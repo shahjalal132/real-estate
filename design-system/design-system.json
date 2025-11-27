@@ -1,0 +1,1255 @@
+{
+    "designSystem": {
+        "metadata": {
+            "projectName": "Rmarketplace - Real Estate Auction Platform",
+            "description": "A comprehensive real estate auction and investment marketplace platform",
+            "version": "1.0.0"
+        },
+        "colors": {
+            "primary": {
+                "blue": "#0066CC",
+                "darkBlue": "#004C99",
+                "lightBlue": "#3399FF"
+            },
+            "neutral": {
+                "white": "#FFFFFF",
+                "lightGray": "#F5F5F5",
+                "gray": "#CCCCCC",
+                "darkGray": "#666666",
+                "black": "#000000"
+            },
+            "accent": {
+                "orange": "#FF6B00",
+                "green": "#00CC66",
+                "lightOrange": "#FFE5CC"
+            },
+            "text": {
+                "primary": "#333333",
+                "secondary": "#666666",
+                "light": "#999999",
+                "white": "#FFFFFF"
+            }
+        },
+        "typography": {
+            "fontFamily": {
+                "primary": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
+                "secondary": "'Helvetica Neue', Arial, sans-serif"
+            },
+            "fontSize": {
+                "xs": "12px",
+                "sm": "14px",
+                "base": "16px",
+                "lg": "18px",
+                "xl": "20px",
+                "2xl": "24px",
+                "3xl": "30px",
+                "4xl": "36px",
+                "5xl": "48px",
+                "6xl": "60px"
+            },
+            "fontWeight": {
+                "light": "300",
+                "normal": "400",
+                "medium": "500",
+                "semibold": "600",
+                "bold": "700",
+                "extrabold": "800"
+            },
+            "lineHeight": {
+                "tight": "1.2",
+                "normal": "1.5",
+                "relaxed": "1.75"
+            }
+        },
+        "spacing": {
+            "xs": "4px",
+            "sm": "8px",
+            "md": "16px",
+            "lg": "24px",
+            "xl": "32px",
+            "2xl": "48px",
+            "3xl": "64px",
+            "4xl": "96px",
+            "5xl": "128px"
+        },
+        "borderRadius": {
+            "none": "0",
+            "sm": "4px",
+            "md": "8px",
+            "lg": "12px",
+            "xl": "16px",
+            "full": "9999px"
+        },
+        "shadows": {
+            "sm": "0 1px 2px rgba(0, 0, 0, 0.05)",
+            "md": "0 4px 6px rgba(0, 0, 0, 0.1)",
+            "lg": "0 10px 15px rgba(0, 0, 0, 0.1)",
+            "xl": "0 20px 25px rgba(0, 0, 0, 0.15)",
+            "megaMenu": "0 8px 24px rgba(0, 0, 0, 0.12)"
+        },
+        "breakpoints": {
+            "mobile": "320px",
+            "tablet": "768px",
+            "desktop": "1024px",
+            "wide": "1440px"
+        }
+    },
+    "components": {
+        "header": {
+            "type": "navigation",
+            "style": "sticky",
+            "backgroundColor": "#FFFFFF",
+            "height": "70px",
+            "shadow": "0 2px 4px rgba(0,0,0,0.1)",
+            "logo": {
+                "text": "Rmarketplace",
+                "icon": "R",
+                "iconColor": "#0066CC",
+                "textColor": "#333333"
+            },
+            "navigation": {
+                "items": [
+                    {
+                        "label": "Comps",
+                        "link": "/comps",
+                        "type": "megaMenu",
+                        "megaMenuId": "comps"
+                    },
+                    {
+                        "label": "For Sale",
+                        "link": "/for-sale",
+                        "type": "megaMenu",
+                        "megaMenuId": "forSale"
+                    },
+                    {
+                        "label": "For Lease",
+                        "link": "/for-lease",
+                        "type": "megaMenu",
+                        "megaMenuId": "forLease"
+                    },
+                    {
+                        "label": "Scout",
+                        "link": "/scout",
+                        "type": "megaMenu",
+                        "megaMenuId": "scout"
+                    },
+                    {
+                        "label": "Dispensaries",
+                        "link": "/dispensaries",
+                        "type": "megaMenu",
+                        "megaMenuId": "dispensaries"
+                    },
+                    {
+                        "label": "Zoning Changes",
+                        "link": "/zoning-changes",
+                        "type": "page"
+                    },
+                    {
+                        "label": "Contacts",
+                        "link": "/contacts",
+                        "type": "megaMenu",
+                        "megaMenuId": "contacts"
+                    },
+                    {
+                        "label": "Search",
+                        "link": "/search",
+                        "type": "page"
+                    },
+                    {
+                        "label": "Underwriting",
+                        "link": "/underwriting",
+                        "type": "megaMenu",
+                        "megaMenuId": "underwriting"
+                    },
+                    {
+                        "label": "Tools",
+                        "link": "/tools",
+                        "type": "megaMenu",
+                        "megaMenuId": "tools"
+                    },
+                    {
+                        "label": "Settings",
+                        "link": "/settings",
+                        "type": "megaMenu",
+                        "megaMenuId": "settings"
+                    }
+                ],
+                "style": {
+                    "fontSize": "14px",
+                    "fontWeight": "500",
+                    "color": "#333333",
+                    "hoverColor": "#0066CC"
+                }
+            },
+            "cta": {
+                "type": "button",
+                "text": "Log In",
+                "backgroundColor": "#0066CC",
+                "color": "#FFFFFF",
+                "borderRadius": "4px",
+                "padding": "10px 20px"
+            },
+            "userActions": {
+                "search": true,
+                "profile": true,
+                "language": "EN"
+            }
+        },
+        "megaMenu": {
+            "type": "dropdown-mega-menu",
+            "position": "absolute",
+            "top": "70px",
+            "backgroundColor": "#FFFFFF",
+            "boxShadow": "0 8px 24px rgba(0, 0, 0, 0.12)",
+            "borderRadius": "0 0 8px 8px",
+            "padding": "32px",
+            "minWidth": "280px",
+            "maxWidth": "1200px",
+            "zIndex": "1000",
+            "animation": {
+                "entry": "fadeInDown",
+                "duration": "0.3s",
+                "easing": "ease-out"
+            },
+            "menus": {
+                "comps": {
+                    "id": "comps",
+                    "title": "Comparables",
+                    "layout": "single-column",
+                    "width": "300px",
+                    "sections": [
+                        {
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Commercial Sales",
+                                    "link": "/comps/commercial-sales",
+                                    "icon": "building-office",
+                                    "description": "View commercial property sales data"
+                                },
+                                {
+                                    "label": "Commercial Lease",
+                                    "link": "/comps/commercial-lease",
+                                    "icon": "document-text",
+                                    "description": "Commercial lease comparables"
+                                },
+                                {
+                                    "label": "Residential Sales",
+                                    "link": "/comps/residential-sales",
+                                    "icon": "home",
+                                    "description": "Residential property sales"
+                                },
+                                {
+                                    "label": "Residential Lease",
+                                    "link": "/comps/residential-lease",
+                                    "icon": "key",
+                                    "description": "Residential rental comparables"
+                                },
+                                {
+                                    "label": "All Comps",
+                                    "link": "/comps/all",
+                                    "icon": "chart-bar",
+                                    "description": "View all comparable data",
+                                    "featured": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "forSale": {
+                    "id": "forSale",
+                    "title": "Properties For Sale",
+                    "layout": "two-column",
+                    "width": "600px",
+                    "sections": [
+                        {
+                            "title": "Commercial",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Commercial Sale",
+                                    "link": "/for-sale/commercial",
+                                    "icon": "building-storefront"
+                                },
+                                {
+                                    "label": "Commercial Auctions",
+                                    "link": "/for-sale/commercial-auctions",
+                                    "icon": "megaphone",
+                                    "badge": "Live"
+                                },
+                                {
+                                    "label": "Off-Market Commercial",
+                                    "link": "/for-sale/commercial-off-market",
+                                    "icon": "lock-closed"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Residential",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Residential Sale",
+                                    "link": "/for-sale/residential",
+                                    "icon": "home-modern"
+                                },
+                                {
+                                    "label": "Residential Auctions",
+                                    "link": "/for-sale/residential-auctions",
+                                    "icon": "megaphone",
+                                    "badge": "Live"
+                                },
+                                {
+                                    "label": "Off-Market Residential",
+                                    "link": "/for-sale/residential-off-market",
+                                    "icon": "lock-closed"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Filters",
+                            "type": "link-list",
+                            "fullWidth": true,
+                            "items": [
+                                {
+                                    "label": "Sort by BSF",
+                                    "link": "/for-sale?sort=bsf",
+                                    "icon": "arrows-up-down"
+                                },
+                                {
+                                    "label": "Sort by PPSF",
+                                    "link": "/for-sale?sort=ppsf",
+                                    "icon": "arrows-up-down"
+                                },
+                                {
+                                    "label": "All For Sale",
+                                    "link": "/for-sale/all",
+                                    "icon": "squares-2x2",
+                                    "featured": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "forLease": {
+                    "id": "forLease",
+                    "title": "Properties For Lease",
+                    "layout": "single-column",
+                    "width": "300px",
+                    "sections": [
+                        {
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Commercial Lease",
+                                    "link": "/for-lease/commercial",
+                                    "icon": "building-office-2",
+                                    "description": "Office, retail, industrial spaces"
+                                },
+                                {
+                                    "label": "Residential Lease",
+                                    "link": "/for-lease/residential",
+                                    "icon": "home",
+                                    "description": "Apartments and houses for rent"
+                                },
+                                {
+                                    "label": "All For Lease",
+                                    "link": "/for-lease/all",
+                                    "icon": "squares-2x2",
+                                    "description": "View all available leases",
+                                    "featured": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "scout": {
+                    "id": "scout",
+                    "title": "Scout System",
+                    "layout": "two-column",
+                    "width": "700px",
+                    "description": "Tenant analysis and location intelligence",
+                    "sections": [
+                        {
+                            "title": "Analytics",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Tenants",
+                                    "link": "/scout/tenants",
+                                    "icon": "users",
+                                    "description": "View tenant database"
+                                },
+                                {
+                                    "label": "Criteria",
+                                    "link": "/scout/criteria",
+                                    "icon": "clipboard-document-check",
+                                    "description": "Tenant requirements"
+                                },
+                                {
+                                    "label": "Ratings",
+                                    "link": "/scout/ratings",
+                                    "icon": "star",
+                                    "description": "Tenant credit ratings"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Location Tools",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Maps",
+                                    "link": "/scout/maps",
+                                    "icon": "map",
+                                    "description": "Geographic tenant distribution"
+                                },
+                                {
+                                    "label": "Distance Calculator",
+                                    "link": "/scout/distance",
+                                    "icon": "map-pin",
+                                    "description": "Calculate proximity to locations"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "featured-card",
+                            "fullWidth": true,
+                            "backgroundColor": "#F0F7FF",
+                            "title": "Scout Intelligence",
+                            "description": "Analyze tenant proximity, ratings, and criteria from any location",
+                            "cta": {
+                                "text": "Launch Scout",
+                                "link": "/scout",
+                                "icon": "arrow-right"
+                            }
+                        }
+                    ]
+                },
+                "dispensaries": {
+                    "id": "dispensaries",
+                    "title": "Dispensary Properties",
+                    "layout": "single-column",
+                    "width": "350px",
+                    "sections": [
+                        {
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Dispensaries for Lease",
+                                    "link": "/dispensaries/lease",
+                                    "icon": "building-storefront",
+                                    "description": "Commercial dispensary spaces"
+                                },
+                                {
+                                    "label": "Dispensaries for Sale",
+                                    "link": "/dispensaries/sale",
+                                    "icon": "shopping-bag",
+                                    "description": "Purchase dispensary properties"
+                                },
+                                {
+                                    "label": "All Dispensaries",
+                                    "link": "/dispensaries/all",
+                                    "icon": "squares-2x2",
+                                    "description": "View all available properties",
+                                    "featured": true
+                                },
+                                {
+                                    "label": "Zoning Map",
+                                    "link": "/dispensaries/zoning-map",
+                                    "icon": "map",
+                                    "description": "View dispensary-eligible zones"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "contacts": {
+                    "id": "contacts",
+                    "title": "Contact Directory",
+                    "layout": "single-column",
+                    "width": "300px",
+                    "sections": [
+                        {
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Owners",
+                                    "link": "/contacts/owners",
+                                    "icon": "user-circle",
+                                    "description": "Property owner database"
+                                },
+                                {
+                                    "label": "Tenants",
+                                    "link": "/contacts/tenants",
+                                    "icon": "users",
+                                    "description": "Tenant directory"
+                                },
+                                {
+                                    "label": "Brokers",
+                                    "link": "/contacts/brokers",
+                                    "icon": "briefcase",
+                                    "description": "Real estate broker contacts"
+                                },
+                                {
+                                    "label": "All Contacts",
+                                    "link": "/contacts/all",
+                                    "icon": "address-book",
+                                    "description": "View complete directory",
+                                    "featured": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "underwriting": {
+                    "id": "underwriting",
+                    "title": "Underwriting Center",
+                    "layout": "two-column",
+                    "width": "650px",
+                    "sections": [
+                        {
+                            "title": "Properties",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Saved Properties",
+                                    "link": "/underwriting/saved",
+                                    "icon": "bookmark",
+                                    "description": "Your saved properties"
+                                },
+                                {
+                                    "label": "Underwrote Properties",
+                                    "link": "/underwriting/completed",
+                                    "icon": "document-check",
+                                    "description": "Completed analyses"
+                                },
+                                {
+                                    "label": "Submitted Deals",
+                                    "link": "/underwriting/submitted",
+                                    "icon": "paper-airplane",
+                                    "description": "Broker-submitted opportunities"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Tools",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Underwriting Sheets",
+                                    "link": "/underwriting/sheets",
+                                    "icon": "table-cells",
+                                    "description": "Templates by asset class"
+                                },
+                                {
+                                    "label": "New Analysis",
+                                    "link": "/underwriting/new",
+                                    "icon": "plus-circle",
+                                    "description": "Start new underwriting",
+                                    "featured": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "quick-stats",
+                            "fullWidth": true,
+                            "backgroundColor": "#F0F7FF",
+                            "stats": [
+                                {
+                                    "label": "Saved",
+                                    "value": "12",
+                                    "icon": "bookmark"
+                                },
+                                {
+                                    "label": "Analyzed",
+                                    "value": "8",
+                                    "icon": "chart-bar"
+                                },
+                                {
+                                    "label": "Pending",
+                                    "value": "3",
+                                    "icon": "clock"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "tools": {
+                    "id": "tools",
+                    "title": "Investment Tools",
+                    "layout": "three-column",
+                    "width": "900px",
+                    "sections": [
+                        {
+                            "title": "Calculators",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Mortgage Calculator",
+                                    "link": "/tools/mortgage-calculator",
+                                    "icon": "calculator"
+                                },
+                                {
+                                    "label": "Cost Seg Calculator",
+                                    "link": "/tools/cost-seg",
+                                    "icon": "currency-dollar"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Research",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Market Research",
+                                    "link": "/tools/market-research",
+                                    "icon": "chart-bar"
+                                },
+                                {
+                                    "label": "Zoning Codes (NY)",
+                                    "link": "/tools/zoning-codes",
+                                    "icon": "document-text"
+                                },
+                                {
+                                    "label": "ChatGPT Assistant",
+                                    "link": "/tools/chatgpt",
+                                    "icon": "chat-bubble-left-right",
+                                    "badge": "AI"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Organization",
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Quick Links",
+                                    "link": "/tools/links",
+                                    "icon": "link"
+                                },
+                                {
+                                    "label": "To-Do List",
+                                    "link": "/tools/todo",
+                                    "icon": "clipboard-document-list"
+                                },
+                                {
+                                    "label": "Calendar",
+                                    "link": "/tools/calendar",
+                                    "icon": "calendar"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "market-research-preview",
+                            "fullWidth": true,
+                            "backgroundColor": "#F0F7FF",
+                            "title": "Market Research Data",
+                            "metrics": [
+                                "VPD",
+                                "Population",
+                                "Income",
+                                "Political Climate",
+                                "Vacancy Rate",
+                                "Owner/Renter Ratio"
+                            ],
+                            "cta": {
+                                "text": "View Full Research",
+                                "link": "/tools/market-research"
+                            }
+                        }
+                    ]
+                },
+                "settings": {
+                    "id": "settings",
+                    "title": "Settings",
+                    "layout": "single-column",
+                    "width": "320px",
+                    "sections": [
+                        {
+                            "type": "link-list",
+                            "items": [
+                                {
+                                    "label": "Buy Box Criteria",
+                                    "link": "/settings/buy-box",
+                                    "icon": "adjustments-horizontal",
+                                    "description": "Set investment parameters"
+                                },
+                                {
+                                    "label": "Email Notifications",
+                                    "link": "/settings/notifications",
+                                    "icon": "bell",
+                                    "description": "Manage alert preferences"
+                                },
+                                {
+                                    "label": "Account Settings",
+                                    "link": "/settings/account",
+                                    "icon": "user-circle",
+                                    "description": "Profile and preferences"
+                                },
+                                {
+                                    "label": "Subscription",
+                                    "link": "/settings/subscription",
+                                    "icon": "credit-card",
+                                    "description": "Manage your plan"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "itemStyle": {
+                "padding": "12px 16px",
+                "borderRadius": "6px",
+                "fontSize": "14px",
+                "fontWeight": "500",
+                "color": "#333333",
+                "hoverBackgroundColor": "#F0F7FF",
+                "hoverColor": "#0066CC",
+                "transition": "all 0.2s ease",
+                "icon": {
+                    "size": "20px",
+                    "marginRight": "12px",
+                    "color": "#0066CC"
+                },
+                "description": {
+                    "fontSize": "12px",
+                    "color": "#666666",
+                    "marginTop": "4px"
+                },
+                "badge": {
+                    "backgroundColor": "#FF6B00",
+                    "color": "#FFFFFF",
+                    "fontSize": "10px",
+                    "padding": "2px 6px",
+                    "borderRadius": "4px",
+                    "fontWeight": "600",
+                    "marginLeft": "8px"
+                },
+                "featured": {
+                    "backgroundColor": "#0066CC",
+                    "color": "#FFFFFF",
+                    "fontWeight": "600",
+                    "hoverBackgroundColor": "#004C99"
+                }
+            },
+            "sectionStyle": {
+                "title": {
+                    "fontSize": "12px",
+                    "fontWeight": "600",
+                    "color": "#666666",
+                    "textTransform": "uppercase",
+                    "letterSpacing": "0.5px",
+                    "marginBottom": "12px"
+                },
+                "marginBottom": "24px"
+            }
+        },
+        "hero": {
+            "type": "hero-section",
+            "layout": "split",
+            "backgroundColor": "#FFFFFF",
+            "leftPanel": {
+                "backgroundColor": "#0066CC",
+                "clipPath": "polygon(0 0, 100% 0, 85% 100%, 0% 100%)",
+                "content": {
+                    "title": {
+                        "text": "Find Your Next Investment",
+                        "color": "#FFFFFF",
+                        "fontSize": "48px",
+                        "fontWeight": "700"
+                    },
+                    "searchBar": {
+                        "placeholder": "Search by address, owner, city, or ZIP code",
+                        "backgroundColor": "#FFFFFF",
+                        "borderRadius": "4px",
+                        "height": "50px"
+                    },
+                    "auctionDates": {
+                        "title": "Our Auction Dates",
+                        "dates": [
+                            {
+                                "label": "DEC 16",
+                                "day": "Monday"
+                            },
+                            {
+                                "label": "DEC 18",
+                                "day": "Wednesday"
+                            },
+                            {
+                                "label": "DEC 23",
+                                "day": "Monday"
+                            }
+                        ],
+                        "style": {
+                            "backgroundColor": "rgba(255,255,255,0.1)",
+                            "color": "#FFFFFF",
+                            "fontSize": "14px"
+                        }
+                    }
+                }
+            },
+            "rightPanel": {
+                "type": "image",
+                "imagePrompt": "Modern city skyline with skyscrapers and waterfront, professional real estate photography, bright daylight, Denver or major metropolitan area",
+                "alt": "City skyline representing investment opportunities"
+            }
+        },
+        "auctionCards": {
+            "type": "card-grid",
+            "layout": "3-column",
+            "gap": "24px",
+            "card": {
+                "backgroundColor": "#FFFFFF",
+                "borderRadius": "8px",
+                "shadow": "0 2px 8px rgba(0,0,0,0.1)",
+                "hoverShadow": "0 4px 12px rgba(0,0,0,0.15)",
+                "image": {
+                    "height": "200px",
+                    "borderRadius": "8px 8px 0 0",
+                    "objectFit": "cover"
+                },
+                "badge": {
+                    "position": "top-right",
+                    "backgroundColor": "#FFFFFF",
+                    "icon": "heart",
+                    "size": "32px",
+                    "borderRadius": "50%"
+                },
+                "content": {
+                    "padding": "16px",
+                    "propertyType": {
+                        "fontSize": "12px",
+                        "color": "#666666",
+                        "textTransform": "uppercase"
+                    },
+                    "address": {
+                        "fontSize": "16px",
+                        "fontWeight": "600",
+                        "color": "#333333",
+                        "marginBottom": "8px"
+                    },
+                    "auctionInfo": {
+                        "fontSize": "14px",
+                        "color": "#666666"
+                    },
+                    "price": {
+                        "fontSize": "18px",
+                        "fontWeight": "700",
+                        "color": "#0066CC"
+                    }
+                }
+            }
+        },
+        "statCards": {
+            "type": "stat-showcase",
+            "layout": "3-column",
+            "gap": "24px",
+            "card": {
+                "backgroundColor": "#0066CC",
+                "color": "#FFFFFF",
+                "borderRadius": "8px",
+                "padding": "48px 32px",
+                "textAlign": "center",
+                "number": {
+                    "fontSize": "48px",
+                    "fontWeight": "700",
+                    "marginBottom": "16px"
+                },
+                "label": {
+                    "fontSize": "16px",
+                    "fontWeight": "400"
+                },
+                "cta": {
+                    "text": "LEARN MORE →",
+                    "fontSize": "14px",
+                    "fontWeight": "600",
+                    "marginTop": "24px",
+                    "textDecoration": "underline"
+                }
+            },
+            "stats": [
+                {
+                    "number": "100,000+",
+                    "label": "USERS",
+                    "description": "Join thousands of investors finding their next opportunity"
+                },
+                {
+                    "number": "$5B+",
+                    "label": "SALES",
+                    "description": "Total transaction volume processed through platform"
+                },
+                {
+                    "number": "75%",
+                    "label": "SUCCESS",
+                    "description": "Success rate in the last year"
+                }
+            ]
+        },
+        "infoGraphic": {
+            "type": "explainer-modal",
+            "backgroundColor": "#0066CC",
+            "color": "#FFFFFF",
+            "title": {
+                "mainText": "WHAT IS",
+                "brandText": "R MARKETPLACE?",
+                "fontSize": "60px",
+                "fontWeight": "700"
+            },
+            "subtitle": {
+                "text": "The auction platform with the highest trade rate in the industry - explained",
+                "fontSize": "18px",
+                "color": "#FFE5CC"
+            },
+            "graphics": {
+                "type": "dashboard-preview",
+                "imagePrompt": "Modern auction platform dashboard interface showing real-time bidding, property listings, market analytics charts, graphs with blue and orange accent colors, clean UI design"
+            },
+            "cta": {
+                "text": "Watch our video",
+                "backgroundColor": "#FFFFFF",
+                "color": "#0066CC",
+                "borderRadius": "4px"
+            }
+        },
+        "mobileApp": {
+            "type": "app-showcase",
+            "layout": "image-text",
+            "backgroundColor": "#F5F5F5",
+            "title": "The Marketplace App",
+            "subtitle": "FIND YOUR NEXT INVESTMENT ON THE GO WITH OUR MOBILE APP",
+            "features": [
+                "Verify your identity for auction",
+                "Search properties from your device",
+                "Get notifications about upcoming auctions",
+                "Make a bid from anywhere",
+                "Browse our inventory",
+                "Calculate how much you'll need",
+                "Manage your watchlist from your desktop or anywhere"
+            ],
+            "deviceMockup": {
+                "type": "smartphone",
+                "imagePrompt": "iPhone mockup showing real estate auction app interface with property listings, search functionality, and bid features, professional app design"
+            },
+            "cta": {
+                "text": "Download Now",
+                "backgroundColor": "#0066CC",
+                "color": "#FFFFFF"
+            }
+        },
+        "featureIcons": {
+            "type": "icon-grid",
+            "layout": "4-column",
+            "gap": "32px",
+            "features": [
+                {
+                    "icon": "document-chart",
+                    "iconColor": "#0066CC",
+                    "title": "PROMOTE PRIME ASSETS THROUGH RMAX AUCTIONS",
+                    "description": "Showcase your premium properties"
+                },
+                {
+                    "icon": "trending-up",
+                    "iconColor": "#0066CC",
+                    "title": "FAST-TRACK TRADES WITH LIVE DEALER",
+                    "description": "Real-time auction management"
+                },
+                {
+                    "icon": "target",
+                    "iconColor": "#0066CC",
+                    "title": "TAILOR YOUR TACTICS WITH CUSTOM ONLINE AUCTIONS",
+                    "description": "Customizable auction strategies"
+                },
+                {
+                    "icon": "chart-bar",
+                    "iconColor": "#0066CC",
+                    "title": "CENTRALIZE SALES WITH MARKETPLACE LISTINGS",
+                    "description": "Unified sales platform"
+                }
+            ]
+        },
+        "newsCards": {
+            "type": "news-grid",
+            "layout": "4-column",
+            "gap": "24px",
+            "card": {
+                "backgroundColor": "#FFFFFF",
+                "borderRadius": "8px",
+                "border": "1px solid #E0E0E0",
+                "padding": "24px",
+                "title": {
+                    "fontSize": "16px",
+                    "fontWeight": "600",
+                    "color": "#333333",
+                    "marginBottom": "12px"
+                },
+                "date": {
+                    "fontSize": "12px",
+                    "color": "#999999"
+                },
+                "readMore": {
+                    "text": "Read more →",
+                    "color": "#0066CC",
+                    "fontSize": "14px"
+                }
+            }
+        },
+        "testimonials": {
+            "type": "testimonial-cards",
+            "layout": "3-column",
+            "gap": "24px",
+            "card": {
+                "backgroundColor": "#FFE5CC",
+                "borderRadius": "8px",
+                "padding": "32px",
+                "quote": {
+                    "fontSize": "14px",
+                    "lineHeight": "1.6",
+                    "color": "#333333",
+                    "marginBottom": "24px"
+                },
+                "author": {
+                    "name": {
+                        "fontSize": "16px",
+                        "fontWeight": "600",
+                        "color": "#333333"
+                    },
+                    "title": {
+                        "fontSize": "14px",
+                        "color": "#666666"
+                    }
+                }
+            }
+        },
+        "ctaBanner": {
+            "type": "cta-section",
+            "backgroundColor": "#0066CC",
+            "color": "#FFFFFF",
+            "clipPath": "polygon(15% 0, 100% 0, 100% 100%, 0 100%)",
+            "padding": "64px",
+            "title": {
+                "text": "Have a Question?",
+                "fontSize": "36px",
+                "fontWeight": "700"
+            },
+            "description": {
+                "text": "Our team is ready to help you find your next investment opportunity",
+                "fontSize": "18px"
+            },
+            "cta": {
+                "text": "Contact Us",
+                "backgroundColor": "#FFFFFF",
+                "color": "#0066CC",
+                "borderRadius": "4px"
+            }
+        },
+        "footer": {
+            "type": "footer",
+            "backgroundColor": "#F5F5F5",
+            "padding": "48px 0",
+            "sections": [
+                {
+                    "title": "ABOUT US",
+                    "links": [
+                        "Our Story",
+                        "Leadership",
+                        "Careers",
+                        "Press"
+                    ]
+                },
+                {
+                    "title": "SUPPORT",
+                    "links": [
+                        "Help Center",
+                        "Contact Us",
+                        "FAQs",
+                        "Terms of Service"
+                    ]
+                },
+                {
+                    "title": "MARKETPLACE",
+                    "links": [
+                        "Buy",
+                        "Sell",
+                        "Auctions",
+                        "Listings"
+                    ]
+                },
+                {
+                    "title": "RESOURCES",
+                    "links": [
+                        "Blog",
+                        "Market Insights",
+                        "Education",
+                        "Tools"
+                    ]
+                }
+            ],
+            "social": {
+                "platforms": [
+                    "Facebook",
+                    "Twitter",
+                    "Instagram",
+                    "LinkedIn",
+                    "YouTube",
+                    "TikTok"
+                ],
+                "iconColor": "#333333"
+            },
+            "bottomBar": {
+                "backgroundColor": "#E0E0E0",
+                "text": "© 2025 Rmarketplace. All rights reserved.",
+                "links": [
+                    "Privacy Policy",
+                    "Terms of Use",
+                    "Accessibility"
+                ]
+            }
+        },
+        "buttons": {
+            "primary": {
+                "backgroundColor": "#0066CC",
+                "color": "#FFFFFF",
+                "borderRadius": "4px",
+                "padding": "12px 24px",
+                "fontSize": "14px",
+                "fontWeight": "600",
+                "hoverBackgroundColor": "#004C99"
+            },
+            "secondary": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#0066CC",
+                "border": "2px solid #0066CC",
+                "borderRadius": "4px",
+                "padding": "12px 24px",
+                "fontSize": "14px",
+                "fontWeight": "600"
+            },
+            "viewMore": {
+                "backgroundColor": "#0066CC",
+                "color": "#FFFFFF",
+                "borderRadius": "4px",
+                "padding": "10px 32px",
+                "fontSize": "14px",
+                "fontWeight": "600",
+                "textTransform": "uppercase"
+            }
+        }
+    },
+    "sections": [
+        {
+            "id": "hero",
+            "name": "Hero Section",
+            "order": 1,
+            "fullWidth": true
+        },
+        {
+            "id": "featured-auctions",
+            "name": "Featured Auctions",
+            "order": 2,
+            "title": "Featured Auctions",
+            "hasViewMore": true,
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "featured-listings",
+            "name": "Featured Listings",
+            "order": 3,
+            "title": "Featured Listings",
+            "hasViewMore": true,
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "stats",
+            "name": "Statistics Section",
+            "order": 4,
+            "title": "The Right Place To Transact",
+            "subtitle": "YOUR SUCCESS IS OUR PRIORITY. VIEW UPCOMING PROPERTIES & REGISTER TO BID",
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "data-powered",
+            "name": "Data Powered Investing",
+            "order": 5,
+            "title": "Data-Powered Investing",
+            "features": [
+                "Dynamic Bidding Data",
+                "Market Analytics",
+                "Auto-Bidder"
+            ],
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "marketplace-explainer",
+            "name": "What is R Marketplace",
+            "order": 6,
+            "fullWidth": true
+        },
+        {
+            "id": "mobile-app",
+            "name": "Mobile App Section",
+            "order": 7,
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "features",
+            "name": "Platform Features",
+            "order": 8,
+            "title": "Win Us You Can",
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "news",
+            "name": "Latest News",
+            "order": 9,
+            "title": "Latest Marketplace News",
+            "hasViewMore": true,
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "testimonials",
+            "name": "Winning Words",
+            "order": 10,
+            "title": "Winning Words",
+            "containerWidth": "1200px"
+        },
+        {
+            "id": "cta",
+            "name": "Contact CTA",
+            "order": 11,
+            "fullWidth": true
+        }
+    ],
+    "imagePrompts": {
+        "propertyImages": [
+            "Commercial retail property with parking lot, aerial drone view, professional real estate photography",
+            "Industrial warehouse facility, modern architecture, aerial photography",
+            "Vacant land plot for development, aerial view, commercial real estate",
+            "Urban residential building exterior, brick architecture, city setting",
+            "Suburban golf course community, aerial view, green landscape",
+            "City skyline with modern skyscrapers, waterfront, daytime professional photography"
+        ],
+        "dashboardGraphics": "Real estate auction platform interface with charts, graphs, property listings, blue and orange color scheme, modern UI design",
+        "mobileApp": "Smartphone showing real estate auction app with property cards, search bar, and bidding interface",
+        "icons": "Minimalist line icons for real estate, charts, analytics, and marketplace features in blue color"
+    },
+    "contentGuidelines": {
+        "tone": "Professional, trustworthy, authoritative yet approachable",
+        "voiceAttributes": [
+            "Data-driven",
+            "Industry-leading",
+            "User-focused",
+            "Transparent"
+        ],
+        "keyMessages": [
+            "Largest real estate auction marketplace",
+            "Data-powered investment decisions",
+            "Highest trade rate in industry",
+            "100,000+ active users",
+            "$5B+ in transactions",
+            "Complete deal sourcing and underwriting platform",
+            "Advanced mapping and zoning intelligence",
+            "Comprehensive contact management system"
+        ]
+    }
+}
