@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link } from "@inertiajs/react";
 
 interface MenuItem {
     label: string;
@@ -25,42 +25,72 @@ interface MegaMenuProps {
 export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
     const menus: Record<string, Menu> = {
         auctions: {
-            title: 'Auctions',
+            title: "Auctions",
             sections: [
                 {
-                    title: 'Auction Types',
+                    title: "Auction Types",
                     items: [
-                        { label: 'Classic Auctions', link: '/auctions/classic' },
-                        { label: 'Absolute Auctions', link: '/auctions/absolute' },
-                        { label: 'Custom Auctions', link: '/auctions/custom' },
+                        {
+                            label: "Classic Auctions",
+                            link: "/auctions/classic",
+                        },
+                        {
+                            label: "Absolute Auctions",
+                            link: "/auctions/absolute",
+                        },
+                        { label: "Custom Auctions", link: "/auctions/custom" },
                     ],
                 },
                 {
-                    title: 'Browse',
+                    title: "Browse",
                     items: [
-                        { label: 'All Auctions', link: '/auctions', featured: true },
-                        { label: 'Upcoming Auctions', link: '/auctions/upcoming' },
-                        { label: 'Live Auctions', link: '/auctions/live', badge: 'Live' },
+                        {
+                            label: "All Auctions",
+                            link: "/auctions",
+                            featured: true,
+                        },
+                        {
+                            label: "Upcoming Auctions",
+                            link: "/auctions/upcoming",
+                        },
+                        {
+                            label: "Live Auctions",
+                            link: "/auctions/live",
+                            badge: "Live",
+                        },
                     ],
                 },
             ],
         },
         listings: {
-            title: 'Listings',
+            title: "Listings",
             sections: [
                 {
-                    title: 'Property Types',
+                    title: "Property Types",
                     items: [
-                        { label: 'Commercial Listings', link: '/listings/commercial' },
-                        { label: 'Residential Listings', link: '/listings/residential' },
-                        { label: 'Land Listings', link: '/listings/land' },
+                        {
+                            label: "Commercial Listings",
+                            link: "/listings/commercial",
+                        },
+                        {
+                            label: "Residential Listings",
+                            link: "/listings/residential",
+                        },
+                        { label: "Land Listings", link: "/listings/land" },
                     ],
                 },
                 {
-                    title: 'View All',
+                    title: "View All",
                     items: [
-                        { label: 'All Listings', link: '/listings', featured: true },
-                        { label: 'Featured Listings', link: '/listings/featured' },
+                        {
+                            label: "All Listings",
+                            link: "/listings",
+                            featured: true,
+                        },
+                        {
+                            label: "Featured Listings",
+                            link: "/listings/featured",
+                        },
                     ],
                 },
             ],
@@ -72,11 +102,10 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
 
     return (
         <div
-            className="absolute left-0 mt-0 bg-white rounded-b-lg shadow-[0_8px_24px_rgba(0,0,0,0.12)] min-w-[280px] max-w-[1200px] p-8"
-            style={{ top: '70px' }}
+            className="absolute left-0 mt-0 bg-white rounded-b-lg shadow-[0_-10px_20px_rgba(0,0,0,0.10),0_-6px_6px_rgba(0,0,0,0.10)] min-w-[300px] max-w-[1200px] p-4"
             onMouseLeave={onClose}
         >
-            <div className="grid grid-cols-2 gap-8">
+            <div className="">
                 {menu.sections.map((section, idx) => (
                     <div key={idx}>
                         <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-3">
@@ -89,8 +118,8 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
                                         href={item.link}
                                         className={`block px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                                             item.featured
-                                                ? 'bg-[#0066CC] text-white hover:bg-[#004C99]'
-                                                : 'text-[#333333] hover:bg-[#F0F7FF] hover:text-[#0066CC]'
+                                                ? "bg-[#0066CC] text-white hover:bg-[#004C99]"
+                                                : "text-[#333333] hover:bg-[#F0F7FF] hover:text-[#0066CC]"
                                         }`}
                                     >
                                         <span className="flex items-center">
@@ -111,4 +140,3 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
         </div>
     );
 }
-
