@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "@inertiajs/react";
 import MegaMenu from "./MegaMenu";
-import { Info, Menu, MessageCircleQuestionMark } from "lucide-react";
+import { Menu, MessageCircleQuestionMark } from "lucide-react";
 
 interface NavigationItem {
     label: string;
     link: string;
     type: "megaMenu" | "page";
     megaMenuId?: string;
+    hasDropdown?: boolean;
 }
 
 export default function Header() {
@@ -20,12 +21,14 @@ export default function Header() {
             link: "/auctions",
             type: "megaMenu",
             megaMenuId: "auctions",
+            hasDropdown: true,
         },
         {
             label: "LISTINGS",
             link: "/listings",
             type: "megaMenu",
             megaMenuId: "listings",
+            hasDropdown: true,
         },
         { label: "INSIGHTS", link: "/insights", type: "page" },
         { label: "SELL WITH US", link: "/sell-with-us", type: "page" },
@@ -86,21 +89,22 @@ export default function Header() {
                                 >
                                     <Link
                                         href={item.link}
-                                        className="text-[#4A4A4A] tracking-[1px] font-normal"
+                                        className="header-nav-link text-[#4A4A4A] tracking-[1px] font-normal"
                                     >
                                         <div className="flex items-center justify-between gap-2">
                                             {item.label}
 
-                                            {/* TODO: conditionally show if has dropdown menu */}
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                height="0.75em"
-                                                viewBox="0 0 512 512"
-                                                id="header-fa-icon"
-                                                color="#4a4a4a"
-                                            >
-                                                <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
-                                            </svg>
+                                            {item.hasDropdown && (
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    height="0.75em"
+                                                    viewBox="0 0 512 512"
+                                                    id="header-fa-icon"
+                                                    color="#4a4a4a"
+                                                >
+                                                    <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
+                                                </svg>
+                                            )}
                                         </div>
                                     </Link>
                                     {item.type === "megaMenu" &&
@@ -121,7 +125,7 @@ export default function Header() {
                     <div className="flex items-center py-6 lg:py-0 right-0 space-x-7 justify-between">
                         <Link
                             href="/login"
-                            className="bg-[#0f6bd0] hover:bg-[#3787DE] text-white tracking-[1px] font-normal uppercase rounded-xs px-4 py-2"
+                            className="header-cta bg-[#0f6bd0] hover:bg-[#3787DE] text-white tracking-[1px] font-normal uppercase rounded-xs px-4 py-2"
                         >
                             Log in / Sign Up
                         </Link>

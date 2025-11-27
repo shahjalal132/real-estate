@@ -72,3 +72,26 @@
     --color-text-light: #999999;
     --color-text-white: #FFFFFF;
 }
+
+.header-nav-link {
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #4a4a4a;
+    text-transform: uppercase;
+}
+
+.header-cta {
+    font-size: 0.75rem;
+    padding: 0.5rem 1.5rem;
+}
+
+@media (min-width: 1020px) and (max-width: 1330px) {
+    .header-nav-link {
+        font-size: 13px;
+    }
+
+    .header-cta {
+        font-size: 0.7rem;
+        padding: 0.35rem 1.25rem;
+    }
+}
