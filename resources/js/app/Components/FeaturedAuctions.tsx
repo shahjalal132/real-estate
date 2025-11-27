@@ -1,7 +1,8 @@
-import { useRef } from "react";
-import Slider from "react-slick";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
+import SectionHeading from "./SectionHeading";
+import SliderWithControls from "./SliderWithControls";
+import SliderControls from "./SliderControls";
+import { useSliderControls } from "./useSliderControls";
 
 export default function FeaturedAuctions() {
     const auctions: (PropertyCardProps & { id: number })[] = [
@@ -119,61 +120,37 @@ export default function FeaturedAuctions() {
         },
     ];
 
-    const sliderRef = useRef<Slider | null>(null);
-
-    const sliderSettings = {
-        dots: false,
-        arrows: false,
-        infinite: false,
-        speed: 500,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        responsive: [
-            {
-                breakpoint: 1280,
-                settings: { slidesToShow: 2 },
-            },
-            {
-                breakpoint: 768,
-                settings: { slidesToShow: 1 },
-            },
-        ],
-    };
+    const { sliderRef, handlePrev, handleNext } = useSliderControls();
 
     return (
         <section className="mx-auto w-full max-w-6xl px-4 py-8">
             <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1 text-center sm:text-left">
-                    <h2 className="text-3xl font-bold text-[#333333]">Featured Auctions Properties</h2>
+                    <SectionHeading>Featured Auctions Properties</SectionHeading>
                 </div>
 
-                <div className="flex items-center justify-center gap-3">
-                    <button
-                        type="button"
-                        aria-label="Previous auctions"
-                        onClick={() => sliderRef.current?.slickPrev()}
-                        className="rounded-full border border-gray-200 p-3 text-gray-600 transition hover:border-blue-500 hover:text-blue-600"
-                    >
-                        <ChevronLeft className="h-5 w-5" />
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="Next auctions"
-                        onClick={() => sliderRef.current?.slickNext()}
-                        className="rounded-full border border-gray-200 p-3 text-gray-600 transition hover:border-blue-500 hover:text-blue-600"
-                    >
-                        <ChevronRight className="h-5 w-5" />
-                    </button>
-                </div>
+                <SliderControls
+                    onPrev={handlePrev}
+                    onNext={handleNext}
+                    prevButtonLabel="Previous auctions"
+                    nextButtonLabel="Next auctions"
+                />
             </header>
 
-            <Slider ref={sliderRef} {...sliderSettings}>
+            <SliderWithControls
+                sliderRef={sliderRef}
+                onPrev={handlePrev}
+                onNext={handleNext}
+                prevButtonLabel="Previous auctions"
+                nextButtonLabel="Next auctions"
+                hideControls={true}
+            >
                 {auctions.map((auction) => (
                     <div key={auction.id} className="px-3">
                         <PropertyCard {...auction} />
                     </div>
                 ))}
-            </Slider>
+            </SliderWithControls>
         </section>
     );
 }
