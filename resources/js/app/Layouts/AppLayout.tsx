@@ -14,7 +14,7 @@ export default function AppLayout({ children, title }: AppLayoutProps) {
             <Head title={title} />
             <div className="min-h-screen bg-white">
                 <Header />
-                <main className="w-[95%] max-w-full mx-auto">{children}</main>
+                <main className="max-w-full mx-auto">{children}</main>
                 <Footer />
             </div>
         </>
