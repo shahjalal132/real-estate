@@ -17,23 +17,69 @@ export default function Header() {
 
     const navigationItems: NavigationItem[] = [
         {
-            label: "AUCTIONS",
-            link: "/auctions",
+            label: "COMPS",
+            link: "/comps",
             type: "megaMenu",
-            megaMenuId: "auctions",
+            megaMenuId: "comps",
             hasDropdown: true,
         },
         {
-            label: "LISTINGS",
-            link: "/listings",
+            label: "FOR SALE",
+            link: "/for-sale",
             type: "megaMenu",
-            megaMenuId: "listings",
+            megaMenuId: "forSale",
+            hasDropdown: true,
+        },
+        {
+            label: "FOR LEASE",
+            link: "/for-lease",
+            type: "megaMenu",
+            megaMenuId: "forLease",
+            hasDropdown: true,
+        },
+        {
+            label: "SCOUT",
+            link: "/scout",
+            type: "megaMenu",
+            megaMenuId: "scout",
+            hasDropdown: true,
+        },
+        {
+            label: "DISPENSARIES",
+            link: "/dispensaries",
+            type: "megaMenu",
+            megaMenuId: "dispensaries",
             hasDropdown: true,
         },
         { label: "INSIGHTS", link: "/insights", type: "page" },
-        { label: "SELL WITH US", link: "/sell-with-us", type: "page" },
-        { label: "BROKERS", link: "/brokers", type: "page" },
-        { label: "BUYERS", link: "/buyers", type: "page" },
+        {
+            label: "CONTACTS",
+            link: "/contacts",
+            type: "megaMenu",
+            megaMenuId: "contacts",
+            hasDropdown: true,
+        },
+        {
+            label: "UNDERWRITING",
+            link: "/underwriting",
+            type: "megaMenu",
+            megaMenuId: "underwriting",
+            hasDropdown: true,
+        },
+        {
+            label: "TOOLS",
+            link: "/tools",
+            type: "megaMenu",
+            megaMenuId: "tools",
+            hasDropdown: true,
+        },
+        {
+            label: "SETTINGS",
+            link: "/settings",
+            type: "megaMenu",
+            megaMenuId: "settings",
+            hasDropdown: true,
+        },
     ];
 
     return (
