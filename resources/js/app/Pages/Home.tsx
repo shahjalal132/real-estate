@@ -13,19 +13,19 @@ import CTABanner from '../Components/CTABanner';
 
 export default function Home() {
     return (
-        <AppLayout title="Home">
+        <AppLayout title= "Home" footerClassName = "pt-32" >
             <Hero />
-            <FeaturedAuctions />
+            < FeaturedAuctions />
             <FeaturedListings />
-            <Statistics />
+            < Statistics />
             <DataPowered />
-            <MarketplaceExplainer />
+            < MarketplaceExplainer />
             <MobileApp />
-            <Features />
+            < Features />
             <News />
-            <Testimonials />
+            < Testimonials />
             <CTABanner />
-        </AppLayout>
+            </AppLayout>
     );
 }
 
