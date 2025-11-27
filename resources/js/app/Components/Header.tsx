@@ -51,7 +51,6 @@ export default function Header() {
             megaMenuId: "dispensaries",
             hasDropdown: true,
         },
-        { label: "INSIGHTS", link: "/insights", type: "page" },
         {
             label: "CONTACTS",
             link: "/contacts",
@@ -122,7 +121,7 @@ export default function Header() {
                         </Link>
 
                         {/* Desktop Navigation */}
-                        <nav className="hidden lg:flex items-center space-x-7">
+                        <nav className="hidden lg:flex items-center space-x-4">
                             {navigationItems.map((item) => (
                                 <div
                                     key={item.label}
