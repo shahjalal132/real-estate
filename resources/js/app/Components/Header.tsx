@@ -38,8 +38,33 @@ export default function Header() {
             <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-6 h-full">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center space-x-5">
-                        {/* Logo */}
-                        <Link href="/" className="flex items-center space-x-2">
+                        {/* Logo for small, medium screen */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 68.76 79.56"
+                            width="20"
+                            height="23"
+                            className="h-10 w-auto object-contain lg:hidden"
+                        >
+                            <defs>
+                                <style>.cls-1fill:#002856;</style>
+                            </defs>
+                            <title>Asset 1</title>
+                            <g id="Layer_2" data-name="Layer 2">
+                                <g id="Layer_1-2" data-name="Layer 1">
+                                    <path
+                                        className="cls-1"
+                                        d="M0,38.66v40.9H17.5V38.61ZM0,20.11V34.3l17.5,0V20.17ZM17.5,15.8H34.89c8.52,0,13.75,3.87,13.75,11.37v.23c0,6.7-4.88,11.25-13.41,11.25H22V54.11h9.24l17,25.45H68.76L49.32,51.15C59.44,47.4,66.37,39.33,66.37,26.48v-.22c0-7.5-2.38-13.75-6.82-18.19C54.32,2.84,46.48,0,36.37,0H0V15.74"
+                                    ></path>
+                                </g>
+                            </g>
+                        </svg>
+
+                        {/* Logo for large screen*/}
+                        <Link
+                            href="/"
+                            className="hidden lg:flex items-center space-x-2"
+                        >
                             <img
                                 src="/assets/images/logo.png"
                                 alt="R Marketplace"
@@ -93,7 +118,7 @@ export default function Header() {
                     </div>
 
                     {/* CTA Button */}
-                    <div className="hidden lg:flex items-center space-x-7 justify-between">
+                    <div className="flex items-center py-6 lg:py-0 right-0 space-x-7 justify-between">
                         <Link
                             href="/login"
                             className="bg-[#0f6bd0] hover:bg-[#3787DE] text-white tracking-[1px] font-normal uppercase rounded-xs px-4 py-2"
@@ -111,12 +136,6 @@ export default function Header() {
                             className="cursor-pointer"
                         />
                     </div>
-
-                    {/* Mobile Menu Button */}
-                    <button
-                        className="lg:hidden text-gray-600"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    ></button>
                 </div>
             </div>
 
