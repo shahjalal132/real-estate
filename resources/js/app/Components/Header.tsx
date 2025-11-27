@@ -24,12 +24,15 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-50 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]" style={{ height: '70px' }}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-8 h-full">
                 <div className="flex items-center justify-between h-full">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
-                        <span className="text-2xl font-bold text-[#0066CC]">R</span>
-                        <span className="text-xl font-semibold text-[#333333]">MARKETPLACE</span>
+                        <img 
+                            src="/assets/images/logo.png" 
+                            alt="R Marketplace" 
+                            className="h-10 w-auto object-contain"
+                        />
                     </Link>
 
                     {/* Desktop Navigation */}
