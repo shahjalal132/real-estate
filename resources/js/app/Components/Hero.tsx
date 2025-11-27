@@ -36,8 +36,8 @@ export default function Hero() {
 
                     {/* search */}
                     <div className="flex flex-col gap-3">
-                        <div className="flex flex-col sm:flex-row sm:items-stretch bg-white/10 rounded-lg p-2 gap-2 shadow-lg shadow-black/20 backdrop-blur">
-                            <div className="flex items-center bg-white rounded-md px-4 py-3 flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-stretch bg-white p-2 gap-2 shadow-lg shadow-black/20 backdrop-blur">
+                            <div className="flex items-center bg-white px-4 py-3 flex-1">
                                 <Search className="w-4 h-4 text-[#0F6BD0] mr-3" />
                                 <input
                                     type="text"
@@ -45,15 +45,15 @@ export default function Hero() {
                                     className="flex-1 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none"
                                 />
                             </div>
-                            <button className="bg-[#0F2343] text-white px-10 py-3 rounded-md text-sm tracking-[0.4em] uppercase font-semibold hover:bg-[#143560] transition-colors">
+                            <button className="bg-[#0F2343] text-white px-6 py-2 text-sm uppercase font-semibold hover:bg-[#143560] transition-colors">
                                 Search
                             </button>
                         </div>
                     </div>
 
                     {/* auction dates */}
-                    <div className="space-y-3">
-                        <p className="text-base sm:text-lg font-semibold tracking-wide">
+                    <div className="mt-8">
+                        <p className="text-[40px] capitalize font-semibold">
                             Our Auction Dates
                         </p>
                         <div className="flex items-center gap-5">
