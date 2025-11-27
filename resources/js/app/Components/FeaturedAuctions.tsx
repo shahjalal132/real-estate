@@ -1,3 +1,6 @@
+import { useRef } from "react";
+import Slider from "react-slick";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
 
 export default function FeaturedAuctions() {
@@ -46,25 +49,69 @@ export default function FeaturedAuctions() {
         },
     ];
 
+    const sliderRef = useRef<Slider | null>(null);
+
+    const sliderSettings = {
+        dots: false,
+        arrows: false,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        responsive: [
+            {
+                breakpoint: 1280,
+                settings: { slidesToShow: 2 },
+            },
+            {
+                breakpoint: 768,
+                settings: { slidesToShow: 1 },
+            },
+        ],
+    };
+
     return (
         <section className="mx-auto w-full max-w-6xl px-4 py-12">
-            <header className="mb-8 flex flex-col gap-3 text-center">
-                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-500">
-                    Featured Auctions
-                </p>
-                <h2 className="text-3xl font-semibold text-gray-900 sm:text-4xl">
-                    Discover Investment Opportunities
-                </h2>
-                <p className="text-base text-gray-600">
-                    Curated properties with exclusive access for qualified investors.
-                </p>
+            <header className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex-1 text-center sm:text-left">
+                    <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-500">
+                        Auctions
+                    </p>
+                    <h2 className="mt-2 text-3xl font-semibold text-gray-900 sm:text-4xl">
+                        Discover Investment Opportunities
+                    </h2>
+                    <p className="mt-2 text-base text-gray-600">
+                        Curated properties with exclusive access for qualified investors.
+                    </p>
+                </div>
+
+                <div className="flex items-center justify-center gap-3">
+                    <button
+                        type="button"
+                        aria-label="Previous auctions"
+                        onClick={() => sliderRef.current?.slickPrev()}
+                        className="rounded-full border border-gray-200 p-3 text-gray-600 transition hover:border-blue-500 hover:text-blue-600"
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                        type="button"
+                        aria-label="Next auctions"
+                        onClick={() => sliderRef.current?.slickNext()}
+                        className="rounded-full border border-gray-200 p-3 text-gray-600 transition hover:border-blue-500 hover:text-blue-600"
+                    >
+                        <ChevronRight className="h-5 w-5" />
+                    </button>
+                </div>
             </header>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <Slider ref={sliderRef} {...sliderSettings}>
                 {auctions.map((auction) => (
-                    <PropertyCard key={auction.id} {...auction} />
+                    <div key={auction.id} className="px-3">
+                        <PropertyCard {...auction} />
+                    </div>
                 ))}
-            </div>
+            </Slider>
         </section>
     );
 }
