@@ -32,6 +32,11 @@ export default function SliderWithControls({
         speed: 500,
         slidesToShow: 5,
         slidesToScroll: 1,
+        swipe: true,
+        swipeToSlide: true,
+        touchMove: true,
+        touchThreshold: 5,
+        adaptiveHeight: false,
         responsive: [
             {
                 breakpoint: 1920,
@@ -47,15 +52,34 @@ export default function SliderWithControls({
             },
             {
                 breakpoint: 1024,
-                settings: { slidesToShow: 2, slidesToScroll: 1 },
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 1,
+                    swipe: true,
+                    swipeToSlide: true,
+                },
             },
             {
                 breakpoint: 640,
-                settings: { slidesToShow: 2, slidesToScroll: 1 },
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 1,
+                    swipe: true,
+                    swipeToSlide: true,
+                    touchMove: true,
+                    touchThreshold: 5,
+                },
             },
             {
                 breakpoint: 480,
-                settings: { slidesToShow: 1, slidesToScroll: 1 },
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 1,
+                    swipe: true,
+                    swipeToSlide: true,
+                    touchMove: true,
+                    touchThreshold: 5,
+                },
             },
         ],
         ...settings,

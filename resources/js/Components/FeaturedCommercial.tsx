@@ -51,6 +51,38 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             ? property.brokers[0].full_name
             : "No Agent";
 
+    // Format price for display
+    const formatPrice = (price: number | string | null | undefined): string => {
+        if (!price && price !== 0) return "Undisclosed";
+
+        let numValue: number;
+        if (typeof price === "string") {
+            // Remove $ and commas, then parse
+            const cleaned = price.replace(/[$,\s]/g, "");
+            numValue = parseFloat(cleaned);
+        } else {
+            numValue = price;
+        }
+
+        if (isNaN(numValue)) return "Undisclosed";
+
+        // Format with commas, no decimals for large numbers
+        return numValue.toLocaleString("en-US", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        });
+    };
+
+    // Get formatted price - remove $ if present since PropertyCard will add it
+    let formattedPrice: string;
+    if (property.formatted_price) {
+        formattedPrice = property.formatted_price.replace(/^\$\s*/, "").trim();
+    } else if (property.asking_price) {
+        formattedPrice = formatPrice(property.asking_price);
+    } else {
+        formattedPrice = "Undisclosed";
+    }
+
     return {
         title: property.name,
         category:
@@ -58,7 +90,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
                 ? property.types[0]
                 : "Property",
         isFeatured: property.is_in_opportunity_zone || false,
-        asking_price: property.asking_price || "Undisclosed",
+        asking_price: formattedPrice,
         priceUnit: "/Sqft",
         description:
             property.marketing_description ||
@@ -132,51 +164,60 @@ export default function FeaturedCommercial({
     }
 
     return (
-        <section className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2 py-6 sm:py-8">
-            <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex-1 text-center sm:text-left">
-                    <SectionHeading>Featured Commercial</SectionHeading>
-                </div>
-
-                <div className="flex flex-col items-center gap-2 sm:items-end">
-                    <SliderControls
-                        onPrev={handlePrev}
-                        onNext={handleNext}
-                        prevButtonLabel="Previous properties"
-                        nextButtonLabel="Next properties"
-                    />
-                    <FilterDropdown
-                        value={selectedFilter}
-                        onChange={setSelectedFilter}
-                    />
-                </div>
-            </header>
-
-            <SliderWithControls
-                sliderRef={sliderRef}
-                onPrev={handlePrev}
-                onNext={handleNext}
-                prevButtonLabel="Previous properties"
-                nextButtonLabel="Next properties"
-                hideControls={true}
-            >
-                {filteredListings.map((property) => (
-                    <div
-                        key={property.id}
-                        className="px-1.5 sm:px-3 md:px-4 lg:px-3 h-full"
-                    >
-                        <PropertyCard {...mapPropertyToCardProps(property)} />
+        <section className="w-full overflow-hidden py-6 sm:py-8">
+            <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">
+                <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex-1 text-center sm:text-left">
+                        <SectionHeading>Featured Commercial</SectionHeading>
                     </div>
-                ))}
-            </SliderWithControls>
 
-            <div className="mt-4 sm:mt-6 flex justify-center">
-                <Button
-                    href={viewMoreHref}
-                    className="px-5 sm:px-6 py-2 text-xs font-semibold uppercase tracking-[0.15em]"
+                    <div className="flex flex-col items-center gap-2 sm:items-end">
+                        <SliderControls
+                            onPrev={handlePrev}
+                            onNext={handleNext}
+                            prevButtonLabel="Previous properties"
+                            nextButtonLabel="Next properties"
+                        />
+                        <FilterDropdown
+                            value={selectedFilter}
+                            onChange={setSelectedFilter}
+                        />
+                    </div>
+                </header>
+            </div>
+
+            <div className="w-full overflow-hidden -mx-2 sm:-mx-4 md:-mx-6 lg:w-[95%] lg:mx-auto">
+                <SliderWithControls
+                    sliderRef={sliderRef}
+                    onPrev={handlePrev}
+                    onNext={handleNext}
+                    prevButtonLabel="Previous properties"
+                    nextButtonLabel="Next properties"
+                    hideControls={true}
                 >
-                    View More
-                </Button>
+                    {filteredListings.map((property) => (
+                        <div
+                            key={property.id}
+                            className="px-1 sm:px-2 md:px-3 lg:px-3 h-full w-full"
+                            style={{ maxWidth: "100%" }}
+                        >
+                            <PropertyCard
+                                {...mapPropertyToCardProps(property)}
+                            />
+                        </div>
+                    ))}
+                </SliderWithControls>
+            </div>
+
+            <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">
+                <div className="mt-4 sm:mt-6 flex justify-center">
+                    <Button
+                        href={viewMoreHref}
+                        className="px-5 sm:px-6 py-2 text-xs font-semibold uppercase tracking-[0.15em]"
+                    >
+                        View More
+                    </Button>
+                </div>
             </div>
         </section>
     );

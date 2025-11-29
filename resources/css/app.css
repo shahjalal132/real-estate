@@ -145,7 +145,7 @@ article .price *,
 
 .slick-list {
     height: auto;
-    margin: 0 -8px;
+    margin: 0 -4px;
 }
 
 .slick-track {
@@ -168,19 +168,19 @@ article .price *,
 /* Responsive slider spacing */
 @media (min-width: 480px) {
     .slick-list {
-        margin: 0 -6px;
+        margin: 0 -4px;
     }
 }
 
 @media (min-width: 640px) {
     .slick-list {
-        margin: 0 -12px;
+        margin: 0 -8px;
     }
 }
 
 @media (min-width: 1024px) {
     .slick-list {
-        margin: 0 -16px;
+        margin: 0 -12px;
     }
 }
 
@@ -193,10 +193,98 @@ article .price *,
 /* Touch-friendly swipe on mobile */
 @media (max-width: 639px) {
     .slick-slider {
-        touch-action: pan-y;
+        touch-action: pan-x;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
     }
 
     .slick-list {
         padding: 0 !important;
+        margin: 0 -8px !important;
+        overflow: hidden !important;
+        width: 100%;
     }
+
+    .slick-track {
+        display: flex !important;
+        align-items: stretch;
+        transition: transform 0.5s ease;
+        width: 100% !important;
+    }
+
+    .slick-slide {
+        padding: 0 8px;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .slick-slide > div {
+        width: 100% !important;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex !important;
+    }
+
+    /* Ensure cards don't overflow */
+    .slick-slide article,
+    .slick-slide article > *,
+    .slick-slide article > div {
+        max-width: 100% !important;
+        box-sizing: border-box;
+        width: 100% !important;
+    }
+}
+
+/* Single slide on very small screens */
+@media (max-width: 479px) {
+    .slick-slide {
+        width: calc(100vw - 16px) !important;
+        flex-shrink: 0;
+    }
+}
+
+/* Two slides on small screens */
+@media (min-width: 480px) and (max-width: 639px) {
+    .slick-slide {
+        width: calc((100vw - 24px) / 2) !important;
+        flex-shrink: 0;
+    }
+}
+
+/* Fix slider container on all screens */
+.slick-slider {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.slick-list {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.slick-list:focus {
+    outline: none;
+}
+
+.slick-list.dragging {
+    cursor: pointer;
+    cursor: hand;
+}
+
+.slick-track {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

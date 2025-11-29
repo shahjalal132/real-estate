@@ -165,7 +165,7 @@ export default function PropertyCard({
     );
 
     return (
-        <article className="relative w-full h-full">
+        <article className="relative w-full h-full max-w-full">
             {href ? (
                 <Link
                     href={href}
