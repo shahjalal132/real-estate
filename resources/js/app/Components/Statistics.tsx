@@ -1,76 +1,83 @@
 import { Link } from '@inertiajs/react';
+import { Users, TrendingUp, BarChart3, ArrowRight } from 'lucide-react';
 
-interface Stat {
+interface StatCard {
+    icon: React.ComponentType<{ className?: string }>;
     number: string;
-    label: string;
-}
-
-interface Benefit {
     title: string;
     description: string;
-    link: string;
+    ctaText: string;
+    ctaLink: string;
 }
 
 export default function Statistics() {
-    const stats: Stat[] = [
-        { number: '100,000+', label: 'Investors' },
-        { number: '$5B+', label: 'Transacted' },
-        { number: '75%', label: 'Industry Leading Trade Rate' },
-    ];
-
-    const benefits: Benefit[] = [
+    const stats: StatCard[] = [
         {
-            title: 'Sellers',
-            description: 'Reach a wider pool of qualified investors and close sooner with greater certainty of execution than traditional listing processes.',
-            link: '/sell-with-us',
+            icon: Users,
+            number: '100,000+',
+            title: 'Investors',
+            description: 'Our platform has grown to over 100,000 active investors, creating the largest network of qualified buyers in commercial real estate.',
+            ctaText: 'View investor network',
+            ctaLink: '/investors',
         },
         {
-            title: 'Buyers',
-            description: 'Find exclusive investment opportunities and gain insights that are not on the open market.',
-            link: '/buyers',
+            icon: TrendingUp,
+            number: '$5B+',
+            title: 'Transacted',
+            description: 'Total transaction volume exceeds $5 billion, demonstrating the platform\'s ability to facilitate large-scale commercial real estate deals.',
+            ctaText: 'See transaction data',
+            ctaLink: '/transactions',
         },
         {
-            title: 'Brokers',
-            description: 'Earn your fee & increase by using Marketplace to streamline the sales process and drive value for your clients.',
-            link: '/brokers',
+            icon: BarChart3,
+            number: '75%',
+            title: 'Industry Leading Trade Rate',
+            description: 'Our auction platform achieves a 75% trade rate, significantly higher than industry averages, ensuring successful property sales.',
+            ctaText: 'Learn about our success',
+            ctaLink: '/success-stories',
         },
     ];
 
     return (
-        <section className="py-16 bg-white">
+        <section className="py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold text-[#333333] mb-2">The Right Place To Transact</h2>
-                    <p className="text-lg text-[#666666]">THE AUCTION PLATFORM THAT ACHIEVES POWERFUL RESULTS</p>
+                    <p className="text-lg text-gray-400">THE AUCTION PLATFORM THAT ACHIEVES POWERFUL RESULTS</p>
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    {stats.map((stat, idx) => (
-                        <div
-                            key={idx}
-                            className="bg-[#0066CC] text-white rounded-lg p-12 text-center"
-                        >
-                            <div className="text-5xl font-bold mb-4">{stat.number}</div>
-                            <div className="text-lg">{stat.label}</div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Benefits */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {benefits.map((benefit, idx) => (
-                        <div key={idx}>
-                            <h3 className="text-xl font-semibold text-[#333333] mb-3">{benefit.title}</h3>
-                            <p className="text-[#666666] mb-4">{benefit.description}</p>
-                            <Link
-                                href={benefit.link}
-                                className="text-[#0066CC] font-semibold hover:text-[#004C99] underline"
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {stats.map((stat, idx) => {
+                        const IconComponent = stat.icon;
+                        return (
+                            <div
+                                key={idx}
+                                className="rounded-lg overflow-hidden bg-white"
                             >
-                                LEARN MORE →
-                            </Link>
-                        </div>
-                    ))}
+                                {/* Upper Section - Brand Color */}
+                                <div className="bg-[#0066CC] text-white p-8">
+                                    <div className="mb-6">
+                                        <IconComponent className="h-8 w-8" />
+                                    </div>
+                                    <div className="text-5xl font-bold mb-2">{stat.number}</div>
+                                    <div className="text-xl font-semibold mb-4">{stat.title}</div>
+                                    <p className="text-sm text-white/90 leading-relaxed">{stat.description}</p>
+                                </div>
+
+                                {/* Lower Section - Dark Gray CTA */}
+                                <div className="bg-gray-800 px-6 py-4">
+                                    <Link
+                                        href={stat.ctaLink}
+                                        className="flex items-center gap-2 text-white text-sm font-medium hover:text-gray-300 transition-colors"
+                                    >
+                                        <span>{stat.ctaText}</span>
+                                        <ArrowRight className="h-4 w-4" />
+                                    </Link>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </section>
