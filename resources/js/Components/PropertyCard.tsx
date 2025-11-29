@@ -46,8 +46,8 @@ export default function PropertyCard({
     href,
 }: PropertyCardProps) {
     const cardContent = (
-        <div className="flex h-full flex-col rounded-2xl bg-white p-4 shadow-lg">
-            <div className="relative flex h-52 justify-center overflow-hidden rounded-xl">
+        <div className="flex h-full flex-col rounded-xl sm:rounded-2xl bg-white p-3 sm:p-4 shadow-lg">
+            <div className="relative flex h-48 sm:h-52 justify-center overflow-hidden rounded-lg sm:rounded-xl">
                 <img
                     src={image}
                     alt={title}

@@ -127,6 +127,7 @@ body {
 
 .slick-list {
     height: auto;
+    margin: 0 -8px;
 }
 
 .slick-track {
@@ -144,4 +145,34 @@ body {
     width: 100%;
     height: 100%;
     display: flex;
+}
+
+/* Responsive slider spacing */
+@media (min-width: 640px) {
+    .slick-list {
+        margin: 0 -12px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .slick-list {
+        margin: 0 -16px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .slick-list {
+        margin: 0 -12px;
+    }
+}
+
+/* Touch-friendly swipe on mobile */
+@media (max-width: 639px) {
+    .slick-slider {
+        touch-action: pan-y;
+    }
+
+    .slick-list {
+        padding: 0 !important;
+    }
 }

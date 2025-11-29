@@ -132,8 +132,8 @@ export default function FeaturedCommercial({
     }
 
     return (
-        <section className="mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2 py-8">
-            <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <section className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2 py-6 sm:py-8">
+            <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1 text-center sm:text-left">
                     <SectionHeading>Featured Commercial</SectionHeading>
                 </div>
@@ -161,16 +161,19 @@ export default function FeaturedCommercial({
                 hideControls={true}
             >
                 {filteredListings.map((property) => (
-                    <div key={property.id} className="px-3 h-full">
+                    <div
+                        key={property.id}
+                        className="px-2 sm:px-3 md:px-4 lg:px-3 h-full"
+                    >
                         <PropertyCard {...mapPropertyToCardProps(property)} />
                     </div>
                 ))}
             </SliderWithControls>
 
-            <div className="mt-6 flex justify-center">
+            <div className="mt-4 sm:mt-6 flex justify-center">
                 <Button
                     href={viewMoreHref}
-                    className="px-6 py-2 text-xs font-semibold uppercase tracking-[0.15em]"
+                    className="px-5 sm:px-6 py-2 text-xs font-semibold uppercase tracking-[0.15em]"
                 >
                     View More
                 </Button>
