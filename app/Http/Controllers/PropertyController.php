@@ -18,8 +18,7 @@ class PropertyController extends Controller
 
         // Apply section-based filtering
         if ($section === 'residential') {
-            $query->whereJsonContains('types', 'Residential')
-                ->where('status', '!=', 'Sold');
+            $query->whereJsonContains('types', 'Multifamily')->orWhereJsonContains('types', 'living')->where('status', '!=', 'Sold');
         } elseif ($section === 'commercial') {
             $query->where(function ($q) {
                 $q->whereJsonContains('types', 'Commercial')

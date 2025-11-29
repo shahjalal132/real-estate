@@ -88,7 +88,23 @@ export default function Testimonials({ testimonials = [] }: TestimonialsProps) {
                                 </div>
 
                                 <p className="text-[#333333] mb-8 leading-relaxed text-lg font-medium">
-                                    "{testimonial.quote}"
+                                    <span
+                                        style={{
+                                            fontFamily:
+                                                "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+                                        }}
+                                    >
+                                        "
+                                    </span>
+                                    {testimonial.quote}
+                                    <span
+                                        style={{
+                                            fontFamily:
+                                                "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+                                        }}
+                                    >
+                                        "
+                                    </span>
                                 </p>
 
                                 <div className="pt-6 border-t border-[#FF6B00]/20">

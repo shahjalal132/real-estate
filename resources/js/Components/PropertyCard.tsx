@@ -15,7 +15,7 @@ export interface PropertyCardProps {
     category?: string;
     isFeatured?: boolean;
     auctionDates?: string;
-    price: string;
+    asking_price: string;
     priceUnit?: string;
     description: string;
     beds?: number;
@@ -33,7 +33,7 @@ export default function PropertyCard({
     title,
     category = "Residential",
     isFeatured = true,
-    price,
+    asking_price,
     priceUnit = "/Sqft",
     description,
     beds = 0,
@@ -93,13 +93,28 @@ export default function PropertyCard({
                         {title}
                     </h2>
                     <p className="mt-2 inline-flex items-baseline gap-1 rounded-xl font-semibold text-blue-900">
-                        <span className="text-sm uppercase tracking-wide">
-                            USD
+                        <span className="text-sm">
+                            {asking_price === "Undisclosed" ? (
+                                asking_price
+                            ) : (
+                                <>
+                                    <span
+                                        style={{
+                                            fontFamily:
+                                                "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+                                        }}
+                                    >
+                                        $
+                                    </span>
+                                    {asking_price || "0"}
+                                </>
+                            )}
                         </span>
-                        <span className="text-2xl">{price}</span>
-                        <span className="text-sm text-gray-500">
-                            {priceUnit}
-                        </span>
+                        {priceUnit && asking_price !== "Undisclosed" && (
+                            <span className="text-sm text-gray-500">
+                                {priceUnit}
+                            </span>
+                        )}
                     </p>
                 </div>
 

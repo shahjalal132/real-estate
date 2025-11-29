@@ -51,6 +51,38 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             ? property.brokers[0].full_name
             : "No Agent";
 
+    // Format price for display
+    const formatPrice = (price: number | string | null | undefined): string => {
+        if (!price && price !== 0) return "Undisclosed";
+
+        let numValue: number;
+        if (typeof price === "string") {
+            // Remove $ and commas, then parse
+            const cleaned = price.replace(/[$,\s]/g, "");
+            numValue = parseFloat(cleaned);
+        } else {
+            numValue = price;
+        }
+
+        if (isNaN(numValue)) return "Undisclosed";
+
+        // Format with commas, no decimals for large numbers
+        return numValue.toLocaleString("en-US", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        });
+    };
+
+    // Get formatted price - remove $ if present since PropertyCard will add it
+    let formattedPrice: string;
+    if (property.formatted_price) {
+        formattedPrice = property.formatted_price.replace(/^\$\s*/, "").trim();
+    } else if (property.asking_price) {
+        formattedPrice = formatPrice(property.asking_price);
+    } else {
+        formattedPrice = "Undisclosed";
+    }
+
     return {
         title: property.name,
         category:
@@ -58,7 +90,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
                 ? property.types[0]
                 : "Property",
         isFeatured: property.is_in_opportunity_zone || false,
-        price: property.formatted_price || "Undisclosed",
+        asking_price: formattedPrice,
         priceUnit: "/Sqft",
         description:
             property.marketing_description ||
@@ -152,7 +184,7 @@ export default function Properties() {
                 </div>
 
                 {filteredListings.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                         {filteredListings.map((property) => (
                             <PropertyCard
                                 key={property.id}

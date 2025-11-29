@@ -51,6 +51,38 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             ? property.brokers[0].full_name
             : "No Agent";
 
+    // Format price for display
+    const formatPrice = (price: number | string | null | undefined): string => {
+        if (!price && price !== 0) return "Undisclosed";
+
+        let numValue: number;
+        if (typeof price === "string") {
+            // Remove $ and commas, then parse
+            const cleaned = price.replace(/[$,\s]/g, "");
+            numValue = parseFloat(cleaned);
+        } else {
+            numValue = price;
+        }
+
+        if (isNaN(numValue)) return "Undisclosed";
+
+        // Format with commas, no decimals for large numbers
+        return numValue.toLocaleString("en-US", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        });
+    };
+
+    // Get formatted price - remove $ if present since PropertyCard will add it
+    let formattedPrice: string;
+    if (property.formatted_price) {
+        formattedPrice = property.formatted_price.replace(/^\$\s*/, "").trim();
+    } else if (property.asking_price) {
+        formattedPrice = formatPrice(property.asking_price);
+    } else {
+        formattedPrice = "Undisclosed";
+    }
+
     return {
         title: property.name,
         category:
@@ -58,7 +90,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
                 ? property.types[0]
                 : "Property",
         isFeatured: property.is_in_opportunity_zone || false,
-        price: property.formatted_price || "Undisclosed",
+        asking_price: formattedPrice,
         priceUnit: "/Sqft",
         description:
             property.marketing_description ||
@@ -83,17 +115,11 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
 export default function FeaturedResidential({
     properties = [],
 }: FeaturedResidentialProps) {
+    console.log(properties);
+
     const { sliderRef, handlePrev, handleNext } = useSliderControls();
     const [selectedFilter, setSelectedFilter] = useState<string>("all");
-
-    // Filter properties that have "Residential" in types
-    const residentialProperties = properties.filter(
-        (property) =>
-            property.types &&
-            property.types.some((type) =>
-                type.toLowerCase().includes("residential")
-            )
-    );
+    const residentialProperties = Array.isArray(properties) ? properties : [];
 
     const filteredListings = residentialProperties.filter((_, index) => {
         if (selectedFilter === "all") return true;
@@ -107,7 +133,8 @@ export default function FeaturedResidential({
         selectedFilter
     )}`;
 
-    if (residentialProperties.length === 0) {
+    // Show section only if we have properties
+    if (!residentialProperties || residentialProperties.length === 0) {
         return null;
     }
 

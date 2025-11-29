@@ -58,7 +58,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
                 ? property.types[0]
                 : "Property",
         isFeatured: property.is_in_opportunity_zone || false,
-        price: property.formatted_price || "Undisclosed",
+        asking_price: property.asking_price || "Undisclosed",
         priceUnit: "/Sqft",
         description:
             property.marketing_description ||
