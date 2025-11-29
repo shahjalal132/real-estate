@@ -1,7 +1,10 @@
+import { useState } from "react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
+import Button from "./Button";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
+import FilterDropdown from "./FilterDropdown";
 import { useSliderControls } from "./useSliderControls";
 
 export default function CommercialListings() {
@@ -93,6 +96,19 @@ export default function CommercialListings() {
     ];
 
     const { sliderRef, handlePrev, handleNext } = useSliderControls();
+    const [selectedFilter, setSelectedFilter] = useState<string>("all");
+
+    const filteredListings = listings.filter((_, index) => {
+        if (selectedFilter === "all") return true;
+        if (selectedFilter === "option1") return index % 3 === 0;
+        if (selectedFilter === "option2") return index % 3 === 1;
+        if (selectedFilter === "option3") return index % 3 === 2;
+        return true;
+    });
+
+    const viewMoreHref = `/properties?section=commercial&filter=${encodeURIComponent(
+        selectedFilter,
+    )}`;
 
     return (
         <section className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -101,12 +117,18 @@ export default function CommercialListings() {
                     <SectionHeading>Commercial Listings Properties</SectionHeading>
                 </div>
 
-                <SliderControls
-                    onPrev={handlePrev}
-                    onNext={handleNext}
-                    prevButtonLabel="Previous listings"
-                    nextButtonLabel="Next listings"
-                />
+                <div className="flex flex-col items-center gap-2 sm:items-end">
+                    <SliderControls
+                        onPrev={handlePrev}
+                        onNext={handleNext}
+                        prevButtonLabel="Previous listings"
+                        nextButtonLabel="Next listings"
+                    />
+                    <FilterDropdown
+                        value={selectedFilter}
+                        onChange={setSelectedFilter}
+                    />
+                </div>
             </header>
 
             <SliderWithControls
@@ -117,12 +139,21 @@ export default function CommercialListings() {
                 nextButtonLabel="Next listings"
                 hideControls={true}
             >
-                {listings.map((listing) => (
+                {filteredListings.map((listing) => (
                     <div key={listing.id} className="px-3">
                         <PropertyCard {...listing} />
                     </div>
                 ))}
             </SliderWithControls>
+
+            <div className="mt-6 flex justify-center">
+                <Button
+                    href={viewMoreHref}
+                    className="px-6 py-2 text-xs font-semibold uppercase tracking-[0.15em]"
+                >
+                    View More
+                </Button>
+            </div>
         </section>
     );
 }
