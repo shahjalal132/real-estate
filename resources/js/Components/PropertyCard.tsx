@@ -46,7 +46,7 @@ export default function PropertyCard({
     href,
 }: PropertyCardProps) {
     const cardContent = (
-        <div className="rounded-2xl bg-white p-4 shadow-lg">
+        <div className="flex h-full flex-col rounded-2xl bg-white p-4 shadow-lg">
             <div className="relative flex h-52 justify-center overflow-hidden rounded-xl">
                 <img
                     src={image}
@@ -81,7 +81,7 @@ export default function PropertyCard({
                 )}
             </div>
 
-            <div className="mt-5 space-y-4 text-gray-800">
+            <div className="mt-5 flex flex-1 flex-col space-y-4 text-gray-800">
                 <div>
                     <p className="text-sm uppercase text-blue-600">
                         {location}
@@ -118,8 +118,11 @@ export default function PropertyCard({
                     </p>
                 </div>
 
-                <p className="line-clamp-2 text-sm text-gray-600">
-                    {description}
+                <p className="line-clamp-2 text-sm text-gray-600 min-h-10">
+                    {description.replace(/<[^>]*>/g, "").substring(0, 120)}
+                    {description.replace(/<[^>]*>/g, "").length > 120
+                        ? "..."
+                        : ""}
                 </p>
 
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-gray-700">
@@ -137,7 +140,7 @@ export default function PropertyCard({
                     )}
                 </div>
 
-                <div className="grid grid-cols-2 items-center">
+                <div className="grid grid-cols-2 items-center mt-auto">
                     <div className="flex items-center gap-2">
                         <div className="relative">
                             <div className="h-8 w-8 rounded-full bg-gray-200" />
@@ -172,16 +175,16 @@ export default function PropertyCard({
     );
 
     return (
-        <article className="relative w-full">
+        <article className="relative w-full h-full">
             {href ? (
                 <Link
                     href={href}
-                    className="relative inline-block w-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2"
+                    className="relative inline-block w-full h-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2"
                 >
                     {cardContent}
                 </Link>
             ) : (
-                <div className="relative inline-block w-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2">
+                <div className="relative inline-block w-full h-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2">
                     {cardContent}
                 </div>
             )}

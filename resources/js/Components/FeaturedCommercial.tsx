@@ -161,7 +161,7 @@ export default function FeaturedCommercial({
                 hideControls={true}
             >
                 {filteredListings.map((property) => (
-                    <div key={property.id} className="px-3">
+                    <div key={property.id} className="px-3 h-full">
                         <PropertyCard {...mapPropertyToCardProps(property)} />
                     </div>
                 ))}

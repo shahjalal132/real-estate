@@ -87,11 +87,11 @@ body {
 }
 
 /* Utility class for forcing system fonts (for symbol-heavy content) */
-.font-symbols,
+/* .font-symbols,
 .font-symbols * {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
         "Helvetica Neue", Arial, sans-serif !important;
-}
+} */
 
 .header-nav-link {
     font-size: 14px;
@@ -114,4 +114,34 @@ body {
         font-size: 0.7rem;
         padding: 0.35rem 1.25rem;
     }
+}
+
+/* Ensure all property cards in sliders have equal heights */
+.slick-slide {
+    height: auto;
+}
+
+.slick-slide > div {
+    height: 100%;
+}
+
+.slick-list {
+    height: auto;
+}
+
+.slick-track {
+    display: flex;
+    align-items: stretch;
+}
+
+.slick-track .slick-slide {
+    display: flex;
+    height: auto;
+    align-items: stretch;
+}
+
+.slick-track .slick-slide > div {
+    width: 100%;
+    height: 100%;
+    display: flex;
 }
