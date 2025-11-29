@@ -8,7 +8,7 @@ import FeaturedListings from "../Components/FeaturedListings";
 import Statistics from "../Components/Statistics";
 import DataPowered from "../Components/DataPowered";
 import MarketplaceExplainer from "../Components/MarketplaceExplainer";
-import MobileApp from "../Components/MobileApp";
+// import MobileApp from "../Components/MobileApp";
 import Features from "../Components/Features";
 import News from "../Components/News";
 import Testimonials from "../Components/Testimonials";
@@ -44,7 +44,7 @@ export default function Home({
             <Statistics />
             <DataPowered />
             <MarketplaceExplainer />
-            <MobileApp />
+            {/* <MobileApp /> */}
             <Features />
             <News />
             <Testimonials />

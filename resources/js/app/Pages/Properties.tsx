@@ -1,12 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import AppLayout from "../Layouts/AppLayout";
 import SectionHeading from "../Components/SectionHeading";
 import PropertyCard, { PropertyCardProps } from "../Components/PropertyCard";
+import FilterBar from "../Components/FilterBar";
 
 interface PageProps {
     filter: string;
     section: string | null;
+    [key: string]: unknown;
 }
 
 type ListingWithId = PropertyCardProps & { id: number };
@@ -119,9 +121,13 @@ export default function Properties() {
     const { props } = usePage<PageProps>();
     const { filter, section } = props;
 
+    const [searchValue, setSearchValue] = useState("");
+    const [auctionValue, setAuctionValue] = useState("all");
+    const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+
     const filteredListings = useMemo(
         () => applyFilter(ALL_LISTINGS, filter),
-        [filter],
+        [filter]
     );
 
     return (
@@ -144,6 +150,18 @@ export default function Properties() {
                     </div>
                 </div>
 
+                {/* Filter bar */}
+                <div className="my-6">
+                    <FilterBar
+                        searchValue={searchValue}
+                        onSearchChange={setSearchValue}
+                        auctionValue={auctionValue}
+                        onAuctionChange={setAuctionValue}
+                        viewMode={viewMode}
+                        onViewModeChange={setViewMode}
+                    />
+                </div>
+
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredListings.map((listing) => (
                         <PropertyCard key={listing.id} {...listing} />
@@ -153,6 +171,3 @@ export default function Properties() {
         </AppLayout>
     );
 }
-
-
-
