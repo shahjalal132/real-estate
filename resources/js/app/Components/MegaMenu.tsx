@@ -371,6 +371,73 @@ const menus: Record<string, Menu> = {
             },
         ],
     },
+    zoningChanges: {
+        id: "zoningChanges",
+        title: "Zoning Changes",
+        layout: "two-column",
+        width: "760px",
+        description:
+            "Current and upcoming rezoning areas with property details",
+        sections: [
+            {
+                title: "Zoning Maps",
+                type: "link-list",
+                items: [
+                    {
+                        label: "Property & Zoning Map",
+                        link: "/zoning-changes/property-map",
+                        icon: Map,
+                        description: "Search by zoning or property type",
+                    },
+                    {
+                        label: "Rezoning Map",
+                        link: "/zoning-changes/rezoning-map",
+                        icon: MapPin,
+                        description: "Current and upcoming rezoning areas",
+                    },
+                    {
+                        label: "ACRIS Data Integration",
+                        link: "/zoning-changes/acris",
+                        icon: FileText,
+                        description: "NYC property records",
+                    },
+                ],
+            },
+            {
+                title: "Filters",
+                type: "link-list",
+                items: [
+                    {
+                        label: "BSF Filter",
+                        link: "/zoning-changes?filter=bsf",
+                        icon: ArrowUpDown,
+                    },
+                    {
+                        label: "PPSF Filter",
+                        link: "/zoning-changes?filter=ppsf",
+                        icon: ArrowUpDown,
+                    },
+                    {
+                        label: "NOI Filter",
+                        link: "/zoning-changes?filter=noi",
+                        icon: ArrowUpDown,
+                    },
+                ],
+            },
+            {
+                type: "featured-card",
+                fullWidth: true,
+                backgroundColor: "#F0F7FF",
+                title: "Zoning Intelligence",
+                description:
+                    "View rezoning areas, click to see addresses and owner details in highlighted zones.",
+                cta: {
+                    text: "View Zoning Map",
+                    link: "/zoning-changes/rezoning-map",
+                },
+            },
+        ],
+    },
     underwriting: {
         id: "underwriting",
         title: "Underwriting Center",
