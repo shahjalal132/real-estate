@@ -215,7 +215,7 @@ article .price *,
     }
 
     .slick-slide {
-        padding: 0 8px;
+        padding: 0 4px;
         min-width: 0;
         box-sizing: border-box;
     }

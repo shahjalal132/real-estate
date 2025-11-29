@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -11,3 +12,8 @@ Route::get('/properties/auctions', [\App\Http\Controllers\PropertyController::cl
 Route::get('/properties/commercial', [\App\Http\Controllers\PropertyController::class, 'commercial'])->name('properties.commercial');
 Route::get('/properties/rental', [\App\Http\Controllers\PropertyController::class, 'rental'])->name('properties.rental');
 Route::get('/properties/{property}', [\App\Http\Controllers\PropertyController::class, 'show'])->name('properties.show');
+
+Route::get('/optimize', function () {
+    Artisan::call('optimize:clear');
+    return 'Application optimized!';
+})->name('optimize')->middleware('auth');

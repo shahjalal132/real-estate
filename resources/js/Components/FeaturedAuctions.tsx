@@ -179,8 +179,7 @@ export default function FeaturedAuctions({
                     {filteredListings.map((property) => (
                         <div
                             key={property.id}
-                            className="px-1 sm:px-2 md:px-3 lg:px-3 h-full w-full"
-                            style={{ maxWidth: "100%" }}
+                            className="px-1 sm:px-2 md:px-3 lg:px-3 h-full"
                         >
                             <PropertyCard
                                 {...mapPropertyToCardProps(property)}

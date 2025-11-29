@@ -46,8 +46,8 @@ export default function PropertyCard({
     href,
 }: PropertyCardProps) {
     const cardContent = (
-        <div className="flex h-full flex-col rounded-xl sm:rounded-2xl bg-white p-3 sm:p-4 shadow-lg">
-            <div className="relative flex h-48 sm:h-52 justify-center overflow-hidden rounded-lg sm:rounded-xl">
+        <div className="flex h-full flex-col rounded-xl sm:rounded-2xl bg-white p-2 sm:p-4 shadow-lg">
+            <div className="relative flex h-44 sm:h-52 justify-center overflow-hidden rounded-lg sm:rounded-xl">
                 <img
                     src={image}
                     alt={title}
@@ -81,13 +81,13 @@ export default function PropertyCard({
                 )}
             </div>
 
-            <div className="mt-5 flex flex-1 flex-col space-y-4 text-gray-800">
+            <div className="mt-3 sm:mt-5 flex flex-1 flex-col space-y-3 sm:space-y-4 text-gray-800">
                 <div>
                     <p className="text-sm uppercase text-blue-600">
                         {location}
                     </p>
                     <h2
-                        className="line-clamp-1 text-xl font-semibold"
+                        className="line-clamp-1 text-lg sm:text-xl font-semibold"
                         title={title}
                     >
                         {title}
@@ -108,7 +108,7 @@ export default function PropertyCard({
                     </p>
                 </div>
 
-                <p className="line-clamp-2 text-sm text-gray-600 min-h-10">
+                <p className="line-clamp-2 text-xs sm:text-sm text-gray-600 min-h-8 sm:min-h-10">
                     {description.replace(/<[^>]*>/g, "").substring(0, 120)}
                     {description.replace(/<[^>]*>/g, "").length > 120
                         ? "..."
