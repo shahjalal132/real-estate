@@ -47,8 +47,8 @@
 }
 
 @theme {
-    --font-sans: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
-        "Roboto", "Helvetica Neue", Arial, sans-serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, sans-serif, "Proxima Nova";
 
     /* Primary Colors */
     --color-primary-blue: #0066cc;
@@ -77,27 +77,44 @@
 /* 
  * Comprehensive solution for missing keyboard symbols in Proxima Nova font
  * 
- * The browser will automatically fall back to system fonts if a character
- * is missing from Proxima Nova. We ensure comprehensive fallback fonts
- * are available in the font stack.
+ * System fonts are prioritized first to ensure all symbols display correctly.
+ * Proxima Nova is used as a fallback for characters it supports.
  */
 body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, sans-serif, "Proxima Nova";
+}
+
+/* Use Proxima Nova for text content that doesn't need special symbols */
+.text-proxima {
     font-family: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
         "Roboto", "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Utility class for forcing system fonts (for symbol-heavy content) */
-/* .font-symbols,
-.font-symbols * {
+/* Force system fonts for symbol-heavy content to ensure proper rendering */
+.font-symbols,
+.font-symbols *,
+.price,
+.price * {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
         "Helvetica Neue", Arial, sans-serif !important;
-} */
+}
+
+/* Ensure PropertyCard prices and any numeric content use system fonts */
+article .price,
+article .price *,
+.PropertyCard .price,
+.PropertyCard .price * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, sans-serif !important;
+}
 
 .header-nav-link {
     font-size: 14px;
     letter-spacing: 1px;
     color: #4a4a4a;
     text-transform: uppercase;
+    padding: 0.25rem 0.5rem;
 }
 
 .header-cta {
@@ -108,6 +125,7 @@ body {
 @media (min-width: 1020px) and (max-width: 1330px) {
     .header-nav-link {
         font-size: 13px;
+        padding: 0.2rem 0.4rem;
     }
 
     .header-cta {

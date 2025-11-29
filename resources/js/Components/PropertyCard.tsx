@@ -92,22 +92,12 @@ export default function PropertyCard({
                     >
                         {title}
                     </h2>
-                    <p className="mt-2 inline-flex items-baseline gap-1 rounded-xl font-semibold text-blue-900">
+                    <p className="price mt-2 inline-flex items-baseline gap-1 rounded-xl font-semibold text-blue-900">
                         <span className="text-sm">
                             {asking_price === "Undisclosed" ? (
                                 asking_price
                             ) : (
-                                <>
-                                    <span
-                                        style={{
-                                            fontFamily:
-                                                "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
-                                        }}
-                                    >
-                                        $
-                                    </span>
-                                    {asking_price || "0"}
-                                </>
+                                <>${asking_price || "0"}</>
                             )}
                         </span>
                         {priceUnit && asking_price !== "Undisclosed" && (

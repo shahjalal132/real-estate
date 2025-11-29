@@ -214,7 +214,7 @@ export default function Footer({ className = "" }: { className?: string }) {
 
                 {/* Bottom Bar */}
                 <div className="mt-6 flex flex-col gap-4 text-sm text-[#5C5C5C] md:flex-row md:items-center md:justify-between">
-                    <p>© 2025 CWFS Insight LLC - All Rights Reserved </p>
+                    <p>© 2025 TENANTS HQ - All Rights Reserved </p>
                     <div className="flex flex-wrap gap-4">
                         {policyLinks.map((link) => (
                             <Link

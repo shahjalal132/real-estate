@@ -91,9 +91,9 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-50 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
-            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-6 h-full">
+            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-3 h-full">
                 <div className="flex items-center justify-between h-full">
-                    <div className="flex items-center space-x-5">
+                    <div className="flex items-center space-x-2">
                         {/* Logo for small, medium screen */}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -142,9 +142,9 @@ export default function Header() {
                                 >
                                     <Link
                                         href={item.link}
-                                        className="header-nav-link text-[#4A4A4A] text-[10px] tracking-[1px] font-normal"
+                                        className="header-nav-link text-[#4A4A4A] tracking-[1px] font-normal"
                                     >
-                                        <div className="flex items-center justify-between gap-1">
+                                        <div className="flex items-center justify-between gap-3">
                                             {item.label}
 
                                             {item.hasDropdown && (
@@ -175,12 +175,12 @@ export default function Header() {
                     </div>
 
                     {/* CTA Button */}
-                    <div className="flex items-center py-6 lg:py-0 space-x-7 justify-between">
+                    <div className="flex items-center py-6 lg:py-0 space-x-4 justify-between">
                         <Button
                             href="/login"
                             className="tracking-[1px] uppercase"
                         >
-                            Log in / Sign Up
+                            Log in
                         </Button>
                         <Menu
                             color="#4a4a4a"
@@ -211,7 +211,7 @@ export default function Header() {
                             className="block mt-4 bg-[#0066CC] text-white px-5 py-2.5 rounded text-sm font-semibold text-center"
                             onClick={() => setMobileMenuOpen(false)}
                         >
-                            LOG IN / SIGN UP
+                            LOG IN
                         </Link>
                     </nav>
                 </div>
