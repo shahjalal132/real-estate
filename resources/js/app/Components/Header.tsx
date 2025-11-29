@@ -53,6 +53,13 @@ export default function Header() {
             hasDropdown: true,
         },
         {
+            label: "ZONING CHANGES",
+            link: "/zoning-changes",
+            type: "megaMenu",
+            megaMenuId: "zoningChanges",
+            hasDropdown: true,
+        },
+        {
             label: "CONTACTS",
             link: "/contacts",
             type: "megaMenu",
@@ -169,13 +176,17 @@ export default function Header() {
 
                     {/* CTA Button */}
                     <div className="flex items-center py-6 lg:py-0 space-x-7 justify-between">
-                        <Button href="/login" className="tracking-[1px] uppercase">
+                        <Button
+                            href="/login"
+                            className="tracking-[1px] uppercase"
+                        >
                             Log in / Sign Up
                         </Button>
                         <Menu
                             color="#4a4a4a"
                             strokeWidth={3}
                             className="cursor-pointer lg:hidden"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         />
                     </div>
                 </div>

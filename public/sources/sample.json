@@ -1,0 +1,289 @@
+{
+    "activatedOn": "2025-10-23T17:59:35Z",
+    "locations": [
+      {
+        "address": "3203 Fayetteville Rd",
+        "city": "Raeford",
+        "county": "Hoke County",
+        "state": {
+          "code": "NC",
+          "name": "North Carolina"
+        },
+        "zip": "28376",
+        "latitude": 35.00319,
+        "longitude": -79.1968877,
+        "fullAddress": "3203 Fayetteville Rd, Raeford, Hoke County, NC 28376"
+      }
+    ],
+    "askingPrice": 295000,
+    "brokerTeamLogoUrl": "https://images.crexi.com/user-accounts/24156/8344e9a603084748bc9030f19917459c_150x100_resize.jpg",
+    "brokerageName": "Grant-Murray Real Estate",
+    "description": "Highway Commercial Opportunity in Raeford NC",
+    "hasFlyer": true,
+    "hasOM": false,
+    "hasVideo": false,
+    "id": 2228471,
+    "isInOpportunityZone": false,
+    "name": "3203 Fayetteville Rd, Raeford NC",
+    "numberOfGalleryItems": 11,
+    "numberOfImages": 11,
+    "pricePerAcreLand": "$98,333.33/Acre",
+    "showCountdownAsDate": false,
+    "status": "On-Market",
+    "thumbnailUrl": "https://images.crexi.com/assets/2228471/aac27c9a42af4801bb031cc1bcf72a94_716x444.jpg",
+    "types": ["Land"],
+    "updatedOn": "2025-10-23T18:00:04Z",
+    "urlSlug": "north-carolina-3203-fayetteville-rd-raeford-nc",
+    "userIsAssetOwner": false,
+    "hasVirtualTour": false,
+    "recommId": "c2b6fa5ab22e21833f2a18aa1cee79f9",
+    "lotSizeAcres": 3,
+    "url": "https://www.crexi.com/properties/2228471/north-carolina-3203-fayetteville-rd-raeford-nc",
+    "ajaxUrl": "https://api.crexi.com/assets/2228471",
+    "details": {
+      "subtypes": ["Commercial"],
+      "investmentHighlights": "<p>Prime Highway Commercial Opportunity – 3203 Fayetteville Rd, Hoke County</p><p>Positioned along Highway 401, the rapidly growing Fayetteville Road corridor, this 3-acre commercial tract offers exceptional visibility and accessibility with 17,500 vehicles per day passing directly in front of the site. The property features a flat topography, making it highly development-friendly, and is already equipped with water on site and septic in place.</p><p>The parcel is zoned Highway Commercial (HC), providing versatile potential for a wide range of retail, service, and commercial uses. Adding further value, a double-wide trailer will convey with the sale, offering immediate use potential or transitional space while planning for future development.</p><p>Located in the heart of Hoke County’s expanding commercial district, this site presents a rare chance to secure a prime piece of property in a corridor experiencing rapid growth and strong demand.</p>",
+      "earnestDepositAmountInPercent": false,
+      "qualFormRequired": false,
+      "marketingDescription": "<p>Prime Highway Commercial Opportunity – 3203 Fayetteville Rd, Hoke County</p><p>Positioned along Highway 401, the rapidly growing Fayetteville Road corridor, this 3-acre commercial tract offers exceptional visibility and accessibility with 17,500 vehicles per day passing directly in front of the site.​ The property features a flat topography, making it highly development-friendly, and is already equipped with water on site and septic in place.​</p><p>The parcel is zoned Highway Commercial (HC), providing versatile potential for a wide range of retail, service, and commercial uses.​ Adding further value, a double-wide trailer will convey with the sale, offering immediate use potential or transitional space while planning for future development.​</p><p>Located in the heart of Hoke County’s expanding commercial district, this site presents a rare chance to secure a prime piece of property in a corridor experiencing rapid growth and strong demand.​</p>",
+      "hasVault": false,
+      "hasPrivateVault": false,
+      "hideAddress": false,
+      "hideStreetView": false,
+      "details": {
+        "Asking Price": "$295,000",
+        "Property Type": "Land",
+        "Sub Type": "Commercial",
+        "Zoning": "HC",
+        "Lot Size (acres)": "3"
+      },
+      "summaryDetails": [
+        {
+          "key": "AskingPrice",
+          "value": 295000,
+          "valueType": "Money",
+          "label": "Asking Price",
+          "display": "$295,000"
+        },
+        {
+          "key": "PropertyType",
+          "value": ["Land"],
+          "valueType": "Array",
+          "label": "Property Type",
+          "display": "Land"
+        },
+        {
+          "key": "SubType",
+          "value": ["Commercial"],
+          "valueType": "Array",
+          "label": "Subtype",
+          "display": "Commercial"
+        },
+        {
+          "key": "PermittedZoning",
+          "value": "HC",
+          "valueType": "Text",
+          "label": "Permitted Zoning",
+          "display": "HC"
+        },
+        {
+          "key": "LotSize",
+          "value": 3,
+          "valueType": "IntegerType",
+          "label": "Lot Size (acres)",
+          "display": "3"
+        }
+      ],
+      "loanDetails": {},
+      "createdOn": "2025-10-23T17:57:06.947Z",
+      "activatedOn": "2025-10-23T17:59:35.513Z",
+      "vaultAccessStatus": "AuthRequired",
+      "hasBrokerOfRecord": false,
+      "locations": [
+        {
+          "cityVerified": "Raeford",
+          "stateVerified": {
+            "code": "NC",
+            "name": "North Carolina"
+          },
+          "address": "3203 Fayetteville Rd",
+          "city": "Raeford",
+          "county": "Hoke County",
+          "state": {
+            "code": "NC",
+            "name": "North Carolina"
+          },
+          "zip": "28376",
+          "latitude": 35.00319,
+          "longitude": -79.1968877,
+          "povPitch": 0,
+          "povHeading": 0
+        }
+      ],
+      "feeAgreementIsRequired": false,
+      "userCanDownloadMd": false,
+      "userExecutedCA": false,
+      "isSavedToBoards": false,
+      "caPrincipalInfoType": "None",
+      "allLoiFieldsRequired": false,
+      "hasClosing": false,
+      "usePrintViewAsFlyer": false,
+      "isInOpportunityZone": false,
+      "isNoteLoan": false,
+      "hasVirtualTour": false,
+      "hidePropertyHistory": false,
+      "hideValuationCalculator": false,
+      "hideClimateRisk": false,
+      "hidePlacerInsights": false,
+      "hideDemographicInsights": false,
+      "brokerProducts": ["All Pro", "Legacy All Pro"],
+      "hasDefaultSummaryDetails": true,
+      "showCountdownAsDate": false,
+      "askingPrice": 295000,
+      "userIsAssetOwner": false,
+      "isSold": false,
+      "isPaused": false,
+      "updatedOn": "2025-10-23T18:00:04.856Z",
+      "isOutdated": false,
+      "hasOM": false,
+      "hasFlyer": true,
+      "types": ["Land"],
+      "status": "Active",
+      "id": 2228471,
+      "name": "3203 Fayetteville Rd, Raeford NC",
+      "description": "Highway Commercial Opportunity in Raeford NC",
+      "thumbnailUrl": "https://images.crexi.com/assets/2228471/aac27c9a42af4801bb031cc1bcf72a94_716x444.jpg",
+      "isPrivate": false,
+      "urlSlug": "north-carolina-3203-fayetteville-rd-raeford-nc",
+      "isComp": false,
+      "isElite": false,
+      "isSellSubjectTo": false,
+      "hasAuctioneer": false,
+      "realtorBoards": [],
+      "url1": "https://www.crexi.com/properties/2228471/north-carolina-3203-fayetteville-rd-raeford-nc",
+      "ajaxUrl1": "https://api.crexi.com/assets/2228471"
+    },
+    "brokers": [
+      {
+        "capabilities": [
+          {
+            "kind": "Chats"
+          }
+        ],
+        "brokerage": {
+          "location": {
+            "address": "150 North McPherson Church Road",
+            "city": "Fayetteville",
+            "county": "",
+            "country": "United States",
+            "state": {
+              "code": "NC",
+              "name": "North Carolina"
+            },
+            "zip": "28303",
+            "aptNumber": "A",
+            "latitude": 0,
+            "longitude": 0
+          },
+          "name": "Grant-Murray Real Estate",
+          "logoUrl": "https://images.crexi.com/user-accounts/24156/8344e9a603084748bc9030f19917459c_150x100_resize.jpg",
+          "website": "http://www.grantmurrayre.com/"
+        },
+        "badges": [
+          {
+            "title": "PRO"
+          }
+        ],
+        "numberOfAssets": 21,
+        "isInternal": false,
+        "isPlatinum": false,
+        "globalId": "5e83cce7-980f-47e0-a409-a81c7f2fdc40",
+        "id": 2285071,
+        "firstName": "Corey",
+        "lastName": "Croegaert",
+        "phone": "910.987.2579",
+        "email": "user@crexi.com",
+        "thumbnailUrl": "https://images.crexi.com/users/2285071/9d164d3525d04a21ac4d5595c468dd07_164x164.jpg",
+        "createdOn": "2024-10-08T04:10:49.154Z",
+        "publicProfileId": "coreycroeg",
+        "licenses": ["327556"],
+        "licenseDetails": [
+          {
+            "brokerId": 2285071,
+            "position": 1,
+            "number": "327556",
+            "typeId": "Associate Real Estate Broker",
+            "createdOn": "2025-01-21T17:10:55.67Z",
+            "licenseStateCode": "NC",
+            "brokerTitle": "Commercial Broker",
+            "brokerageName": "Grant-Murray",
+            "brokerageAddress": "150 North McPherson Church Road",
+            "brokerageCity": "Fayetteville",
+            "brokerageCounty": "Cumberland County",
+            "brokerageStateCode": "NC",
+            "brokerageZip": "28303",
+            "brokerageCountry": "United States",
+            "isAuctioneer": false
+          }
+        ],
+        "isAuctioneer": false,
+        "verificationMethod": "None"
+      },
+      {
+        "capabilities": [
+          {
+            "kind": "Chats"
+          }
+        ],
+        "brokerage": {
+          "location": {
+            "address": "150 North McPherson Church Road",
+            "city": "Fayetteville",
+            "county": "",
+            "country": "United States",
+            "state": {
+              "code": "NC",
+              "name": "North Carolina"
+            },
+            "zip": "28303",
+            "aptNumber": "A",
+            "latitude": 0,
+            "longitude": 0
+          },
+          "name": "Grant-Murray Real Estate",
+          "logoUrl": "https://images.crexi.com/user-accounts/24156/8344e9a603084748bc9030f19917459c_150x100_resize.jpg",
+          "website": "http://www.grantmurrayre.com/"
+        },
+        "badges": [
+          {
+            "title": "PRO"
+          }
+        ],
+        "numberOfAssets": 193,
+        "isInternal": false,
+        "isPlatinum": false,
+        "globalId": "32636473-1665-49a5-8734-089b8ffe6911",
+        "id": 43282,
+        "firstName": "Neil",
+        "lastName": "Grant",
+        "phone": "910.829.1617",
+        "email": "user@crexi.com",
+        "thumbnailUrl": "https://images.crexi.com/users/43282/0e84a870a7e348d3929f733d1def4700_164x164.jpg",
+        "createdOn": "2017-11-15T07:55:21.508Z",
+        "publicProfileId": "neilgr",
+        "licenses": ["NC 208918"],
+        "licenseDetails": [
+          {
+            "brokerId": 43282,
+            "position": 0,
+            "number": "NC 208918",
+            "typeId": "Real Estate Broker",
+            "createdOn": "2024-05-01T18:16:39.575Z",
+            "isAuctioneer": false
+          }
+        ],
+        "isAuctioneer": false,
+        "verificationMethod": "None"
+      }
+    ]
+  }
