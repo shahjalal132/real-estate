@@ -1,36 +1,144 @@
-interface Auction {
-    id: number;
-    title: string;
-    auctionDates: string;
-    startingBid: string;
-    description: string;
-    location: string;
-    image: string;
-}
+import PropertyCard, { PropertyCardProps } from "./PropertyCard";
+import SectionHeading from "./SectionHeading";
+import SliderWithControls from "./SliderWithControls";
+import SliderControls from "./SliderControls";
+import { useSliderControls } from "./useSliderControls";
 
 export default function FeaturedAuctions() {
-    const auctions: Auction[] = [
+    const auctions: (PropertyCardProps & { id: number })[] = [
         {
             id: 1,
             title: "Classic Auction - Fairfield",
             auctionDates: "Dec 15 to Dec 17",
-            startingBid: "$1,250,000",
             description:
                 "Institutional Seller | Fairfield Inn & Suites Greeley",
             location: "Greeley, Colorado",
             image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800",
+            price: "1,250,000",
+            category: "Hospitality",
+            beds: 2,
+            baths: 3,
+            area: "2000 Yd²",
+            agentName: "Salman Ghouri Dev",
+            photosCount: 10,
+            startingBid: "$1,250,000",
         },
         {
             id: 2,
             title: "Classic Auction - Holiday",
             auctionDates: "Dec 15 to Dec 17",
-            startingBid: "$2,900,000",
             description:
                 "Institutional Seller | Holiday Inn Express & Suites Terrell",
             location: "Terrell, Texas",
             image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800",
+            price: "2,900,000",
+            category: "Residential",
+            beds: 4,
+            baths: 4,
+            area: "3200 Sqft",
+            agentName: "Jordan Wells",
+            photosCount: 12,
+            startingBid: "$2,900,000",
+        },
+        {
+            id: 3,
+            title: "Signature Auction - Scottsdale Estate",
+            price: "3,200,000",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
+            location: "Scottsdale, Arizona",
+            image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
+            category: "Luxury",
+            beds: 6,
+            baths: 5,
+            area: "5,400 Sqft",
+            agentName: "Alexandra Poe",
+            photosCount: 18,
+            startingBid: "$3,200,000",
+        },
+        {
+            id: 4,
+            title: "Signature Auction - Scottsdale Estate",
+            price: "3,200,000",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
+            location: "Scottsdale, Arizona",
+            image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
+            category: "Luxury",
+            beds: 6,
+            baths: 5,
+            area: "5,400 Sqft",
+            agentName: "Alexandra Poe",
+            photosCount: 18,
+            startingBid: "$3,200,000",
+        },
+        {
+            id: 5,
+            title: "Signature Auction - Scottsdale Estate",
+            price: "3,200,000",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
+            location: "Scottsdale, Arizona",
+            image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
+            category: "Luxury",
+            beds: 6,
+            baths: 5,
+            area: "5,400 Sqft",
+            agentName: "Alexandra Poe",
+            photosCount: 18,
+            startingBid: "$3,200,000",
+        },
+        {
+            id: 6,
+            title: "Signature Auction - Scottsdale Estate",
+            price: "3,200,000",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
+            location: "Scottsdale, Arizona",
+            image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
+            category: "Luxury",
+            beds: 6,
+            baths: 5,
+            area: "5,400 Sqft",
+            agentName: "Alexandra Poe",
+            photosCount: 18,
+            startingBid: "$3,200,000",
+        },
+        {
+            id: 7,
+            title: "Signature Auction - Scottsdale Estate",
+            price: "3,200,000",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
+            location: "Scottsdale, Arizona",
+            image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
+            category: "Luxury",
+            beds: 6,
+            baths: 5,
+            area: "5,400 Sqft",
+            agentName: "Alexandra Poe",
+            photosCount: 18,
+            startingBid: "$3,200,000",
+        },
+        {
+            id: 3,
+            title: "Signature Auction - Scottsdale Estate",
+            price: "3,200,000",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
+            location: "Scottsdale, Arizona",
+            image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
+            category: "Luxury",
+            beds: 6,
+            baths: 5,
+            area: "5,400 Sqft",
+            agentName: "Alexandra Poe",
+            photosCount: 18,
+            startingBid: "$3,200,000",
         },
     ];
+
+    const { sliderRef, handlePrev, handleNext } = useSliderControls();
 
     return (
         <section className="py-16 bg-white">
@@ -40,10 +148,10 @@ export default function FeaturedAuctions() {
                         Featured Auctions
                     </h2>
                     <div className="flex items-center space-x-4">
-                        <button className="text-[#0066CC] hover:text-[#004C99] font-medium">
+                        <button className="text-[#0066CC] hover:text-[#023c76] font-medium">
                             PREVIOUS
                         </button>
-                        <button className="text-[#0066CC] hover:text-[#004C99] font-medium">
+                        <button className="text-[#0066CC] hover:text-[#01468b] font-medium">
                             NEXT
                         </button>
                     </div>

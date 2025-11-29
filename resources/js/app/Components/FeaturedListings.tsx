@@ -1,75 +1,128 @@
-import { Link } from '@inertiajs/react';
-
-interface Listing {
-    id: number;
-    title: string;
-    askingPrice: string;
-    description: string;
-    location: string;
-    image: string;
-}
+import PropertyCard, { PropertyCardProps } from "./PropertyCard";
+import SectionHeading from "./SectionHeading";
+import SliderWithControls from "./SliderWithControls";
+import SliderControls from "./SliderControls";
+import { useSliderControls } from "./useSliderControls";
 
 export default function FeaturedListings() {
-    const listings: Listing[] = [
+    const listings: (PropertyCardProps & { id: number })[] = [
         {
             id: 1,
-            title: 'Marketplace Listing - Normandy',
-            askingPrice: 'Undisclosed',
-            description: 'REO: Leola 640 | 295 Unit Multifamily + Retail | Philadelphia, PA',
-            location: 'Philadelphia, Pennsylvania',
-            image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800',
+            title: "Marketplace Listing - Normandy",
+            price: "Undisclosed",
+            description: "REO: Leola 640 | 295 Unit Multifamily + Retail | Philadelphia, PA",
+            location: "Philadelphia, Pennsylvania",
+            image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200",
+            category: "Multifamily",
+            beds: 295,
+            baths: 0,
+            area: "295 Units",
+            agentName: "John Smith",
+            photosCount: 15,
         },
         {
             id: 2,
-            title: 'Marketplace Listing - Normandy',
-            askingPrice: '$10,000,000',
-            description: 'REO Sale | Hillside Manor Apt Resort | 218 Units | 71% Occupied | Ph...',
-            location: 'Clinton, Pennsylvania',
-            image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800',
+            title: "Marketplace Listing - Normandy",
+            price: "10,000,000",
+            description: "REO Sale | Hillside Manor Apt Resort | 218 Units | 71% Occupied | Ph...",
+            location: "Clinton, Pennsylvania",
+            image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200",
+            category: "Multifamily",
+            beds: 218,
+            baths: 0,
+            area: "218 Units",
+            agentName: "Sarah Johnson",
+            photosCount: 12,
+        },
+        {
+            id: 3,
+            title: "Marketplace Listing - Downtown Office",
+            price: "5,500,000",
+            description: "Prime downtown office space | 50,000 Sqft | Fully leased | Excellent location",
+            location: "New York, New York",
+            image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200",
+            category: "Commercial",
+            beds: 0,
+            baths: 0,
+            area: "50,000 Sqft",
+            agentName: "Michael Chen",
+            photosCount: 20,
+        },
+        {
+            id: 4,
+            title: "Marketplace Listing - Retail Plaza",
+            price: "8,200,000",
+            description: "Shopping center | 25 retail units | High traffic area | Strong tenant mix",
+            location: "Los Angeles, California",
+            image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200",
+            category: "Retail",
+            beds: 0,
+            baths: 0,
+            area: "25 Units",
+            agentName: "Emily Rodriguez",
+            photosCount: 18,
+        },
+        {
+            id: 5,
+            title: "Marketplace Listing - Industrial Warehouse",
+            price: "12,000,000",
+            description: "Modern warehouse facility | 200,000 Sqft | Loading docks | Prime logistics location",
+            location: "Chicago, Illinois",
+            image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200",
+            category: "Industrial",
+            beds: 0,
+            baths: 0,
+            area: "200,000 Sqft",
+            agentName: "David Thompson",
+            photosCount: 22,
+        },
+        {
+            id: 6,
+            title: "Marketplace Listing - Mixed Use Building",
+            price: "6,800,000",
+            description: "Mixed-use development | Retail + Residential | Prime urban location",
+            location: "Seattle, Washington",
+            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200",
+            category: "Mixed Use",
+            beds: 24,
+            baths: 24,
+            area: "45,000 Sqft",
+            agentName: "Lisa Anderson",
+            photosCount: 16,
         },
     ];
 
+    const { sliderRef, handlePrev, handleNext } = useSliderControls();
+
     return (
-        <section className="py-16 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold text-[#333333]">Featured Listings</h2>
-                    <Link
-                        href="/listings"
-                        className="bg-[#0066CC] text-white px-8 py-2 rounded font-semibold hover:bg-[#004C99] transition-colors"
-                    >
-                        VIEW ALL LISTINGS
-                    </Link>
+        <section className="mx-auto w-full max-w-6xl px-4 py-8">
+            <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex-1 text-center sm:text-left">
+                    <SectionHeading>Featured Listings</SectionHeading>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {listings.map((listing) => (
-                        <div
-                            key={listing.id}
-                            className="bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-shadow overflow-hidden"
-                        >
-                            <div className="relative h-48 bg-gray-200">
-                                <img
-                                    src={listing.image}
-                                    alt={listing.title}
-                                    className="w-full h-full object-cover"
-                                />
-                                <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100">
-                                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div className="p-4">
-                                <p className="text-xs text-[#666666] uppercase mb-2">{listing.title}</p>
-                                <p className="text-lg font-bold text-[#0066CC] mb-2">Asking Price: {listing.askingPrice}</p>
-                                <p className="text-sm text-[#333333] mb-1">{listing.description}</p>
-                                <p className="text-sm text-[#666666]">{listing.location}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+                <SliderControls
+                    onPrev={handlePrev}
+                    onNext={handleNext}
+                    prevButtonLabel="Previous listings"
+                    nextButtonLabel="Next listings"
+                />
+            </header>
+
+            <SliderWithControls
+                sliderRef={sliderRef}
+                onPrev={handlePrev}
+                onNext={handleNext}
+                prevButtonLabel="Previous listings"
+                nextButtonLabel="Next listings"
+                hideControls={true}
+            >
+                {listings.map((listing) => (
+                    <div key={listing.id} className="px-3">
+                        <PropertyCard {...listing} />
+                    </div>
+                ))}
+            </SliderWithControls>
         </section>
     );
 }

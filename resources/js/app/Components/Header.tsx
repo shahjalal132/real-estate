@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "@inertiajs/react";
 import MegaMenu from "./MegaMenu";
-import { Menu, MessageCircleQuestionMark } from "lucide-react";
+import { Menu } from "lucide-react";
+import Button from "./Button";
 
 interface NavigationItem {
     label: string;
@@ -51,7 +52,6 @@ export default function Header() {
             megaMenuId: "dispensaries",
             hasDropdown: true,
         },
-        { label: "INSIGHTS", link: "/insights", type: "page" },
         {
             label: "CONTACTS",
             link: "/contacts",
@@ -93,7 +93,7 @@ export default function Header() {
                             viewBox="0 0 68.76 79.56"
                             width="20"
                             height="23"
-                            className="h-10 w-auto object-contain lg:hidden"
+                            className="h-10 w-auto object-contain md:hidden"
                         >
                             <defs>
                                 <style>.cls-1fill:#002856;</style>
@@ -112,7 +112,7 @@ export default function Header() {
                         {/* Logo for large screen*/}
                         <Link
                             href="/"
-                            className="hidden lg:flex items-center space-x-2"
+                            className="hidden md:flex items-center space-x-2"
                         >
                             <img
                                 src="/assets/images/logo.png"
@@ -122,7 +122,7 @@ export default function Header() {
                         </Link>
 
                         {/* Desktop Navigation */}
-                        <nav className="hidden lg:flex items-center space-x-7">
+                        <nav className="hidden lg:flex items-center space-x-3">
                             {navigationItems.map((item) => (
                                 <div
                                     key={item.label}
@@ -135,9 +135,9 @@ export default function Header() {
                                 >
                                     <Link
                                         href={item.link}
-                                        className="header-nav-link text-[#4A4A4A] tracking-[1px] font-normal"
+                                        className="header-nav-link text-[#4A4A4A] text-[10px] tracking-[1px] font-normal"
                                     >
-                                        <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center justify-between gap-1">
                                             {item.label}
 
                                             {item.hasDropdown && (
@@ -168,22 +168,14 @@ export default function Header() {
                     </div>
 
                     {/* CTA Button */}
-                    <div className="flex items-center py-6 lg:py-0 right-0 space-x-7 justify-between">
-                        <Link
-                            href="/login"
-                            className="header-cta bg-[#0f6bd0] hover:bg-[#3787DE] text-white tracking-[1px] font-normal uppercase rounded-xs px-4 py-2"
-                        >
+                    <div className="flex items-center py-6 lg:py-0 space-x-7 justify-between">
+                        <Button href="/login" className="tracking-[1px] uppercase">
                             Log in / Sign Up
-                        </Link>
-                        <MessageCircleQuestionMark
-                            color="#4a4a4a"
-                            strokeWidth={2.5}
-                            className="cursor-pointer"
-                        />
+                        </Button>
                         <Menu
                             color="#4a4a4a"
                             strokeWidth={3}
-                            className="cursor-pointer"
+                            className="cursor-pointer lg:hidden"
                         />
                     </div>
                 </div>
