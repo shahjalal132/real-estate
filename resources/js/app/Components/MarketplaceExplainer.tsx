@@ -1,4 +1,10 @@
+import { useState } from "react";
+
 export default function MarketplaceExplainer() {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const videoId = "020g-0hhCAU";
+    const youtubeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+
     return (
         <section className="relative py-20 bg-[#0066CC] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -11,18 +17,48 @@ export default function MarketplaceExplainer() {
                     </p>
                 </div>
 
-                {/* Video Player Placeholder */}
+                {/* Video Player */}
                 <div className="relative max-w-4xl mx-auto">
-                    <div className="aspect-video bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                        <div className="text-center">
-                            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 cursor-pointer hover:bg-white/30 transition-colors">
-                                <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
+                    {!isPlaying ? (
+                        <div
+                            className="aspect-video bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center cursor-pointer group relative overflow-hidden"
+                            onClick={() => setIsPlaying(true)}
+                        >
+                            {/* Thumbnail Background */}
+                            <div
+                                className="absolute inset-0 bg-cover bg-center opacity-30"
+                                style={{
+                                    backgroundImage: `url(https://img.youtube.com/vi/${videoId}/maxresdefault.jpg)`,
+                                }}
+                            />
+                            
+                            {/* Play Button Overlay */}
+                            <div className="relative z-10 text-center">
+                                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-white/30 transition-colors">
+                                    <svg
+                                        className="w-10 h-10 text-white ml-1"
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                </div>
+                                <p className="text-white font-semibold">WATCH ON YouTube</p>
                             </div>
-                            <p className="text-white font-semibold">WATCH ON YouTube</p>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                src={youtubeUrl}
+                                title="R Marketplace Video"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Dashboard Preview Elements (overlay) */}
