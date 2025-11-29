@@ -1,0 +1,173 @@
+import { useMemo, useState } from "react";
+import { usePage } from "@inertiajs/react";
+import AppLayout from "../Layouts/AppLayout";
+import SectionHeading from "../../Components/SectionHeading";
+import PropertyCard, { PropertyCardProps } from "../../Components/PropertyCard";
+import FilterBar from "../../Components/FilterBar";
+import { Property } from "../../types";
+
+interface PageProps {
+    properties?: Property[];
+    filter: string;
+    section: string | null;
+    [key: string]: unknown;
+}
+
+function mapPropertyToCardProps(property: Property): PropertyCardProps {
+    const summaryDetails = property.details?.summary_details || {};
+    const beds =
+        summaryDetails["Bedrooms"] ||
+        summaryDetails["Beds"] ||
+        summaryDetails["Number of Bedrooms"] ||
+        0;
+    const baths =
+        summaryDetails["Bathrooms"] ||
+        summaryDetails["Baths"] ||
+        summaryDetails["Number of Bathrooms"] ||
+        0;
+    const areaSqft =
+        summaryDetails["Square Feet"] ||
+        summaryDetails["Sqft"] ||
+        summaryDetails["Square Footage"] ||
+        null;
+    const areaAcres = property.details?.lot_size_acres;
+
+    let area: string | undefined;
+    if (areaSqft) {
+        area =
+            typeof areaSqft === "number"
+                ? `${areaSqft.toLocaleString()} Sqft`
+                : `${areaSqft} Sqft`;
+    } else if (areaAcres) {
+        area = `${areaAcres} Acres`;
+    }
+
+    const locationString = property.location
+        ? `${property.location.city}, ${property.location.state_code}`
+        : "Location not available";
+
+    const agentName =
+        property.brokers && property.brokers.length > 0
+            ? property.brokers[0].full_name
+            : "No Agent";
+
+    return {
+        title: property.name,
+        category:
+            property.types && property.types.length > 0
+                ? property.types[0]
+                : "Property",
+        isFeatured: property.is_in_opportunity_zone || false,
+        price: property.formatted_price || "Undisclosed",
+        priceUnit: "/Sqft",
+        description:
+            property.marketing_description ||
+            property.description ||
+            "No description available",
+        beds: typeof beds === "number" ? beds : parseInt(beds) || 0,
+        baths:
+            typeof baths === "number"
+                ? baths
+                : parseFloat(baths.toString()) || 0,
+        area: area,
+        agentName: agentName,
+        photosCount: property.number_of_images || 0,
+        image:
+            property.thumbnail_url ||
+            "https://via.placeholder.com/400x300?text=No+Image",
+        location: locationString,
+        href: `/properties/${property.id}`,
+    };
+}
+
+function applyFilter(items: Property[], filter: string): Property[] {
+    if (!filter || filter === "all") return items;
+
+    return items.filter((_, index) => {
+        if (filter === "option1") return index % 3 === 0;
+        if (filter === "option2") return index % 3 === 1;
+        if (filter === "option3") return index % 3 === 2;
+        return true;
+    });
+}
+
+export default function Properties() {
+    const { props } = usePage<PageProps>();
+    const { properties = [], filter, section } = props;
+
+    const [searchValue, setSearchValue] = useState("");
+    const [auctionValue, setAuctionValue] = useState("all");
+    const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+
+    const filteredListings = useMemo(
+        () => applyFilter(properties, filter),
+        [properties, filter]
+    );
+
+    const sectionTitle = section
+        ? section.charAt(0).toUpperCase() + section.slice(1) + " Properties"
+        : "All Properties";
+
+    return (
+        <AppLayout title={sectionTitle} footerClassName="pt-32">
+            <section className="mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2 py-10">
+                <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+                    <div>
+                        <SectionHeading>{sectionTitle}</SectionHeading>
+                        <p className="mt-2 text-sm text-gray-600">
+                            Showing {filteredListings.length} properties
+                            {section && (
+                                <>
+                                    {" "}
+                                    for{" "}
+                                    <span className="font-semibold">
+                                        {section}
+                                    </span>
+                                </>
+                            )}
+                            {filter && filter !== "all" && (
+                                <>
+                                    {" "}
+                                    with filter{" "}
+                                    <span className="font-semibold">
+                                        {filter}
+                                    </span>
+                                </>
+                            )}
+                            .
+                        </p>
+                    </div>
+                </div>
+
+                {/* Filter bar */}
+                <div className="my-6">
+                    <FilterBar
+                        searchValue={searchValue}
+                        onSearchChange={setSearchValue}
+                        auctionValue={auctionValue}
+                        onAuctionChange={setAuctionValue}
+                        viewMode={viewMode}
+                        onViewModeChange={setViewMode}
+                    />
+                </div>
+
+                {filteredListings.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {filteredListings.map((property) => (
+                            <PropertyCard
+                                key={property.id}
+                                {...mapPropertyToCardProps(property)}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-12">
+                        <p className="text-gray-500 text-lg">
+                            No properties found matching your criteria.
+                        </p>
+                    </div>
+                )}
+            </section>
+        </AppLayout>
+    );
+}

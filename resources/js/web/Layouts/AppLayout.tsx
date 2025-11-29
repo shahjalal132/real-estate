@@ -1,7 +1,7 @@
 import { Head } from "@inertiajs/react";
 import { ReactNode } from "react";
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
+import Header from "../../Components/Header";
+import Footer from "../../Components/Footer";
 
 interface AppLayoutProps {
     children: ReactNode;

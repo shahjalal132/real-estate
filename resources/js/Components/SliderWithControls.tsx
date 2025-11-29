@@ -30,11 +30,19 @@ export default function SliderWithControls({
         arrows: false,
         infinite: false,
         speed: 500,
-        slidesToShow: 3,
+        slidesToShow: 5,
         slidesToScroll: 1,
         responsive: [
             {
+                breakpoint: 1536,
+                settings: { slidesToShow: 4 },
+            },
+            {
                 breakpoint: 1280,
+                settings: { slidesToShow: 3 },
+            },
+            {
+                breakpoint: 1024,
                 settings: { slidesToShow: 2 },
             },
             {
@@ -65,4 +73,3 @@ export default function SliderWithControls({
         </div>
     );
 }
-
