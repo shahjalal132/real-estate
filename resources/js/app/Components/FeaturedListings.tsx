@@ -1,6 +1,5 @@
-import PropertyCard from "../../Components/PropertyCard";
 import { useState } from "react";
-import PropertyCard, { PropertyCardProps } from "./PropertyCard";
+import PropertyCard from "./PropertyCard";
 import Button from "./Button";
 import FilterDropdown from "./FilterDropdown";
 import SectionHeading from "./SectionHeading";
@@ -28,7 +27,7 @@ export default function FeaturedListings({
     });
 
     const viewMoreHref = `/properties?section=featured&filter=${encodeURIComponent(
-        selectedFilter,
+        selectedFilter
     )}`;
 
     if (listings.length === 0) {
@@ -39,7 +38,9 @@ export default function FeaturedListings({
         <section className="mx-auto w-full max-w-6xl px-4 py-8">
             <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1 text-center sm:text-left">
-                    <SectionHeading>Featured Listings Properties</SectionHeading>
+                    <SectionHeading>
+                        Featured Listings Properties
+                    </SectionHeading>
                 </div>
 
                 <div className="flex flex-col items-center gap-2 sm:items-end">
