@@ -34,7 +34,7 @@ export default function PropertyCard({
     category = "Residential",
     isFeatured = true,
     asking_price,
-    priceUnit = "/Sqft",
+    priceUnit = "",
     description,
     beds = 0,
     baths = 0,
@@ -100,11 +100,6 @@ export default function PropertyCard({
                                 <>${asking_price || "0"}</>
                             )}
                         </span>
-                        {priceUnit && asking_price !== "Undisclosed" && (
-                            <span className="text-sm text-gray-500">
-                                {priceUnit}
-                            </span>
-                        )}
                     </p>
                 </div>
 
@@ -116,16 +111,22 @@ export default function PropertyCard({
                 </p>
 
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-gray-700">
-                    <span className="inline-flex items-center gap-2">
+                    {/* <span className="inline-flex items-center gap-2">
                         <Bed className="h-4 w-4 text-blue-900" /> {beds} Beds
                     </span>
                     <span className="inline-flex items-center gap-2">
                         <Bath className="h-4 w-4 text-blue-900" /> {baths} Baths
-                    </span>
-                    {area && (
+                    </span> */}
+
+                    {area && area !== "0" && area !== "0 Sqft" ? (
                         <span className="inline-flex items-center gap-2">
                             <HomeIcon className="h-4 w-4 text-blue-900" />{" "}
                             {area}
+                        </span>
+                    ) : (
+                        <span className="inline-flex items-center gap-2 text-gray-400">
+                            <HomeIcon className="h-4 w-4 text-gray-400" /> Not
+                            mentioned
                         </span>
                     )}
                 </div>
@@ -133,8 +134,12 @@ export default function PropertyCard({
                 <div className="grid grid-cols-2 items-center mt-auto">
                     <div className="flex items-center gap-2">
                         <div className="relative">
-                            <div className="h-8 w-8 rounded-full bg-gray-200" />
-                            <span className="absolute right-0 top-0 inline-block h-3 w-3 rounded-full bg-green-500" />
+                            <img
+                                src="/assets/images/broker.jpeg"
+                                alt={agentName}
+                                className="h-8 w-8 rounded-full object-cover"
+                            />
+                            {/* <span className="absolute right-0 top-0 inline-block h-3 w-3 rounded-full bg-green-500" /> */}
                         </div>
                         <div>
                             <p className="text-sm font-semibold">{agentName}</p>

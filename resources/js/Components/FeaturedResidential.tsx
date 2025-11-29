@@ -138,7 +138,7 @@ export default function FeaturedResidential({
 
     return (
         <section className="w-full overflow-hidden py-6 sm:py-8">
-            <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">
+            <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2 mb-4!">
                 <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex-1 text-center sm:text-left">
                         <SectionHeading>Featured Residential</SectionHeading>
@@ -171,7 +171,7 @@ export default function FeaturedResidential({
                     {filteredListings.map((property) => (
                         <div
                             key={property.id}
-                            className="px-1 sm:px-2 md:px-3 lg:px-3 h-full"
+                            className="px-1 sm:px-2 md:px-3 pb-4 lg:px-3 h-full"
                         >
                             <PropertyCard
                                 {...mapPropertyToCardProps(property)}

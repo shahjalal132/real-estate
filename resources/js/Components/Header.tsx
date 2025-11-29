@@ -90,50 +90,25 @@ export default function Header() {
     ];
 
     return (
-        <header className="sticky top-0 z-50 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
-            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-3 h-full">
+        <header className="sticky top-0 z-50 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
+            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-3 h-full overflow-visible">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center space-x-2">
-                        {/* Logo for small, medium screen */}
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 68.76 79.56"
-                            width="20"
-                            height="23"
-                            className="h-10 w-auto object-contain md:hidden"
-                        >
-                            <defs>
-                                <style>.cls-1fill:#002856;</style>
-                            </defs>
-                            <title>Asset 1</title>
-                            <g id="Layer_2" data-name="Layer 2">
-                                <g id="Layer_1-2" data-name="Layer 1">
-                                    <path
-                                        className="cls-1"
-                                        d="M0,38.66v40.9H17.5V38.61ZM0,20.11V34.3l17.5,0V20.17ZM17.5,15.8H34.89c8.52,0,13.75,3.87,13.75,11.37v.23c0,6.7-4.88,11.25-13.41,11.25H22V54.11h9.24l17,25.45H68.76L49.32,51.15C59.44,47.4,66.37,39.33,66.37,26.48v-.22c0-7.5-2.38-13.75-6.82-18.19C54.32,2.84,46.48,0,36.37,0H0V15.74"
-                                    ></path>
-                                </g>
-                            </g>
-                        </svg>
-
-                        {/* Logo for large screen*/}
-                        <Link
-                            href="/"
-                            className="hidden md:flex items-center space-x-2"
-                        >
+                        {/* Logo */}
+                        <Link href="/" className="flex items-center">
                             <img
-                                src="/assets/images/logo.png"
-                                alt="R Marketplace"
-                                className="h-10 w-auto object-contain"
+                                src="/assets/images/logo-updated.png"
+                                alt="TENANTS HQ"
+                                className="h-7 w-auto object-contain"
                             />
                         </Link>
 
                         {/* Desktop Navigation */}
-                        <nav className="hidden lg:flex items-center space-x-3">
+                        <nav className="hidden lg:flex items-center space-x-3 overflow-visible">
                             {navigationItems.map((item) => (
                                 <div
                                     key={item.label}
-                                    className="relative"
+                                    className="relative overflow-visible"
                                     onMouseEnter={() =>
                                         item.type === "megaMenu" &&
                                         setActiveMenu(item.megaMenuId || null)

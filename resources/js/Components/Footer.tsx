@@ -133,19 +133,18 @@ export default function Footer({ className = "" }: { className?: string }) {
             <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2">
                 <div className="grid gap-10 border-b pt-8 border-[#E0E0E0] pb-10 lg:grid-cols-4">
                     <div className="space-y-6">
-                        <Link href="/" className="flex items-center space-x-2">
-                            <span className="text-3xl font-extrabold text-[#0166D0]">
-                                R
-                            </span>
-                            <span className="text-2xl font-semibold tracking-wide text-[#1B1B1B]">
-                                MARKETPLACE
-                            </span>
+                        <Link href="/" className="flex items-center">
+                            <img
+                                src="/assets/images/logo-updated.png"
+                                alt="TENANTS HQ"
+                                className="h-9 w-auto object-contain"
+                            />
                         </Link>
                         <div className="space-y-2 text-sm text-[#4B4B4B]">
                             <p className="font-medium text-[#1B1B1B]">
-                                800.915.7015
+                                (443) 489-9162
                             </p>
-                            <p> info@rmarketplace.com</p>
+                            <p> info@tenantshq.com</p>
                         </div>
                     </div>
 

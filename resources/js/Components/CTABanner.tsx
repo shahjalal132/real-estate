@@ -107,18 +107,18 @@ export default function CTABanner({ content }: CTABannerProps) {
                                     <Mail className="w-4 h-4" />
                                 </div>
                                 <span className="text-sm font-medium">
-                                    info@rmarketplace.com
+                                    info@tenantshq.com
                                 </span>
                             </a>
                             <a
-                                href="tel:8009157015"
+                                href="tel:(443) 489-9162"
                                 className="flex items-center gap-3 text-white/90 hover:text-white transition-colors group/contact"
                             >
                                 <div className="p-2 bg-white/10 rounded-lg group-hover/contact:bg-white/20 transition-colors">
                                     <Phone className="w-4 h-4" />
                                 </div>
                                 <span className="text-sm font-medium">
-                                    800.915.7015
+                                    (443) 489-9162
                                 </span>
                             </a>
                         </div>

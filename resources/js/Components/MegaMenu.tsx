@@ -639,10 +639,20 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
         menus[menuId] ?? menus[menuAliases[menuId as keyof typeof menuAliases]];
     if (!menu) return null;
 
+    // Determine which menus should be right-aligned to prevent overflow
+    // Wide menus or menus on the right side: tools, settings, underwriting
+    const rightAlignMenus = ["tools", "settings", "underwriting"];
+    const shouldRightAlign = rightAlignMenus.includes(menuId);
+
     return (
         <div
-            className="absolute left-0 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0]"
-            style={{ width: menu.width }}
+            className={`absolute top-full mt-2 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
+                shouldRightAlign ? "right-0" : "left-0"
+            }`}
+            style={{
+                width: menu.width,
+                maxWidth: "calc(100vw - 2rem)", // Prevent overflow beyond viewport
+            }}
             onMouseLeave={onClose}
         >
             <div className="p-6">
