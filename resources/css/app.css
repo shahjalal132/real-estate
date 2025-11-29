@@ -148,6 +148,12 @@ body {
 }
 
 /* Responsive slider spacing */
+@media (min-width: 480px) {
+    .slick-list {
+        margin: 0 -6px;
+    }
+}
+
 @media (min-width: 640px) {
     .slick-list {
         margin: 0 -12px;

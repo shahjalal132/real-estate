@@ -163,7 +163,7 @@ export default function FeaturedCommercial({
                 {filteredListings.map((property) => (
                     <div
                         key={property.id}
-                        className="px-2 sm:px-3 md:px-4 lg:px-3 h-full"
+                        className="px-1.5 sm:px-3 md:px-4 lg:px-3 h-full"
                     >
                         <PropertyCard {...mapPropertyToCardProps(property)} />
                     </div>

@@ -51,6 +51,10 @@ export default function SliderWithControls({
             },
             {
                 breakpoint: 640,
+                settings: { slidesToShow: 2, slidesToScroll: 1 },
+            },
+            {
+                breakpoint: 480,
                 settings: { slidesToShow: 1, slidesToScroll: 1 },
             },
         ],
