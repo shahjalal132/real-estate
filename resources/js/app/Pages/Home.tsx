@@ -1,31 +1,34 @@
-import AppLayout from '../Layouts/AppLayout';
-import Hero from '../Components/Hero';
-import FeaturedAuctions from '../Components/FeaturedAuctions';
-import FeaturedListings from '../Components/FeaturedListings';
-import Statistics from '../Components/Statistics';
-import DataPowered from '../Components/DataPowered';
-import MarketplaceExplainer from '../Components/MarketplaceExplainer';
-import MobileApp from '../Components/MobileApp';
-import Features from '../Components/Features';
-import News from '../Components/News';
-import Testimonials from '../Components/Testimonials';
-import CTABanner from '../Components/CTABanner';
+import AppLayout from "../Layouts/AppLayout";
+import Hero from "../Components/Hero";
+import FeaturedAuctions from "../Components/FeaturedAuctions";
+import FeaturedListings from "../Components/FeaturedListings";
+import Statistics from "../Components/Statistics";
+import DataPowered from "../Components/DataPowered";
+import MarketplaceExplainer from "../Components/MarketplaceExplainer";
+import MobileApp from "../Components/MobileApp";
+import Features from "../Components/Features";
+import News from "../Components/News";
+import Testimonials from "../Components/Testimonials";
+import CTABanner from "../Components/CTABanner";
+import ResidentialListings from "../Components/ResidentialListings";
+import CommercialListings from "../Components/CommercialListings";
 
 export default function Home() {
     return (
-        <AppLayout title= "Home" footerClassName = "pt-32" >
+        <AppLayout title="Home" footerClassName="pt-32">
             <Hero />
-            < FeaturedAuctions />
             <FeaturedListings />
-            < Statistics />
+            <ResidentialListings/>
+            <FeaturedAuctions />
+            <CommercialListings/>
+            <Statistics />
             <DataPowered />
-            < MarketplaceExplainer />
+            <MarketplaceExplainer />
             <MobileApp />
-            < Features />
+            <Features />
             <News />
-            < Testimonials />
+            <Testimonials />
             <CTABanner />
-            </AppLayout>
+        </AppLayout>
     );
 }
-

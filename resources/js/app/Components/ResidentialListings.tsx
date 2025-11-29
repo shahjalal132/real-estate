@@ -4,7 +4,7 @@ import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
 import { useSliderControls } from "./useSliderControls";
 
-export default function FeaturedListings() {
+export default function ResidentialListings() {
     const listings: (PropertyCardProps & { id: number })[] = [
         {
             id: 1,
@@ -98,7 +98,7 @@ export default function FeaturedListings() {
         <section className="mx-auto w-full max-w-6xl px-4 py-8">
             <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1 text-center sm:text-left">
-                    <SectionHeading>Featured Listings Properties</SectionHeading>
+                    <SectionHeading>Residential Listings Properties</SectionHeading>
                 </div>
 
                 <SliderControls
