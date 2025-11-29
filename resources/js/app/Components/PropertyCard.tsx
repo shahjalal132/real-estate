@@ -23,6 +23,7 @@ export interface PropertyCardProps {
     photosCount?: number;
     image: string;
     location: string;
+    startingBid?: string;
 }
 
 export default function PropertyCard({
@@ -83,28 +84,40 @@ export default function PropertyCard({
                             <p className="text-sm uppercase text-blue-600">
                                 {location}
                             </p>
-                            <h2 className="line-clamp-1 text-xl font-semibold" title={title}>
+                            <h2
+                                className="line-clamp-1 text-xl font-semibold"
+                                title={title}
+                            >
                                 {title}
                             </h2>
                             <p className="mt-2 inline-flex items-baseline gap-1 rounded-xl font-semibold text-blue-900">
-                                <span className="text-sm uppercase tracking-wide">USD</span>
+                                <span className="text-sm uppercase tracking-wide">
+                                    USD
+                                </span>
                                 <span className="text-2xl">{price}</span>
-                                <span className="text-sm text-gray-500">{priceUnit}</span>
+                                <span className="text-sm text-gray-500">
+                                    {priceUnit}
+                                </span>
                             </p>
                         </div>
 
-                        <p className="line-clamp-2 text-sm text-gray-600">{description}</p>
+                        <p className="line-clamp-2 text-sm text-gray-600">
+                            {description}
+                        </p>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-gray-700">
                             <span className="inline-flex items-center gap-2">
-                                <Bed className="h-4 w-4 text-blue-900" /> {beds} Beds
+                                <Bed className="h-4 w-4 text-blue-900" /> {beds}{" "}
+                                Beds
                             </span>
                             <span className="inline-flex items-center gap-2">
-                                <Bath className="h-4 w-4 text-blue-900" /> {baths} Baths
+                                <Bath className="h-4 w-4 text-blue-900" />{" "}
+                                {baths} Baths
                             </span>
                             {area && (
                                 <span className="inline-flex items-center gap-2">
-                                    <HomeIcon className="h-4 w-4 text-blue-900" /> {area}
+                                    <HomeIcon className="h-4 w-4 text-blue-900" />{" "}
+                                    {area}
                                 </span>
                             )}
                         </div>
@@ -116,8 +129,12 @@ export default function PropertyCard({
                                     <span className="absolute right-0 top-0 inline-block h-3 w-3 rounded-full bg-green-500" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-semibold">{agentName}</p>
-                                    <p className="text-xs text-gray-500">Listing Agent</p>
+                                    <p className="text-sm font-semibold">
+                                        {agentName}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                        Listing Agent
+                                    </p>
                                 </div>
                             </div>
                             <div className="flex justify-end gap-2">
@@ -143,4 +160,3 @@ export default function PropertyCard({
         </article>
     );
 }
-

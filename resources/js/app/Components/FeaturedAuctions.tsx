@@ -10,7 +10,8 @@ export default function FeaturedAuctions() {
             id: 1,
             title: "Classic Auction - Fairfield",
             price: "1,250,000",
-            description: "Institutional Seller | Fairfield Inn & Suites Greeley",
+            description:
+                "Institutional Seller | Fairfield Inn & Suites Greeley",
             location: "Greeley, Colorado",
             image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200",
             category: "Hospitality",
@@ -19,12 +20,14 @@ export default function FeaturedAuctions() {
             area: "2000 Yd²",
             agentName: "Salman Ghouri Dev",
             photosCount: 10,
+            startingBid: "$1,250,000",
         },
         {
             id: 2,
             title: "Classic Auction - Holiday",
             price: "2,900,000",
-            description: "Institutional Seller | Holiday Inn Express & Suites Terrell",
+            description:
+                "Institutional Seller | Holiday Inn Express & Suites Terrell",
             location: "Terrell, Texas",
             image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?w=1200",
             category: "Residential",
@@ -33,12 +36,14 @@ export default function FeaturedAuctions() {
             area: "3200 Sqft",
             agentName: "Jordan Wells",
             photosCount: 12,
+            startingBid: "$2,900,000",
         },
         {
             id: 3,
             title: "Signature Auction - Scottsdale Estate",
             price: "3,200,000",
-            description: "Award-winning architecture with mountain views and resort amenities.",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
             location: "Scottsdale, Arizona",
             image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
             category: "Luxury",
@@ -47,12 +52,14 @@ export default function FeaturedAuctions() {
             area: "5,400 Sqft",
             agentName: "Alexandra Poe",
             photosCount: 18,
+            startingBid: "$3,200,000",
         },
         {
             id: 4,
             title: "Signature Auction - Scottsdale Estate",
             price: "3,200,000",
-            description: "Award-winning architecture with mountain views and resort amenities.",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
             location: "Scottsdale, Arizona",
             image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
             category: "Luxury",
@@ -61,12 +68,14 @@ export default function FeaturedAuctions() {
             area: "5,400 Sqft",
             agentName: "Alexandra Poe",
             photosCount: 18,
+            startingBid: "$3,200,000",
         },
         {
             id: 5,
             title: "Signature Auction - Scottsdale Estate",
             price: "3,200,000",
-            description: "Award-winning architecture with mountain views and resort amenities.",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
             location: "Scottsdale, Arizona",
             image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
             category: "Luxury",
@@ -75,12 +84,14 @@ export default function FeaturedAuctions() {
             area: "5,400 Sqft",
             agentName: "Alexandra Poe",
             photosCount: 18,
+            startingBid: "$3,200,000",
         },
         {
             id: 6,
             title: "Signature Auction - Scottsdale Estate",
             price: "3,200,000",
-            description: "Award-winning architecture with mountain views and resort amenities.",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
             location: "Scottsdale, Arizona",
             image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
             category: "Luxury",
@@ -89,12 +100,14 @@ export default function FeaturedAuctions() {
             area: "5,400 Sqft",
             agentName: "Alexandra Poe",
             photosCount: 18,
+            startingBid: "$3,200,000",
         },
         {
             id: 7,
             title: "Signature Auction - Scottsdale Estate",
             price: "3,200,000",
-            description: "Award-winning architecture with mountain views and resort amenities.",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
             location: "Scottsdale, Arizona",
             image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
             category: "Luxury",
@@ -103,12 +116,14 @@ export default function FeaturedAuctions() {
             area: "5,400 Sqft",
             agentName: "Alexandra Poe",
             photosCount: 18,
+            startingBid: "$3,200,000",
         },
         {
             id: 3,
             title: "Signature Auction - Scottsdale Estate",
             price: "3,200,000",
-            description: "Award-winning architecture with mountain views and resort amenities.",
+            description:
+                "Award-winning architecture with mountain views and resort amenities.",
             location: "Scottsdale, Arizona",
             image: "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200",
             category: "Luxury",
@@ -117,6 +132,7 @@ export default function FeaturedAuctions() {
             area: "5,400 Sqft",
             agentName: "Alexandra Poe",
             photosCount: 18,
+            startingBid: "$3,200,000",
         },
     ];
 
@@ -126,7 +142,9 @@ export default function FeaturedAuctions() {
         <section className="mx-auto w-full max-w-6xl px-4 py-8">
             <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1 text-center sm:text-left">
-                    <SectionHeading>Featured Auctions Properties</SectionHeading>
+                    <SectionHeading>
+                        Featured Auctions Properties
+                    </SectionHeading>
                 </div>
 
                 <SliderControls
