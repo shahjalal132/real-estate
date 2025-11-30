@@ -5,7 +5,9 @@ export interface User {
     email_verified_at: string;
 }
 
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+export type PageProps<
+    T extends Record<string, unknown> = Record<string, unknown>
+> = T & {
     auth: {
         user: User;
     };
@@ -71,7 +73,7 @@ export interface Property {
     name: string;
     description: string | null;
     marketing_description: string | null;
-    asking_price: number;
+    asking_price: string;
     formatted_price: string;
     status: string;
     types: string[];

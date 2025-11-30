@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -7,70 +7,106 @@
 
 /* Proxima Nova Font Faces */
 @font-face {
-    font-family: 'Proxima Nova';
-    src: url('/assets/fonts/proximanova-light.woff') format('woff');
+    font-family: "Proxima Nova";
+    src: url("/assets/fonts/proximanova-light.woff") format("woff");
     font-weight: 300;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Proxima Nova';
-    src: url('/assets/fonts/proximanova-regular.woff') format('woff');
+    font-family: "Proxima Nova";
+    src: url("/assets/fonts/proximanova-regular.woff") format("woff");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Proxima Nova';
-    src: url('/assets/fonts/proximanova-medium.woff') format('woff');
+    font-family: "Proxima Nova";
+    src: url("/assets/fonts/proximanova-medium.woff") format("woff");
     font-weight: 500;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Proxima Nova';
-    src: url('/assets/fonts/proximanova-semibold.woff') format('woff');
+    font-family: "Proxima Nova";
+    src: url("/assets/fonts/proximanova-semibold.woff") format("woff");
     font-weight: 600;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Proxima Nova';
-    src: url('/assets/fonts/proximanova-bold.woff') format('woff');
+    font-family: "Proxima Nova";
+    src: url("/assets/fonts/proximanova-bold.woff") format("woff");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
 }
 
 @theme {
-    --font-sans: 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, sans-serif, "Proxima Nova";
+
     /* Primary Colors */
-    --color-primary-blue: #0066CC;
-    --color-primary-dark-blue: #004C99;
-    --color-primary-light-blue: #3399FF;
-    
+    --color-primary-blue: #0066cc;
+    --color-primary-dark-blue: #004c99;
+    --color-primary-light-blue: #3399ff;
+
     /* Neutral Colors */
-    --color-neutral-white: #FFFFFF;
-    --color-neutral-light-gray: #F5F5F5;
-    --color-neutral-gray: #CCCCCC;
+    --color-neutral-white: #ffffff;
+    --color-neutral-light-gray: #f5f5f5;
+    --color-neutral-gray: #cccccc;
     --color-neutral-dark-gray: #666666;
     --color-neutral-black: #000000;
-    
+
     /* Accent Colors */
-    --color-accent-orange: #FF6B00;
-    --color-accent-green: #00CC66;
-    --color-accent-light-orange: #FFE5CC;
-    
+    --color-accent-orange: #ff6b00;
+    --color-accent-green: #00cc66;
+    --color-accent-light-orange: #ffe5cc;
+
     /* Text Colors */
     --color-text-primary: #333333;
     --color-text-secondary: #666666;
     --color-text-light: #999999;
-    --color-text-white: #FFFFFF;
+    --color-text-white: #ffffff;
+}
+
+/* 
+ * Comprehensive solution for missing keyboard symbols in Proxima Nova font
+ * 
+ * System fonts are prioritized first to ensure all symbols display correctly.
+ * Proxima Nova is used as a fallback for characters it supports.
+ */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, sans-serif, "Proxima Nova";
+}
+
+/* Use Proxima Nova for text content that doesn't need special symbols */
+.text-proxima {
+    font-family: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Force system fonts for symbol-heavy content to ensure proper rendering */
+.font-symbols,
+.font-symbols *,
+.price,
+.price * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* Ensure PropertyCard prices and any numeric content use system fonts */
+article .price,
+article .price *,
+.PropertyCard .price,
+.PropertyCard .price * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, sans-serif !important;
 }
 
 .header-nav-link {
@@ -78,6 +114,7 @@
     letter-spacing: 1px;
     color: #4a4a4a;
     text-transform: uppercase;
+    padding: 0.25rem 0.5rem;
 }
 
 .header-cta {
@@ -88,10 +125,166 @@
 @media (min-width: 1020px) and (max-width: 1330px) {
     .header-nav-link {
         font-size: 13px;
+        padding: 0.2rem 0.4rem;
     }
 
     .header-cta {
         font-size: 0.7rem;
         padding: 0.35rem 1.25rem;
     }
+}
+
+/* Ensure all property cards in sliders have equal heights */
+.slick-slide {
+    height: auto;
+}
+
+.slick-slide > div {
+    height: 100%;
+}
+
+.slick-list {
+    height: auto;
+    margin: 0 -4px;
+}
+
+.slick-track {
+    display: flex;
+    align-items: stretch;
+}
+
+.slick-track .slick-slide {
+    display: flex;
+    height: auto;
+    align-items: stretch;
+}
+
+.slick-track .slick-slide > div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+/* Responsive slider spacing */
+@media (min-width: 480px) {
+    .slick-list {
+        margin: 0 -4px;
+    }
+}
+
+@media (min-width: 640px) {
+    .slick-list {
+        margin: 0 -8px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .slick-list {
+        margin: 0 -12px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .slick-list {
+        margin: 0 -12px;
+    }
+}
+
+/* Touch-friendly swipe on mobile */
+@media (max-width: 639px) {
+    .slick-slider {
+        touch-action: pan-x;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .slick-list {
+        padding: 0 !important;
+        margin: 0 -8px !important;
+        overflow: hidden !important;
+        width: 100%;
+    }
+
+    .slick-track {
+        display: flex !important;
+        align-items: stretch;
+        transition: transform 0.5s ease;
+        width: 100% !important;
+    }
+
+    .slick-slide {
+        padding: 0 4px;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .slick-slide > div {
+        width: 100% !important;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex !important;
+    }
+
+    /* Ensure cards don't overflow */
+    .slick-slide article,
+    .slick-slide article > *,
+    .slick-slide article > div {
+        max-width: 100% !important;
+        box-sizing: border-box;
+        width: 100% !important;
+    }
+}
+
+/* Single slide on very small screens */
+@media (max-width: 479px) {
+    .slick-slide {
+        width: calc(100vw - 16px) !important;
+        flex-shrink: 0;
+    }
+}
+
+/* Two slides on small screens */
+@media (min-width: 480px) and (max-width: 639px) {
+    .slick-slide {
+        width: calc((100vw - 24px) / 2) !important;
+        flex-shrink: 0;
+    }
+}
+
+/* Fix slider container on all screens */
+.slick-slider {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.slick-list {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.slick-list:focus {
+    outline: none;
+}
+
+.slick-list.dragging {
+    cursor: pointer;
+    cursor: hand;
+}
+
+.slick-track {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
