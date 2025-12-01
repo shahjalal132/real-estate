@@ -262,7 +262,22 @@ export default function Header() {
                                                     {item.type === "megaMenu" &&
                                                         activeMenu ===
                                                             item.megaMenuId && (
-                                                            <div className="absolute left-full top-0 ml-1 z-[60]">
+                                                            <div
+                                                                className={`absolute top-0 z-[60] ${
+                                                                    // Right-align menus (pipeline, tools, settings, contacts) to prevent overflow
+                                                                    [
+                                                                        "pipeline",
+                                                                        "tools",
+                                                                        "settings",
+                                                                        "contacts",
+                                                                    ].includes(
+                                                                        item.megaMenuId ||
+                                                                            ""
+                                                                    )
+                                                                        ? "right-full mr-1"
+                                                                        : "left-full ml-1"
+                                                                }`}
+                                                            >
                                                                 <MegaMenu
                                                                     menuId={
                                                                         item.megaMenuId!
