@@ -137,7 +137,7 @@ export default function Footer({ className = "" }: { className?: string }) {
                             <img
                                 src="/assets/images/logo-updated.png"
                                 alt="TENANTS HQ"
-                                className="h-9 w-auto object-contain"
+                                className="h-6 md:h-7 w-auto max-w-[120px] md:max-w-[140px] object-contain"
                             />
                         </Link>
                         <div className="space-y-2 text-sm text-[#4B4B4B]">

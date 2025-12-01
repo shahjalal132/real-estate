@@ -143,12 +143,56 @@ export default function FeaturedAuctions({
                 ))
     );
 
-    const filteredListings = auctionProperties.filter((_, index) => {
-        if (selectedFilter === "all") return true;
+    // Filter by property type based on selected filter
+    let typeFilteredProperties = auctionProperties;
+
+    if (selectedFilter === "all") {
+        // Show all auction properties (default)
+        typeFilteredProperties = auctionProperties;
+    } else if (selectedFilter === "auctions") {
+        // Show only auction properties (already filtered, but ensure they're On-Market)
+        typeFilteredProperties = auctionProperties.filter(
+            (property) => property.status === "On-Market"
+        );
+    } else if (selectedFilter === "residential") {
+        // Filter to show residential properties from the list
+        typeFilteredProperties = auctionProperties.filter((property) => {
+            if (!property.types || property.types.length === 0) return false;
+            return property.types.some(
+                (type) =>
+                    type.toLowerCase().includes("residential") ||
+                    type.toLowerCase().includes("multifamily")
+            );
+        });
+    } else if (selectedFilter === "commercial") {
+        // Filter to show commercial properties from the list
+        typeFilteredProperties = auctionProperties.filter((property) => {
+            if (!property.types || property.types.length === 0) return false;
+            const commercialTypes = [
+                "Commercial",
+                "Land",
+                "Office",
+                "Retail",
+                "Industrial",
+            ];
+            const hasCommercialType = property.types.some((type) =>
+                commercialTypes.some((commercialType) =>
+                    type.toLowerCase().includes(commercialType.toLowerCase())
+                )
+            );
+            const hasResidentialType = property.types.some((type) =>
+                type.toLowerCase().includes("residential")
+            );
+            return hasCommercialType && !hasResidentialType;
+        });
+    }
+
+    // Apply index-based filtering if needed (for option1, option2, option3)
+    const filteredListings = typeFilteredProperties.filter((_, index) => {
         if (selectedFilter === "option1") return index % 3 === 0;
         if (selectedFilter === "option2") return index % 3 === 1;
         if (selectedFilter === "option3") return index % 3 === 2;
-        return true;
+        return true; // For "all", "residential", "commercial", "auctions" - show all filtered
     });
 
     const viewMoreHref = `/properties/auctions?filter=${encodeURIComponent(
@@ -164,7 +208,9 @@ export default function FeaturedAuctions({
             <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">
                 <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex-1 text-center sm:text-left">
-                        <SectionHeading>{getSectionHeading(selectedFilter)}</SectionHeading>
+                        <SectionHeading>
+                            {getSectionHeading(selectedFilter)}
+                        </SectionHeading>
                     </div>
 
                     <div className="flex flex-col items-center gap-2 sm:items-end">
