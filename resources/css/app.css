@@ -288,3 +288,102 @@ article .price *,
     margin-left: auto;
     margin-right: auto;
 }
+
+/* Lollipop Map Markers */
+.lollipop-marker {
+    background: transparent !important;
+    border: none !important;
+}
+
+.lollipop-marker-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.lollipop-marker-container:hover {
+    transform: scale(1.15);
+    z-index: 1000;
+}
+
+.lollipop-marker-container.selected {
+    z-index: 1001;
+}
+
+.lollipop-pin {
+    width: 24px;
+    height: 24px;
+    background: #0d6efd;
+    border: 3px solid white;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.lollipop-pin::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.lollipop-marker-container.selected .lollipop-pin {
+    background: #0b5ed7;
+    border-color: #fff;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
+    transform: rotate(-45deg) scale(1.2);
+}
+
+/* Property Tooltip Styling */
+.property-tooltip .leaflet-tooltip-content-wrapper {
+    background: white;
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+}
+
+.property-tooltip .leaflet-tooltip-content {
+    margin: 0;
+    padding: 10px 12px;
+}
+
+.property-tooltip-content {
+    min-width: 180px;
+    max-width: 220px;
+}
+
+.property-tooltip .leaflet-tooltip-tip {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    border-right: none;
+}
+
+/* Property Popup Styling */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.property-popup .leaflet-popup-content {
+    margin: 16px;
+}
+
+/* Ensure markers don't interfere with map controls */
+.leaflet-marker-icon {
+    z-index: 600;
+}
+
+.lollipop-marker.selected {
+    z-index: 700 !important;
+}
