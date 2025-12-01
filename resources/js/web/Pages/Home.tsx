@@ -3,16 +3,13 @@ import Hero from "../../Components/Hero";
 import FeaturedAuctions from "../../Components/FeaturedAuctions";
 import FeaturedResidential from "../../Components/FeaturedResidential";
 import FeaturedCommercial from "../../Components/FeaturedCommercial";
-import Statistics from "../../Components/Statistics";
 import DataPowered from "../../Components/DataPowered";
 import MarketplaceExplainer from "../../Components/MarketplaceExplainer";
-// import MobileApp from "../Components/MobileApp";
 import Features from "../../Components/Features";
 import News from "../../Components/News";
 import Testimonials from "../../Components/Testimonials";
 import CTABanner from "../../Components/CTABanner";
 import { Property } from "../../types";
-import { useState } from "react";
 
 interface HeroContent {
     title: string;
@@ -87,7 +84,6 @@ export default function Home({
     featuredResidential = [],
     featuredCommercial = [],
     heroContent,
-    statistics = [],
     features = [],
     news = [],
     testimonials = [],
@@ -101,10 +97,8 @@ export default function Home({
             <FeaturedResidential properties={featuredResidential} />
             <FeaturedAuctions auctions={featuredAuctions} />
             <FeaturedCommercial properties={featuredCommercial} />
-            <Statistics statistics={statistics} />
             <DataPowered content={dataPowered} />
             <MarketplaceExplainer content={marketplaceExplainer} />
-            {/* <MobileApp /> */}
             <Features features={features} />
             <News news={news} />
             <Testimonials testimonials={testimonials} />
