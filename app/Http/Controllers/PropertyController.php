@@ -87,9 +87,12 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function show(Property $property)
+    public function show($property, $url_slug)
     {
-        $property->load(['location', 'details', 'brokers.brokerage', 'images']);
+        $property = Property::where('id', $property)
+            ->where('url_slug', $url_slug)
+            ->with(['location', 'details', 'brokers.brokerage', 'images'])
+            ->firstOrFail();
 
         return Inertia::render('Properties/Show', [
             'property' => $property,
