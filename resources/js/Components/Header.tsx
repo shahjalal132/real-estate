@@ -67,10 +67,10 @@ export default function Header() {
             hasDropdown: true,
         },
         {
-            label: "UNDERWRITING",
-            link: "/underwriting",
+            label: "PIPELINE",
+            link: "/pipeline",
             type: "megaMenu",
-            megaMenuId: "underwriting",
+            megaMenuId: "pipeline",
             hasDropdown: true,
         },
         {
@@ -93,7 +93,7 @@ export default function Header() {
         <header className="sticky top-0 z-50 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
             <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-3 h-full overflow-visible">
                 <div className="flex items-center justify-between h-full">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 justify-between">
                         {/* Logo */}
                         <Link href="/" className="flex items-center">
                             <img
@@ -117,8 +117,13 @@ export default function Header() {
                                 >
                                     <Link
                                         href={item.link}
-                                        className="header-nav-link text-[#4A4A4A] tracking-[1px] font-normal"
+                                        className={`relative group tracking-[1px] font-normal transition-colors ${
+                                            activeMenu === item.megaMenuId
+                                                ? "text-[#0066cc]"
+                                                : "text-[#4A4A4A]"
+                                        }`}
                                     >
+                                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0066cc] group-hover:w-full group-hover:transition-all transition-all"></span>
                                         <div className="flex items-center justify-between gap-3">
                                             {item.label}
 
@@ -128,7 +133,10 @@ export default function Header() {
                                                     height="0.75em"
                                                     viewBox="0 0 512 512"
                                                     id="header-fa-icon"
-                                                    color="#4a4a4a"
+                                                    color={activeMenu === item.megaMenuId ? "#0066cc" : "#4a4a4a"}
+                                                    className={`transition-all duration-300 ${
+                                                        activeMenu === item.megaMenuId ? "rotate-180" : ""
+                                                    }`}
                                                 >
                                                     <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
                                                 </svg>

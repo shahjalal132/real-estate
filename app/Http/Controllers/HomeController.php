@@ -83,7 +83,7 @@ class HomeController extends Controller
             'heroContent' => [
                 'title' => 'Discover Your New Home',
                 'subtitle' => 'Helping 100 million renters find their perfect fit.',
-                'searchPlaceholder' => 'Chicago, IL',
+                'searchPlaceholder' => 'Enter Location, Broker/Agent, Tenant, Keyword',
                 'backgroundImage' => 'https://images.pexels.com/photos/772472/pexels-photo-772472.jpeg',
             ],
             'statistics' => [

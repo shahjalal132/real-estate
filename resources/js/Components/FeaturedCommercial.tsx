@@ -4,7 +4,7 @@ import { Property } from "../types";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
-import FilterDropdown from "./FilterDropdown";
+import ChoseView from "./ChoseView";
 import Button from "./Button";
 import { useSliderControls } from "./useSliderControls";
 
@@ -118,6 +118,21 @@ export default function FeaturedCommercial({
     const { sliderRef, handlePrev, handleNext } = useSliderControls();
     const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
+    // Get dynamic section heading based on filter selection
+    const getSectionHeading = (filter: string): string => {
+        switch (filter) {
+            case "residential":
+                return "Featured Residential";
+            case "auctions":
+                return "Featured Auctions";
+            case "commercial":
+                return "Featured Commercial";
+            case "all":
+            default:
+                return "Featured Commercial";
+        }
+    };
+
     // Filter properties that are commercial (Commercial, Land, Multifamily, Office, Retail, Industrial)
     // but exclude Residential
     const commercialTypes = [
@@ -168,7 +183,7 @@ export default function FeaturedCommercial({
             <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">
                 <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex-1 text-center sm:text-left">
-                        <SectionHeading>Featured Commercial</SectionHeading>
+                        <SectionHeading>{getSectionHeading(selectedFilter)}</SectionHeading>
                     </div>
 
                     <div className="flex flex-col items-center gap-2 sm:items-end">
@@ -178,7 +193,7 @@ export default function FeaturedCommercial({
                             prevButtonLabel="Previous properties"
                             nextButtonLabel="Next properties"
                         />
-                        <FilterDropdown
+                        <ChoseView
                             value={selectedFilter}
                             onChange={setSelectedFilter}
                         />

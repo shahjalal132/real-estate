@@ -34,6 +34,7 @@ import {
     Users,
     Calculator,
     KeyRound as Key,
+    Bot,
 } from "lucide-react";
 
 interface MenuItem {
@@ -85,37 +86,37 @@ const menus: Record<string, Menu> = {
         id: "comps",
         title: "Comparables",
         layout: "single-column",
-        width: "340px",
+        width: "400px",
         sections: [
             {
                 type: "link-list",
                 items: [
                     {
-                        label: "Commercial Sales",
+                        label: "Commercial Sales Comparables",
                         link: "/comps/commercial-sales",
                         icon: Building2,
                         description: "View commercial property sales data",
                     },
                     {
-                        label: "Commercial Lease",
+                        label: "Commercial Lease Comparables",
                         link: "/comps/commercial-lease",
                         icon: FileText,
                         description: "Commercial lease comparables",
                     },
                     {
-                        label: "Residential Sales",
+                        label: "Residential Sales Comparables",
                         link: "/comps/residential-sales",
                         icon: Home,
                         description: "Residential property sales",
                     },
                     {
-                        label: "Residential Lease",
+                        label: "Residential Lease Comparables",
                         link: "/comps/residential-lease",
                         icon: Key,
                         description: "Residential rental comparables",
                     },
                     {
-                        label: "All Comps",
+                        label: "All Comparables",
                         link: "/comps/all",
                         icon: BarChart3,
                         featured: true,
@@ -129,14 +130,14 @@ const menus: Record<string, Menu> = {
         id: "forSale",
         title: "Properties For Sale",
         layout: "two-column",
-        width: "720px",
+        width: "680px",
         sections: [
             {
                 title: "Commercial",
                 type: "link-list",
                 items: [
                     {
-                        label: "Commercial Sale",
+                        label: "Commercial For Sale",
                         link: "/for-sale/commercial",
                         icon: Building2,
                     },
@@ -144,12 +145,17 @@ const menus: Record<string, Menu> = {
                         label: "Commercial Auctions",
                         link: "/for-sale/commercial-auctions",
                         icon: Megaphone,
-                        badge: "Live",
                     },
                     {
                         label: "Off-Market Commercial",
                         link: "/for-sale/commercial-off-market",
                         icon: Lock,
+                    },
+                    {
+                        label: "All Commercial For Sale",
+                        link: "/for-commercial-sale/all",
+                        icon: Grid3X3,
+                        featured: true,
                     },
                 ],
             },
@@ -158,7 +164,7 @@ const menus: Record<string, Menu> = {
                 type: "link-list",
                 items: [
                     {
-                        label: "Residential Sale",
+                        label: "Residential For Sale",
                         link: "/for-sale/residential",
                         icon: Home,
                     },
@@ -166,35 +172,16 @@ const menus: Record<string, Menu> = {
                         label: "Residential Auctions",
                         link: "/for-sale/residential-auctions",
                         icon: Megaphone,
-                        badge: "Live",
                     },
                     {
                         label: "Off-Market Residential",
                         link: "/for-sale/residential-off-market",
                         icon: Lock,
                     },
-                ],
-            },
-            {
-                title: "Filters",
-                type: "link-list",
-                fullWidth: true,
-                items: [
                     {
-                        label: "Sort by BSF",
-                        link: "/for-sale?sort=bsf",
-                        icon: ArrowUpDown,
-                    },
-                    {
-                        label: "Sort by PPSF",
-                        link: "/for-sale?sort=ppsf",
-                        icon: ArrowUpDown,
-                    },
-                    {
-                        label: "All For Sale",
-                        link: "/for-sale/all",
+                        label: "All Residential For Sale",
+                        link: "/for-residential-sale/all",
                         icon: Grid3X3,
-                        featured: true,
                     },
                 ],
             },
@@ -204,7 +191,7 @@ const menus: Record<string, Menu> = {
         id: "forLease",
         title: "Properties For Lease",
         layout: "single-column",
-        width: "360px",
+        width: "300px",
         sections: [
             {
                 type: "link-list",
@@ -236,7 +223,7 @@ const menus: Record<string, Menu> = {
         id: "scout",
         title: "Scout System",
         layout: "two-column",
-        width: "760px",
+        width: "700px",
         description: "Tenant analysis and location intelligence",
         sections: [
             {
@@ -244,22 +231,17 @@ const menus: Record<string, Menu> = {
                 type: "link-list",
                 items: [
                     {
-                        label: "Tenants",
-                        link: "/scout/tenants",
+                        label: "Owners and Criteria",
+                        link: "/scout/owners-criteria",
                         icon: Users,
-                        description: "View tenant database",
+                        description: "Owners portfolio and requirements",
                     },
                     {
-                        label: "Criteria",
-                        link: "/scout/criteria",
+                        label: "Tenant and Criteria",
+                        link: "/scout/tenant-criteria",
                         icon: ClipboardCheck,
-                        description: "Tenant requirements",
-                    },
-                    {
-                        label: "Ratings",
-                        link: "/scout/ratings",
-                        icon: Star,
-                        description: "Tenant credit ratings",
+                        description:
+                            "Tenant portfolio, requirements and ratings",
                     },
                 ],
             },
@@ -268,16 +250,17 @@ const menus: Record<string, Menu> = {
                 type: "link-list",
                 items: [
                     {
-                        label: "Maps",
-                        link: "/scout/maps",
+                        label: "Location Rankings",
+                        link: "/scout/location-rankings",
                         icon: Map,
-                        description: "Geographic tenant distribution",
+                        description: "Location reports",
                     },
                     {
-                        label: "Distance Calculator",
-                        link: "/scout/distance",
+                        label: "Scout Map",
+                        link: "/scout/scout-map",
                         icon: Navigation,
-                        description: "Calculate proximity to locations",
+                        description:
+                            "Market Research Map, VPD, Population, Income etc",
                     },
                 ],
             },
@@ -299,7 +282,7 @@ const menus: Record<string, Menu> = {
         id: "dispensaries",
         title: "Dispensary Properties",
         layout: "single-column",
-        width: "360px",
+        width: "350px",
         sections: [
             {
                 type: "link-list",
@@ -308,13 +291,13 @@ const menus: Record<string, Menu> = {
                         label: "Dispensaries for Lease",
                         link: "/dispensaries/lease",
                         icon: Store,
-                        description: "Commercial dispensary spaces",
+                        description: "Eligible dispensary for lease",
                     },
                     {
                         label: "Dispensaries for Sale",
                         link: "/dispensaries/sale",
                         icon: DollarSign,
-                        description: "Purchase dispensary properties",
+                        description: "Eligible dispensary for sale",
                     },
                     {
                         label: "All Dispensaries",
@@ -324,8 +307,8 @@ const menus: Record<string, Menu> = {
                         description: "View all available properties",
                     },
                     {
-                        label: "Zoning Map",
-                        link: "/dispensaries/zoning-map",
+                        label: "OCM Map",
+                        link: "/dispensaries/ocm-map",
                         icon: MapPin,
                         description: "View dispensary-eligible zones",
                     },
@@ -333,11 +316,51 @@ const menus: Record<string, Menu> = {
             },
         ],
     },
+    zoningChanges: {
+        id: "zoningChanges",
+        title: "Zoning Changes",
+        layout: "single-column",
+        width: "460px",
+        description:
+            "Current and upcoming rezoning areas with property details",
+        sections: [
+            {
+                title: "Zoning Maps",
+                type: "link-list",
+                items: [
+                    {
+                        label: "Property & Zoning Map",
+                        link: "/zoning-changes/property-map",
+                        icon: Map,
+                        description: "Search by zoning Code",
+                    },
+                    {
+                        label: "Rezoning Map",
+                        link: "/zoning-changes/rezoning-map",
+                        icon: MapPin,
+                        description: "Current and upcoming rezoning areas",
+                    },
+                ],
+            },
+            {
+                type: "featured-card",
+                fullWidth: true,
+                backgroundColor: "#F0F7FF",
+                title: "Zoning Intelligence",
+                description:
+                    "View rezoning areas, click to see addresses and owner details in highlighted zones.",
+                cta: {
+                    text: "View Zoning Map",
+                    link: "/zoning-changes/rezoning-map",
+                },
+            },
+        ],
+    },
     contacts: {
         id: "contacts",
         title: "Contact Directory",
         layout: "single-column",
-        width: "340px",
+        width: "300px",
         sections: [
             {
                 type: "link-list",
@@ -371,81 +394,14 @@ const menus: Record<string, Menu> = {
             },
         ],
     },
-    zoningChanges: {
-        id: "zoningChanges",
-        title: "Zoning Changes",
+    pipeline: {
+        id: "pipeline",
+        title: "Pipeline",
         layout: "two-column",
-        width: "760px",
-        description:
-            "Current and upcoming rezoning areas with property details",
+        width: "700px",
         sections: [
             {
-                title: "Zoning Maps",
-                type: "link-list",
-                items: [
-                    {
-                        label: "Property & Zoning Map",
-                        link: "/zoning-changes/property-map",
-                        icon: Map,
-                        description: "Search by zoning or property type",
-                    },
-                    {
-                        label: "Rezoning Map",
-                        link: "/zoning-changes/rezoning-map",
-                        icon: MapPin,
-                        description: "Current and upcoming rezoning areas",
-                    },
-                    {
-                        label: "ACRIS Data Integration",
-                        link: "/zoning-changes/acris",
-                        icon: FileText,
-                        description: "NYC property records",
-                    },
-                ],
-            },
-            {
-                title: "Filters",
-                type: "link-list",
-                items: [
-                    {
-                        label: "BSF Filter",
-                        link: "/zoning-changes?filter=bsf",
-                        icon: ArrowUpDown,
-                    },
-                    {
-                        label: "PPSF Filter",
-                        link: "/zoning-changes?filter=ppsf",
-                        icon: ArrowUpDown,
-                    },
-                    {
-                        label: "NOI Filter",
-                        link: "/zoning-changes?filter=noi",
-                        icon: ArrowUpDown,
-                    },
-                ],
-            },
-            {
-                type: "featured-card",
-                fullWidth: true,
-                backgroundColor: "#F0F7FF",
-                title: "Zoning Intelligence",
-                description:
-                    "View rezoning areas, click to see addresses and owner details in highlighted zones.",
-                cta: {
-                    text: "View Zoning Map",
-                    link: "/zoning-changes/rezoning-map",
-                },
-            },
-        ],
-    },
-    underwriting: {
-        id: "underwriting",
-        title: "Underwriting Center",
-        layout: "two-column",
-        width: "760px",
-        sections: [
-            {
-                title: "Properties",
+                title: "Properties Pipeline",
                 type: "link-list",
                 items: [
                     {
@@ -473,17 +429,23 @@ const menus: Record<string, Menu> = {
                 type: "link-list",
                 items: [
                     {
-                        label: "Underwriting Sheets",
+                        label: "Underwriting",
                         link: "/underwriting/sheets",
                         icon: Table,
-                        description: "Templates by asset class",
+                        description: "Underwriting templates by asset class",
                     },
                     {
                         label: "New Analysis",
-                        link: "/underwriting/new",
+                        link: "/underwriting/new-manual",
                         icon: PlusCircle,
                         featured: true,
                         description: "Start new underwriting",
+                    },
+                    {
+                        label: "New AI Analysis",
+                        link: "/underwriting/new-ai",
+                        icon: Bot,
+                        description: "Start new AI underwriting",
                     },
                 ],
             },
@@ -526,17 +488,12 @@ const menus: Record<string, Menu> = {
                 type: "link-list",
                 items: [
                     {
-                        label: "Market Research",
-                        link: "/tools/market-research",
-                        icon: BarChart3,
-                    },
-                    {
-                        label: "Zoning Codes (NY)",
+                        label: "Zoning Codes",
                         link: "/tools/zoning-codes",
                         icon: MapPin,
                     },
                     {
-                        label: "ChatGPT Assistant",
+                        label: "Send proof of funds send offers",
                         link: "/tools/chatgpt",
                         icon: MessageCircle,
                         badge: "AI",
@@ -544,11 +501,11 @@ const menus: Record<string, Menu> = {
                 ],
             },
             {
-                title: "Organization",
+                title: "Tools",
                 type: "link-list",
                 items: [
                     {
-                        label: "Quick Links",
+                        label: "Links",
                         link: "/tools/links",
                         icon: LinkIcon,
                     },
@@ -564,31 +521,13 @@ const menus: Record<string, Menu> = {
                     },
                 ],
             },
-            {
-                type: "market-preview",
-                fullWidth: true,
-                backgroundColor: "#F0F7FF",
-                title: "Market Research Data",
-                metrics: [
-                    "VPD",
-                    "Population",
-                    "Income",
-                    "Political Climate",
-                    "Vacancy Rate",
-                    "Owner/Renter Ratio",
-                ],
-                cta: {
-                    text: "View Full Research",
-                    link: "/tools/market-research",
-                },
-            },
         ],
     },
     settings: {
         id: "settings",
         title: "Settings",
         layout: "single-column",
-        width: "360px",
+        width: "300px",
         sections: [
             {
                 type: "link-list",
@@ -640,13 +579,12 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
     if (!menu) return null;
 
     // Determine which menus should be right-aligned to prevent overflow
-    // Wide menus or menus on the right side: tools, settings, underwriting
     const rightAlignMenus = ["tools", "settings", "underwriting"];
     const shouldRightAlign = rightAlignMenus.includes(menuId);
 
     return (
         <div
-            className={`absolute top-full mt-2 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
+            className={`absolute top-full mt-0 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
                 shouldRightAlign ? "right-0" : "left-0"
             }`}
             style={{
