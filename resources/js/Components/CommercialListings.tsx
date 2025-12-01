@@ -4,7 +4,7 @@ import Button from "./Button";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
-import FilterDropdown from "./FilterDropdown";
+import ChoseView from "./ChoseView";
 import { useSliderControls } from "./useSliderControls";
 import { Property } from "../types";
 
@@ -118,7 +118,7 @@ export default function CommercialListings({
                         prevButtonLabel="Previous listings"
                         nextButtonLabel="Next listings"
                     />
-                    <FilterDropdown
+                    <ChoseView
                         value={selectedFilter}
                         onChange={setSelectedFilter}
                     />

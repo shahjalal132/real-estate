@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
 
-interface FilterDropdownProps {
+interface ChoseViewProps {
     value: string;
     onChange: (value: string) => void;
 }
@@ -12,10 +11,10 @@ const OPTIONS = [
     { value: "commercial", label: "Commercial" },
 ];
 
-export default function FilterDropdown({
+export default function ChoseView({
     value,
     onChange,
-}: FilterDropdownProps) {
+}: ChoseViewProps) {
     const [open, setOpen] = useState(false);
 
     const selectedLabel =
@@ -63,3 +62,4 @@ export default function FilterDropdown({
         </div>
     );
 }
+

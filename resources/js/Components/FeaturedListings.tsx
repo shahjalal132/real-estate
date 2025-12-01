@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
 import Button from "./Button";
-import FilterDropdown from "./FilterDropdown";
+import ChoseView from "./ChoseView";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
@@ -118,7 +118,7 @@ export default function FeaturedListings({
                         prevButtonLabel="Previous listings"
                         nextButtonLabel="Next listings"
                     />
-                    <FilterDropdown
+                    <ChoseView
                         value={selectedFilter}
                         onChange={setSelectedFilter}
                     />
