@@ -34,6 +34,7 @@ import {
     Users,
     Calculator,
     KeyRound as Key,
+    Bot,
 } from "lucide-react";
 
 interface MenuItem {
@@ -435,10 +436,16 @@ const menus: Record<string, Menu> = {
                     },
                     {
                         label: "New Analysis",
-                        link: "/underwriting/new",
+                        link: "/underwriting/new-manual",
                         icon: PlusCircle,
                         featured: true,
                         description: "Start new underwriting",
+                    },
+                    {
+                        label: "New AI Analysis",
+                        link: "/underwriting/new-ai",
+                        icon: Bot,
+                        description: "Start new AI underwriting",
                     },
                 ],
             },
@@ -481,17 +488,12 @@ const menus: Record<string, Menu> = {
                 type: "link-list",
                 items: [
                     {
-                        label: "Market Research",
-                        link: "/tools/market-research",
-                        icon: BarChart3,
-                    },
-                    {
-                        label: "Zoning Codes (NY)",
+                        label: "Zoning Codes",
                         link: "/tools/zoning-codes",
                         icon: MapPin,
                     },
                     {
-                        label: "ChatGPT Assistant",
+                        label: "Send proof of funds send offers",
                         link: "/tools/chatgpt",
                         icon: MessageCircle,
                         badge: "AI",
@@ -499,11 +501,11 @@ const menus: Record<string, Menu> = {
                 ],
             },
             {
-                title: "Organization",
+                title: "Tools",
                 type: "link-list",
                 items: [
                     {
-                        label: "Quick Links",
+                        label: "Links",
                         link: "/tools/links",
                         icon: LinkIcon,
                     },
@@ -519,31 +521,13 @@ const menus: Record<string, Menu> = {
                     },
                 ],
             },
-            {
-                type: "market-preview",
-                fullWidth: true,
-                backgroundColor: "#F0F7FF",
-                title: "Market Research Data",
-                metrics: [
-                    "VPD",
-                    "Population",
-                    "Income",
-                    "Political Climate",
-                    "Vacancy Rate",
-                    "Owner/Renter Ratio",
-                ],
-                cta: {
-                    text: "View Full Research",
-                    link: "/tools/market-research",
-                },
-            },
         ],
     },
     settings: {
         id: "settings",
         title: "Settings",
         layout: "single-column",
-        width: "360px",
+        width: "300px",
         sections: [
             {
                 type: "link-list",
