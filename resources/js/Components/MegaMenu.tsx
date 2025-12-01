@@ -579,7 +579,13 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
     if (!menu) return null;
 
     // Determine which menus should be right-aligned to prevent overflow
-    const rightAlignMenus = ["tools", "settings", "underwriting"];
+    const rightAlignMenus = [
+        "tools",
+        "settings",
+        "underwriting",
+        "pipeline",
+        "contacts",
+    ];
     const shouldRightAlign = rightAlignMenus.includes(menuId);
 
     return (
