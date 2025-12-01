@@ -67,10 +67,10 @@ export default function Header() {
             hasDropdown: true,
         },
         {
-            label: "UNDERWRITING",
-            link: "/underwriting",
+            label: "PIPELINE",
+            link: "/pipeline",
             type: "megaMenu",
-            megaMenuId: "underwriting",
+            megaMenuId: "pipeline",
             hasDropdown: true,
         },
         {
