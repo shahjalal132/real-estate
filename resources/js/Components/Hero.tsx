@@ -15,7 +15,7 @@ export default function Hero({ content }: HeroProps) {
     const defaultContent: HeroContent = {
         title: "Discover Your New Home",
         subtitle: "Helping 100 million renters find their perfect fit.",
-        searchPlaceholder: "Chicago, IL",
+        searchPlaceholder: "Search...",
         backgroundImage:
             "https://images.pexels.com/photos/772472/pexels-photo-772472.jpeg",
     };

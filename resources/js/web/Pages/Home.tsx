@@ -12,6 +12,7 @@ import News from "../../Components/News";
 import Testimonials from "../../Components/Testimonials";
 import CTABanner from "../../Components/CTABanner";
 import { Property } from "../../types";
+import { useState } from "react";
 
 interface HeroContent {
     title: string;
