@@ -310,6 +310,7 @@ export default function Properties() {
                             onViewModeChange={setViewMode}
                             onFiltersClick={() => setFiltersExpanded(false)}
                             showExpandedOnly={true}
+                            listingsCount={filteredListings.length}
                         />
                     </div>
                 )}
