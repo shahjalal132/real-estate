@@ -142,6 +142,27 @@ export default function Properties() {
     const [sortOpen, setSortOpen] = useState(false);
     const [sortBy, setSortBy] = useState("recommended");
 
+    const sortOptions = [
+        "Recommended",
+        "New Listings",
+        "Recently Updated",
+        "Sq Ft (High to Low)",
+        "Sq Ft (Low to High)",
+        "Rate per Sq Ft (High to Low)",
+        "Rate per Sq Ft (Low to High)",
+        "Spaces (Most to Least)",
+        "Spaces (Least to Most)",
+    ];
+
+    const getSortValue = (label: string) => {
+        return label.toLowerCase().replace(/\s+/g, "-").replace(/[()]/g, "");
+    };
+
+    const getSortLabel = (value: string) => {
+        const option = sortOptions.find((opt) => getSortValue(opt) === value);
+        return option || value;
+    };
+
     const filteredListings = useMemo(
         () => applyFilter(properties, filter),
         [properties, filter]
@@ -246,12 +267,7 @@ export default function Properties() {
                                 onClick={() => setSortOpen(!sortOpen)}
                                 className="inline-flex items-center gap-2 rounded border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                             >
-                                <span>
-                                    ↑↓{" "}
-                                    {sortBy === "recommended"
-                                        ? "Recommended"
-                                        : sortBy}
-                                </span>
+                                <span>↑↓ {getSortLabel(sortBy)}</span>
                                 <ChevronDown className="h-4 w-4" />
                             </button>
                             {sortOpen && (
@@ -260,36 +276,32 @@ export default function Properties() {
                                         className="fixed inset-0 z-10"
                                         onClick={() => setSortOpen(false)}
                                     />
-                                    <div className="absolute right-0 z-20 mt-2 w-48 rounded-md bg-white shadow-lg border border-gray-200">
+                                    <div className="absolute right-0 z-20 mt-2 w-64 rounded-md bg-white shadow-lg border border-gray-200">
                                         <div className="py-1">
-                                            {[
-                                                "recommended",
-                                                "price-low",
-                                                "price-high",
-                                                "newest",
-                                                "oldest",
-                                            ].map((option) => (
-                                                <button
-                                                    key={option}
-                                                    type="button"
-                                                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                                                    onClick={() => {
-                                                        setSortBy(option);
-                                                        setSortOpen(false);
-                                                    }}
-                                                >
-                                                    {option
-                                                        .split("-")
-                                                        .map(
-                                                            (word) =>
-                                                                word
-                                                                    .charAt(0)
-                                                                    .toUpperCase() +
-                                                                word.slice(1)
-                                                        )
-                                                        .join(" ")}
-                                                </button>
-                                            ))}
+                                            {sortOptions.map((option) => {
+                                                const optionValue =
+                                                    getSortValue(option);
+                                                return (
+                                                    <button
+                                                        key={option}
+                                                        type="button"
+                                                        className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors ${
+                                                            sortBy ===
+                                                            optionValue
+                                                                ? "bg-gray-50 text-[#0066CC] font-medium"
+                                                                : "text-gray-700"
+                                                        }`}
+                                                        onClick={() => {
+                                                            setSortBy(
+                                                                optionValue
+                                                            );
+                                                            setSortOpen(false);
+                                                        }}
+                                                    >
+                                                        {option}
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </>

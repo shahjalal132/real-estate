@@ -1,8 +1,8 @@
-import { Search } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface HeroContent {
     title: string;
-    subtitle: string;
     searchPlaceholder: string;
     backgroundImage: string;
 }
@@ -13,80 +13,137 @@ interface HeroProps {
 
 export default function Hero({ content }: HeroProps) {
     const defaultContent: HeroContent = {
-        title: "Discover Your New Home",
-        subtitle: "Helping 100 million renters find their perfect fit.",
-        searchPlaceholder: "Search...",
+        title: "Your Next Deal Starts Here.",
+        searchPlaceholder: "Enter Location, Broker/Agent, or Description",
         backgroundImage:
             "https://images.pexels.com/photos/772472/pexels-photo-772472.jpeg",
     };
 
     const heroContent = content || defaultContent;
 
+    const [activeTab, setActiveTab] = useState("Sale");
+    const [propertyTypeOpen, setPropertyTypeOpen] = useState(false);
+    const [selectedPropertyType, setSelectedPropertyType] =
+        useState("All Types");
+
+    const propertyTypes = [
+        "All Types",
+        "Retail",
+        "Office",
+        "Industrial",
+        "Multifamily",
+        "Land",
+        "Hospitality",
+        "Mixed Use",
+    ];
+
+    const tabs = ["Sale", "Lease", "Auctions", "Comps & Records"];
+
     return (
-        <section className="relative flex h-[450px] w-full items-center justify-center overflow-hidden sm:h-[500px] lg:h-[600px]">
+        <section className="relative flex min-h-[500px] w-full items-center justify-center overflow-hidden sm:min-h-[600px] lg:min-h-[650px]">
+            {/* Background Image */}
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{
                     backgroundImage: `url('${heroContent.backgroundImage}')`,
                 }}
             />
-            <div className="absolute inset-0 bg-black opacity-50" />
 
-            {/* Title */}
-            <div className="relative z-10 mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2 text-center text-white">
-                <h1 className="mb-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[4.5rem]">
+            {/* Gradient Overlay - Blue and black mixed effect */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0066CC]/40 via-[#003366]/50 to-black/60" />
+
+            {/* Content */}
+            <div className="relative z-10 mx-auto w-[95%] max-w-6xl px-4 text-center sm:px-6">
+                {/* Headline */}
+                <h1 className="mb-8 text-4xl font-bold text-white sm:text-5xl lg:text-6xl drop-shadow-lg">
                     {heroContent.title}
                 </h1>
-                {/* Subtitle */}
-                <p className="mb-6 text-lg font-light text-white/95 sm:text-xl lg:text-[1.75rem]">
-                    {heroContent.subtitle}
-                </p>
 
-                {/* Categories */}
-                <div className="flex items-center justify-between gap-2 sm:gap-3 mx-auto w-full max-w-[600px] mb-4 bg-white/20 rounded-lg px-4 py-3 shadow-lg font-semibold text-sm sm:text-xs text-[#fdfbfb] max-[615px]:flex-wrap max-[615px]:justify-center max-[615px]:gap-2 max-[615px]:py-2.5">
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        For Sale
-                    </span>
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        For Lease
-                    </span>
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        Scout
-                    </span>
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        Comps
-                    </span>
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        Dispensaries
-                    </span>
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        Owner
-                    </span>
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        Tenant
-                    </span>
-                    <span className="hover:text-[#0066CC] transition-colors cursor-pointer px-2 py-1 rounded">
-                        Records
-                    </span>
+                {/* Tabs */}
+                <div className="mb-6 flex items-center justify-center gap-8 pb-2">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab}
+                            type="button"
+                            onClick={() => setActiveTab(tab)}
+                            className={`pb-2 text-base font-medium transition-colors ${
+                                activeTab === tab
+                                    ? "border-b-2 border-white text-white"
+                                    : "text-white/80 hover:text-white"
+                            }`}
+                        >
+                            {tab}
+                        </button>
+                    ))}
                 </div>
 
-                {/* Search */}
-                <div className="mx-auto w-full max-w-[700px]">
-                    <div className="flex items-center rounded-full bg-white px-5 py-2 shadow-lg transition-all duration-300 hover:shadow-xl sm:px-7 max-[615px]:px-3 max-[615px]:py-1.5">
+                {/* Search Bar */}
+                <div className="mx-auto w-full max-w-4xl">
+                    <div className="flex items-center gap-0 rounded-lg bg-white shadow-lg">
+                        {/* Property Type Dropdown */}
+                        <div className="relative">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setPropertyTypeOpen(!propertyTypeOpen)
+                                }
+                                className="flex items-center gap-2 border-r border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                                <span>{selectedPropertyType}</span>
+                                <ChevronDown
+                                    className={`h-4 w-4 transition-transform ${
+                                        propertyTypeOpen ? "rotate-180" : ""
+                                    }`}
+                                />
+                            </button>
+                            {propertyTypeOpen && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-10"
+                                        onClick={() =>
+                                            setPropertyTypeOpen(false)
+                                        }
+                                    />
+                                    <div className="absolute left-0 z-20 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
+                                        <div className="py-1">
+                                            {propertyTypes.map((type) => (
+                                                <button
+                                                    key={type}
+                                                    type="button"
+                                                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => {
+                                                        setSelectedPropertyType(
+                                                            type
+                                                        );
+                                                        setPropertyTypeOpen(
+                                                            false
+                                                        );
+                                                    }}
+                                                >
+                                                    {type}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Search Input */}
                         <input
                             type="text"
-                            className="flex-1 bg-transparent py-3 text-base text-[#333333] placeholder:text-[#666666] focus:outline-none sm:text-lg max-[615px]:py-2 max-[615px]:text-sm max-[615px]:placeholder:text-xs"
                             placeholder={heroContent.searchPlaceholder}
-                            aria-label="Search location"
+                            className="flex-1 border-0 bg-transparent px-4 py-3 text-base text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-0"
+                            aria-label="Search location, broker, or description"
                         />
+
+                        {/* Search Button */}
                         <button
-                            className="rounded-full p-3 transition-all duration-200 hover:bg-[#0066CC] hover:text-white focus:outline-none max-[615px]:p-2 shrink-0 group"
+                            type="button"
+                            className="rounded-r-lg bg-[#0066CC] px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0052A3] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2"
                             aria-label="Search"
                         >
-                            <Search
-                                color="#0066CC"
-                                className="max-[615px]:w-4 max-[615px]:h-4 group-hover:text-white transition-colors"
-                            />
+                            Search
                         </button>
                     </div>
                 </div>
