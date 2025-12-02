@@ -1,11 +1,15 @@
 import { useMemo, useState } from "react";
-import { usePage } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react";
 import AppLayout from "../Layouts/AppLayout";
 import SectionHeading from "../../Components/SectionHeading";
 import PropertyCard, { PropertyCardProps } from "../../Components/PropertyCard";
+import PropertySearchHeader, {
+    SearchFilters,
+} from "../../Components/PropertySearchHeader";
 import FilterBar from "../../Components/FilterBar";
 import MapView from "../../Components/MapView";
 import { Property } from "../../types";
+import { ChevronDown } from "lucide-react";
 
 interface PageProps {
     properties?: Property[];
@@ -134,6 +138,30 @@ export default function Properties() {
     const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
         null
     );
+    const [filtersExpanded, setFiltersExpanded] = useState(false);
+    const [sortOpen, setSortOpen] = useState(false);
+    const [sortBy, setSortBy] = useState("recommended");
+
+    const sortOptions = [
+        "Recommended",
+        "New Listings",
+        "Recently Updated",
+        "Sq Ft (High to Low)",
+        "Sq Ft (Low to High)",
+        "Rate per Sq Ft (High to Low)",
+        "Rate per Sq Ft (Low to High)",
+        "Spaces (Most to Least)",
+        "Spaces (Least to Most)",
+    ];
+
+    const getSortValue = (label: string) => {
+        return label.toLowerCase().replace(/\s+/g, "-").replace(/[()]/g, "");
+    };
+
+    const getSortLabel = (value: string) => {
+        const option = sortOptions.find((opt) => getSortValue(opt) === value);
+        return option || value;
+    };
 
     const filteredListings = useMemo(
         () => applyFilter(properties, filter),
@@ -144,48 +172,160 @@ export default function Properties() {
         ? section.charAt(0).toUpperCase() + section.slice(1) + " Properties"
         : "All Properties";
 
+    // Calculate active filters count
+    const activeFiltersCount = useMemo(() => {
+        let count = 0;
+        if (filter && filter !== "all") count++;
+        if (section) count++;
+        return count;
+    }, [filter, section]);
+
+    const handleSearch = (searchFilters: SearchFilters) => {
+        const params: Record<string, string> = {};
+
+        if (searchFilters.status !== "all") {
+            params.section = searchFilters.status;
+        }
+        if (searchFilters.propertyType !== "all") {
+            params.type = searchFilters.propertyType;
+        }
+        if (searchFilters.priceRange !== "any") {
+            const [min, max] = searchFilters.priceRange.split("-");
+            if (min)
+                params.min_price = min
+                    .replace("k", "000")
+                    .replace("m", "000000");
+            if (max)
+                params.max_price = max
+                    .replace("k", "000")
+                    .replace("m", "000000");
+        }
+
+        router.get("/properties", params, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const handleClearFilters = () => {
+        router.get(
+            "/properties",
+            {},
+            {
+                preserveState: false,
+            }
+        );
+    };
+
     return (
         <AppLayout title={sectionTitle} footerClassName="pt-32">
+            {/* Property Search Header */}
+            <PropertySearchHeader
+                onSearch={handleSearch}
+                onFiltersClick={() => setFiltersExpanded(!filtersExpanded)}
+                onSaveSearch={() => {
+                    // TODO: Implement save search functionality
+                    console.log("Save search");
+                }}
+                onClearFilters={handleClearFilters}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                activeFiltersCount={activeFiltersCount}
+            />
+
             <section className="mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2 py-10">
-                <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-                    <div>
+                {/* Results Header */}
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex-1">
                         <SectionHeading>{sectionTitle}</SectionHeading>
-                        <p className="mt-2 text-sm text-gray-600">
-                            Showing {filteredListings.length} properties
-                            {section && (
+                    </div>
+
+                    {/* Tabs and Results Count */}
+                    <div className="flex items-center gap-6">
+                        {/* Tabs */}
+                        <div className="flex items-center gap-1 border-b border-gray-200">
+                            <button className="px-4 py-2 text-sm font-medium text-[#0066CC] border-b-2 border-[#0066CC]">
+                                Results
+                            </button>
+                            <button className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC]">
+                                Insights
+                            </button>
+                        </div>
+
+                        {/* Results Count */}
+                        <div className="text-sm text-gray-600">
+                            <span className="font-semibold">
+                                {filteredListings.length}
+                            </span>{" "}
+                            results
+                        </div>
+
+                        {/* Sort Dropdown */}
+                        <div className="relative">
+                            <button
+                                type="button"
+                                onClick={() => setSortOpen(!sortOpen)}
+                                className="inline-flex items-center gap-2 rounded border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                <span>↑↓ {getSortLabel(sortBy)}</span>
+                                <ChevronDown className="h-4 w-4" />
+                            </button>
+                            {sortOpen && (
                                 <>
-                                    {" "}
-                                    for{" "}
-                                    <span className="font-semibold">
-                                        {section}
-                                    </span>
+                                    <div
+                                        className="fixed inset-0 z-10"
+                                        onClick={() => setSortOpen(false)}
+                                    />
+                                    <div className="absolute right-0 z-20 mt-2 w-64 rounded-md bg-white shadow-lg border border-gray-200">
+                                        <div className="py-1">
+                                            {sortOptions.map((option) => {
+                                                const optionValue =
+                                                    getSortValue(option);
+                                                return (
+                                                    <button
+                                                        key={option}
+                                                        type="button"
+                                                        className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors ${
+                                                            sortBy ===
+                                                            optionValue
+                                                                ? "bg-gray-50 text-[#0066CC] font-medium"
+                                                                : "text-gray-700"
+                                                        }`}
+                                                        onClick={() => {
+                                                            setSortBy(
+                                                                optionValue
+                                                            );
+                                                            setSortOpen(false);
+                                                        }}
+                                                    >
+                                                        {option}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                 </>
                             )}
-                            {filter && filter !== "all" && (
-                                <>
-                                    {" "}
-                                    with filter{" "}
-                                    <span className="font-semibold">
-                                        {filter}
-                                    </span>
-                                </>
-                            )}
-                            .
-                        </p>
+                        </div>
                     </div>
                 </div>
 
-                {/* Filter bar */}
-                <div className="my-6">
-                    <FilterBar
-                        searchValue={searchValue}
-                        onSearchChange={setSearchValue}
-                        auctionValue={auctionValue}
-                        onAuctionChange={setAuctionValue}
-                        viewMode={viewMode}
-                        onViewModeChange={setViewMode}
-                    />
-                </div>
+                {/* Expanded Filters Section (when All Filters is clicked) */}
+                {filtersExpanded && (
+                    <div className="mb-6">
+                        <FilterBar
+                            searchValue={searchValue}
+                            onSearchChange={setSearchValue}
+                            auctionValue={auctionValue}
+                            onAuctionChange={setAuctionValue}
+                            viewMode={viewMode}
+                            onViewModeChange={setViewMode}
+                            onFiltersClick={() => setFiltersExpanded(false)}
+                            showExpandedOnly={true}
+                            listingsCount={filteredListings.length}
+                        />
+                    </div>
+                )}
 
                 {/* Split View: Listings + Map */}
                 {viewMode === "map" ? (
