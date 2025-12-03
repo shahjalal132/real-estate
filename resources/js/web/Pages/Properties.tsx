@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { usePage, router } from "@inertiajs/react";
 import AppLayout from "../Layouts/AppLayout";
 import SectionHeading from "../../Components/SectionHeading";
@@ -9,10 +9,10 @@ import PropertySearchHeader, {
 import AllFiltersModal, {
     FilterValues,
 } from "../../Components/AllFiltersModal";
+import PropertySort from "../../Components/PropertySort";
 import MapView from "../../Components/MapView";
 import ScrollToTop from "../../Components/ScrollToTop";
 import { Property } from "../../types";
-import { ChevronDown } from "lucide-react";
 
 interface PageProps {
     properties?: Property[];
@@ -135,40 +135,22 @@ export default function Properties() {
     const { props } = usePage<PageProps>();
     const { properties = [], filter, section } = props;
 
-    const [searchValue, setSearchValue] = useState("");
-    const [auctionValue, setAuctionValue] = useState("all");
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
     const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
         null
     );
     const [filtersExpanded, setFiltersExpanded] = useState(false);
-    const [sortOpen, setSortOpen] = useState(false);
-    const [sortBy, setSortBy] = useState("recommended");
+    const [sortedProperties, setSortedProperties] =
+        useState<Property[]>(properties);
 
-    const sortOptions = [
-        "Recommended",
-        "New Listings",
-        "Recently Updated",
-        "Sq Ft (High to Low)",
-        "Sq Ft (Low to High)",
-        "Rate per Sq Ft (High to Low)",
-        "Rate per Sq Ft (Low to High)",
-        "Spaces (Most to Least)",
-        "Spaces (Least to Most)",
-    ];
-
-    const getSortValue = (label: string) => {
-        return label.toLowerCase().replace(/\s+/g, "-").replace(/[()]/g, "");
-    };
-
-    const getSortLabel = (value: string) => {
-        const option = sortOptions.find((opt) => getSortValue(opt) === value);
-        return option || value;
-    };
+    // Update sorted properties when properties change
+    useEffect(() => {
+        setSortedProperties(properties);
+    }, [properties]);
 
     const filteredListings = useMemo(
-        () => applyFilter(properties, filter),
-        [properties, filter]
+        () => applyFilter(sortedProperties, filter),
+        [sortedProperties, filter]
     );
 
     const sectionTitle = section
@@ -245,16 +227,6 @@ export default function Properties() {
 
                     {/* Tabs and Results Count */}
                     <div className="flex items-center gap-6">
-                        {/* Tabs */}
-                        <div className="flex items-center gap-1 border-b border-gray-200">
-                            <button className="px-4 py-2 text-sm font-medium text-[#0066CC] border-b-2 border-[#0066CC]">
-                                Results
-                            </button>
-                            <button className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC]">
-                                Insights
-                            </button>
-                        </div>
-
                         {/* Results Count */}
                         <div className="text-sm text-gray-600">
                             <span className="font-semibold">
@@ -264,52 +236,11 @@ export default function Properties() {
                         </div>
 
                         {/* Sort Dropdown */}
-                        <div className="relative">
-                            <button
-                                type="button"
-                                onClick={() => setSortOpen(!sortOpen)}
-                                className="inline-flex items-center gap-2 rounded border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                            >
-                                <span>↑↓ {getSortLabel(sortBy)}</span>
-                                <ChevronDown className="h-4 w-4" />
-                            </button>
-                            {sortOpen && (
-                                <>
-                                    <div
-                                        className="fixed inset-0 z-10"
-                                        onClick={() => setSortOpen(false)}
-                                    />
-                                    <div className="absolute right-0 z-20 mt-2 w-64 rounded-md bg-white shadow-lg border border-gray-200">
-                                        <div className="py-1">
-                                            {sortOptions.map((option) => {
-                                                const optionValue =
-                                                    getSortValue(option);
-                                                return (
-                                                    <button
-                                                        key={option}
-                                                        type="button"
-                                                        className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors ${
-                                                            sortBy ===
-                                                            optionValue
-                                                                ? "bg-gray-50 text-[#0066CC] font-medium"
-                                                                : "text-gray-700"
-                                                        }`}
-                                                        onClick={() => {
-                                                            setSortBy(
-                                                                optionValue
-                                                            );
-                                                            setSortOpen(false);
-                                                        }}
-                                                    >
-                                                        {option}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                        <PropertySort
+                            properties={properties}
+                            section={section}
+                            onSortChange={setSortedProperties}
+                        />
                     </div>
                 </div>
 

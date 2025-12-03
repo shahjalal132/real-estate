@@ -35,6 +35,38 @@ class PropertyController extends Controller
         // Always exclude properties without thumbnails
         $query->whereNotNull('thumbnail_url');
 
+        // Location filter
+        if ($request->has('location') && $request->input('location')) {
+            $location = $request->input('location');
+            $query->whereHas('location', function ($locQuery) use ($location) {
+                $locQuery->where('city', 'like', "%{$location}%")
+                    ->orWhere('state_name', 'like', "%{$location}%")
+                    ->orWhere('state_code', 'like', "%{$location}%")
+                    ->orWhere('zip', 'like', "%{$location}%")
+                    ->orWhere('full_address', 'like', "%{$location}%");
+            });
+        }
+
+        // Keywords filter
+        if ($request->has('keywords') && $request->input('keywords')) {
+            $keywords = $request->input('keywords');
+            $query->where(function ($q) use ($keywords) {
+                $q->where('name', 'like', "%{$keywords}%")
+                    ->orWhere('description', 'like', "%{$keywords}%")
+                    ->orWhere('marketing_description', 'like', "%{$keywords}%");
+            });
+        }
+
+        // Property Types filter (Building Type)
+        if ($request->has('property_types') && $request->input('property_types')) {
+            $propertyTypes = explode(',', $request->input('property_types'));
+            $query->where(function ($q) use ($propertyTypes) {
+                foreach ($propertyTypes as $type) {
+                    $q->orWhereJsonContains('types', trim($type));
+                }
+            });
+        }
+
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -68,17 +100,6 @@ class PropertyController extends Controller
         }
 
         $properties = $query->orderBy('created_at', 'desc')->get();
-
-        // Apply client-side filter if needed (for the filter dropdown)
-        if ($filter && $filter !== 'all') {
-            $filteredProperties = $properties->filter(function ($property, $index) use ($filter) {
-                if ($filter === 'option1') return $index % 3 === 0;
-                if ($filter === 'option2') return $index % 3 === 1;
-                if ($filter === 'option3') return $index % 3 === 2;
-                return true;
-            });
-            $properties = $filteredProperties->values();
-        }
 
         return Inertia::render('Properties', [
             'properties' => $properties,

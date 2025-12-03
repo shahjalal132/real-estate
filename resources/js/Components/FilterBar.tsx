@@ -30,6 +30,7 @@ interface FilterBarProps {
     onViewModeChange?: (mode: "grid" | "map") => void;
     showExpandedOnly?: boolean;
     listingsCount?: number;
+    onApplyFilters?: (filters: any) => void;
 }
 
 export default function FilterBar({
@@ -42,6 +43,7 @@ export default function FilterBar({
     onViewModeChange,
     showExpandedOnly = false,
     listingsCount = 0,
+    onApplyFilters,
 }: FilterBarProps) {
     const [auctionOpen, setAuctionOpen] = useState(false);
     const [filtersExpanded, setFiltersExpanded] = useState(
@@ -102,8 +104,7 @@ export default function FilterBar({
     };
 
     const handleApply = () => {
-        // Handle filter application here
-        console.log("Applied filters:", {
+        const filterValues = {
             location,
             keywords,
             propertyTypes,
@@ -121,7 +122,16 @@ export default function FilterBar({
             listingStatus,
             opportunityZone,
             propertyClass,
-        });
+        };
+
+        // Call the callback if provided (for FeaturedResidential)
+        if (onApplyFilters) {
+            onApplyFilters(filterValues);
+        } else {
+            // Default behavior - log filters
+            console.log("Applied filters:", filterValues);
+        }
+
         setFiltersExpanded(false);
         onFiltersClick?.();
     };

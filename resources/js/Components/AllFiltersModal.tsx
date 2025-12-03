@@ -83,7 +83,9 @@ export default function AllFiltersModal({
     const [brokerAgent, setBrokerAgent] = useState("");
     const [brokerageShop, setBrokerageShop] = useState("");
     const [tenancy, setTenancy] = useState<"single" | "multiple">("single");
-    const [timelineType, setTimelineType] = useState<"timePeriod" | "custom">("timePeriod");
+    const [timelineType, setTimelineType] = useState<"timePeriod" | "custom">(
+        "timePeriod"
+    );
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
     const [timePeriod, setTimePeriod] = useState("Any");
@@ -168,15 +170,15 @@ export default function AllFiltersModal({
                 onClick={onClose}
             />
 
-            {/* Modal - Slides in from right */}
-            <div className="fixed right-0 top-0 z-50 h-full w-full max-w-[800px] bg-white shadow-xl transition-transform duration-300 ease-in-out translate-x-0 overflow-hidden">
+            {/* Modal - Slides in from left */}
+            <div className="fixed left-0 top-0 z-50 h-full w-full max-w-[800px] bg-white shadow-xl transition-transform duration-300 ease-in-out translate-x-0 overflow-hidden">
                 <div className="flex h-full flex-col overflow-hidden">
                     {/* Header */}
                     <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
                         <div className="flex items-center gap-3">
                             <SlidersHorizontal className="h-5 w-5 text-[#0066CC]" />
                             <h2 className="text-lg font-semibold text-gray-900">
-                                All Filters
+                                Filters
                             </h2>
                             {activeFiltersCount > 0 && (
                                 <span className="bg-[#0066CC] text-white rounded-full px-2 py-0.5 text-xs font-bold min-w-[20px] text-center">
@@ -221,7 +223,9 @@ export default function AllFiltersModal({
                                     onMinRateChange={setMinRate}
                                     onMaxRateChange={setMaxRate}
                                     excludeUndisclosed={excludeUndisclosedRate}
-                                    onExcludeUndisclosedChange={setExcludeUndisclosedRate}
+                                    onExcludeUndisclosedChange={
+                                        setExcludeUndisclosedRate
+                                    }
                                 />
                                 <SizeFilter
                                     sizeType={sizeType}
@@ -281,14 +285,17 @@ export default function AllFiltersModal({
                             <input
                                 type="checkbox"
                                 checked={saveSearch}
-                                onChange={(e) => setSaveSearch(e.target.checked)}
+                                onChange={(e) =>
+                                    setSaveSearch(e.target.checked)
+                                }
                                 className="h-4 w-4 rounded border-gray-300 text-[#0066CC] focus:ring-[#0066CC] accent-[#0066CC] shrink-0"
                             />
                             <span className="text-sm text-gray-700 whitespace-nowrap">
                                 Save Search
                             </span>
                             <span className="text-xs text-gray-500">
-                                Receive email alerts when new properties hit the market.
+                                Receive email alerts when new properties hit the
+                                market.
                             </span>
                         </label>
 
@@ -298,7 +305,9 @@ export default function AllFiltersModal({
                             onClick={handleApply}
                             className="rounded-lg bg-[#0066CC] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#004C99] shadow-md hover:shadow-lg transition-all whitespace-nowrap"
                         >
-                            Show {listingsCount > 0 ? `${listingsCount}+` : "999+"} Spaces
+                            Show{" "}
+                            {listingsCount > 0 ? `${listingsCount}+` : "999+"}{" "}
+                            Spaces
                         </button>
                     </div>
                 </div>
