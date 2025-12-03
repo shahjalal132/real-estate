@@ -8,6 +8,7 @@ import PropertySearchHeader, {
 } from "../../Components/PropertySearchHeader";
 import FilterBar from "../../Components/FilterBar";
 import MapView from "../../Components/MapView";
+import ScrollToTop from "../../Components/ScrollToTop";
 import { Property } from "../../types";
 import { ChevronDown } from "lucide-react";
 
@@ -408,6 +409,7 @@ export default function Properties() {
                     </div>
                 )}
             </section>
+            <ScrollToTop />
         </AppLayout>
     );
 }

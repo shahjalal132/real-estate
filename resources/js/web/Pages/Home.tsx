@@ -9,6 +9,7 @@ import Features from "../../Components/Features";
 import News from "../../Components/News";
 import Testimonials from "../../Components/Testimonials";
 import CTABanner from "../../Components/CTABanner";
+import ScrollToTop from "../../Components/ScrollToTop";
 import { Property } from "../../types";
 
 interface HeroContent {
@@ -103,6 +104,7 @@ export default function Home({
             <News news={news} />
             <Testimonials testimonials={testimonials} />
             <CTABanner content={ctaBanner} />
+            <ScrollToTop />
         </AppLayout>
     );
 }
