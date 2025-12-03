@@ -1,15 +1,22 @@
 import { usePage } from "@inertiajs/react";
+import { useRef } from "react";
 import AppLayout from "../../Layouts/AppLayout";
 import { Property } from "../../../types";
 import { PageProps as InertiaPageProps } from "../../../types";
-import PropertyHero from "../../../Components/Property/PropertyHero";
-import PropertyHeader from "../../../Components/Property/PropertyHeader";
+import PropertyOverview from "../../../Components/Property/PropertyOverview";
+import PropertyTopTabs from "../../../Components/Property/PropertyTopTabs";
+import PropertyTabs from "../../../Components/Property/PropertyTabs";
 import PropertyDescription from "../../../Components/Property/PropertyDescription";
 import PropertyDetailsGrid from "../../../Components/Property/PropertyDetailsGrid";
 import PropertyLocationMap from "../../../Components/Property/PropertyLocationMap";
-import PropertyQuickInfo from "../../../Components/Property/PropertyQuickInfo";
 import PropertyBrokers from "../../../Components/Property/PropertyBrokers";
-import PropertyExternalLink from "../../../Components/Property/PropertyExternalLink";
+import PropertyHistory from "../../../Components/Property/PropertyHistory";
+import TaxHistory from "../../../Components/Property/TaxHistory";
+import ValuationCalculator from "../../../Components/Property/ValuationCalculator";
+import ValuationMetrics from "../../../Components/Property/ValuationMetrics";
+import Demographics from "../../../Components/Property/Demographics";
+import ClimateRisk from "../../../Components/Property/ClimateRisk";
+import LocationInsights from "../../../Components/Property/LocationInsights";
 
 interface PageProps extends InertiaPageProps {
     property: Property;
@@ -26,6 +33,21 @@ interface ExtendedPropertyImage {
 export default function PropertyShow() {
     const { props } = usePage<PageProps>();
     const { property } = props;
+
+    // Refs for scrolling to sections
+    const sectionRefs = {
+        contacts: useRef<HTMLDivElement>(null),
+        details: useRef<HTMLDivElement>(null),
+        about: useRef<HTMLDivElement>(null),
+        map: useRef<HTMLDivElement>(null),
+        climate: useRef<HTMLDivElement>(null),
+        history: useRef<HTMLDivElement>(null),
+        tax: useRef<HTMLDivElement>(null),
+        valuation: useRef<HTMLDivElement>(null),
+        metrics: useRef<HTMLDivElement>(null),
+        demographics: useRef<HTMLDivElement>(null),
+        insights: useRef<HTMLDivElement>(null),
+    };
 
     const location = property.location;
     const details = property.details;
@@ -86,72 +108,168 @@ export default function PropertyShow() {
             ? `${location.address}, ${location.city}, ${location.state_name} ${location.zip}`
             : "Address not available");
 
+    const handleViewMap = () => {
+        sectionRefs.map.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        });
+    };
+
+    const handleViewStreetView = () => {
+        // Street view functionality
+        window.open(
+            `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${location?.latitude},${location?.longitude}`,
+            "_blank"
+        );
+    };
+
+    const handleTabClick = (tabId: string) => {
+        const ref = sectionRefs[tabId as keyof typeof sectionRefs];
+        if (ref?.current) {
+            ref.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+    };
+
     return (
         <AppLayout title={property.name}>
-            <div className="min-h-screen bg-gray-50">
-                {/* Hero Section */}
-                <PropertyHero
-                    images={images}
-                    mapUrl={mapUrl}
-                    propertyName={property.name}
-                    thumbnailUrl={property.thumbnail_url}
-                />
+            <div className="min-h-screen bg-white">
+                <div className="max-w-[95%] mx-auto px-3  py-4">
+                    {/* Top Tabs */}
+                    <PropertyTopTabs />
 
-                {/* Main Content */}
-                <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2  relative z-20">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                        {/* Main Content Column */}
-                        <div className="lg:col-span-2 space-y-6">
-                            {/* Property Header */}
-                            <PropertyHeader
-                                property={property}
-                                fullAddress={fullAddress}
-                                formattedPrice={formattedPrice}
-                            />
+                    {/* Property Overview */}
+                    <PropertyOverview
+                        property={property}
+                        images={images}
+                        formattedPrice={formattedPrice}
+                        fullAddress={fullAddress}
+                        onViewMap={handleViewMap}
+                        onViewStreetView={handleViewStreetView}
+                    />
 
-                            {/* Description */}
-                            <PropertyDescription
-                                description={property.description}
-                                marketingDescription={
-                                    property.marketing_description
-                                }
-                            />
+                    {/* Tabs Navigation */}
+                    <PropertyTabs onTabClick={handleTabClick} />
 
-                            {/* Property Details */}
+                    {/* All Sections Displayed Serially */}
+                    <div className="space-y-8 mb-8">
+                        {/* Listing Contacts Section */}
+                        <div
+                            id="contacts"
+                            ref={sectionRefs.contacts}
+                            className="scroll-mt-20"
+                        >
+                            <PropertyBrokers brokers={brokers} />
+                        </div>
+
+                        {/* Details Section */}
+                        <div
+                            id="details"
+                            ref={sectionRefs.details}
+                            className="scroll-mt-20"
+                        >
                             <PropertyDetailsGrid
                                 details={details}
                                 isInOpportunityZone={
                                     property.is_in_opportunity_zone
                                 }
                             />
+                        </div>
 
-                            {/* Location Map */}
+                        {/* About Property Section */}
+                        <div
+                            id="about"
+                            ref={sectionRefs.about}
+                            className="scroll-mt-20"
+                        >
+                            <PropertyDescription
+                                description={property.description}
+                                marketingDescription={
+                                    property.marketing_description
+                                }
+                            />
+                        </div>
+
+                        {/* Map Section */}
+                        <div
+                            id="map"
+                            ref={sectionRefs.map}
+                            className="scroll-mt-20"
+                        >
                             <PropertyLocationMap
                                 mapUrl={mapUrl}
                                 fullAddress={fullAddress}
                             />
                         </div>
 
-                        {/* Sidebar Column */}
-                        <div className="lg:col-span-1">
-                            <div className="lg:sticky lg:top-8 space-y-6">
-                                {/* Quick Info */}
-                                <PropertyQuickInfo
-                                    property={property}
-                                    formattedPrice={formattedPrice}
-                                    lotSizeAcres={details?.lot_size_acres}
-                                />
+                        {/* Climate Risk Section */}
+                        <div
+                            id="climate"
+                            ref={sectionRefs.climate}
+                            className="scroll-mt-20"
+                        >
+                            <ClimateRisk />
+                        </div>
 
-                                {/* Brokers */}
-                                <PropertyBrokers brokers={brokers} />
+                        {/* Property History Section */}
+                        <div
+                            id="history"
+                            ref={sectionRefs.history}
+                            className="scroll-mt-20"
+                        >
+                            <PropertyHistory />
+                        </div>
 
-                                {/* External Link */}
-                                {property.external_url && (
-                                    <PropertyExternalLink
-                                        externalUrl={property.external_url}
-                                    />
-                                )}
-                            </div>
+                        {/* Tax History Section */}
+                        <div
+                            id="tax"
+                            ref={sectionRefs.tax}
+                            className="scroll-mt-20"
+                        >
+                            <TaxHistory />
+                        </div>
+
+                        {/* Valuation Calculator Section */}
+                        <div
+                            id="valuation"
+                            ref={sectionRefs.valuation}
+                            className="scroll-mt-20"
+                        >
+                            <ValuationCalculator />
+                        </div>
+
+                        {/* Valuation Metrics Section */}
+                        <div
+                            id="metrics"
+                            ref={sectionRefs.metrics}
+                            className="scroll-mt-20"
+                        >
+                            <ValuationMetrics />
+                        </div>
+
+                        {/* Demographics Section */}
+                        <div
+                            id="demographics"
+                            ref={sectionRefs.demographics}
+                            className="scroll-mt-20"
+                        >
+                            <Demographics />
+                        </div>
+
+                        {/* Location Insights Section */}
+                        <div
+                            id="insights"
+                            ref={sectionRefs.insights}
+                            className="scroll-mt-20"
+                        >
+                            <LocationInsights
+                                mapUrl={mapUrl}
+                                fullAddress={fullAddress}
+                                centerLat={location?.latitude ?? undefined}
+                                centerLng={location?.longitude ?? undefined}
+                            />
                         </div>
                     </div>
                 </div>
