@@ -71,11 +71,11 @@ export default function ImageGallery({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center">
             {/* Close Button */}
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/20 rounded-full p-2 text-white transition-colors"
+                className="absolute top-4 right-4 z-[101] bg-white/10 hover:bg-white/20 rounded-full p-2 text-white transition-colors"
                 aria-label="Close gallery"
             >
                 <X className="w-6 h-6" />
@@ -86,14 +86,14 @@ export default function ImageGallery({
                 <>
                     <button
                         onClick={prevImage}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 rounded-full p-3 text-white transition-colors"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-[101] bg-white/10 hover:bg-white/20 rounded-full p-3 text-white transition-colors"
                         aria-label="Previous image"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     <button
                         onClick={nextImage}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 rounded-full p-3 text-white transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-[101] bg-white/10 hover:bg-white/20 rounded-full p-3 text-white transition-colors"
                         aria-label="Next image"
                     >
                         <ChevronRight className="w-6 h-6" />

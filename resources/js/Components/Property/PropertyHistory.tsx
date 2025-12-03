@@ -1,30 +1,11 @@
 import LineChart from "./Charts/LineChart";
 
 export default function PropertyHistory() {
-    const saleHistory = [
-        { label: "2004", value: 2500000 },
-        { label: "2006", value: 3725000 },
-        { label: "2010", value: 3200000 },
-        { label: "2015", value: 4100000 },
-        { label: "2020", value: 4850000 },
-        { label: "2024", value: 5500000 },
-    ];
-
     return (
         <div className="bg-white border border-gray-200 rounded-lg p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-6">
                 Property History
             </h2>
-
-            {/* Sale History Chart */}
-            <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Sale History Trend
-                </h3>
-                <div className="bg-gray-50 rounded-lg p-4">
-                    <LineChart data={saleHistory} height={250} />
-                </div>
-            </div>
 
             {/* Recent Sales */}
             <div className="space-y-4">

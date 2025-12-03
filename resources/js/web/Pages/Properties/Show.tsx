@@ -267,8 +267,8 @@ export default function PropertyShow() {
                             <LocationInsights
                                 mapUrl={mapUrl}
                                 fullAddress={fullAddress}
-                                centerLat={location?.latitude}
-                                centerLng={location?.longitude}
+                                centerLat={location?.latitude ?? undefined}
+                                centerLng={location?.longitude ?? undefined}
                             />
                         </div>
                     </div>
