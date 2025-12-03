@@ -133,8 +133,7 @@ export default function FeaturedCommercial({
         }
     };
 
-    // Filter properties that are commercial (Commercial, Land, Multifamily, Office, Retail, Industrial)
-    // but exclude Residential
+    // Filter properties
     const commercialTypes = [
         "Commercial",
         "Land",
@@ -236,6 +235,7 @@ export default function FeaturedCommercial({
                     onNext={handleNext}
                     prevButtonLabel="Previous properties"
                     nextButtonLabel="Next properties"
+                    className="ml-5 md:ml-0"
                     hideControls={true}
                 >
                     {filteredListings.map((property) => (

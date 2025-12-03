@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, SlidersHorizontal, Map } from "lucide-react";
-import Button from "./Button";
+import { ChevronDown } from "lucide-react";
+import AllFiltersButton from "./AllFiltersButton";
 
 interface PropertySearchHeaderProps {
     onSearch?: (filters: SearchFilters) => void;
@@ -261,19 +261,10 @@ export default function PropertySearchHeader({
                     {/* Right Side: Filters, Save, Clear, Map Toggle */}
                     <div className="flex flex-wrap items-center gap-3">
                         {/* All Filters Button */}
-                        <button
-                            type="button"
-                            onClick={onFiltersClick}
-                            className="inline-flex items-center gap-2 rounded-full bg-[#0066CC] px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#004C99] focus:outline-none cursor-pointer"
-                        >
-                            <SlidersHorizontal className="h-4 w-4" />
-                            <span>All Filters</span>
-                            {activeFiltersCount > 0 && (
-                                <span className="bg-white text-[#0066CC] rounded-full px-2 py-0.5 text-xs font-bold min-w-[20px] text-center">
-                                    {activeFiltersCount}
-                                </span>
-                            )}
-                        </button>
+                        <AllFiltersButton
+                            onClick={onFiltersClick || (() => {})}
+                            activeFiltersCount={activeFiltersCount}
+                        />
 
                         {/* Map Toggle */}
                         <div className="flex items-center gap-2">

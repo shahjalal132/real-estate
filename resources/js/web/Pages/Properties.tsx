@@ -6,8 +6,11 @@ import PropertyCard, { PropertyCardProps } from "../../Components/PropertyCard";
 import PropertySearchHeader, {
     SearchFilters,
 } from "../../Components/PropertySearchHeader";
-import FilterBar from "../../Components/FilterBar";
+import AllFiltersModal, {
+    FilterValues,
+} from "../../Components/AllFiltersModal";
 import MapView from "../../Components/MapView";
+import ScrollToTop from "../../Components/ScrollToTop";
 import { Property } from "../../types";
 import { ChevronDown } from "lucide-react";
 
@@ -310,22 +313,21 @@ export default function Properties() {
                     </div>
                 </div>
 
-                {/* Expanded Filters Section (when All Filters is clicked) */}
-                {filtersExpanded && (
-                    <div className="mb-6">
-                        <FilterBar
-                            searchValue={searchValue}
-                            onSearchChange={setSearchValue}
-                            auctionValue={auctionValue}
-                            onAuctionChange={setAuctionValue}
-                            viewMode={viewMode}
-                            onViewModeChange={setViewMode}
-                            onFiltersClick={() => setFiltersExpanded(false)}
-                            showExpandedOnly={true}
-                            listingsCount={filteredListings.length}
-                        />
-                    </div>
-                )}
+                {/* All Filters Modal */}
+                <AllFiltersModal
+                    isOpen={filtersExpanded}
+                    onClose={() => setFiltersExpanded(false)}
+                    activeFiltersCount={activeFiltersCount}
+                    listingsCount={filteredListings.length}
+                    onApply={(filters: FilterValues) => {
+                        // TODO: Apply filters to the search
+                        console.log("Applied filters:", filters);
+                    }}
+                    onReset={() => {
+                        // TODO: Reset filters
+                        console.log("Reset filters");
+                    }}
+                />
 
                 {/* Split View: Listings + Map */}
                 {viewMode === "map" ? (
@@ -408,6 +410,7 @@ export default function Properties() {
                     </div>
                 )}
             </section>
+            <ScrollToTop />
         </AppLayout>
     );
 }

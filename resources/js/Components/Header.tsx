@@ -19,13 +19,6 @@ export default function Header() {
 
     const navigationItems: NavigationItem[] = [
         {
-            label: "COMPS",
-            link: "/comps",
-            type: "megaMenu",
-            megaMenuId: "comps",
-            hasDropdown: true,
-        },
-        {
             label: "FOR SALE",
             link: "/for-sale",
             type: "megaMenu",
@@ -47,6 +40,13 @@ export default function Header() {
             hasDropdown: true,
         },
         {
+            label: "COMPS",
+            link: "/comps",
+            type: "megaMenu",
+            megaMenuId: "comps",
+            hasDropdown: true,
+        },
+        {
             label: "DISPENSARIES",
             link: "/dispensaries",
             type: "megaMenu",
@@ -54,8 +54,8 @@ export default function Header() {
             hasDropdown: true,
         },
         {
-            label: "ZONING CHANGES",
-            link: "/zoning-changes",
+            label: "ZONING",
+            link: "/zoning",
             type: "megaMenu",
             megaMenuId: "zoningChanges",
             hasDropdown: true,

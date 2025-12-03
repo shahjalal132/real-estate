@@ -16,7 +16,7 @@ export default function Hero({ content }: HeroProps) {
         title: "Your Next Deal Starts Here.",
         searchPlaceholder: "Enter Location, Broker/Agent, or Description",
         backgroundImage:
-            "https://images.pexels.com/photos/772472/pexels-photo-772472.jpeg",
+            "https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg",
     };
 
     const heroContent = content || defaultContent;
@@ -37,7 +37,17 @@ export default function Hero({ content }: HeroProps) {
         "Mixed Use",
     ];
 
-    const tabs = ["Sale", "Lease", "Auctions", "Comps & Records"];
+    const tabs = [
+        "For Sale",
+        "For Lease",
+        "Scout",
+        "Comps",
+        "Dispensaries",
+        "Owner",
+        "Tenant",
+        "Research",
+        "Records",
+    ];
 
     return (
         <section className="relative flex min-h-[500px] w-full items-center justify-center overflow-hidden sm:min-h-[600px] lg:min-h-[650px]">
@@ -50,17 +60,17 @@ export default function Hero({ content }: HeroProps) {
             />
 
             {/* Gradient Overlay - Blue and black mixed effect */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0066CC]/40 via-[#003366]/50 to-black/60" />
+            <div className="absolute inset-0 bg-linear-to-b from-[#0066CC]/40 via-[#003366]/50 to-black/50" />
 
             {/* Content */}
             <div className="relative z-10 mx-auto w-[95%] max-w-6xl px-4 text-center sm:px-6">
                 {/* Headline */}
-                <h1 className="mb-8 text-4xl font-bold text-white sm:text-5xl lg:text-6xl drop-shadow-lg">
+                <h1 className="pt-7 sm:pt-0 mb-4 sm:mb-8  font-bold text-white text-4xl sm:text-5xl lg:text-6xl drop-shadow-lg">
                     {heroContent.title}
                 </h1>
 
                 {/* Tabs */}
-                <div className="mb-6 flex items-center justify-center gap-8 pb-2">
+                <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 max-w-4xl mx-auto">
                     {tabs.map((tab) => (
                         <button
                             key={tab}
@@ -78,7 +88,7 @@ export default function Hero({ content }: HeroProps) {
                 </div>
 
                 {/* Search Bar */}
-                <div className="mx-auto w-full max-w-4xl">
+                <div className="mb-7 sm:mb-0 mx-auto w-full max-w-4xl">
                     <div className="flex items-center gap-0 rounded-lg bg-white shadow-lg">
                         {/* Property Type Dropdown */}
                         <div className="relative">
@@ -140,7 +150,7 @@ export default function Hero({ content }: HeroProps) {
                         {/* Search Button */}
                         <button
                             type="button"
-                            className="rounded-r-lg bg-[#0066CC] px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0052A3] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2"
+                            className="rounded-r-lg bg-[#0066CC] px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0052A3] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2 mr-0.5"
                             aria-label="Search"
                         >
                             Search

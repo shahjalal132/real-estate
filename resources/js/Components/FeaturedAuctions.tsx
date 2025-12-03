@@ -235,6 +235,7 @@ export default function FeaturedAuctions({
                     onNext={handleNext}
                     prevButtonLabel="Previous properties"
                     nextButtonLabel="Next properties"
+                    className="ml-5 md:ml-0"
                     hideControls={true}
                 >
                     {filteredListings.map((property) => (
