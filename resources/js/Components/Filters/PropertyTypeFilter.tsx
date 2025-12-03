@@ -82,7 +82,7 @@ export default function PropertyTypeFilter({
     return (
         <div>
             <label className="mb-3 block text-sm font-semibold text-gray-900">
-                Property Type(s)
+                Building Type(s)
             </label>
             <div className="space-y-2">
                 <label className="flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-gray-50 transition-colors">

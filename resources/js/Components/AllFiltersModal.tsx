@@ -3,14 +3,12 @@ import { SlidersHorizontal, X } from "lucide-react";
 import LocationFilter from "./Filters/LocationFilter";
 import KeywordsFilter from "./Filters/KeywordsFilter";
 import PropertyTypeFilter from "./Filters/PropertyTypeFilter";
-import ListingStatusFilter from "./Filters/ListingStatusFilter";
-import TenantBrandFilter from "./Filters/TenantBrandFilter";
-import RemainingTermFilter from "./Filters/RemainingTermFilter";
+import RateFilter from "./Filters/RateFilter";
+import SizeFilter from "./Filters/SizeFilter";
 import BrokerAgentFilter from "./Filters/BrokerAgentFilter";
 import BrokerageShopFilter from "./Filters/BrokerageShopFilter";
-import PropertyDetailsFilter from "./Filters/PropertyDetailsFilter";
-import TenantCreditFilter from "./Filters/TenantCreditFilter";
-import OpportunityZoneFilter from "./Filters/OpportunityZoneFilter";
+import TenancyFilter from "./Filters/TenancyFilter";
+import ListingTimelineFilter from "./Filters/ListingTimelineFilter";
 import ClassFilter from "./Filters/ClassFilter";
 
 interface AllFiltersModalProps {
@@ -19,25 +17,27 @@ interface AllFiltersModalProps {
     activeFiltersCount?: number;
     onApply?: (filters: FilterValues) => void;
     onReset?: () => void;
+    listingsCount?: number;
 }
 
 export interface FilterValues {
     location: string;
     keywords: string;
     propertyTypes: string[];
-    tenantBrand: string;
-    remainingTerm: [number, number];
+    rateType: "yearly" | "monthly";
+    minRate: string;
+    maxRate: string;
+    excludeUndisclosedRate: boolean;
+    sizeType: "sqft" | "acreage";
+    minSize: string;
+    maxSize: string;
     brokerAgent: string;
     brokerageShop: string;
-    minSqft: string;
-    maxSqft: string;
-    minPricePerSqft: string;
-    maxPricePerSqft: string;
-    minAcres: string;
-    maxAcres: string;
-    tenantCredit: string[];
-    listingStatus: string[];
-    opportunityZone: boolean;
+    tenancy: "single" | "multiple";
+    timelineType: "timePeriod" | "custom";
+    fromDate: string;
+    toDate: string;
+    timePeriod: string;
     propertyClass: string[];
 }
 
@@ -47,58 +47,71 @@ export default function AllFiltersModal({
     activeFiltersCount = 0,
     onApply,
     onReset,
+    listingsCount = 0,
 }: AllFiltersModalProps) {
-    // Filter states
+    // Filter states - Left Column
     const [location, setLocation] = useState("");
     const [keywords, setKeywords] = useState("");
     const [propertyTypes, setPropertyTypes] = useState<string[]>(["All"]);
-    const [tenantBrand, setTenantBrand] = useState("");
-    const [remainingTerm, setRemainingTerm] = useState<[number, number]>([
-        0, 100,
-    ]);
+    const [rateType, setRateType] = useState<"yearly" | "monthly">("yearly");
+    const [minRate, setMinRate] = useState("$0");
+    const [maxRate, setMaxRate] = useState("$20,000+");
+    const [excludeUndisclosedRate, setExcludeUndisclosedRate] = useState(false);
+    const [sizeType, setSizeType] = useState<"sqft" | "acreage">("sqft");
+    const [minSize, setMinSize] = useState("0");
+    const [maxSize, setMaxSize] = useState("15,000+");
+
+    // Update max rate when rate type changes
+    useEffect(() => {
+        if (rateType === "yearly") {
+            setMaxRate("$20,000+");
+        } else {
+            setMaxRate("$2,000+");
+        }
+    }, [rateType]);
+
+    // Update max size when size type changes
+    useEffect(() => {
+        if (sizeType === "sqft") {
+            setMaxSize("15,000+");
+        } else {
+            setMaxSize("100+");
+        }
+    }, [sizeType]);
+
+    // Filter states - Right Column
     const [brokerAgent, setBrokerAgent] = useState("");
     const [brokerageShop, setBrokerageShop] = useState("");
-    const [minSqft, setMinSqft] = useState("");
-    const [maxSqft, setMaxSqft] = useState("");
-    const [minPricePerSqft, setMinPricePerSqft] = useState("");
-    const [maxPricePerSqft, setMaxPricePerSqft] = useState("");
-    const [minAcres, setMinAcres] = useState("");
-    const [maxAcres, setMaxAcres] = useState("");
-    const [tenantCredit, setTenantCredit] = useState<string[]>([]);
-    const [listingStatus, setListingStatus] = useState<string[]>([
-        "Active Listings",
-        "On-Market",
-        "Auction",
-        "Highest & Best",
-        "Call For Offers",
-    ]);
-    const [opportunityZone, setOpportunityZone] = useState(false);
+    const [tenancy, setTenancy] = useState<"single" | "multiple">("single");
+    const [timelineType, setTimelineType] = useState<"timePeriod" | "custom">("timePeriod");
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+    const [timePeriod, setTimePeriod] = useState("Any");
     const [propertyClass, setPropertyClass] = useState<string[]>([]);
+
+    // Save Search state
+    const [saveSearch, setSaveSearch] = useState(false);
 
     const handleReset = () => {
         setLocation("");
         setKeywords("");
         setPropertyTypes(["All"]);
-        setTenantBrand("");
-        setRemainingTerm([0, 100]);
+        setRateType("yearly");
+        setMinRate("$0");
+        setMaxRate("$20,000+");
+        setExcludeUndisclosedRate(false);
+        setSizeType("sqft");
+        setMinSize("0");
+        setMaxSize("15,000+");
         setBrokerAgent("");
         setBrokerageShop("");
-        setMinSqft("");
-        setMaxSqft("");
-        setMinPricePerSqft("");
-        setMaxPricePerSqft("");
-        setMinAcres("");
-        setMaxAcres("");
-        setTenantCredit([]);
-        setListingStatus([
-            "Active Listings",
-            "On-Market",
-            "Auction",
-            "Highest & Best",
-            "Call For Offers",
-        ]);
-        setOpportunityZone(false);
+        setTenancy("single");
+        setTimelineType("timePeriod");
+        setFromDate("");
+        setToDate("");
+        setTimePeriod("Any");
         setPropertyClass([]);
+        setSaveSearch(false);
         onReset?.();
     };
 
@@ -107,19 +120,20 @@ export default function AllFiltersModal({
             location,
             keywords,
             propertyTypes,
-            tenantBrand,
-            remainingTerm,
+            rateType,
+            minRate,
+            maxRate,
+            excludeUndisclosedRate,
+            sizeType,
+            minSize,
+            maxSize,
             brokerAgent,
             brokerageShop,
-            minSqft,
-            maxSqft,
-            minPricePerSqft,
-            maxPricePerSqft,
-            minAcres,
-            maxAcres,
-            tenantCredit,
-            listingStatus,
-            opportunityZone,
+            tenancy,
+            timelineType,
+            fromDate,
+            toDate,
+            timePeriod,
             propertyClass,
         };
         onApply?.(filters);
@@ -183,11 +197,15 @@ export default function AllFiltersModal({
                     {/* Scrollable Content - Two Columns */}
                     <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-6">
                         <div className="grid grid-cols-2 gap-6 min-w-0">
-                            {/* Column 1 */}
+                            {/* Left Column */}
                             <div className="space-y-6 min-w-0">
                                 <LocationFilter
                                     value={location}
                                     onChange={setLocation}
+                                />
+                                <KeywordsFilter
+                                    value={keywords}
+                                    onChange={setKeywords}
                                 />
                                 <div className="max-h-[340px] overflow-y-auto overflow-x-hidden pr-2">
                                     <PropertyTypeFilter
@@ -195,79 +213,92 @@ export default function AllFiltersModal({
                                         onChange={setPropertyTypes}
                                     />
                                 </div>
-                                <TenantBrandFilter
-                                    value={tenantBrand}
-                                    onChange={setTenantBrand}
+                                <RateFilter
+                                    rateType={rateType}
+                                    onRateTypeChange={setRateType}
+                                    minRate={minRate}
+                                    maxRate={maxRate}
+                                    onMinRateChange={setMinRate}
+                                    onMaxRateChange={setMaxRate}
+                                    excludeUndisclosed={excludeUndisclosedRate}
+                                    onExcludeUndisclosedChange={setExcludeUndisclosedRate}
+                                />
+                                <SizeFilter
+                                    sizeType={sizeType}
+                                    onSizeTypeChange={setSizeType}
+                                    minSize={minSize}
+                                    maxSize={maxSize}
+                                    onMinSizeChange={setMinSize}
+                                    onMaxSizeChange={setMaxSize}
+                                />
+                            </div>
+
+                            {/* Right Column */}
+                            <div className="space-y-6 w-full">
+                                <BrokerAgentFilter
+                                    value={brokerAgent}
+                                    onChange={setBrokerAgent}
                                 />
                                 <BrokerageShopFilter
                                     value={brokerageShop}
                                     onChange={setBrokerageShop}
                                 />
-                                <TenantCreditFilter
-                                    selectedCredits={tenantCredit}
-                                    onChange={setTenantCredit}
+                                <TenancyFilter
+                                    tenancy={tenancy}
+                                    onChange={setTenancy}
                                 />
-                                <OpportunityZoneFilter
-                                    value={opportunityZone}
-                                    onChange={setOpportunityZone}
-                                />
-                            </div>
-
-                            {/* Column 2 */}
-                            <div className="space-y-6 min-w-0">
-                                <KeywordsFilter
-                                    value={keywords}
-                                    onChange={setKeywords}
+                                <ListingTimelineFilter
+                                    timelineType={timelineType}
+                                    onTimelineTypeChange={setTimelineType}
+                                    fromDate={fromDate}
+                                    toDate={toDate}
+                                    onFromDateChange={setFromDate}
+                                    onToDateChange={setToDate}
+                                    timePeriod={timePeriod}
+                                    onTimePeriodChange={setTimePeriod}
                                 />
                                 <ClassFilter
                                     selectedClasses={propertyClass}
                                     onChange={setPropertyClass}
-                                />
-                                <PropertyDetailsFilter
-                                    minSqft={minSqft}
-                                    maxSqft={maxSqft}
-                                    minPricePerSqft={minPricePerSqft}
-                                    maxPricePerSqft={maxPricePerSqft}
-                                    minAcres={minAcres}
-                                    maxAcres={maxAcres}
-                                    onMinSqftChange={setMinSqft}
-                                    onMaxSqftChange={setMaxSqft}
-                                    onMinPricePerSqftChange={setMinPricePerSqft}
-                                    onMaxPricePerSqftChange={setMaxPricePerSqft}
-                                    onMinAcresChange={setMinAcres}
-                                    onMaxAcresChange={setMaxAcres}
-                                />
-                                <ListingStatusFilter
-                                    selectedStatuses={listingStatus}
-                                    onChange={setListingStatus}
-                                />
-                                <BrokerAgentFilter
-                                    value={brokerAgent}
-                                    onChange={setBrokerAgent}
-                                />
-                                <RemainingTermFilter
-                                    value={remainingTerm}
-                                    onChange={setRemainingTerm}
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* Fixed Footer */}
-                    <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-white px-6 py-4">
+                    <div className="flex items-center justify-between gap-4 border-t border-gray-200 bg-white px-6 py-4">
+                        {/* Left: Clear All Filters */}
                         <button
                             type="button"
                             onClick={handleReset}
-                            className="rounded-lg border-2 border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-[#0066CC] transition-all"
+                            className="text-sm font-semibold text-[#0066CC] hover:text-[#004C99] transition-colors whitespace-nowrap"
                         >
                             Clear All Filters
                         </button>
+
+                        {/* Center: Save Search */}
+                        <label className="flex cursor-pointer items-center gap-2 flex-1 max-w-md">
+                            <input
+                                type="checkbox"
+                                checked={saveSearch}
+                                onChange={(e) => setSaveSearch(e.target.checked)}
+                                className="h-4 w-4 rounded border-gray-300 text-[#0066CC] focus:ring-[#0066CC] accent-[#0066CC] shrink-0"
+                            />
+                            <span className="text-sm text-gray-700 whitespace-nowrap">
+                                Save Search
+                            </span>
+                            <span className="text-xs text-gray-500">
+                                Receive email alerts when new properties hit the market.
+                            </span>
+                        </label>
+
+                        {/* Right: Show Button */}
                         <button
                             type="button"
                             onClick={handleApply}
-                            className="rounded-lg bg-[#0066CC] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#004C99] shadow-md hover:shadow-lg transition-all"
+                            className="rounded-lg bg-[#0066CC] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#004C99] shadow-md hover:shadow-lg transition-all whitespace-nowrap"
                         >
-                            Apply Filters
+                            Show {listingsCount > 0 ? `${listingsCount}+` : "999+"} Spaces
                         </button>
                     </div>
                 </div>
@@ -275,4 +306,3 @@ export default function AllFiltersModal({
         </>
     );
 }
-

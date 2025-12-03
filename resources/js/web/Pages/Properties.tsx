@@ -318,6 +318,7 @@ export default function Properties() {
                     isOpen={filtersExpanded}
                     onClose={() => setFiltersExpanded(false)}
                     activeFiltersCount={activeFiltersCount}
+                    listingsCount={filteredListings.length}
                     onApply={(filters: FilterValues) => {
                         // TODO: Apply filters to the search
                         console.log("Applied filters:", filters);
