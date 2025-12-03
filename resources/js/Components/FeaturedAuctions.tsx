@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { router } from "@inertiajs/react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
 import { Property } from "../types";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
-import ChoseView from "./ChoseView";
+import AllFiltersButton from "./AllFiltersButton";
+import AllFiltersModal, { FilterValues } from "./AllFiltersModal";
 import Button from "./Button";
 import { useSliderControls } from "./useSliderControls";
 
@@ -116,22 +118,7 @@ export default function FeaturedAuctions({
     auctions = [],
 }: FeaturedAuctionsProps) {
     const { sliderRef, handlePrev, handleNext } = useSliderControls();
-    const [selectedFilter, setSelectedFilter] = useState<string>("all");
-
-    // Get dynamic section heading based on filter selection
-    const getSectionHeading = (filter: string): string => {
-        switch (filter) {
-            case "residential":
-                return "Featured Residential";
-            case "auctions":
-                return "Featured Auctions";
-            case "commercial":
-                return "Featured Commercial";
-            case "all":
-            default:
-                return "Featured Auctions";
-        }
-    };
+    const [filtersExpanded, setFiltersExpanded] = useState(false);
 
     // Filter properties that have status "On-Market" (auction properties)
     const auctionProperties = auctions.filter(
@@ -143,61 +130,105 @@ export default function FeaturedAuctions({
                 ))
     );
 
-    // Filter by property type based on selected filter
-    let typeFilteredProperties = auctionProperties;
+    // Show all properties in the slider (filtering will be done on the properties page)
+    const filteredListings = auctionProperties;
 
-    if (selectedFilter === "all") {
-        // Show all auction properties (default)
-        typeFilteredProperties = auctionProperties;
-    } else if (selectedFilter === "auctions") {
-        // Show only auction properties (already filtered, but ensure they're On-Market)
-        typeFilteredProperties = auctionProperties.filter(
-            (property) => property.status === "On-Market"
-        );
-    } else if (selectedFilter === "residential") {
-        // Filter to show residential properties from the list
-        typeFilteredProperties = auctionProperties.filter((property) => {
-            if (!property.types || property.types.length === 0) return false;
-            return property.types.some(
-                (type) =>
-                    type.toLowerCase().includes("residential") ||
-                    type.toLowerCase().includes("multifamily")
-            );
+    const viewMoreHref = `/properties/auctions`;
+
+    // Handle filter apply - navigate to properties page with filters
+    const handleApplyFilters = (filters: FilterValues) => {
+        // Build query parameters from filter values
+        const params: Record<string, any> = {
+            section: "auctions",
+        };
+
+        // Add location
+        if (filters.location) {
+            params.location = filters.location;
+        }
+
+        // Add keywords
+        if (filters.keywords) {
+            params.keywords = filters.keywords;
+        }
+
+        // Add property types
+        if (filters.propertyTypes && filters.propertyTypes.length > 0) {
+            if (!filters.propertyTypes.includes("All")) {
+                params.property_types = filters.propertyTypes.join(",");
+            }
+        }
+
+        // Add rate range
+        if (filters.minRate && filters.minRate !== "$0") {
+            const minRateValue = filters.minRate.replace(/[$,]/g, "");
+            if (filters.rateType === "yearly") {
+                params.min_yearly_rate = minRateValue;
+            } else {
+                params.min_monthly_rate = minRateValue;
+            }
+        }
+        if (filters.maxRate && !filters.maxRate.includes("+")) {
+            const maxRateValue = filters.maxRate.replace(/[$,+]/g, "");
+            if (filters.rateType === "yearly") {
+                params.max_yearly_rate = maxRateValue;
+            } else {
+                params.max_monthly_rate = maxRateValue;
+            }
+        }
+
+        // Add size range
+        if (filters.minSize && filters.minSize !== "0") {
+            if (filters.sizeType === "sqft") {
+                params.min_sqft = filters.minSize.replace(/[,+]/g, "");
+            } else {
+                params.min_acres = filters.minSize.replace(/[,+]/g, "");
+            }
+        }
+        if (filters.maxSize && !filters.maxSize.includes("+")) {
+            if (filters.sizeType === "sqft") {
+                params.max_sqft = filters.maxSize.replace(/[,+]/g, "");
+            } else {
+                params.max_acres = filters.maxSize.replace(/[,+]/g, "");
+            }
+        }
+
+        // Add broker/agent
+        if (filters.brokerAgent) {
+            params.broker_agent = filters.brokerAgent;
+        }
+
+        // Add brokerage shop
+        if (filters.brokerageShop) {
+            params.brokerage_shop = filters.brokerageShop;
+        }
+
+        // Add tenancy
+        if (filters.tenancy) {
+            params.tenancy = filters.tenancy;
+        }
+
+        // Add property class
+        if (filters.propertyClass && filters.propertyClass.length > 0) {
+            params.property_class = filters.propertyClass.join(",");
+        }
+
+        // Add listing timeline
+        if (
+            filters.timelineType === "timePeriod" &&
+            filters.timePeriod !== "Any"
+        ) {
+            params.time_period = filters.timePeriod;
+        } else if (filters.timelineType === "custom") {
+            if (filters.fromDate) params.from_date = filters.fromDate;
+            if (filters.toDate) params.to_date = filters.toDate;
+        }
+
+        // Navigate to properties page with filters
+        router.get("/properties", params, {
+            preserveState: false,
         });
-    } else if (selectedFilter === "commercial") {
-        // Filter to show commercial properties from the list
-        typeFilteredProperties = auctionProperties.filter((property) => {
-            if (!property.types || property.types.length === 0) return false;
-            const commercialTypes = [
-                "Commercial",
-                "Land",
-                "Office",
-                "Retail",
-                "Industrial",
-            ];
-            const hasCommercialType = property.types.some((type) =>
-                commercialTypes.some((commercialType) =>
-                    type.toLowerCase().includes(commercialType.toLowerCase())
-                )
-            );
-            const hasResidentialType = property.types.some((type) =>
-                type.toLowerCase().includes("residential")
-            );
-            return hasCommercialType && !hasResidentialType;
-        });
-    }
-
-    // Apply index-based filtering if needed (for option1, option2, option3)
-    const filteredListings = typeFilteredProperties.filter((_, index) => {
-        if (selectedFilter === "option1") return index % 3 === 0;
-        if (selectedFilter === "option2") return index % 3 === 1;
-        if (selectedFilter === "option3") return index % 3 === 2;
-        return true; // For "all", "residential", "commercial", "auctions" - show all filtered
-    });
-
-    const viewMoreHref = `/properties/auctions?filter=${encodeURIComponent(
-        selectedFilter
-    )}`;
+    };
 
     if (auctionProperties.length === 0) {
         return null;
@@ -208,22 +239,23 @@ export default function FeaturedAuctions({
             <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">
                 <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex-1 text-center sm:text-left">
-                        <SectionHeading>
-                            {getSectionHeading(selectedFilter)}
-                        </SectionHeading>
+                        <SectionHeading>Featured Auctions</SectionHeading>
                     </div>
 
-                    <div className="flex flex-col items-center gap-2 sm:items-end">
-                        <SliderControls
-                            onPrev={handlePrev}
-                            onNext={handleNext}
-                            prevButtonLabel="Previous properties"
-                            nextButtonLabel="Next properties"
-                        />
-                        <ChoseView
-                            value={selectedFilter}
-                            onChange={setSelectedFilter}
-                        />
+                    <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-end">
+                        <div className="flex items-center gap-3">
+                            <SliderControls
+                                onPrev={handlePrev}
+                                onNext={handleNext}
+                                prevButtonLabel="Previous properties"
+                                nextButtonLabel="Next properties"
+                            />
+                            <AllFiltersButton
+                                onClick={() => setFiltersExpanded(true)}
+                                activeFiltersCount={0}
+                                className="whitespace-nowrap"
+                            />
+                        </div>
                     </div>
                 </header>
             </div>
@@ -261,6 +293,18 @@ export default function FeaturedAuctions({
                     </Button>
                 </div>
             </div>
+
+            {/* All Filters Modal */}
+            <AllFiltersModal
+                isOpen={filtersExpanded}
+                onClose={() => setFiltersExpanded(false)}
+                activeFiltersCount={0}
+                listingsCount={filteredListings.length}
+                onApply={handleApplyFilters}
+                onReset={() => {
+                    // Reset handled by modal internally
+                }}
+            />
         </section>
     );
 }
