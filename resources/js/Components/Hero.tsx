@@ -65,12 +65,12 @@ export default function Hero({ content }: HeroProps) {
             {/* Content */}
             <div className="relative z-10 mx-auto w-[95%] max-w-6xl px-4 text-center sm:px-6">
                 {/* Headline */}
-                <h1 className="mb-8 text-4xl font-bold text-white sm:text-5xl lg:text-6xl drop-shadow-lg">
+                <h1 className="pt-7 sm:pt-0 mb-4 sm:mb-8  font-bold text-white text-4xl sm:text-5xl lg:text-6xl drop-shadow-lg">
                     {heroContent.title}
                 </h1>
 
                 {/* Tabs */}
-                <div className="mb-6 flex items-center justify-center gap-8 pb-2">
+                <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 max-w-4xl mx-auto">
                     {tabs.map((tab) => (
                         <button
                             key={tab}
@@ -88,7 +88,7 @@ export default function Hero({ content }: HeroProps) {
                 </div>
 
                 {/* Search Bar */}
-                <div className="mx-auto w-full max-w-4xl">
+                <div className="mb-7 sm:mb-0 mx-auto w-full max-w-4xl">
                     <div className="flex items-center gap-0 rounded-lg bg-white shadow-lg">
                         {/* Property Type Dropdown */}
                         <div className="relative">
