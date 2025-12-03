@@ -37,7 +37,17 @@ export default function Hero({ content }: HeroProps) {
         "Mixed Use",
     ];
 
-    const tabs = ["Sale", "Lease", "Auctions", "Comps & Records"];
+    const tabs = [
+        "For Sale",
+        "For Lease",
+        "Scout",
+        "Comps",
+        "Dispensaries",
+        "Owner",
+        "Tenant",
+        "Research",
+        "Records",
+    ];
 
     return (
         <section className="relative flex min-h-[500px] w-full items-center justify-center overflow-hidden sm:min-h-[600px] lg:min-h-[650px]">
