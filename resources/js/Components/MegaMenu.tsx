@@ -1,7 +1,6 @@
 import { Link } from "@inertiajs/react";
 import type { LucideIcon } from "lucide-react";
 import {
-    ArrowUpDown,
     BarChart3,
     Bell,
     Bookmark,
@@ -28,7 +27,6 @@ import {
     PlusCircle,
     Send,
     SlidersHorizontal,
-    Star,
     Store,
     Table,
     Users,
@@ -70,7 +68,7 @@ interface MenuSection {
 interface Menu {
     id: string;
     title: string;
-    layout: "single-column" | "two-column" | "three-column";
+    layout: "single-column" | "two-column" | "three-column" | "four-column";
     width: string;
     description?: string;
     sections: MenuSection[];
@@ -182,6 +180,7 @@ const menus: Record<string, Menu> = {
                         label: "All Residential For Sale",
                         link: "/for-residential-sale/all",
                         icon: Grid3X3,
+                        featured: true,
                     },
                 ],
             },
@@ -464,8 +463,8 @@ const menus: Record<string, Menu> = {
     tools: {
         id: "tools",
         title: "Investment Tools",
-        layout: "three-column",
-        width: "900px",
+        layout: "four-column",
+        width: "1000px",
         sections: [
             {
                 title: "Calculators",
@@ -492,23 +491,12 @@ const menus: Record<string, Menu> = {
                         link: "/tools/zoning-codes",
                         icon: MapPin,
                     },
-                    {
-                        label: "Send proof of funds send offers",
-                        link: "/tools/chatgpt",
-                        icon: MessageCircle,
-                        badge: "AI",
-                    },
                 ],
             },
             {
                 title: "Tools",
                 type: "link-list",
                 items: [
-                    {
-                        label: "Links",
-                        link: "/tools/links",
-                        icon: LinkIcon,
-                    },
                     {
                         label: "To-Do List",
                         link: "/tools/todo",
@@ -518,6 +506,23 @@ const menus: Record<string, Menu> = {
                         label: "Calendar",
                         link: "/tools/calendar",
                         icon: Calendar,
+                    },
+                    {
+                        label: "Chatgpt Assistant",
+                        link: "/tools/chatgpt-assistant",
+                        icon: MessageCircle,
+                        badge: "AI",
+                    },
+                ],
+            },
+            {
+                title: "Links",
+                type: "link-list",
+                items: [
+                    {
+                        label: "Quick Links",
+                        link: "/links/quick-links",
+                        icon: LinkIcon,
                     },
                 ],
             },
@@ -571,6 +576,7 @@ const layoutClasses: Record<Menu["layout"], string> = {
     "single-column": "grid-cols-1",
     "two-column": "md:grid-cols-2",
     "three-column": "md:grid-cols-3",
+    "four-column": "md:grid-cols-4",
 };
 
 export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
