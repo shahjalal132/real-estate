@@ -132,8 +132,17 @@ function applyFilter(items: Property[], filter: string): Property[] {
 }
 
 export default function Properties() {
-    const { props } = usePage<PageProps>();
+    const { props, url } = usePage<PageProps>();
     const { properties = [], filter, section } = props;
+
+    // Determine section from current route
+    const currentSection = useMemo(() => {
+        if (url.includes("/properties/auctions")) return "auctions";
+        if (url.includes("/properties/residentials")) return "residentials";
+        if (url.includes("/properties/commercial")) return "commercial";
+        if (url.includes("/properties/rental")) return "rental";
+        return section || null;
+    }, [url, section]);
 
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
     const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
@@ -153,24 +162,38 @@ export default function Properties() {
         [sortedProperties, filter]
     );
 
-    const sectionTitle = section
-        ? section.charAt(0).toUpperCase() + section.slice(1) + " Properties"
+    const sectionTitle = currentSection
+        ? currentSection.charAt(0).toUpperCase() +
+          currentSection.slice(1) +
+          " Properties"
         : "All Properties";
 
     // Calculate active filters count
     const activeFiltersCount = useMemo(() => {
         let count = 0;
         if (filter && filter !== "all") count++;
-        if (section) count++;
+        if (currentSection) count++;
         return count;
-    }, [filter, section]);
+    }, [filter, currentSection]);
 
     const handleSearch = (searchFilters: SearchFilters) => {
         const params: Record<string, string> = {};
 
-        if (searchFilters.status !== "all") {
-            params.section = searchFilters.status;
+        // Map status to route path
+        let basePath = "/properties";
+        if (searchFilters.status === "auctions") {
+            basePath = "/properties/auctions";
+        } else if (searchFilters.status === "commercial") {
+            basePath = "/properties/commercial";
+        } else if (
+            searchFilters.status === "residential" ||
+            searchFilters.status === "for-sale"
+        ) {
+            basePath = "/properties/residentials";
+        } else if (searchFilters.status === "for-lease") {
+            basePath = "/properties/rental";
         }
+
         if (searchFilters.propertyType !== "all") {
             params.type = searchFilters.propertyType;
         }
@@ -186,7 +209,7 @@ export default function Properties() {
                     .replace("m", "000000");
         }
 
-        router.get("/properties", params, {
+        router.get(basePath, params, {
             preserveState: true,
             preserveScroll: true,
         });
@@ -238,7 +261,7 @@ export default function Properties() {
                         {/* Sort Dropdown */}
                         <PropertySort
                             properties={properties}
-                            section={section}
+                            section={currentSection}
                             onSortChange={setSortedProperties}
                         />
                     </div>
