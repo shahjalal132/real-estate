@@ -14,6 +14,9 @@ Route::get('/properties/commercial', [\App\Http\Controllers\PropertyController::
 Route::get('/properties/rental', [\App\Http\Controllers\PropertyController::class, 'rental'])->name('properties.rental');
 Route::get('/properties/{property}/{url_slug}', [\App\Http\Controllers\PropertyController::class, 'show'])->name('properties.show');
 
+// API routes for filters
+Route::get('/api/brokers/search', [\App\Http\Controllers\BrokerController::class, 'search'])->name('api.brokers.search');
+
 Route::get('/optimize', function () {
     Artisan::call('optimize:clear');
     return 'Application optimized!';

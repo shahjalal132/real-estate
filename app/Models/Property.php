@@ -54,7 +54,7 @@ class Property extends Model
 
     public function brokers(): BelongsToMany
     {
-        return $this->belongsToMany(Broker::class);
+        return $this->belongsToMany(Broker::class, 'broker_property', 'property_id', 'broker_id');
     }
 
     public function images(): HasMany
