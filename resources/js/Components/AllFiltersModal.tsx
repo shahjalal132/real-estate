@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { Filter, FilterIcon, SlidersHorizontal, X } from "lucide-react";
 import LocationFilter from "./Filters/LocationFilter";
 import KeywordsFilter from "./Filters/KeywordsFilter";
 import PropertyTypeFilter from "./Filters/PropertyTypeFilter";
@@ -275,7 +275,7 @@ export default function AllFiltersModal({
                         <button
                             type="button"
                             onClick={handleReset}
-                            className="text-sm font-semibold text-[#0066CC] hover:text-[#004C99] transition-colors whitespace-nowrap"
+                            className="text-sm font-semibold cursor-pointer text-[#0066CC] hover:text-[#004C99] transition-colors whitespace-nowrap"
                         >
                             Clear All Filters
                         </button>
@@ -303,11 +303,10 @@ export default function AllFiltersModal({
                         <button
                             type="button"
                             onClick={handleApply}
-                            className="rounded-lg bg-[#0066CC] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#004C99] shadow-md hover:shadow-lg transition-all whitespace-nowrap"
+                            className="rounded-lg cursor-pointer bg-[#0066CC] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#004C99] shadow-md hover:shadow-lg transition-all whitespace-nowrap"
                         >
-                            Show{" "}
-                            {listingsCount > 0 ? `${listingsCount}+` : "999+"}{" "}
-                            Spaces
+                            <FilterIcon className="inline h-4 w-4 mr-2 -ml-1" />
+                            Apply Filter
                         </button>
                     </div>
                 </div>

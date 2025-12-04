@@ -21,7 +21,7 @@ export default function Hero({ content }: HeroProps) {
 
     const heroContent = content || defaultContent;
 
-    const [activeTab, setActiveTab] = useState("Sale");
+    const [activeTab, setActiveTab] = useState("For Sale");
     const [propertyTypeOpen, setPropertyTypeOpen] = useState(false);
     const [selectedPropertyType, setSelectedPropertyType] =
         useState("All Types");
