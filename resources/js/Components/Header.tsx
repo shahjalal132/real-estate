@@ -90,9 +90,13 @@ export default function Header() {
         },
     ];
 
-    // Split navigation items: first 6 for medium screens, rest go to "MORE"
-    const visibleItems = navigationItems.slice(0, 6);
-    const moreItems = navigationItems.slice(6);
+    // Split navigation items: first 7 for main nav, last 3 go to right side
+    const mainNavItems = navigationItems.slice(0, 7);
+    const rightNavItems = navigationItems.slice(7);
+
+    // For medium screens: first 6 visible, rest (excluding last 3) go to "MORE"
+    const visibleItems = mainNavItems.slice(0, 6);
+    const moreItems = mainNavItems.slice(6);
 
     const renderNavItem = (
         item: NavigationItem,
@@ -301,26 +305,36 @@ export default function Header() {
                             )}
                         </nav>
 
-                        {/* Large Screen Navigation (all items visible) */}
+                        {/* Large Screen Navigation (first 8 items) */}
                         <nav className="hidden lg:flex items-center space-x-2 xl:space-x-3 overflow-visible flex-1 min-w-0 flex-wrap">
-                            {navigationItems.map((item) => renderNavItem(item))}
+                            {mainNavItems.map((item) => renderNavItem(item))}
                         </nav>
                     </div>
 
-                    {/* CTA Button */}
-                    <div className="flex items-center py-6 lg:py-0 space-x-4 justify-between">
-                        <Button
-                            href="/login"
-                            className="tracking-[1px] uppercase"
-                        >
-                            Log in
-                        </Button>
-                        <Menu
-                            color="#4a4a4a"
-                            strokeWidth={3}
-                            className="cursor-pointer lg:hidden"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        />
+                    {/* Right Side: Last 3 Menu Items + Login Button */}
+                    <div className="flex items-center py-6 lg:py-0 space-x-4">
+                        {/* Last 3 Menu Items (with gaps) - visible on md and up */}
+                        <nav className="hidden md:flex items-center space-x-2 xl:space-x-3 overflow-visible">
+                            {rightNavItems.map((item) => renderNavItem(item))}
+                        </nav>
+
+                        {/* CTA Button */}
+                        <div className="flex items-center space-x-4">
+                            <Button
+                                href="/login"
+                                className="tracking-[1px] uppercase"
+                            >
+                                Log in
+                            </Button>
+                            <Menu
+                                color="#4a4a4a"
+                                strokeWidth={3}
+                                className="cursor-pointer lg:hidden"
+                                onClick={() =>
+                                    setMobileMenuOpen(!mobileMenuOpen)
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
