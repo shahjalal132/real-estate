@@ -94,9 +94,11 @@ export default function FeaturedListings({
         return true;
     });
 
-    const viewMoreHref = `/properties?section=featured&filter=${encodeURIComponent(
-        selectedFilter
-    )}`;
+    const viewMoreHref = `/properties${
+        selectedFilter !== "all"
+            ? `?filter=${encodeURIComponent(selectedFilter)}`
+            : ""
+    }`;
 
     if (listings.length === 0) {
         return null;

@@ -9,9 +9,13 @@ Route::get('/', [\App\Http\Controllers\HomeController::class, 'index']);
 
 Route::get('/properties', [\App\Http\Controllers\PropertyController::class, 'index'])->name('properties.index');
 Route::get('/properties/auctions', [\App\Http\Controllers\PropertyController::class, 'auctions'])->name('properties.auctions');
+Route::get('/properties/residential', [\App\Http\Controllers\PropertyController::class, 'residentials'])->name('properties.residentials');
 Route::get('/properties/commercial', [\App\Http\Controllers\PropertyController::class, 'commercial'])->name('properties.commercial');
 Route::get('/properties/rental', [\App\Http\Controllers\PropertyController::class, 'rental'])->name('properties.rental');
 Route::get('/properties/{property}/{url_slug}', [\App\Http\Controllers\PropertyController::class, 'show'])->name('properties.show');
+
+// API routes for filters
+Route::get('/api/brokers/search', [\App\Http\Controllers\BrokerController::class, 'search'])->name('api.brokers.search');
 
 Route::get('/optimize', function () {
     Artisan::call('optimize:clear');

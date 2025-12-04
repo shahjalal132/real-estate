@@ -124,7 +124,7 @@ export default function FeaturedResidential({
     // Show all properties in the slider (filtering will be done on the properties page)
     const filteredListings = residentialProperties;
 
-    const viewMoreHref = `/properties?section=residential`;
+    const viewMoreHref = `/properties/residential`;
 
     // Handle filter apply - navigate to properties page with filters
     const handleApplyFilters = (filters: FilterValues) => {

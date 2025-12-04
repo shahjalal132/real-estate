@@ -18,6 +18,7 @@ interface PageProps {
     properties?: Property[];
     filter: string;
     section: string | null;
+    filters?: Record<string, any>;
     [key: string]: unknown;
 }
 
@@ -132,8 +133,22 @@ function applyFilter(items: Property[], filter: string): Property[] {
 }
 
 export default function Properties() {
-    const { props } = usePage<PageProps>();
-    const { properties = [], filter, section } = props;
+    const { props, url } = usePage<PageProps>();
+    const {
+        properties = [],
+        filter,
+        section,
+        filters: initialFilters = {},
+    } = props;
+
+    // Determine section from current route
+    const currentSection = useMemo(() => {
+        if (url.includes("/properties/auctions")) return "auctions";
+        if (url.includes("/properties/residential")) return "residentials";
+        if (url.includes("/properties/commercial")) return "commercial";
+        if (url.includes("/properties/rental")) return "rental";
+        return section || null;
+    }, [url, section]);
 
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
     const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
@@ -153,24 +168,67 @@ export default function Properties() {
         [sortedProperties, filter]
     );
 
-    const sectionTitle = section
-        ? section.charAt(0).toUpperCase() + section.slice(1) + " Properties"
+    const sectionTitle = currentSection
+        ? currentSection.charAt(0).toUpperCase() +
+          currentSection.slice(1) +
+          " Properties"
         : "All Properties";
 
     // Calculate active filters count
     const activeFiltersCount = useMemo(() => {
         let count = 0;
         if (filter && filter !== "all") count++;
-        if (section) count++;
+        if (currentSection) count++;
+
+        // Count active filters from AllFiltersModal
+        if (initialFilters.location) count++;
+        if (initialFilters.keywords) count++;
+        if (
+            initialFilters.property_types &&
+            Array.isArray(initialFilters.property_types) &&
+            initialFilters.property_types.length > 0 &&
+            !initialFilters.property_types.includes("All")
+        )
+            count++;
+        if (initialFilters.min_rate || initialFilters.max_rate) count++;
+        if (initialFilters.min_size || initialFilters.max_size) count++;
+        if (initialFilters.broker_agent) count++;
+        if (initialFilters.brokerage_shop) count++;
+        if (
+            initialFilters.timeline_type &&
+            (initialFilters.from_date ||
+                initialFilters.to_date ||
+                initialFilters.time_period !== "Any")
+        )
+            count++;
+        if (
+            initialFilters.property_class &&
+            Array.isArray(initialFilters.property_class) &&
+            initialFilters.property_class.length > 0
+        )
+            count++;
+
         return count;
-    }, [filter, section]);
+    }, [filter, currentSection, initialFilters]);
 
     const handleSearch = (searchFilters: SearchFilters) => {
         const params: Record<string, string> = {};
 
-        if (searchFilters.status !== "all") {
-            params.section = searchFilters.status;
+        // Map status to route path
+        let basePath = "/properties";
+        if (searchFilters.status === "auctions") {
+            basePath = "/properties/auctions";
+        } else if (searchFilters.status === "commercial") {
+            basePath = "/properties/commercial";
+        } else if (
+            searchFilters.status === "residential" ||
+            searchFilters.status === "for-sale"
+        ) {
+            basePath = "/properties/residentials";
+        } else if (searchFilters.status === "for-lease") {
+            basePath = "/properties/rental";
         }
+
         if (searchFilters.propertyType !== "all") {
             params.type = searchFilters.propertyType;
         }
@@ -186,7 +244,7 @@ export default function Properties() {
                     .replace("m", "000000");
         }
 
-        router.get("/properties", params, {
+        router.get(basePath, params, {
             preserveState: true,
             preserveScroll: true,
         });
@@ -238,7 +296,7 @@ export default function Properties() {
                         {/* Sort Dropdown */}
                         <PropertySort
                             properties={properties}
-                            section={section}
+                            section={currentSection}
                             onSortChange={setSortedProperties}
                         />
                     </div>
@@ -251,12 +309,108 @@ export default function Properties() {
                     activeFiltersCount={activeFiltersCount}
                     listingsCount={filteredListings.length}
                     onApply={(filters: FilterValues) => {
-                        // TODO: Apply filters to the search
-                        console.log("Applied filters:", filters);
+                        // Build query parameters from filter values
+                        const params: Record<string, any> = {};
+
+                        if (filters.location)
+                            params.location = filters.location;
+                        if (filters.keywords)
+                            params.keywords = filters.keywords;
+                        if (
+                            filters.propertyTypes &&
+                            filters.propertyTypes.length > 0 &&
+                            !filters.propertyTypes.includes("All")
+                        ) {
+                            params.property_types =
+                                filters.propertyTypes.join(",");
+                        }
+
+                        // Rate/Price filters
+                        if (filters.minRate && filters.minRate !== "$0") {
+                            params.min_rate = filters.minRate;
+                        }
+                        if (filters.maxRate && !filters.maxRate.endsWith("+")) {
+                            params.max_rate = filters.maxRate;
+                        }
+                        if (filters.excludeUndisclosedRate) {
+                            params.exclude_undisclosed_rate = "1";
+                        }
+
+                        // Size filters
+                        if (filters.sizeType)
+                            params.size_type = filters.sizeType;
+                        if (filters.minSize && filters.minSize !== "0") {
+                            params.min_size = filters.minSize;
+                        }
+                        if (filters.maxSize && !filters.maxSize.endsWith("+")) {
+                            params.max_size = filters.maxSize;
+                        }
+
+                        // Broker filters
+                        if (filters.brokerAgent)
+                            params.broker_agent = filters.brokerAgent;
+                        if (filters.brokerageShop)
+                            params.brokerage_shop = filters.brokerageShop;
+
+                        // Timeline filters
+                        if (filters.timelineType)
+                            params.timeline_type = filters.timelineType;
+                        if (filters.fromDate)
+                            params.from_date = filters.fromDate;
+                        if (filters.toDate) params.to_date = filters.toDate;
+                        if (
+                            filters.timePeriod &&
+                            filters.timePeriod !== "Any"
+                        ) {
+                            params.time_period = filters.timePeriod;
+                        }
+
+                        // Property class filter
+                        if (
+                            filters.propertyClass &&
+                            filters.propertyClass.length > 0
+                        ) {
+                            params.property_class =
+                                filters.propertyClass.join(",");
+                        }
+
+                        // Determine base path based on current section
+                        let basePath = "/properties";
+                        if (currentSection === "auctions") {
+                            basePath = "/properties/auctions";
+                        } else if (currentSection === "residentials") {
+                            basePath = "/properties/residential";
+                        } else if (currentSection === "commercial") {
+                            basePath = "/properties/commercial";
+                        } else if (currentSection === "rental") {
+                            basePath = "/properties/rental";
+                        }
+
+                        router.get(basePath, params, {
+                            preserveState: false,
+                            preserveScroll: false,
+                        });
                     }}
                     onReset={() => {
-                        // TODO: Reset filters
-                        console.log("Reset filters");
+                        // Determine base path based on current section
+                        let basePath = "/properties";
+                        if (currentSection === "auctions") {
+                            basePath = "/properties/auctions";
+                        } else if (currentSection === "residentials") {
+                            basePath = "/properties/residential";
+                        } else if (currentSection === "commercial") {
+                            basePath = "/properties/commercial";
+                        } else if (currentSection === "rental") {
+                            basePath = "/properties/rental";
+                        }
+
+                        router.get(
+                            basePath,
+                            {},
+                            {
+                                preserveState: false,
+                            }
+                        );
                     }}
                 />
 

@@ -94,9 +94,11 @@ export default function CommercialListings({
         return true;
     });
 
-    const viewMoreHref = `/properties?section=commercial&filter=${encodeURIComponent(
-        selectedFilter
-    )}`;
+    const viewMoreHref = `/properties/commercial${
+        selectedFilter !== "all"
+            ? `?filter=${encodeURIComponent(selectedFilter)}`
+            : ""
+    }`;
 
     if (listings.length === 0) {
         return null;

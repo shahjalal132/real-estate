@@ -94,9 +94,11 @@ export default function ResidentialListings({
         return true;
     });
 
-    const viewMoreHref = `/properties?section=residential&filter=${encodeURIComponent(
-        selectedFilter
-    )}`;
+    const viewMoreHref = `/properties/residentials${
+        selectedFilter !== "all"
+            ? `?filter=${encodeURIComponent(selectedFilter)}`
+            : ""
+    }`;
 
     if (listings.length === 0) {
         return null;
