@@ -285,6 +285,8 @@ export default function PropertySort({
         "Rate per Sq Ft (Low to High)",
         "Spaces (Most to Least)",
         "Spaces (Least to Most)",
+        "Bedroom Count (High to Low)",
+        "Bedroom Count (Low to High)",
     ];
 
     const commercialSortOptions = [
