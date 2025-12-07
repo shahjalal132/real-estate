@@ -363,7 +363,7 @@ export default function AllFiltersModal({
                         <div className="flex items-center gap-3">
                             <SlidersHorizontal className="h-5 w-5 text-[#0066CC]" />
                             <h2 className="text-lg font-semibold text-gray-900">
-                                Sales Filters
+                                All Filters
                             </h2>
                             {activeFiltersCount > 0 && (
                                 <span className="bg-[#0066CC] text-white rounded-full px-2 py-0.5 text-xs font-bold min-w-[20px] text-center">
