@@ -184,10 +184,10 @@ export default function SimilarProperties({
                         onNext={handleNext}
                         settings={sliderSettings}
                         hideControls={true}
-                        className="similar-properties-slider"
+                        className="similar-properties-slider pb-4"
                     >
                         {filteredProperties.map((property) => (
-                            <div key={property.id} className="px-2">
+                            <div key={property.id} className="px-2 py-4">
                                 <PropertyCard
                                     {...mapPropertyToCardProps(property)}
                                 />
