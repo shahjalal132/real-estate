@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import AllFiltersButton from "./AllFiltersButton";
+import SaveFilterModal from "./SaveFilterModal";
+import { saveFilter } from "../utils/cookies";
+import { FilterValues } from "./AllFiltersModal";
 
 interface PropertySearchHeaderProps {
     onSearch?: (filters: SearchFilters) => void;
@@ -10,6 +13,8 @@ interface PropertySearchHeaderProps {
     viewMode?: "grid" | "map";
     onViewModeChange?: (mode: "grid" | "map") => void;
     activeFiltersCount?: number;
+    currentFilters?: FilterValues | null;
+    hasActiveFilters?: boolean;
 }
 
 export interface SearchFilters {
@@ -65,11 +70,15 @@ export default function PropertySearchHeader({
     viewMode = "grid",
     onViewModeChange,
     activeFiltersCount = 0,
+    currentFilters = null,
+    hasActiveFilters = false,
 }: PropertySearchHeaderProps) {
     const [status, setStatus] = useState("for-sale");
     const [propertyType, setPropertyType] = useState("all");
     const [priceRange, setPriceRange] = useState("any");
     const [capRate, setCapRate] = useState("any");
+    const [showSaveModal, setShowSaveModal] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     const [statusOpen, setStatusOpen] = useState(false);
     const [typeOpen, setTypeOpen] = useState(false);
@@ -95,6 +104,55 @@ export default function PropertySearchHeader({
             priceRange,
             capRate,
         });
+    };
+
+    // Get default filter name based on current filters
+    const getDefaultFilterName = (): string => {
+        if (!currentFilters) {
+            return "My Search";
+        }
+
+        if (
+            currentFilters.propertyTypes &&
+            currentFilters.propertyTypes.length > 0 &&
+            !currentFilters.propertyTypes.includes("All")
+        ) {
+            const mainTypes = currentFilters.propertyTypes
+                .filter((type) => type !== "All" && !type.includes(" - "))
+                .slice(0, 3);
+            if (mainTypes.length > 0) {
+                return mainTypes.join(", ");
+            }
+        }
+
+        if (currentFilters.location && currentFilters.location.length > 0) {
+            return currentFilters.location[0];
+        }
+
+        return "My Search";
+    };
+
+    const handleSaveFilter = (name: string, duration: string) => {
+        if (!currentFilters) return;
+
+        setSaving(true);
+        try {
+            saveFilter(name, duration, currentFilters);
+            setShowSaveModal(false);
+            onSaveSearch?.();
+            // Optionally show a success message
+        } catch (error) {
+            console.error("Error saving filter:", error);
+            alert("Failed to save search. Please try again.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSaveSearchClick = () => {
+        if (hasActiveFilters && currentFilters) {
+            setShowSaveModal(true);
+        }
     };
 
     const DropdownButton = ({
@@ -248,11 +306,16 @@ export default function PropertySearchHeader({
                             />
                         </div>
 
-                        {/* Search Now Button */}
+                        {/* Save Search Button */}
                         <button
                             type="button"
-                            onClick={handleSearch}
-                            className="bg-[#0066CC] hover:bg-[#004C99] text-white px-6 py-2.5 rounded font-semibold whitespace-nowrap transition-colors shadow-sm"
+                            onClick={handleSaveSearchClick}
+                            disabled={!hasActiveFilters}
+                            className={`px-6 py-2.5 rounded font-semibold whitespace-nowrap transition-colors shadow-sm ${
+                                hasActiveFilters
+                                    ? "bg-[#0066CC] hover:bg-[#004C99] text-white cursor-pointer"
+                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            }`}
                         >
                             Save Search
                         </button>
@@ -298,6 +361,15 @@ export default function PropertySearchHeader({
                     </div>
                 </div>
             </div>
+
+            {/* Save Filter Modal */}
+            <SaveFilterModal
+                isOpen={showSaveModal}
+                onClose={() => setShowSaveModal(false)}
+                onSave={handleSaveFilter}
+                defaultName={getDefaultFilterName()}
+                saving={saving}
+            />
         </div>
     );
 }

@@ -157,6 +157,9 @@ export default function Properties() {
     const [filtersExpanded, setFiltersExpanded] = useState(false);
     const [sortedProperties, setSortedProperties] =
         useState<Property[]>(properties);
+    const [currentFilters, setCurrentFilters] = useState<FilterValues | null>(
+        null
+    );
 
     // Update sorted properties when properties change
     useEffect(() => {
@@ -174,42 +177,81 @@ export default function Properties() {
           " Properties"
         : "All Properties";
 
-    // Calculate active filters count
-    const activeFiltersCount = useMemo(() => {
+    // Calculate active filters count and check if any filters are active
+    const activeFiltersData = useMemo(() => {
         let count = 0;
-        if (filter && filter !== "all") count++;
-        if (currentSection) count++;
+        let hasActive = false;
 
-        // Count active filters from AllFiltersModal
-        if (initialFilters.location) count++;
-        if (initialFilters.keywords) count++;
-        if (
-            initialFilters.property_types &&
-            Array.isArray(initialFilters.property_types) &&
-            initialFilters.property_types.length > 0 &&
-            !initialFilters.property_types.includes("All")
-        )
+        if (filter && filter !== "all") {
             count++;
-        if (initialFilters.min_rate || initialFilters.max_rate) count++;
-        if (initialFilters.min_size || initialFilters.max_size) count++;
-        if (initialFilters.broker_agent) count++;
-        if (initialFilters.brokerage_shop) count++;
-        if (
-            initialFilters.timeline_type &&
-            (initialFilters.from_date ||
-                initialFilters.to_date ||
-                initialFilters.time_period !== "Any")
-        )
+            hasActive = true;
+        }
+        if (currentSection) {
             count++;
-        if (
-            initialFilters.property_class &&
-            Array.isArray(initialFilters.property_class) &&
-            initialFilters.property_class.length > 0
-        )
-            count++;
+            hasActive = true;
+        }
 
-        return count;
-    }, [filter, currentSection, initialFilters]);
+        // Check current filters or initial filters
+        if (currentFilters) {
+            // Check currentFilters (FilterValues type)
+            if (currentFilters.location && currentFilters.location.length > 0) {
+                count++;
+                hasActive = true;
+            }
+            if (currentFilters.keywords) {
+                count++;
+                hasActive = true;
+            }
+            if (
+                currentFilters.propertyTypes &&
+                currentFilters.propertyTypes.length > 0 &&
+                !currentFilters.propertyTypes.includes("All")
+            ) {
+                count++;
+                hasActive = true;
+            }
+            if (currentFilters.minPrice || currentFilters.maxPrice) {
+                count++;
+                hasActive = true;
+            }
+            if (currentFilters.brokerAgent || currentFilters.brokerageShop) {
+                count++;
+                hasActive = true;
+            }
+        } else {
+            // Check initialFilters (from URL params)
+            if (initialFilters.location) {
+                count++;
+                hasActive = true;
+            }
+            if (initialFilters.keywords) {
+                count++;
+                hasActive = true;
+            }
+            if (
+                initialFilters.property_types &&
+                Array.isArray(initialFilters.property_types) &&
+                initialFilters.property_types.length > 0 &&
+                !initialFilters.property_types.includes("All")
+            ) {
+                count++;
+                hasActive = true;
+            }
+            if (initialFilters.min_rate || initialFilters.max_rate) {
+                count++;
+                hasActive = true;
+            }
+            if (initialFilters.broker_agent || initialFilters.brokerage_shop) {
+                count++;
+                hasActive = true;
+            }
+        }
+
+        return { activeFiltersCount: count, hasActiveFilters: hasActive };
+    }, [filter, currentSection, initialFilters, currentFilters]);
+
+    const activeFiltersCount = activeFiltersData.activeFiltersCount;
+    const hasActiveFilters = activeFiltersData.hasActiveFilters;
 
     const handleSearch = (searchFilters: SearchFilters) => {
         const params: Record<string, string> = {};
@@ -267,13 +309,14 @@ export default function Properties() {
                 onSearch={handleSearch}
                 onFiltersClick={() => setFiltersExpanded(!filtersExpanded)}
                 onSaveSearch={() => {
-                    // TODO: Implement save search functionality
-                    console.log("Save search");
+                    console.log("Hello");
                 }}
                 onClearFilters={handleClearFilters}
                 viewMode={viewMode}
                 onViewModeChange={setViewMode}
                 activeFiltersCount={activeFiltersCount}
+                currentFilters={currentFilters}
+                hasActiveFilters={hasActiveFilters}
             />
 
             <section className="mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2 py-10">
@@ -309,13 +352,20 @@ export default function Properties() {
                     activeFiltersCount={activeFiltersCount}
                     listingsCount={filteredListings.length}
                     onApply={(filters: FilterValues) => {
+                        // Store current filters for save search functionality
+                        setCurrentFilters(filters);
+
                         // Build query parameters from filter values
                         const params: Record<string, any> = {};
 
-                        if (filters.location)
-                            params.location = filters.location;
+                        // Location and Keywords
+                        if (filters.location && filters.location.length > 0) {
+                            params.location = filters.location.join(",");
+                        }
                         if (filters.keywords)
                             params.keywords = filters.keywords;
+
+                        // Property Types
                         if (
                             filters.propertyTypes &&
                             filters.propertyTypes.length > 0 &&
@@ -325,44 +375,160 @@ export default function Properties() {
                                 filters.propertyTypes.join(",");
                         }
 
-                        // Rate/Price filters
-                        if (filters.minRate && filters.minRate !== "$0") {
-                            params.min_rate = filters.minRate;
+                        // Price filters (minPrice, maxPrice)
+                        if (
+                            filters.minPrice &&
+                            filters.minPrice !== "$0" &&
+                            filters.minPrice !== "0"
+                        ) {
+                            params.min_price = filters.minPrice;
+                            params.min_rate = filters.minPrice; // Also set min_rate for backward compatibility
                         }
-                        if (filters.maxRate && !filters.maxRate.endsWith("+")) {
-                            params.max_rate = filters.maxRate;
+                        if (
+                            filters.maxPrice &&
+                            !filters.maxPrice.endsWith("+")
+                        ) {
+                            params.max_price = filters.maxPrice;
+                            params.max_rate = filters.maxPrice; // Also set max_rate for backward compatibility
                         }
-                        if (filters.excludeUndisclosedRate) {
-                            params.exclude_undisclosed_rate = "1";
+                        if (filters.excludeUnpriced) {
+                            params.exclude_unpriced = "1";
+                            params.exclude_undisclosed_rate = "1"; // Also set for backward compatibility
                         }
 
-                        // Size filters
-                        if (filters.sizeType)
-                            params.size_type = filters.sizeType;
-                        if (filters.minSize && filters.minSize !== "0") {
-                            params.min_size = filters.minSize;
+                        // Cap Rate filters
+                        if (filters.minCapRate && filters.minCapRate !== "0") {
+                            params.min_cap_rate = filters.minCapRate;
                         }
-                        if (filters.maxSize && !filters.maxSize.endsWith("+")) {
-                            params.max_size = filters.maxSize;
+                        if (
+                            filters.maxCapRate &&
+                            !filters.maxCapRate.endsWith("+")
+                        ) {
+                            params.max_cap_rate = filters.maxCapRate;
+                        }
+
+                        // Tenant Brand filter
+                        if (filters.tenantBrand) {
+                            params.tenant_brand = filters.tenantBrand;
+                        }
+
+                        // Remaining Term filter (array format)
+                        if (
+                            filters.remainingTerm &&
+                            Array.isArray(filters.remainingTerm)
+                        ) {
+                            params.remaining_term = filters.remainingTerm;
                         }
 
                         // Broker filters
-                        if (filters.brokerAgent)
+                        if (filters.brokerAgent) {
                             params.broker_agent = filters.brokerAgent;
-                        if (filters.brokerageShop)
+                        }
+                        if (filters.brokerageShop) {
                             params.brokerage_shop = filters.brokerageShop;
+                        }
+
+                        // Tenancy filter
+                        if (filters.tenancy) {
+                            params.tenancy = filters.tenancy;
+                        }
+
+                        // Lease Type filter
+                        if (filters.leaseType) {
+                            params.lease_type = filters.leaseType;
+                        }
+
+                        // Unit Measurements filter
+                        if (filters.measurementType) {
+                            params.measurement_type = filters.measurementType;
+                        }
+                        if (filters.minUnits && filters.minUnits !== "0") {
+                            params.min_units = filters.minUnits;
+                        }
+                        if (
+                            filters.maxUnits &&
+                            !filters.maxUnits.endsWith("+")
+                        ) {
+                            params.max_units = filters.maxUnits;
+                        }
+
+                        // Property Details filters
+                        if (filters.minSqft && filters.minSqft !== "0") {
+                            params.min_sqft = filters.minSqft;
+                        }
+                        if (filters.maxSqft && !filters.maxSqft.endsWith("+")) {
+                            params.max_sqft = filters.maxSqft;
+                        }
+                        if (
+                            filters.minPricePerSqft &&
+                            filters.minPricePerSqft !== "0"
+                        ) {
+                            params.min_price_per_sqft = filters.minPricePerSqft;
+                        }
+                        if (
+                            filters.maxPricePerSqft &&
+                            !filters.maxPricePerSqft.endsWith("+")
+                        ) {
+                            params.max_price_per_sqft = filters.maxPricePerSqft;
+                        }
+                        if (filters.minAcres && filters.minAcres !== "0") {
+                            params.min_acres = filters.minAcres;
+                        }
+                        if (
+                            filters.maxAcres &&
+                            !filters.maxAcres.endsWith("+")
+                        ) {
+                            params.max_acres = filters.maxAcres;
+                        }
+
+                        // Tenant Credit filter
+                        if (filters.tenantCredit) {
+                            params.tenant_credit = filters.tenantCredit;
+                        }
+
+                        // Occupancy filter
+                        if (
+                            filters.minOccupancy &&
+                            filters.minOccupancy !== "0"
+                        ) {
+                            params.min_occupancy = filters.minOccupancy;
+                        }
+                        if (
+                            filters.maxOccupancy &&
+                            !filters.maxOccupancy.endsWith("+")
+                        ) {
+                            params.max_occupancy = filters.maxOccupancy;
+                        }
 
                         // Timeline filters
-                        if (filters.timelineType)
+                        if (filters.timelineType) {
                             params.timeline_type = filters.timelineType;
-                        if (filters.fromDate)
+                        }
+                        if (filters.fromDate) {
                             params.from_date = filters.fromDate;
-                        if (filters.toDate) params.to_date = filters.toDate;
+                        }
+                        if (filters.toDate) {
+                            params.to_date = filters.toDate;
+                        }
                         if (
                             filters.timePeriod &&
                             filters.timePeriod !== "Any"
                         ) {
                             params.time_period = filters.timePeriod;
+                        }
+
+                        // Listing Status filter
+                        if (
+                            filters.listingStatus &&
+                            filters.listingStatus.length > 0
+                        ) {
+                            params.listing_status =
+                                filters.listingStatus.join(",");
+                        }
+
+                        // Opportunity Zone filter
+                        if (filters.opportunityZone) {
+                            params.opportunity_zone = "1";
                         }
 
                         // Property class filter
@@ -372,6 +538,14 @@ export default function Properties() {
                         ) {
                             params.property_class =
                                 filters.propertyClass.join(",");
+                        }
+
+                        // Other Options filters (if controller supports them)
+                        if (filters.brokerAgentCoOp) {
+                            params.broker_agent_co_op = "1";
+                        }
+                        if (filters.ownerUser) {
+                            params.owner_user = "1";
                         }
 
                         // Determine base path based on current section

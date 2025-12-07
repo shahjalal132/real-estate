@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import axios from "axios";
 import LocationFilter from "./Filters/LocationFilter";
-import AuthModal from "./AuthModal";
+import SaveFilterModal from "./SaveFilterModal";
+import { saveFilter } from "../utils/cookies";
 import KeywordsFilter from "./Filters/KeywordsFilter";
 import PropertyTypeFilter from "./Filters/PropertyTypeFilter";
 import PriceFilter from "./Filters/PriceFilter";
@@ -33,7 +33,7 @@ interface AllFiltersModalProps {
 }
 
 export interface FilterValues {
-    location: string;
+    location: string[];
     keywords: string;
     propertyTypes: string[];
     minPrice: string;
@@ -79,7 +79,7 @@ export default function AllFiltersModal({
     listingsCount = 0,
 }: AllFiltersModalProps) {
     // Filter states - Left Column
-    const [location, setLocation] = useState("");
+    const [location, setLocation] = useState<string[]>([]);
     const [keywords, setKeywords] = useState("");
     const [propertyTypes, setPropertyTypes] = useState<string[]>(["All"]);
     const [minPrice, setMinPrice] = useState("$0");
@@ -134,12 +134,11 @@ export default function AllFiltersModal({
 
     // Save Search state
     const [saveSearch, setSaveSearch] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showSaveModal, setShowSaveModal] = useState(false);
     const [savingSearch, setSavingSearch] = useState(false);
 
     const handleReset = () => {
-        setLocation("");
+        setLocation([]);
         setKeywords("");
         setPropertyTypes(["All"]);
         setMinPrice("$0");
@@ -183,7 +182,7 @@ export default function AllFiltersModal({
         onReset?.();
     };
 
-    const handleApply = async () => {
+    const handleApply = () => {
         const filters: FilterValues = {
             location,
             keywords,
@@ -222,27 +221,26 @@ export default function AllFiltersModal({
             ownerUser,
         };
 
-        // Save search if checkbox is checked
+        // Show save modal if checkbox is checked
         if (saveSearch) {
-            await handleSaveSearch();
+            setShowSaveModal(true);
+        } else {
+            onApply?.(filters);
+            onClose();
         }
-
-        onApply?.(filters);
-        onClose();
     };
 
-    // Check authentication status
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const response = await axios.get("/api/auth/user");
-                setIsAuthenticated(response.data.authenticated);
-            } catch (error) {
-                setIsAuthenticated(false);
-            }
-        };
-        checkAuth();
-    }, []);
+    // Get default filter name based on selected property types
+    const getDefaultFilterName = (): string => {
+        if (propertyTypes.length === 0 || propertyTypes.includes("All")) {
+            return "All Properties";
+        }
+        // Filter out "All" and subtypes, get main types
+        const mainTypes = propertyTypes
+            .filter((type) => type !== "All" && !type.includes(" - "))
+            .slice(0, 3); // Take first 3 types
+        return mainTypes.length > 0 ? mainTypes.join(", ") : "Custom Search";
+    };
 
     // Lock body scroll and prevent horizontal scroll when modal is open
     useEffect(() => {
@@ -262,16 +260,7 @@ export default function AllFiltersModal({
         };
     }, [isOpen]);
 
-    const handleSaveSearch = async () => {
-        if (!isAuthenticated) {
-            setShowAuthModal(true);
-            return;
-        }
-
-        if (!saveSearch) {
-            return;
-        }
-
+    const handleSaveFilter = (name: string, duration: string) => {
         setSavingSearch(true);
         try {
             const filters: FilterValues = {
@@ -312,41 +301,78 @@ export default function AllFiltersModal({
                 ownerUser,
             };
 
-            await axios.post("/api/saved-searches", {
-                name: `Search - ${new Date().toLocaleDateString()}`,
-                email_alerts: true,
-                filters,
-            });
+            // Save to cookies
+            saveFilter(name, duration, filters);
 
-            alert(
-                "Search saved successfully! You'll receive email alerts for new properties."
-            );
+            // Close modals and apply filters
+            setShowSaveModal(false);
+            setSaveSearch(false);
+            onApply?.(filters);
+            onClose();
         } catch (error: any) {
-            console.error("Error saving search:", error);
+            console.error("Error saving filter:", error);
             alert("Failed to save search. Please try again.");
         } finally {
             setSavingSearch(false);
         }
     };
 
-    const handleAuthSuccess = () => {
-        setIsAuthenticated(true);
-        setShowAuthModal(false);
-        // Retry saving the search
-        if (saveSearch) {
-            handleSaveSearch();
-        }
+    const handleCancelSave = () => {
+        setShowSaveModal(false);
+        setSaveSearch(false);
+        // Still apply the filters even if user cancels saving
+        const filters: FilterValues = {
+            location,
+            keywords,
+            propertyTypes,
+            minPrice,
+            maxPrice,
+            excludeUnpriced,
+            minCapRate,
+            maxCapRate,
+            tenantBrand,
+            remainingTerm,
+            brokerAgent,
+            brokerageShop,
+            tenancy,
+            leaseType,
+            measurementType,
+            minUnits,
+            maxUnits,
+            minSqft,
+            maxSqft,
+            minPricePerSqft,
+            maxPricePerSqft,
+            minAcres,
+            maxAcres,
+            tenantCredit,
+            minOccupancy,
+            maxOccupancy,
+            timelineType,
+            fromDate,
+            toDate,
+            timePeriod,
+            listingStatus,
+            opportunityZone,
+            propertyClass,
+            brokerAgentCoOp,
+            ownerUser,
+        };
+        onApply?.(filters);
+        onClose();
     };
 
     if (!isOpen) return null;
 
     return (
         <>
-            {/* Auth Modal */}
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-                onSuccess={handleAuthSuccess}
+            {/* Save Filter Modal */}
+            <SaveFilterModal
+                isOpen={showSaveModal}
+                onClose={handleCancelSave}
+                onSave={handleSaveFilter}
+                defaultName={getDefaultFilterName()}
+                saving={savingSearch}
             />
 
             {/* Backdrop */}
@@ -363,7 +389,7 @@ export default function AllFiltersModal({
                         <div className="flex items-center gap-3">
                             <SlidersHorizontal className="h-5 w-5 text-[#0066CC]" />
                             <h2 className="text-lg font-semibold text-gray-900">
-                                All Filters
+                                Sales Filters
                             </h2>
                             {activeFiltersCount > 0 && (
                                 <span className="bg-[#0066CC] text-white rounded-full px-2 py-0.5 text-xs font-bold min-w-[20px] text-center">
@@ -524,30 +550,6 @@ export default function AllFiltersModal({
                         >
                             Clear All Filters
                         </button>
-
-                        {/* Center: Save Search */}
-                        <label className="flex cursor-pointer items-center gap-2 flex-1 max-w-md">
-                            <input
-                                type="checkbox"
-                                checked={saveSearch}
-                                onChange={(e) =>
-                                    setSaveSearch(e.target.checked)
-                                }
-                                className="h-4 w-4 rounded border-gray-300 text-[#0066CC] focus:ring-[#0066CC] accent-[#0066CC] shrink-0"
-                            />
-                            <span className="text-sm text-gray-700 whitespace-nowrap">
-                                Save Search
-                            </span>
-                            <span className="text-xs text-gray-500">
-                                Receive email alerts when new properties hit the
-                                market.
-                            </span>
-                            {savingSearch && (
-                                <span className="text-xs text-[#0066CC]">
-                                    Saving...
-                                </span>
-                            )}
-                        </label>
 
                         {/* Right: Show Button */}
                         <button

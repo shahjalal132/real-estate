@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import MegaMenu from "./MegaMenu";
 import { Menu, ChevronDown } from "lucide-react";
 import Button from "./Button";
+import SearchComponent from "./SearchComponent";
 
 interface NavigationItem {
     label: string;
@@ -13,76 +14,84 @@ interface NavigationItem {
 }
 
 export default function Header() {
+    const page = usePage();
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
     const [moreMenuOpen, setMoreMenuOpen] = useState<boolean>(false);
 
+    // Show search component only when URL contains "properties"
+    // Get URL from page props or window location as fallback
+    const currentUrl =
+        (page as any)?.url ||
+        (typeof window !== "undefined" ? window.location.pathname : "");
+    const showSearch = currentUrl.includes("/properties");
+
     const navigationItems: NavigationItem[] = [
         {
-            label: "FOR SALE",
+            label: "For Sale",
             link: "/for-sale",
             type: "megaMenu",
             megaMenuId: "forSale",
             hasDropdown: true,
         },
         {
-            label: "FOR LEASE",
+            label: "For Lease",
             link: "/for-lease",
             type: "megaMenu",
             megaMenuId: "forLease",
             hasDropdown: true,
         },
         {
-            label: "SCOUT",
+            label: "Scout",
             link: "/scout",
             type: "megaMenu",
             megaMenuId: "scout",
             hasDropdown: true,
         },
         {
-            label: "COMPS",
+            label: "Comps",
             link: "/comps",
             type: "megaMenu",
             megaMenuId: "comps",
             hasDropdown: true,
         },
         {
-            label: "DISPENSARIES",
+            label: "Dispensaries",
             link: "/dispensaries",
             type: "megaMenu",
             megaMenuId: "dispensaries",
             hasDropdown: true,
         },
         {
-            label: "PIPELINE",
+            label: "Pipeline",
             link: "/pipeline",
             type: "megaMenu",
             megaMenuId: "pipeline",
             hasDropdown: true,
         },
         {
-            label: "TOOLS",
+            label: "Tools",
             link: "/tools",
             type: "megaMenu",
             megaMenuId: "tools",
             hasDropdown: true,
         },
         {
-            label: "SETTINGS",
+            label: "Settings",
             link: "/settings",
             type: "megaMenu",
             megaMenuId: "settings",
             hasDropdown: true,
         },
         {
-            label: "ZONING",
+            label: "Zoning",
             link: "/zoning",
             type: "megaMenu",
             megaMenuId: "zoningChanges",
             hasDropdown: true,
         },
         {
-            label: "CONTACTS",
+            label: "Contacts",
             link: "/contacts",
             type: "megaMenu",
             megaMenuId: "contacts",
@@ -132,7 +141,7 @@ export default function Header() {
         >
             <Link
                 href={item.link}
-                className={`relative group tracking-[1px] font-normal transition-colors whitespace-nowrap text-xs md:text-sm ${
+                className={`relative group tracking-[0.5px] font-normal transition-colors whitespace-nowrap text-xs md:text-sm capitalize ${
                     activeMenu === item.megaMenuId
                         ? "text-[#0066cc]"
                         : "text-[#4A4A4A]"
@@ -170,7 +179,7 @@ export default function Header() {
         <header className="sticky top-0 z-50 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
             <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-3 h-full overflow-visible">
                 <div className="flex items-center justify-between h-full">
-                    <div className="flex items-center space-x-4 md:space-x-6 lg:space-x-8 flex-1 min-w-0">
+                    <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-6 flex-1 min-w-0">
                         {/* Logo */}
                         <Link
                             href="/"
@@ -182,6 +191,13 @@ export default function Header() {
                                 className="h-6 md:h-7 w-auto max-w-[120px] md:max-w-[140px] object-contain"
                             />
                         </Link>
+
+                        {/* Search Component - Only show on properties pages */}
+                        {showSearch && (
+                            <div className="hidden md:block flex-1 max-w-[250px]">
+                                <SearchComponent />
+                            </div>
+                        )}
 
                         {/* Medium Screen Navigation (with MORE dropdown) */}
                         <nav className="hidden md:flex lg:hidden items-center space-x-1 sm:space-x-2 overflow-visible flex-1 min-w-0">
@@ -203,14 +219,14 @@ export default function Header() {
                                     }}
                                 >
                                     <button
-                                        className={`relative group tracking-[1px] font-normal transition-colors whitespace-nowrap flex items-center gap-1.5 md:gap-2 text-xs md:text-sm ${
+                                        className={`relative group tracking-[0.5px] font-normal transition-colors whitespace-nowrap flex items-center gap-1.5 md:gap-2 text-xs md:text-sm capitalize ${
                                             moreMenuOpen
                                                 ? "text-[#0066cc]"
                                                 : "text-[#4A4A4A]"
                                         }`}
                                     >
                                         <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0066cc] group-hover:w-full group-hover:transition-all transition-all"></span>
-                                        MORE
+                                        More
                                         <ChevronDown
                                             className={`h-3 w-3 flex-shrink-0 transition-all duration-300 ${
                                                 moreMenuOpen
@@ -249,7 +265,7 @@ export default function Header() {
                                                 >
                                                     <Link
                                                         href={item.link}
-                                                        className={`block px-4 py-2 text-sm tracking-[1px] transition-colors ${
+                                                        className={`block px-4 py-2 text-sm tracking-[0.5px] transition-colors capitalize ${
                                                             activeMenu ===
                                                             item.megaMenuId
                                                                 ? "text-[#0066cc] bg-[#F0F7FF]"
@@ -350,11 +366,19 @@ export default function Header() {
             {mobileMenuOpen && (
                 <div className="lg:hidden bg-white border-t">
                     <nav className="px-4 py-4 space-y-2">
+                        {/* Mobile Search - Only show on properties pages */}
+                        {showSearch && (
+                            <div className="mb-4">
+                                <SearchComponent
+                                    onClose={() => setMobileMenuOpen(false)}
+                                />
+                            </div>
+                        )}
                         {navigationItems.map((item) => (
                             <Link
                                 key={item.label}
                                 href={item.link}
-                                className="block py-2 text-sm font-medium text-[#333333] hover:text-[#0066CC]"
+                                className="block py-2 text-sm font-medium text-[#333333] hover:text-[#0066CC] capitalize"
                                 onClick={() => setMobileMenuOpen(false)}
                             >
                                 {item.label}
@@ -365,7 +389,7 @@ export default function Header() {
                             className="block mt-4 bg-[#0066CC] text-white px-5 py-2.5 rounded text-sm font-semibold text-center"
                             onClick={() => setMobileMenuOpen(false)}
                         >
-                            LOG IN
+                            Log In
                         </Link>
                     </nav>
                 </div>

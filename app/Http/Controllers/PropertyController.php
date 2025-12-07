@@ -363,33 +363,53 @@ class PropertyController extends Controller
      */
     protected function applyFilters($query, Request $request)
     {
-        // Location filter
+
+
+        // 1. Location filter (supports multiple locations)
         if ($request->has('location') && $request->input('location')) {
-            $location = $request->input('location');
-            $query->whereHas('location', function ($locQuery) use ($location) {
-                $locQuery->where('city', 'like', "%{$location}%")
-                    ->orWhere('state_name', 'like', "%{$location}%")
-                    ->orWhere('state_code', 'like', "%{$location}%")
-                    ->orWhere('zip', 'like', "%{$location}%")
-                    ->orWhere('full_address', 'like', "%{$location}%")
-                    ->orWhere('county', 'like', "%{$location}%");
-            });
-        }
+            $locations = is_array($request->input('location'))
+                ? $request->input('location')
+                : explode(',', $request->input('location'));
 
-        // Keywords filter
-        if ($request->has('keywords') && $request->input('keywords')) {
-            $keywords = $request->input('keywords');
-            $query->where(function ($q) use ($keywords) {
-                $q->where('name', 'like', "%{$keywords}%")
-                    ->orWhere('description', 'like', "%{$keywords}%")
-                    ->orWhere('marketing_description', 'like', "%{$keywords}%")
-                    ->orWhereHas('details', function ($detailQuery) use ($keywords) {
-                        $detailQuery->where('investment_highlights', 'like', "%{$keywords}%");
+            // Filter out empty values
+            $locations = array_filter(array_map('trim', $locations), function ($loc) {
+                return !empty($loc);
+            });
+
+            if (!empty($locations)) {
+                $query->whereHas('location', function ($locQuery) use ($locations) {
+                    $locQuery->where(function ($subQuery) use ($locations) {
+                        foreach ($locations as $location) {
+                            $subQuery->orWhere(function ($locSubQuery) use ($location) {
+                                $locSubQuery->where('city', 'like', "%{$location}%")
+                                    ->orWhere('state_name', 'like', "%{$location}%")
+                                    ->orWhere('state_code', 'like', "%{$location}%")
+                                    ->orWhere('zip', 'like', "%{$location}%")
+                                    ->orWhere('full_address', 'like', "%{$location}%")
+                                    ->orWhere('county', 'like', "%{$location}%");
+                            });
+                        }
                     });
-            });
+                });
+            }
         }
 
-        // Property Types filter
+        // 2. Keywords filter
+        if ($request->has('keywords') && $request->input('keywords')) {
+            $keywords = trim($request->input('keywords'));
+            if ($keywords) {
+                $query->where(function ($q) use ($keywords) {
+                    $q->where('name', 'like', "%{$keywords}%")
+                        ->orWhere('description', 'like', "%{$keywords}%")
+                        ->orWhere('marketing_description', 'like', "%{$keywords}%")
+                        ->orWhereHas('details', function ($detailQuery) use ($keywords) {
+                            $detailQuery->where('investment_highlights', 'like', "%{$keywords}%");
+                        });
+                });
+            }
+        }
+
+        // 3. Property Types filter
         if ($request->has('property_types') && $request->input('property_types')) {
             $propertyTypes = is_array($request->input('property_types'))
                 ? $request->input('property_types')
@@ -407,10 +427,18 @@ class PropertyController extends Controller
                         // Check if it's a subtype (format: "Type - Subtype")
                         if (strpos($type, ' - ') !== false) {
                             [$mainType, $subtype] = explode(' - ', $type, 2);
+                            $mainType = trim($mainType);
+                            $subtype = trim($subtype);
                             // Filter by both type and subtype
+                            // Subtypes can be in properties.subtypes OR property_details.subtypes
                             $q->orWhere(function ($subQuery) use ($mainType, $subtype) {
                                 $subQuery->whereJsonContains('types', $mainType)
-                                    ->whereJsonContains('subtypes', $subtype);
+                                    ->where(function ($typeQuery) use ($subtype) {
+                                        $typeQuery->whereJsonContains('subtypes', $subtype)
+                                            ->orWhereHas('details', function ($detailQuery) use ($subtype) {
+                                                $detailQuery->whereJsonContains('subtypes', $subtype);
+                                            });
+                                    });
                             });
                         } else {
                             // Just filter by main type
@@ -421,13 +449,13 @@ class PropertyController extends Controller
             }
         }
 
-        // Price/Rate filter (asking_price)
+        // 4. Price/Rate filter (asking_price)
         if ($request->has('min_rate') || $request->has('min_price')) {
             $minPrice = $request->input('min_rate') ?: $request->input('min_price');
             if ($minPrice) {
                 // Remove $ and commas, convert to number
                 $minPrice = preg_replace('/[^0-9.]/', '', $minPrice);
-                if (is_numeric($minPrice)) {
+                if (is_numeric($minPrice) && $minPrice > 0) {
                     $query->where('asking_price', '>=', $minPrice);
                 }
             }
@@ -438,17 +466,56 @@ class PropertyController extends Controller
             if ($maxPrice && !str_ends_with($maxPrice, '+')) {
                 // Remove $ and commas, convert to number
                 $maxPrice = preg_replace('/[^0-9.]/', '', $maxPrice);
-                if (is_numeric($maxPrice)) {
+                if (is_numeric($maxPrice) && $maxPrice > 0) {
                     $query->where('asking_price', '<=', $maxPrice);
                 }
             }
         }
 
         // Exclude undisclosed rate
-        if ($request->has('exclude_undisclosed_rate') && $request->input('exclude_undisclosed_rate')) {
-            $query->whereNotNull('asking_price')->where('asking_price', '>', 0);
+        // if ($request->has('exclude_undisclosed_rate') && $request->input('exclude_undisclosed_rate')) {
+        //     $query->whereNotNull('asking_price')->where('asking_price', '>', 0);
+        // }
+
+        // Exclude unpriced (same as exclude_undisclosed_rate)
+        // if ($request->has('exclude_unpriced') && $request->input('exclude_unpriced')) {
+        //     $query->whereNotNull('asking_price')->where('asking_price', '>', 0);
+        // }
+
+        // 5. Broker Agent filter
+        if ($request->has('broker_agent') && $request->input('broker_agent')) {
+            $brokerName = trim($request->input('broker_agent'));
+            if ($brokerName) {
+                $query->whereHas('brokers', function ($q) use ($brokerName) {
+                    // Search in first name, last name, or full name (case-insensitive)
+                    $q->where(function ($subQuery) use ($brokerName) {
+                        $searchTerm = "%{$brokerName}%";
+                        $subQuery->where('first_name', 'like', $searchTerm)
+                            ->orWhere('last_name', 'like', $searchTerm)
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$searchTerm]);
+                    });
+                });
+            }
         }
 
+        // 6. Brokerage Shop filter
+        if ($request->has('brokerage_shop') && $request->input('brokerage_shop')) {
+            $brokerageName = trim($request->input('brokerage_shop'));
+            if ($brokerageName) {
+                $query->whereHas('brokers', function ($q) use ($brokerageName) {
+                    $q->whereHas('brokerage', function ($brokerageQuery) use ($brokerageName) {
+                        $brokerageQuery->where('name', 'like', "%{$brokerageName}%");
+                    });
+                });
+            }
+        }
+
+        // ============================================
+        // OTHER FILTERS - Temporarily disabled for focused testing
+        // Uncomment these as we test and fix them one by one
+        // ============================================
+
+        /*
         // Size filter (Square Feet or Acreage)
         if ($request->has('size_type') && $request->has('min_size')) {
             $sizeType = $request->input('size_type');
@@ -469,54 +536,26 @@ class PropertyController extends Controller
                 }
             } else {
                 // Filter by Square Feet from summary_details
-                // Note: JSON filtering for numeric comparisons is complex, so we'll filter in PHP for now
-                // This could be optimized with a database function or computed column
                 if (($minSize && is_numeric($minSize)) || ($maxSize && !str_ends_with($maxSize, '+') && is_numeric($maxSize))) {
-                    // We'll apply this filter after fetching, or use a more complex query
-                    // For now, we'll use a whereRaw with JSON extraction
+                    $query->whereHas('details', function ($q) use ($minSize, $maxSize) {
                     if ($minSize && is_numeric($minSize)) {
-                        $query->whereHas('details', function ($q) use ($minSize) {
-                            $q->whereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Feet') AS UNSIGNED) >= ?", [$minSize])
+                            $q->where(function ($sizeQuery) use ($minSize) {
+                                $sizeQuery->whereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Feet') AS UNSIGNED) >= ?", [$minSize])
                                 ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.Sqft') AS UNSIGNED) >= ?", [$minSize])
-                                ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Footage') AS UNSIGNED) >= ?", [$minSize]);
+                                    ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Footage') AS UNSIGNED) >= ?", [$minSize])
+                                    ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.SF') AS UNSIGNED) >= ?", [$minSize]);
                         });
                     }
                     if ($maxSize && !str_ends_with($maxSize, '+') && is_numeric($maxSize)) {
-                        $query->whereHas('details', function ($q) use ($maxSize) {
-                            $q->whereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Feet') AS UNSIGNED) <= ?", [$maxSize])
+                            $q->where(function ($sizeQuery) use ($maxSize) {
+                                $sizeQuery->whereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Feet') AS UNSIGNED) <= ?", [$maxSize])
                                 ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.Sqft') AS UNSIGNED) <= ?", [$maxSize])
-                                ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Footage') AS UNSIGNED) <= ?", [$maxSize]);
-                        });
-                    }
+                                    ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.Square Footage') AS UNSIGNED) <= ?", [$maxSize])
+                                    ->orWhereRaw("CAST(JSON_EXTRACT(summary_details, '$.SF') AS UNSIGNED) <= ?", [$maxSize]);
+                            });
+                        }
+                    });
                 }
-            }
-        }
-
-        // Broker Agent filter
-        if ($request->has('broker_agent') && $request->input('broker_agent')) {
-            $brokerName = trim($request->input('broker_agent'));
-            if ($brokerName) {
-                $query->whereHas('brokers', function ($q) use ($brokerName) {
-                    // Search in first name, last name, or full name (case-insensitive)
-                    $q->where(function ($subQuery) use ($brokerName) {
-                        $searchTerm = "%{$brokerName}%";
-                        $subQuery->where('first_name', 'like', $searchTerm)
-                            ->orWhere('last_name', 'like', $searchTerm)
-                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$searchTerm]);
-                    });
-                });
-            }
-        }
-
-        // Brokerage Shop filter
-        if ($request->has('brokerage_shop') && $request->input('brokerage_shop')) {
-            $brokerageName = trim($request->input('brokerage_shop'));
-            if ($brokerageName) {
-                $query->whereHas('brokers', function ($q) use ($brokerageName) {
-                    $q->whereHas('brokerage', function ($brokerageQuery) use ($brokerageName) {
-                        $brokerageQuery->where('name', 'like', "%{$brokerageName}%");
-                    });
-                });
             }
         }
 
@@ -566,10 +605,17 @@ class PropertyController extends Controller
 
             if (!empty($propertyClasses)) {
                 $query->whereHas('details', function ($q) use ($propertyClasses) {
+                    $q->where(function ($subQuery) use ($propertyClasses) {
                     foreach ($propertyClasses as $class) {
-                        $q->orWhereJsonContains('summary_details->Class', trim($class))
-                            ->orWhereJsonContains('summary_details->Property Class', trim($class));
-                    }
+                            $class = trim($class);
+                            $searchTerm = "%{$class}%";
+                            $subQuery->orWhere(function ($classQuery) use ($class, $searchTerm) {
+                                $classQuery->whereRaw("JSON_EXTRACT(summary_details, '$.Class') LIKE ?", [$searchTerm])
+                                    ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Property Class') LIKE ?", [$searchTerm])
+                                    ->orWhereRaw("JSON_EXTRACT(summary_details, '$.PropertyClass') LIKE ?", [$searchTerm]);
+                            });
+                        }
+                    });
                 });
             }
         }
@@ -602,13 +648,18 @@ class PropertyController extends Controller
 
         // Tenant/Brand filter (if stored in summary_details)
         if ($request->has('tenant_brand') && $request->input('tenant_brand')) {
-            $tenantBrand = $request->input('tenant_brand');
-            $query->whereHas('details', function ($q) use ($tenantBrand) {
-                $q->whereJsonContains('summary_details->Tenant', $tenantBrand)
-                    ->orWhereJsonContains('summary_details->Brand', $tenantBrand)
-                    ->orWhereRaw("JSON_SEARCH(summary_details, 'one', ?, NULL, '$.Tenant') IS NOT NULL", ["%{$tenantBrand}%"])
-                    ->orWhereRaw("JSON_SEARCH(summary_details, 'one', ?, NULL, '$.Brand') IS NOT NULL", ["%{$tenantBrand}%"]);
-            });
+            $tenantBrand = trim($request->input('tenant_brand'));
+            if ($tenantBrand) {
+                $query->whereHas('details', function ($q) use ($tenantBrand) {
+                    $searchTerm = "%{$tenantBrand}%";
+                    $q->where(function ($subQuery) use ($tenantBrand, $searchTerm) {
+                        $subQuery->whereRaw("JSON_EXTRACT(summary_details, '$.Tenant') LIKE ?", [$searchTerm])
+                            ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Brand') LIKE ?", [$searchTerm])
+                            ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Tenant Name') LIKE ?", [$searchTerm])
+                            ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Brand Name') LIKE ?", [$searchTerm]);
+                    });
+                });
+            }
         }
 
         // Remaining Term filter (if stored in summary_details)
@@ -628,22 +679,31 @@ class PropertyController extends Controller
 
         // Tenancy filter (vacant, single, multi)
         if ($request->has('tenancy') && $request->input('tenancy')) {
-            $tenancy = $request->input('tenancy');
-            // This would need to be stored in summary_details or a separate field
-            // For now, we'll check if it's in summary_details
-            $query->whereHas('details', function ($q) use ($tenancy) {
-                $q->whereJsonContains('summary_details->Tenancy', ucfirst($tenancy))
-                    ->orWhereJsonContains('summary_details->Tenant Count', $tenancy === 'single' ? '1' : 'Multiple');
-            });
+            $tenancy = trim($request->input('tenancy'));
+            if ($tenancy) {
+                $query->whereHas('details', function ($q) use ($tenancy) {
+                    $searchTerm = "%{$tenancy}%";
+                    $q->where(function ($subQuery) use ($tenancy, $searchTerm) {
+                        $subQuery->whereRaw("JSON_EXTRACT(summary_details, '$.Tenancy') LIKE ?", [$searchTerm])
+                            ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Tenant Count') LIKE ?", [$searchTerm])
+                            ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Occupancy Status') LIKE ?", [$searchTerm]);
+                    });
+                });
+            }
         }
 
         // Lease Type filter
         if ($request->has('lease_type') && $request->input('lease_type')) {
-            $leaseType = $request->input('lease_type');
-            $query->whereHas('details', function ($q) use ($leaseType) {
-                $q->whereJsonContains('summary_details->Lease Type', $leaseType)
-                    ->orWhereRaw("JSON_SEARCH(summary_details, 'one', ?, NULL, '$.Lease Type') IS NOT NULL", ["%{$leaseType}%"]);
-            });
+            $leaseType = trim($request->input('lease_type'));
+            if ($leaseType) {
+                $query->whereHas('details', function ($q) use ($leaseType) {
+                    $searchTerm = "%{$leaseType}%";
+                    $q->where(function ($subQuery) use ($leaseType, $searchTerm) {
+                        $subQuery->whereRaw("JSON_EXTRACT(summary_details, '$.Lease Type') LIKE ?", [$searchTerm])
+                            ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Lease') LIKE ?", [$searchTerm]);
+                    });
+                });
+            }
         }
 
         // Unit Measurements filter
@@ -734,11 +794,16 @@ class PropertyController extends Controller
 
         // Tenant Credit filter
         if ($request->has('tenant_credit') && $request->input('tenant_credit')) {
-            $tenantCredit = $request->input('tenant_credit');
-            $query->whereHas('details', function ($q) use ($tenantCredit) {
-                $q->whereJsonContains('summary_details->Tenant Credit', $tenantCredit)
-                    ->orWhereRaw("JSON_SEARCH(summary_details, 'one', ?, NULL, '$.Tenant Credit') IS NOT NULL", ["%{$tenantCredit}%"]);
-            });
+            $tenantCredit = trim($request->input('tenant_credit'));
+            if ($tenantCredit) {
+                $query->whereHas('details', function ($q) use ($tenantCredit) {
+                    $searchTerm = "%{$tenantCredit}%";
+                    $q->where(function ($subQuery) use ($tenantCredit, $searchTerm) {
+                        $subQuery->whereRaw("JSON_EXTRACT(summary_details, '$.Tenant Credit') LIKE ?", [$searchTerm])
+                            ->orWhereRaw("JSON_EXTRACT(summary_details, '$.Credit Rating') LIKE ?", [$searchTerm]);
+                    });
+                });
+            }
         }
 
         // Occupancy filter
@@ -802,6 +867,7 @@ class PropertyController extends Controller
         if ($request->has('type')) {
             $query->whereJsonContains('types', $request->input('type'));
         }
+        */
 
         return $query;
     }
