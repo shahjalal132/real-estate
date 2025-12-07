@@ -47,75 +47,75 @@ interface DemographicsData {
 const demographicsData: Record<RadiusTab, DemographicsData> = {
     "1 mile": {
         population: {
-            current: "11k",
-            value2019: "10.6k",
-            value2022: "10.0k",
-            growth2019: 3,
-            growth2022: 1,
+            current: "6,205",
+            value2019: "6,223",
+            value2022: "5,904",
+            growth2019: 0,
+            growth2022: 5,
             chartData: [
-                { label: "2019", value: 10500 },
-                { label: "2020", value: 10700 },
-                { label: "2021", value: 10650 },
-                { label: "2022", value: 10800 },
-                { label: "2023", value: 11000 },
+                { label: "2019", value: 6220 },
+                { label: "2020", value: 5980 },
+                { label: "2021", value: 6180 },
+                { label: "2022", value: 5900 },
+                { label: "2023", value: 6205 },
             ],
         },
         householdIncome: {
-            median: "$53.1k",
-            estimate2028: "$50.4k",
-            growthRate: -5,
+            median: "$51.6k",
+            estimate2028: "$57.9k",
+            growthRate: 12,
             pieData: [
-                { label: "Under $25K", value: 15, color: "#1e3a8a" },
-                { label: "$25K - $50K", value: 25, color: "#3b82f6" },
-                { label: "$50K - $100K", value: 35, color: "#60a5fa" },
-                { label: "$100K - $150K", value: 15, color: "#93c5fd" },
-                { label: "Over $150K", value: 10, color: "#1e40af" },
+                { label: "Under $25K", value: 28, color: "#0066CC" },
+                { label: "$25K - $50K", value: 22, color: "#3B82F6" },
+                { label: "$50K - $100K", value: 20, color: "#60A5FA" },
+                { label: "$100K - $150K", value: 18, color: "#93C5FD" },
+                { label: "Over $150K", value: 12, color: "#1E40AF" },
             ],
         },
         ageDemographics: {
             median: "43",
             estimate2028: "41",
-            growthRate: -3,
+            growthRate: -5,
             pieData: [
-                { label: "Over 65", value: 20, color: "#1e3a8a" },
-                { label: "Under 20", value: 15, color: "#3b82f6" },
-                { label: "20 - 25", value: 10, color: "#60a5fa" },
-                { label: "25 - 45", value: 35, color: "#93c5fd" },
-                { label: "45 - 63", value: 20, color: "#1e40af" },
+                { label: "Under 20", value: 18, color: "#8B5CF6" },
+                { label: "20 - 25", value: 8, color: "#A78BFA" },
+                { label: "25 - 45", value: 32, color: "#C4B5FD" },
+                { label: "45 - 65", value: 25, color: "#DDD6FE" },
+                { label: "Over 65", value: 17, color: "#EDE9FE" },
             ],
         },
         employees: {
-            total: "8,808",
+            total: "5,114",
             categories: [
-                { label: "Manufacturing", value: 2500, color: "#0066CC" },
                 {
-                    label: "Educational services, and heal...",
+                    label: "Management, business, scien...",
                     value: 1800,
                     color: "#0066CC",
                 },
                 {
-                    label: "Management, business, scien...",
+                    label: "Educational services, and heal...",
                     value: 1500,
                     color: "#0066CC",
                 },
-                { label: "Retail trade", value: 1200, color: "#0066CC" },
-                { label: "Other", value: 1808, color: "#0066CC" },
+                { label: "Retail trade", value: 1000, color: "#0066CC" },
+                { label: "Manufacturing", value: 600, color: "#0066CC" },
+                { label: "Construction", value: 214, color: "#0066CC" },
             ],
         },
         housingOccupancy: {
-            current: "8:1",
+            current: "9:1",
             predicted: "11:1 predicted by 2028",
             data: [
-                { label: "Occupied", value: 88, color: "#0066CC" },
-                { label: "Vacant", value: 12, color: "#E5E7EB" },
+                { label: "Occupied", value: 90, color: "#0066CC" },
+                { label: "Vacant", value: 10, color: "#E5E7EB" },
             ],
         },
         renterHomeowner: {
-            current: "1:3",
+            current: "1:2",
             predicted: "1:2 predicted by 2028",
             data: [
-                { label: "Renters", value: 25, color: "#E5E7EB" },
-                { label: "Homeowner", value: 75, color: "#0066CC" },
+                { label: "Renters", value: 33, color: "#E5E7EB" },
+                { label: "Homeowner", value: 67, color: "#0066CC" },
             ],
         },
     },
@@ -139,11 +139,11 @@ const demographicsData: Record<RadiusTab, DemographicsData> = {
             estimate2028: "$55.2k",
             growthRate: -5,
             pieData: [
-                { label: "Under $25K", value: 12, color: "#1e3a8a" },
-                { label: "$25K - $50K", value: 22, color: "#3b82f6" },
-                { label: "$50K - $100K", value: 38, color: "#60a5fa" },
-                { label: "$100K - $150K", value: 18, color: "#93c5fd" },
-                { label: "Over $150K", value: 10, color: "#1e40af" },
+                { label: "Under $25K", value: 12, color: "#0066CC" },
+                { label: "$25K - $50K", value: 22, color: "#3B82F6" },
+                { label: "$50K - $100K", value: 38, color: "#60A5FA" },
+                { label: "$100K - $150K", value: 18, color: "#93C5FD" },
+                { label: "Over $150K", value: 10, color: "#1E40AF" },
             ],
         },
         ageDemographics: {
@@ -151,11 +151,11 @@ const demographicsData: Record<RadiusTab, DemographicsData> = {
             estimate2028: "39",
             growthRate: -3,
             pieData: [
-                { label: "Over 65", value: 18, color: "#1e3a8a" },
-                { label: "Under 20", value: 18, color: "#3b82f6" },
-                { label: "20 - 25", value: 12, color: "#60a5fa" },
-                { label: "25 - 45", value: 38, color: "#93c5fd" },
-                { label: "45 - 63", value: 14, color: "#1e40af" },
+                { label: "Over 65", value: 18, color: "#8B5CF6" },
+                { label: "Under 20", value: 18, color: "#A78BFA" },
+                { label: "20 - 25", value: 12, color: "#C4B5FD" },
+                { label: "25 - 45", value: 38, color: "#DDD6FE" },
+                { label: "45 - 63", value: 14, color: "#EDE9FE" },
             ],
         },
         employees: {
@@ -213,11 +213,11 @@ const demographicsData: Record<RadiusTab, DemographicsData> = {
             estimate2028: "$59.1k",
             growthRate: -5,
             pieData: [
-                { label: "Under $25K", value: 10, color: "#1e3a8a" },
-                { label: "$25K - $50K", value: 20, color: "#3b82f6" },
-                { label: "$50K - $100K", value: 40, color: "#60a5fa" },
-                { label: "$100K - $150K", value: 20, color: "#93c5fd" },
-                { label: "Over $150K", value: 10, color: "#1e40af" },
+                { label: "Under $25K", value: 10, color: "#0066CC" },
+                { label: "$25K - $50K", value: 20, color: "#3B82F6" },
+                { label: "$50K - $100K", value: 40, color: "#60A5FA" },
+                { label: "$100K - $150K", value: 20, color: "#93C5FD" },
+                { label: "Over $150K", value: 10, color: "#1E40AF" },
             ],
         },
         ageDemographics: {
@@ -225,11 +225,11 @@ const demographicsData: Record<RadiusTab, DemographicsData> = {
             estimate2028: "37",
             growthRate: -3,
             pieData: [
-                { label: "Over 65", value: 15, color: "#1e3a8a" },
-                { label: "Under 20", value: 20, color: "#3b82f6" },
-                { label: "20 - 25", value: 15, color: "#60a5fa" },
-                { label: "25 - 45", value: 40, color: "#93c5fd" },
-                { label: "45 - 63", value: 10, color: "#1e40af" },
+                { label: "Over 65", value: 15, color: "#8B5CF6" },
+                { label: "Under 20", value: 20, color: "#A78BFA" },
+                { label: "20 - 25", value: 15, color: "#C4B5FD" },
+                { label: "25 - 45", value: 40, color: "#DDD6FE" },
+                { label: "45 - 63", value: 10, color: "#EDE9FE" },
             ],
         },
         employees: {
@@ -267,6 +267,15 @@ const demographicsData: Record<RadiusTab, DemographicsData> = {
             ],
         },
     },
+};
+
+const colorPalette = {
+    primary: "#0066CC",
+    secondary: "#8B5CF6",
+    tertiary: "#FF6B00",
+    neutralLight: "#E5E7EB",
+    green: "#22C55E",
+    red: "#EF4444",
 };
 
 export default function Demographics() {
@@ -319,177 +328,314 @@ export default function Demographics() {
             {/* Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Population Card */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                    <h3 className="text-sm font-semibold text-purple-600 mb-3">
-                        Population
-                    </h3>
-                    <div className="text-3xl font-bold text-gray-900 mb-4">
-                        {data.population.current}
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                        <div className="flex items-start gap-2">
-                            <TrendingUp className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-                            <div>
-                                <div className="text-sm font-semibold text-green-600">
-                                    {data.population.growth2019}%
+                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex flex-col h-full">
+                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
+                            Population
+                        </h3>
+                        <div className="text-3xl font-bold text-gray-900 mb-4">
+                            {data.population.current}
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                            <div className="flex items-start gap-2">
+                                <TrendingUp
+                                    className={`w-4 h-4 mt-0.5 shrink-0 transition-transform duration-200 ${
+                                        data.population.growth2019 > 0
+                                            ? "text-green-600"
+                                            : data.population.growth2019 < 0
+                                            ? "text-red-600 rotate-180"
+                                            : "text-gray-400"
+                                    }`}
+                                />
+                                <div className="flex flex-col">
+                                    <div
+                                        className={`text-sm font-semibold ${
+                                            data.population.growth2019 > 0
+                                                ? "text-green-600"
+                                                : data.population.growth2019 < 0
+                                                ? "text-red-600"
+                                                : "text-gray-600"
+                                        }`}
+                                    >
+                                        {data.population.growth2019 > 0
+                                            ? "↑"
+                                            : data.population.growth2019 < 0
+                                            ? "↓"
+                                            : ""}
+                                        {Math.abs(data.population.growth2019)}%
+                                    </div>
+                                    <div className="text-xs text-gray-600 leading-tight mt-0.5">
+                                        Compared to {data.population.value2019}{" "}
+                                        in 2019
+                                    </div>
                                 </div>
-                                <div className="text-xs text-gray-600 leading-tight">
-                                    Compared to {data.population.value2019} in
-                                    2019
+                            </div>
+                            <div className="flex items-start gap-2">
+                                <TrendingUp
+                                    className={`w-4 h-4 mt-0.5 shrink-0 transition-transform duration-200 ${
+                                        data.population.growth2022 > 0
+                                            ? "text-green-600"
+                                            : data.population.growth2022 < 0
+                                            ? "text-red-600 rotate-180"
+                                            : "text-gray-400"
+                                    }`}
+                                />
+                                <div className="flex flex-col">
+                                    <div
+                                        className={`text-sm font-semibold ${
+                                            data.population.growth2022 > 0
+                                                ? "text-green-600"
+                                                : data.population.growth2022 < 0
+                                                ? "text-red-600"
+                                                : "text-gray-600"
+                                        }`}
+                                    >
+                                        {data.population.growth2022 > 0
+                                            ? "↑"
+                                            : data.population.growth2022 < 0
+                                            ? "↓"
+                                            : ""}
+                                        {Math.abs(data.population.growth2022)}%
+                                    </div>
+                                    <div className="text-xs text-gray-600 leading-tight mt-0.5">
+                                        Compared to {data.population.value2022}{" "}
+                                        in 2022
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex items-start gap-2">
-                            <TrendingUp className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-                            <div>
-                                <div className="text-sm font-semibold text-green-600">
-                                    {data.population.growth2022}%
-                                </div>
-                                <div className="text-xs text-gray-600 leading-tight">
-                                    Compared to {data.population.value2022} in
-                                    2022
-                                </div>
-                            </div>
+                        <div className="w-full h-40 mt-auto">
+                            <LineChart
+                                data={data.population.chartData}
+                                height={160}
+                                color="#0066CC"
+                                formatValue={(val) => val.toLocaleString()}
+                                compact={true}
+                                showArea={true}
+                            />
                         </div>
-                    </div>
-                    <div className="h-32 overflow-hidden">
-                        <LineChart
-                            data={data.population.chartData}
-                            height={128}
-                            color="#0066CC"
-                            formatValue={(val) => `${(val / 1000).toFixed(1)}k`}
-                            compact={true}
-                            showArea={true}
-                        />
                     </div>
                 </div>
 
                 {/* Household Income Card */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                    <h3 className="text-sm font-semibold text-purple-600 mb-3">
-                        Household Income
-                    </h3>
-                    <div className="text-3xl font-bold text-gray-900 mb-1">
-                        {data.householdIncome.median}
-                    </div>
-                    <div className="text-xs text-gray-600 mb-2">
-                        Median Income
-                    </div>
-                    <div className="text-lg font-semibold text-gray-900 mb-1">
-                        {data.householdIncome.estimate2028}
-                    </div>
-                    <div className="text-xs text-gray-600 mb-3">
-                        2028 Estimate
-                    </div>
-                    <div className="flex items-center gap-2 mb-4">
-                        <TrendingUp className="w-4 h-4 text-red-600 rotate-180" />
-                        <div>
-                            <div className="text-sm font-semibold text-red-600">
-                                {Math.abs(data.householdIncome.growthRate)}%
+                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex flex-col h-full">
+                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
+                            Household Income
+                        </h3>
+                        <div className="flex flex-col mb-4">
+                            <div className="text-3xl font-bold text-gray-900 mb-1">
+                                {data.householdIncome.median}
                             </div>
-                            <div className="text-xs text-gray-600">
-                                Growth Rate
+                            <div className="text-xs text-gray-600 mb-3">
+                                Median Income
+                            </div>
+                            <div className="text-lg font-semibold text-gray-900 mb-1">
+                                {data.householdIncome.estimate2028}
+                            </div>
+                            <div className="text-xs text-gray-600 mb-3">
+                                2028 Estimate
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <TrendingUp
+                                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+                                        data.householdIncome.growthRate >= 0
+                                            ? "text-green-600"
+                                            : "text-red-600 rotate-180"
+                                    }`}
+                                />
+                                <div className="flex flex-col">
+                                    <div
+                                        className={`text-sm font-semibold ${
+                                            data.householdIncome.growthRate >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                        }`}
+                                    >
+                                        {data.householdIncome.growthRate > 0
+                                            ? "↑"
+                                            : data.householdIncome.growthRate <
+                                              0
+                                            ? "↓"
+                                            : ""}
+                                        {Math.abs(
+                                            data.householdIncome.growthRate
+                                        )}
+                                        %
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                        Growth Rate
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex justify-center">
-                        <PieChart
-                            data={data.householdIncome.pieData}
-                            size={160}
-                            showLegend={false}
-                        />
+                        <div className="w-full flex justify-center mt-auto">
+                            <PieChart
+                                data={data.householdIncome.pieData.map(
+                                    (item) => ({
+                                        ...item,
+                                        color:
+                                            item.color || colorPalette.primary,
+                                    })
+                                )}
+                                size={180}
+                                showLegend={false}
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* Age Demographics Card */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                    <h3 className="text-sm font-semibold text-purple-600 mb-3">
-                        Age Demographics
-                    </h3>
-                    <div className="text-3xl font-bold text-gray-900 mb-1">
-                        {data.ageDemographics.median}
-                    </div>
-                    <div className="text-xs text-gray-600 mb-2">Median Age</div>
-                    <div className="text-lg font-semibold text-gray-900 mb-1">
-                        {data.ageDemographics.estimate2028}
-                    </div>
-                    <div className="text-xs text-gray-600 mb-3">
-                        2028 Estimate
-                    </div>
-                    <div className="flex items-center gap-2 mb-4">
-                        <TrendingUp className="w-4 h-4 text-red-600 rotate-180" />
-                        <div>
-                            <div className="text-sm font-semibold text-red-600">
-                                {Math.abs(data.ageDemographics.growthRate)}%
+                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex flex-col h-full">
+                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
+                            Age Demographics
+                        </h3>
+                        <div className="flex flex-col mb-4">
+                            <div className="text-3xl font-bold text-gray-900 mb-1">
+                                {data.ageDemographics.median}
                             </div>
-                            <div className="text-xs text-gray-600">
-                                Growth Rate
+                            <div className="text-xs text-gray-600 mb-3">
+                                Median Age
+                            </div>
+                            <div className="text-lg font-semibold text-gray-900 mb-1">
+                                {data.ageDemographics.estimate2028}
+                            </div>
+                            <div className="text-xs text-gray-600 mb-3">
+                                2028 Estimate
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <TrendingUp
+                                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+                                        data.ageDemographics.growthRate >= 0
+                                            ? "text-green-600"
+                                            : "text-red-600 rotate-180"
+                                    }`}
+                                />
+                                <div className="flex flex-col">
+                                    <div
+                                        className={`text-sm font-semibold ${
+                                            data.ageDemographics.growthRate >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                        }`}
+                                    >
+                                        {data.ageDemographics.growthRate > 0
+                                            ? "↑"
+                                            : data.ageDemographics.growthRate <
+                                              0
+                                            ? "↓"
+                                            : ""}
+                                        {Math.abs(
+                                            data.ageDemographics.growthRate
+                                        )}
+                                        %
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                        Growth Rate
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex justify-center">
-                        <PieChart
-                            data={data.ageDemographics.pieData}
-                            size={160}
-                            showLegend={false}
-                        />
+                        <div className="w-full flex justify-center mt-auto">
+                            <PieChart
+                                data={data.ageDemographics.pieData.map(
+                                    (item) => ({
+                                        ...item,
+                                        color:
+                                            item.color ||
+                                            colorPalette.secondary,
+                                    })
+                                )}
+                                size={180}
+                                showLegend={false}
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* Number of Employees Card */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                    <h3 className="text-sm font-semibold text-purple-600 mb-3">
-                        Number of Employees
-                    </h3>
-                    <div className="text-3xl font-bold text-gray-900 mb-2">
-                        {data.employees.total}
-                    </div>
-                    <div className="text-xs text-gray-600 mb-4">
-                        Top Employment Categories
-                    </div>
-                    <div className="h-40">
-                        <HorizontalBarChart
-                            data={data.employees.categories}
-                            height={160}
-                        />
+                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex flex-col h-full">
+                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
+                            Number of Employees
+                        </h3>
+                        <div className="text-3xl font-bold text-gray-900 mb-2">
+                            {data.employees.total}
+                        </div>
+                        <div className="text-xs text-gray-600 mb-4">
+                            Top Employment Categories
+                        </div>
+                        <div className="w-full h-48 mt-auto">
+                            <HorizontalBarChart
+                                data={data.employees.categories.map((item) => ({
+                                    ...item,
+                                    color: item.color || colorPalette.primary,
+                                }))}
+                                height={192}
+                                showValues={true}
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* Housing Occupancy Ratio Card */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                    <h3 className="text-sm font-semibold text-blue-600 mb-3">
-                        Housing Occupancy Ratio
-                    </h3>
-                    <div className="text-3xl font-bold text-gray-900 mb-1">
-                        {data.housingOccupancy.current}
-                    </div>
-                    <div className="text-sm text-gray-700 mb-4">
-                        {data.housingOccupancy.predicted}
-                    </div>
-                    <div className="h-24">
-                        <HorizontalBarChart
-                            data={data.housingOccupancy.data}
-                            height={96}
-                        />
+                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex flex-col h-full">
+                        <h3 className="text-sm font-semibold text-[#0066CC] mb-3">
+                            Housing Occupancy Ratio
+                        </h3>
+                        <div className="flex flex-col mb-4">
+                            <div className="text-3xl font-bold text-gray-900 mb-1">
+                                {data.housingOccupancy.current}
+                            </div>
+                            <div className="text-sm text-gray-700">
+                                {data.housingOccupancy.predicted}
+                            </div>
+                        </div>
+                        <div className="w-full h-32 mt-auto">
+                            <HorizontalBarChart
+                                data={data.housingOccupancy.data.map(
+                                    (item) => ({
+                                        ...item,
+                                        color:
+                                            item.label === "Occupied"
+                                                ? colorPalette.primary
+                                                : colorPalette.neutralLight,
+                                    })
+                                )}
+                                height={128}
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* Renter to Homeowner Ratio Card */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                    <h3 className="text-sm font-semibold text-blue-600 mb-3">
-                        Renter to Homeowner Ratio
-                    </h3>
-                    <div className="text-3xl font-bold text-gray-900 mb-1">
-                        {data.renterHomeowner.current}
-                    </div>
-                    <div className="text-sm text-gray-700 mb-4">
-                        {data.renterHomeowner.predicted}
-                    </div>
-                    <div className="h-24">
-                        <HorizontalBarChart
-                            data={data.renterHomeowner.data}
-                            height={96}
-                        />
+                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex flex-col h-full">
+                        <h3 className="text-sm font-semibold text-[#0066CC] mb-3">
+                            Renter to Homeowner Ratio
+                        </h3>
+                        <div className="flex flex-col mb-4">
+                            <div className="text-3xl font-bold text-gray-900 mb-1">
+                                {data.renterHomeowner.current}
+                            </div>
+                            <div className="text-sm text-gray-700">
+                                {data.renterHomeowner.predicted}
+                            </div>
+                        </div>
+                        <div className="w-full h-32 mt-auto">
+                            <HorizontalBarChart
+                                data={data.renterHomeowner.data.map((item) => ({
+                                    ...item,
+                                    color:
+                                        item.label === "Homeowner"
+                                            ? colorPalette.primary
+                                            : colorPalette.neutralLight,
+                                }))}
+                                height={128}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
