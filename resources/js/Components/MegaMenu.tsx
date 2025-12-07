@@ -469,7 +469,7 @@ const menus: Record<string, Menu> = {
         id: "tools",
         title: "Investment Tools",
         layout: "four-column",
-        width: "1000px",
+        width: "1400px",
         sections: [
             {
                 title: "Calculators",
@@ -513,10 +513,16 @@ const menus: Record<string, Menu> = {
                         icon: Calendar,
                     },
                     {
-                        label: "Send Proof of Funds",
+                        label: "chatgpt-assistant",
                         link: "/tools/chatgpt-assistant",
                         icon: Bot,
                         badge: "AI",
+                        description: "Chat with our AI assistant",
+                    },
+                    {
+                        label: "Send Proof of Funds",
+                        link: "/tools/chatgpt-assistant",
+                        icon: Send,
                     },
                     {
                         label: "Send LOI",
@@ -606,12 +612,17 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
 
     return (
         <div
-            className={`absolute top-full mt-5 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
+            className={`absolute top-full mt-0 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
                 shouldRightAlign ? "right-0" : "left-0"
             }`}
             style={{
                 width: menu.width,
-                maxWidth: "calc(100vw - 2rem)", // Prevent overflow beyond viewport
+                maxWidth: "calc(100vw - 25rem)", // Prevent overflow beyond viewport
+                ...(shouldRightAlign &&
+                    menuId === "tools" && {
+                        right: "0",
+                        transform: "none",
+                    }),
             }}
             onMouseLeave={onClose}
         >

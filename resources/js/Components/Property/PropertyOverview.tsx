@@ -355,37 +355,45 @@ export default function PropertyOverview({
     return (
         <div className="mb-8">
             {/* Title Section */}
-            <div className="flex items-start justify-between mb-6 pb-4">
+            <div className="flex items-start justify-between mb-6 py-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
                         {fullAddress}
                     </h1>
                     <p className="text-lg text-gray-700">{propertyName}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <button
-                        className="p-2 text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-colors"
+                        type="button"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Notes"
                     >
-                        <FileText className="w-5 h-5" />
+                        <FileText className="w-4 h-4" />
+                        <span>Notes</span>
                     </button>
                     <button
-                        className="p-2 text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-colors"
+                        type="button"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Print"
                     >
-                        <Printer className="w-5 h-5" />
+                        <Printer className="w-4 h-4" />
+                        <span>Print</span>
                     </button>
                     <button
-                        className="p-2 text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-colors"
+                        type="button"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Share"
                     >
-                        <Share2 className="w-5 h-5" />
+                        <Share2 className="w-4 h-4" />
+                        <span>Share</span>
                     </button>
                     <button
-                        className="p-2 text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-colors"
+                        type="button"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Save"
                     >
-                        <Star className="w-5 h-5" />
+                        <Star className="w-4 h-4" />
+                        <span>Save</span>
                     </button>
                 </div>
             </div>

@@ -70,38 +70,42 @@ export default function Hero({ content }: HeroProps) {
                 </h1>
 
                 {/* Tabs */}
-                <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 max-w-4xl mx-auto">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            type="button"
-                            onClick={() => setActiveTab(tab)}
-                            className={`pb-2 text-base font-medium transition-colors ${
-                                activeTab === tab
-                                    ? "border-b-2 border-white text-white"
-                                    : "text-white/80 hover:text-white"
-                            }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+                <div className="mb-4 sm:mb-6 w-full max-w-4xl mx-auto">
+                    <div className="flex flex-row items-center justify-start sm:justify-center gap-2 sm:gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab}
+                                type="button"
+                                onClick={() => setActiveTab(tab)}
+                                className={`shrink-0 pb-2 text-sm sm:text-base font-medium transition-colors whitespace-nowrap ${
+                                    activeTab === tab
+                                        ? "border-b-2 border-white text-white"
+                                        : "text-white/80 hover:text-white"
+                                }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Search Bar */}
                 <div className="mb-7 sm:mb-0 mx-auto w-full max-w-4xl">
-                    <div className="flex items-center gap-0 rounded-lg bg-white shadow-lg">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-0 rounded-lg bg-white shadow-lg overflow-hidden">
                         {/* Property Type Dropdown */}
-                        <div className="relative">
+                        <div className="relative shrink-0">
                             <button
                                 type="button"
                                 onClick={() =>
                                     setPropertyTypeOpen(!propertyTypeOpen)
                                 }
-                                className="flex items-center gap-2 border-r border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                className="flex items-center justify-center sm:justify-start gap-2 border-b sm:border-b-0 sm:border-r border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
                             >
-                                <span>{selectedPropertyType}</span>
+                                <span className="truncate">
+                                    {selectedPropertyType}
+                                </span>
                                 <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
+                                    className={`h-3 w-3 sm:h-4 sm:w-4 shrink-0 transition-transform ${
                                         propertyTypeOpen ? "rotate-180" : ""
                                     }`}
                                 />
@@ -114,8 +118,8 @@ export default function Hero({ content }: HeroProps) {
                                             setPropertyTypeOpen(false)
                                         }
                                     />
-                                    <div className="absolute left-0 z-20 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                                        <div className="py-1">
+                                    <div className="absolute left-0 sm:left-auto right-0 sm:right-auto z-20 mt-1 w-full sm:w-48 rounded-md border border-gray-200 bg-white shadow-lg">
+                                        <div className="py-1 max-h-60 overflow-y-auto">
                                             {propertyTypes.map((type) => (
                                                 <button
                                                     key={type}
@@ -143,14 +147,14 @@ export default function Hero({ content }: HeroProps) {
                         <input
                             type="text"
                             placeholder={heroContent.searchPlaceholder}
-                            className="flex-1 border-0 bg-transparent px-4 py-3 text-base text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-0"
+                            className="flex-1 border-0 bg-transparent px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-0"
                             aria-label="Search location, broker, or description"
                         />
 
                         {/* Search Button */}
                         <button
                             type="button"
-                            className="rounded-r-lg bg-[#0066CC] px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0052A3] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2 mr-0.5"
+                            className="rounded-b-lg sm:rounded-b-none sm:rounded-r-lg bg-[#0066CC] px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-[#0052A3] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2"
                             aria-label="Search"
                         >
                             Search

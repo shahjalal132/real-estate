@@ -1,3 +1,5 @@
+import { useState, useRef } from "react";
+
 interface LineChartProps {
     data: { label: string; value: number }[];
     height?: number;
@@ -15,9 +17,18 @@ export default function LineChart({
     formatValue,
     compact = false,
 }: LineChartProps) {
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [tooltip, setTooltip] = useState<{
+        x: number;
+        y: number;
+        label: string;
+        value: string;
+    } | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const svgRef = useRef<SVGSVGElement>(null);
+
     const maxValue = Math.max(...data.map((d) => d.value));
     const minValue = Math.min(...data.map((d) => d.value));
-    const range = maxValue - minValue || 1;
 
     // Calculate nice rounded Y-axis tick values
     const getNiceTicks = (
@@ -28,7 +39,6 @@ export default function LineChart({
         const niceRange = max - min;
         const tickSpacing = niceRange / (count - 1);
 
-        // Round to nice numbers
         const magnitude = Math.pow(10, Math.floor(Math.log10(tickSpacing)));
         const normalizedSpacing = tickSpacing / magnitude;
         let niceSpacing;
@@ -39,8 +49,6 @@ export default function LineChart({
         else niceSpacing = 10;
 
         niceSpacing *= magnitude;
-
-        // Start from a nice number below min
         const niceMin = Math.floor(min / niceSpacing) * niceSpacing;
         const ticks: number[] = [];
 
@@ -51,8 +59,7 @@ export default function LineChart({
         return ticks;
     };
 
-    // Use actual pixel dimensions for better rendering
-    const actualWidth = compact ? 280 : 400;
+    const actualWidth = compact ? 400 : 600;
     const actualHeight = height;
     const padding = compact
         ? { top: 10, right: 10, bottom: 25, left: 45 }
@@ -60,8 +67,7 @@ export default function LineChart({
     const chartWidth = actualWidth - padding.left - padding.right;
     const chartHeight = actualHeight - padding.top - padding.bottom;
 
-    // Calculate Y-axis tick values with nice rounding
-    const yTicks = compact ? 5 : 5;
+    const yTicks = 5;
     const tickValues = getNiceTicks(minValue, maxValue, yTicks);
     const actualMin = Math.min(...tickValues);
     const actualMax = Math.max(...tickValues);
@@ -94,11 +100,44 @@ export default function LineChart({
     const format = formatValue || ((val) => val.toLocaleString());
     const gradientId = `gradient-${Math.random().toString(36).substr(2, 9)}`;
 
+    const handleMouseEnter = (
+        index: number,
+        event: React.MouseEvent<SVGCircleElement>
+    ) => {
+        setHoveredIndex(index);
+        const point = points[index];
+
+        if (containerRef.current) {
+            const containerRect = containerRef.current.getBoundingClientRect();
+            const mouseX = event.clientX - containerRect.left;
+            const mouseY = event.clientY - containerRect.top;
+
+            setTooltip({
+                x: mouseX,
+                y: mouseY,
+                label: point.label,
+                value: format(point.value),
+            });
+        }
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredIndex(null);
+        setTooltip(null);
+    };
+
     return (
-        <div className="w-full" style={{ height: `${actualHeight}px` }}>
+        <div
+            ref={containerRef}
+            className="w-full relative"
+            style={{ height: `${actualHeight}px` }}
+        >
             <svg
-                width={actualWidth}
+                ref={svgRef}
+                width="100%"
                 height={actualHeight}
+                viewBox={`0 0 ${actualWidth} ${actualHeight}`}
+                preserveAspectRatio="xMidYMid meet"
                 className="w-full h-full"
             >
                 <defs>
@@ -183,13 +222,24 @@ export default function LineChart({
                 {/* Data points */}
                 {points.map((point, index) => (
                     <g key={index}>
+                        {/* Invisible larger circle for easier hover */}
+                        <circle
+                            cx={point.x}
+                            cy={point.y}
+                            r={compact ? "12" : "15"}
+                            fill="transparent"
+                            className="cursor-pointer"
+                            onMouseEnter={(e) => handleMouseEnter(index, e)}
+                            onMouseLeave={handleMouseLeave}
+                        />
                         {/* Outer circle with glow */}
                         <circle
                             cx={point.x}
                             cy={point.y}
                             r={compact ? "5" : "6"}
                             fill={color}
-                            opacity="0.15"
+                            opacity={hoveredIndex === index ? "0.25" : "0.15"}
+                            className="transition-opacity duration-200"
                         />
                         {/* White middle circle */}
                         <circle
@@ -198,14 +248,32 @@ export default function LineChart({
                             r={compact ? "4" : "5"}
                             fill="white"
                             stroke={color}
-                            strokeWidth={compact ? "2" : "2.5"}
+                            strokeWidth={
+                                hoveredIndex === index
+                                    ? compact
+                                        ? "3"
+                                        : "3.5"
+                                    : compact
+                                    ? "2"
+                                    : "2.5"
+                            }
+                            className="transition-all duration-200"
                         />
                         {/* Inner blue circle */}
                         <circle
                             cx={point.x}
                             cy={point.y}
-                            r={compact ? "2" : "2.5"}
+                            r={
+                                hoveredIndex === index
+                                    ? compact
+                                        ? "3"
+                                        : "3.5"
+                                    : compact
+                                    ? "2"
+                                    : "2.5"
+                            }
                             fill={color}
+                            className="transition-all duration-200"
                         />
                     </g>
                 ))}
@@ -226,6 +294,22 @@ export default function LineChart({
                     </text>
                 ))}
             </svg>
+            {tooltip && hoveredIndex !== null && (
+                <div
+                    className="absolute bg-gray-900 text-white text-xs rounded-lg px-3 py-2 shadow-xl z-50 pointer-events-none whitespace-nowrap"
+                    style={{
+                        left: `${tooltip.x}px`,
+                        top: `${tooltip.y - 60}px`,
+                        transform: "translateX(-50%)",
+                    }}
+                >
+                    <div className="font-semibold mb-1 text-white">
+                        {tooltip.label}
+                    </div>
+                    <div className="text-gray-300">{tooltip.value}</div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                </div>
+            )}
         </div>
     );
 }

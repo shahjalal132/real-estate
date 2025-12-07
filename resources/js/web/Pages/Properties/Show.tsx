@@ -153,7 +153,12 @@ export default function PropertyShow() {
                     />
 
                     {/* Tabs Navigation */}
-                    <PropertyTabs onTabClick={handleTabClick} />
+                    <PropertyTabs
+                        onTabClick={handleTabClick}
+                        property={property}
+                        formattedPrice={formattedPrice}
+                        fullAddress={fullAddress}
+                    />
 
                     {/* All Sections Displayed Serially */}
                     <div className="space-y-8 mb-8">

@@ -382,13 +382,13 @@ export default function AllFiltersModal({
             />
 
             {/* Modal - Full Page */}
-            <div className="fixed left-0 top-0 z-50 h-full max-w-[95%] bg-white rounded-r-2xl shadow-xl transition-transform duration-300 ease-in-out translate-x-0 overflow-hidden">
+            <div className="fixed left-0 top-0 z-50 h-full w-full lg:max-w-[95%] bg-white rounded-none lg:rounded-r-2xl shadow-xl transition-transform duration-300 ease-in-out translate-x-0 overflow-hidden">
                 <div className="flex h-full flex-col overflow-hidden">
                     {/* Header */}
-                    <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-                        <div className="flex items-center gap-3">
-                            <SlidersHorizontal className="h-5 w-5 text-[#0066CC]" />
-                            <h2 className="text-lg font-semibold text-gray-900">
+                    <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 lg:px-6 lg:py-4">
+                        <div className="flex items-center gap-2 lg:gap-3">
+                            <SlidersHorizontal className="h-4 w-4 lg:h-5 lg:w-5 text-[#0066CC]" />
+                            <h2 className="text-base lg:text-lg font-semibold text-gray-900">
                                 Sales Filters
                             </h2>
                             {activeFiltersCount > 0 && (
@@ -400,18 +400,18 @@ export default function AllFiltersModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all"
+                            className="rounded-full p-1.5 lg:p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all"
                             aria-label="Close filters"
                         >
-                            <X className="h-5 w-5" />
+                            <X className="h-4 w-4 lg:h-5 lg:w-5" />
                         </button>
                     </div>
 
-                    {/* Scrollable Content - Four Columns */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4">
-                        <div className="grid grid-cols-4 gap-8 min-w-0">
+                    {/* Scrollable Content - Responsive Columns */}
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 lg:px-4 lg:py-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 min-w-0">
                             {/* Column 1 */}
-                            <div className="space-y-4 space-x-8 min-w-0 bg-slate-50 rounded-lg p-4">
+                            <div className="space-y-4 min-w-0 bg-slate-50 rounded-lg p-3 lg:p-4">
                                 <LocationFilter
                                     value={location}
                                     onChange={setLocation}
@@ -541,12 +541,12 @@ export default function AllFiltersModal({
                     </div>
 
                     {/* Fixed Footer */}
-                    <div className="flex items-center justify-between gap-4 border-t border-gray-200 bg-white px-6 py-4">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 border-t border-gray-200 bg-white px-4 py-3 lg:px-6 lg:py-4">
                         {/* Left: Clear All Filters */}
                         <button
                             type="button"
                             onClick={handleReset}
-                            className="text-sm font-semibold cursor-pointer text-[#0066CC] hover:text-[#004C99] transition-colors whitespace-nowrap"
+                            className="text-sm font-semibold cursor-pointer text-[#0066CC] hover:text-[#004C99] transition-colors whitespace-nowrap text-center sm:text-left"
                         >
                             Clear All Filters
                         </button>
@@ -555,7 +555,7 @@ export default function AllFiltersModal({
                         <button
                             type="button"
                             onClick={handleApply}
-                            className="rounded-lg cursor-pointer bg-[#0066CC] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#004C99] shadow-md hover:shadow-lg transition-all whitespace-nowrap"
+                            className="rounded-lg cursor-pointer bg-[#0066CC] px-4 py-2.5 lg:px-6 text-sm font-semibold text-white hover:bg-[#004C99] shadow-md hover:shadow-lg transition-all whitespace-nowrap w-full sm:w-auto"
                         >
                             Show{" "}
                             {listingsCount > 0
