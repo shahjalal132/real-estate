@@ -513,10 +513,15 @@ const menus: Record<string, Menu> = {
                         icon: Calendar,
                     },
                     {
-                        label: "Chatgpt Assistant",
+                        label: "Send Proof of Funds",
+                        link: "/tools/chatgpt-assistant",
+                        icon: Bot,
+                        badge: "AI",
+                    },
+                    {
+                        label: "Send LOI",
                         link: "/tools/chatgpt-assistant",
                         icon: MessageCircle,
-                        badge: "AI",
                     },
                 ],
             },

@@ -96,8 +96,34 @@ class PropertyController extends Controller
             ->with(['location', 'details', 'brokers.brokerage', 'images'])
             ->firstOrFail();
 
+        // Get similar properties based on property types
+        $similarProperties = Property::where('id', '!=', $property->id)
+            ->whereNotNull('thumbnail_url')
+            ->where(function ($query) use ($property) {
+                // Match by property types
+                if ($property->types && is_array($property->types) && count($property->types) > 0) {
+                    foreach ($property->types as $type) {
+                        $query->orWhereJsonContains('types', $type);
+                    }
+                }
+                // Match by subtypes if available
+                if ($property->subtypes && is_array($property->subtypes) && count($property->subtypes) > 0) {
+                    foreach ($property->subtypes as $subtype) {
+                        $query->orWhereJsonContains('subtypes', $subtype);
+                    }
+                }
+                // Match by status
+                if ($property->status) {
+                    $query->orWhere('status', $property->status);
+                }
+            })
+            ->with(['location', 'details', 'brokers.brokerage', 'images'])
+            ->limit(10)
+            ->get();
+
         return Inertia::render('Properties/Show', [
             'property' => $property,
+            'similarProperties' => $similarProperties,
         ]);
     }
 
