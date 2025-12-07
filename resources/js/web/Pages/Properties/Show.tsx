@@ -257,15 +257,6 @@ export default function PropertyShow() {
                             <Demographics />
                         </div>
 
-                        {/* Valuation Calculator Section */}
-                        <div
-                            id="valuation"
-                            ref={sectionRefs.valuation}
-                            className="scroll-mt-20"
-                        >
-                            <ValuationCalculator />
-                        </div>
-
                         {/* Valuation Metrics Section */}
                         {/* <div
                             id="metrics"
@@ -287,6 +278,14 @@ export default function PropertyShow() {
                                 centerLat={location?.latitude ?? undefined}
                                 centerLng={location?.longitude ?? undefined}
                             />
+                        </div>
+                        {/* Valuation Calculator Section */}
+                        <div
+                            id="valuation"
+                            ref={sectionRefs.valuation}
+                            className="scroll-mt-20"
+                        >
+                            <ValuationCalculator />
                         </div>
 
                         {/* Similar Properties Section */}
