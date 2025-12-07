@@ -99,8 +99,6 @@ export default function Header() {
         },
     ];
 
-    // Split navigation items: first 5 for main nav, last 5 go to right side
-    // Right side order: ZONING, PIPELINE, TOOLS, SETTINGS, CONTACTS
     const mainNavItems = navigationItems.slice(0, 5);
     const rightNavItems = [
         navigationItems[8], // ZONING
@@ -131,7 +129,6 @@ export default function Header() {
             }}
             onMouseLeave={() => {
                 if (isInMoreMenu && activeMenu === item.megaMenuId) {
-                    // Keep more menu open if hovering over it
                     return;
                 }
                 if (!isInMoreMenu) {

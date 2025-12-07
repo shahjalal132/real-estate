@@ -402,7 +402,7 @@ export default function Properties() {
                     <div className="flex items-center gap-6">
                         {/* Results Count */}
                         <div className="text-sm text-gray-600">
-                            <strong>Total Result:</strong>
+                            <strong>Results: </strong>
                             <span className="font-semibold">
                                 {filteredListings.length}
                             </span>{" "}
