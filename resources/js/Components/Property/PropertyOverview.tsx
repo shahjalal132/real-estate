@@ -427,12 +427,6 @@ export default function PropertyOverview({
                                             <ChevronRight className="w-5 h-5 text-gray-700" />
                                         </button>
                                         {/* Large right arrow indicator */}
-                                        <div
-                                            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/40 rounded-l-lg p-3 cursor-pointer transition-all z-10"
-                                            onClick={nextImage}
-                                        >
-                                            <ChevronRight className="w-6 h-6 text-white" />
-                                        </div>
                                     </>
                                 )}
                             </>
