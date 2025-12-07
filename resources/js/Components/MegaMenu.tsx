@@ -513,10 +513,16 @@ const menus: Record<string, Menu> = {
                         icon: Calendar,
                     },
                     {
-                        label: "Send Proof of Funds",
+                        label: "chatgpt-assistant",
                         link: "/tools/chatgpt-assistant",
                         icon: Bot,
                         badge: "AI",
+                        description: "Chat with our AI assistant",
+                    },
+                    {
+                        label: "Send Proof of Funds",
+                        link: "/tools/chatgpt-assistant",
+                        icon: Send,
                     },
                     {
                         label: "Send LOI",
@@ -611,7 +617,7 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
             }`}
             style={{
                 width: menu.width,
-                maxWidth: "calc(100vw - 2rem)", // Prevent overflow beyond viewport
+                maxWidth: "calc(100vw - 25rem)", // Prevent overflow beyond viewport
                 ...(shouldRightAlign &&
                     menuId === "tools" && {
                         right: "0",

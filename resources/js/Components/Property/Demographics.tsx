@@ -330,16 +330,18 @@ export default function Demographics() {
                 {/* Population Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
-                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
-                            Population
-                        </h3>
-                        <div className="text-3xl font-bold text-gray-900 mb-4">
-                            {data.population.current}
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                                Population
+                            </h3>
+                            <div className="text-3xl font-bold text-gray-900">
+                                {data.population.current}
+                            </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                            <div className="flex items-start gap-2">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="flex items-center gap-1.5">
                                 <TrendingUp
-                                    className={`w-4 h-4 mt-0.5 shrink-0 transition-transform duration-200 ${
+                                    className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
                                         data.population.growth2019 > 0
                                             ? "text-green-600"
                                             : data.population.growth2019 < 0
@@ -347,32 +349,29 @@ export default function Demographics() {
                                             : "text-gray-400"
                                     }`}
                                 />
-                                <div className="flex flex-col">
-                                    <div
-                                        className={`text-sm font-semibold ${
-                                            data.population.growth2019 > 0
-                                                ? "text-green-600"
-                                                : data.population.growth2019 < 0
-                                                ? "text-red-600"
-                                                : "text-gray-600"
-                                        }`}
-                                    >
-                                        {data.population.growth2019 > 0
-                                            ? "↑"
+                                <span
+                                    className={`text-xs font-semibold ${
+                                        data.population.growth2019 > 0
+                                            ? "text-green-600"
                                             : data.population.growth2019 < 0
-                                            ? "↓"
-                                            : ""}
-                                        {Math.abs(data.population.growth2019)}%
-                                    </div>
-                                    <div className="text-xs text-gray-600 leading-tight mt-0.5">
-                                        Compared to {data.population.value2019}{" "}
-                                        in 2019
-                                    </div>
-                                </div>
+                                            ? "text-red-600"
+                                            : "text-gray-600"
+                                    }`}
+                                >
+                                    {data.population.growth2019 > 0
+                                        ? "↑"
+                                        : data.population.growth2019 < 0
+                                        ? "↓"
+                                        : ""}
+                                    {Math.abs(data.population.growth2019)}%
+                                </span>
+                                <span className="text-xs text-gray-600">
+                                    vs {data.population.value2019} in 2019
+                                </span>
                             </div>
-                            <div className="flex items-start gap-2">
+                            <div className="flex items-center gap-1.5">
                                 <TrendingUp
-                                    className={`w-4 h-4 mt-0.5 shrink-0 transition-transform duration-200 ${
+                                    className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
                                         data.population.growth2022 > 0
                                             ? "text-green-600"
                                             : data.population.growth2022 < 0
@@ -380,31 +379,28 @@ export default function Demographics() {
                                             : "text-gray-400"
                                     }`}
                                 />
-                                <div className="flex flex-col">
-                                    <div
-                                        className={`text-sm font-semibold ${
-                                            data.population.growth2022 > 0
-                                                ? "text-green-600"
-                                                : data.population.growth2022 < 0
-                                                ? "text-red-600"
-                                                : "text-gray-600"
-                                        }`}
-                                    >
-                                        {data.population.growth2022 > 0
-                                            ? "↑"
+                                <span
+                                    className={`text-xs font-semibold ${
+                                        data.population.growth2022 > 0
+                                            ? "text-green-600"
                                             : data.population.growth2022 < 0
-                                            ? "↓"
-                                            : ""}
-                                        {Math.abs(data.population.growth2022)}%
-                                    </div>
-                                    <div className="text-xs text-gray-600 leading-tight mt-0.5">
-                                        Compared to {data.population.value2022}{" "}
-                                        in 2022
-                                    </div>
-                                </div>
+                                            ? "text-red-600"
+                                            : "text-gray-600"
+                                    }`}
+                                >
+                                    {data.population.growth2022 > 0
+                                        ? "↑"
+                                        : data.population.growth2022 < 0
+                                        ? "↓"
+                                        : ""}
+                                    {Math.abs(data.population.growth2022)}%
+                                </span>
+                                <span className="text-xs text-gray-600">
+                                    vs {data.population.value2022} in 2022
+                                </span>
                             </div>
                         </div>
-                        <div className="w-full h-40 mt-auto">
+                        <div className="w-full h-40">
                             <LineChart
                                 data={data.population.chartData}
                                 height={160}
@@ -420,56 +416,63 @@ export default function Demographics() {
                 {/* Household Income Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
-                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
-                            Household Income
-                        </h3>
-                        <div className="flex flex-col mb-4">
-                            <div className="text-3xl font-bold text-gray-900 mb-1">
-                                {data.householdIncome.median}
-                            </div>
-                            <div className="text-xs text-gray-600 mb-3">
-                                Median Income
-                            </div>
-                            <div className="text-lg font-semibold text-gray-900 mb-1">
-                                {data.householdIncome.estimate2028}
-                            </div>
-                            <div className="text-xs text-gray-600 mb-3">
-                                2028 Estimate
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <TrendingUp
-                                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                                        data.householdIncome.growthRate >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600 rotate-180"
-                                    }`}
-                                />
-                                <div className="flex flex-col">
-                                    <div
-                                        className={`text-sm font-semibold ${
-                                            data.householdIncome.growthRate >= 0
-                                                ? "text-green-600"
-                                                : "text-red-600"
-                                        }`}
-                                    >
-                                        {data.householdIncome.growthRate > 0
-                                            ? "↑"
-                                            : data.householdIncome.growthRate <
-                                              0
-                                            ? "↓"
-                                            : ""}
-                                        {Math.abs(
-                                            data.householdIncome.growthRate
-                                        )}
-                                        %
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                                Household Income
+                            </h3>
+                            <div className="flex items-baseline gap-3">
+                                <div className="text-right">
+                                    <div className="text-2xl font-bold text-gray-900">
+                                        {data.householdIncome.median}
                                     </div>
                                     <div className="text-xs text-gray-600">
-                                        Growth Rate
+                                        Median
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-lg font-semibold text-gray-900">
+                                        {data.householdIncome.estimate2028}
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                        2028 Est.
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <TrendingUp
+                                        className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+                                            data.householdIncome.growthRate >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600 rotate-180"
+                                        }`}
+                                    />
+                                    <div className="text-right">
+                                        <div
+                                            className={`text-xs font-semibold ${
+                                                data.householdIncome
+                                                    .growthRate >= 0
+                                                    ? "text-green-600"
+                                                    : "text-red-600"
+                                            }`}
+                                        >
+                                            {data.householdIncome.growthRate > 0
+                                                ? "↑"
+                                                : data.householdIncome
+                                                      .growthRate < 0
+                                                ? "↓"
+                                                : ""}
+                                            {Math.abs(
+                                                data.householdIncome.growthRate
+                                            )}
+                                            %
+                                        </div>
+                                        <div className="text-xs text-gray-600">
+                                            Growth
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full flex justify-center mt-auto">
+                        <div className="w-full flex justify-center">
                             <PieChart
                                 data={data.householdIncome.pieData.map(
                                     (item) => ({
@@ -488,56 +491,63 @@ export default function Demographics() {
                 {/* Age Demographics Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
-                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
-                            Age Demographics
-                        </h3>
-                        <div className="flex flex-col mb-4">
-                            <div className="text-3xl font-bold text-gray-900 mb-1">
-                                {data.ageDemographics.median}
-                            </div>
-                            <div className="text-xs text-gray-600 mb-3">
-                                Median Age
-                            </div>
-                            <div className="text-lg font-semibold text-gray-900 mb-1">
-                                {data.ageDemographics.estimate2028}
-                            </div>
-                            <div className="text-xs text-gray-600 mb-3">
-                                2028 Estimate
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <TrendingUp
-                                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                                        data.ageDemographics.growthRate >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600 rotate-180"
-                                    }`}
-                                />
-                                <div className="flex flex-col">
-                                    <div
-                                        className={`text-sm font-semibold ${
-                                            data.ageDemographics.growthRate >= 0
-                                                ? "text-green-600"
-                                                : "text-red-600"
-                                        }`}
-                                    >
-                                        {data.ageDemographics.growthRate > 0
-                                            ? "↑"
-                                            : data.ageDemographics.growthRate <
-                                              0
-                                            ? "↓"
-                                            : ""}
-                                        {Math.abs(
-                                            data.ageDemographics.growthRate
-                                        )}
-                                        %
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                                Age Demographics
+                            </h3>
+                            <div className="flex items-baseline gap-3">
+                                <div className="text-right">
+                                    <div className="text-2xl font-bold text-gray-900">
+                                        {data.ageDemographics.median}
                                     </div>
                                     <div className="text-xs text-gray-600">
-                                        Growth Rate
+                                        Median Age
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-lg font-semibold text-gray-900">
+                                        {data.ageDemographics.estimate2028}
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                        2028 Est.
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <TrendingUp
+                                        className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+                                            data.ageDemographics.growthRate >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600 rotate-180"
+                                        }`}
+                                    />
+                                    <div className="text-right">
+                                        <div
+                                            className={`text-xs font-semibold ${
+                                                data.ageDemographics
+                                                    .growthRate >= 0
+                                                    ? "text-green-600"
+                                                    : "text-red-600"
+                                            }`}
+                                        >
+                                            {data.ageDemographics.growthRate > 0
+                                                ? "↑"
+                                                : data.ageDemographics
+                                                      .growthRate < 0
+                                                ? "↓"
+                                                : ""}
+                                            {Math.abs(
+                                                data.ageDemographics.growthRate
+                                            )}
+                                            %
+                                        </div>
+                                        <div className="text-xs text-gray-600">
+                                            Growth
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full flex justify-center mt-auto">
+                        <div className="w-full flex justify-center">
                             <PieChart
                                 data={data.ageDemographics.pieData.map(
                                     (item) => ({
@@ -557,16 +567,18 @@ export default function Demographics() {
                 {/* Number of Employees Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
-                        <h3 className="text-sm font-semibold text-[#8B5CF6] mb-3">
-                            Number of Employees
-                        </h3>
-                        <div className="text-3xl font-bold text-gray-900 mb-2">
-                            {data.employees.total}
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                                Number of Employees
+                            </h3>
+                            <div className="text-2xl font-bold text-gray-900">
+                                {data.employees.total}
+                            </div>
                         </div>
-                        <div className="text-xs text-gray-600 mb-4">
+                        <div className="text-xs text-gray-600 mb-2">
                             Top Employment Categories
                         </div>
-                        <div className="w-full h-48 mt-auto">
+                        <div className="w-full h-48">
                             <HorizontalBarChart
                                 data={data.employees.categories.map((item) => ({
                                     ...item,
@@ -582,18 +594,22 @@ export default function Demographics() {
                 {/* Housing Occupancy Ratio Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
-                        <h3 className="text-sm font-semibold text-[#0066CC] mb-3">
-                            Housing Occupancy Ratio
-                        </h3>
-                        <div className="flex flex-col mb-4">
-                            <div className="text-3xl font-bold text-gray-900 mb-1">
-                                {data.housingOccupancy.current}
-                            </div>
-                            <div className="text-sm text-gray-700">
-                                {data.housingOccupancy.predicted}
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-[#0066CC]">
+                                Housing Occupancy Ratio
+                            </h3>
+                            <div className="flex items-baseline gap-3">
+                                <div className="text-right">
+                                    <div className="text-2xl font-bold text-gray-900">
+                                        {data.housingOccupancy.current}
+                                    </div>
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                    {data.housingOccupancy.predicted}
+                                </div>
                             </div>
                         </div>
-                        <div className="w-full h-32 mt-auto">
+                        <div className="w-full h-32">
                             <HorizontalBarChart
                                 data={data.housingOccupancy.data.map(
                                     (item) => ({
@@ -613,18 +629,22 @@ export default function Demographics() {
                 {/* Renter to Homeowner Ratio Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
-                        <h3 className="text-sm font-semibold text-[#0066CC] mb-3">
-                            Renter to Homeowner Ratio
-                        </h3>
-                        <div className="flex flex-col mb-4">
-                            <div className="text-3xl font-bold text-gray-900 mb-1">
-                                {data.renterHomeowner.current}
-                            </div>
-                            <div className="text-sm text-gray-700">
-                                {data.renterHomeowner.predicted}
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-[#0066CC]">
+                                Renter to Homeowner Ratio
+                            </h3>
+                            <div className="flex items-baseline gap-3">
+                                <div className="text-right">
+                                    <div className="text-2xl font-bold text-gray-900">
+                                        {data.renterHomeowner.current}
+                                    </div>
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                    {data.renterHomeowner.predicted}
+                                </div>
                             </div>
                         </div>
-                        <div className="w-full h-32 mt-auto">
+                        <div className="w-full h-32">
                             <HorizontalBarChart
                                 data={data.renterHomeowner.data.map((item) => ({
                                     ...item,

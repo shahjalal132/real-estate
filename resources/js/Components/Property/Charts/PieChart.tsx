@@ -75,26 +75,20 @@ export default function PieChart({
         setHoveredIndex(index);
         const path = paths[index];
         const item = data[index];
-        
-        if (containerRef.current && svgRef.current) {
+
+        if (containerRef.current) {
             const containerRect = containerRef.current.getBoundingClientRect();
-            const svgRect = svgRef.current.getBoundingClientRect();
-            
-            // Calculate the actual position in the container
-            const scaleX = svgRect.width / size;
-            const scaleY = svgRect.height / size;
-            
-            const tooltipX = (path.tooltipX * scaleX) + (containerRect.left - svgRect.left);
-            const tooltipY = (path.tooltipY * scaleY) + (containerRect.top - svgRect.top);
-            
+            const mouseX = event.clientX - containerRect.left;
+            const mouseY = event.clientY - containerRect.top;
+
             const valueText =
                 typeof item.value === "number"
                     ? item.value.toLocaleString()
                     : item.value.toString();
-            
+
             setTooltip({
-                x: tooltipX,
-                y: tooltipY,
+                x: mouseX,
+                y: mouseY,
                 label: path.label,
                 value: `${path.percentage}% (${valueText})`,
             });
@@ -108,10 +102,10 @@ export default function PieChart({
 
     return (
         <div ref={containerRef} className="flex flex-col items-center relative">
-            <svg 
+            <svg
                 ref={svgRef}
-                width={size} 
-                height={size} 
+                width={size}
+                height={size}
                 className="overflow-visible"
             >
                 {paths.map((path, index) => (
@@ -132,7 +126,10 @@ export default function PieChart({
                             onMouseLeave={handleMouseLeave}
                             style={{
                                 transformOrigin: `${centerX}px ${centerY}px`,
-                                transform: hoveredIndex === index ? "scale(1.05)" : "scale(1)",
+                                transform:
+                                    hoveredIndex === index
+                                        ? "scale(1.05)"
+                                        : "scale(1)",
                             }}
                         />
                     </g>
@@ -147,7 +144,9 @@ export default function PieChart({
                         transform: "translateX(-50%)",
                     }}
                 >
-                    <div className="font-semibold mb-1 text-white">{tooltip.label}</div>
+                    <div className="font-semibold mb-1 text-white">
+                        {tooltip.label}
+                    </div>
                     <div className="text-gray-300">{tooltip.value}</div>
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
                 </div>

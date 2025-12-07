@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 interface LineChartProps {
     data: { label: string; value: number }[];
@@ -106,21 +106,15 @@ export default function LineChart({
     ) => {
         setHoveredIndex(index);
         const point = points[index];
-        
-        if (containerRef.current && svgRef.current) {
+
+        if (containerRef.current) {
             const containerRect = containerRef.current.getBoundingClientRect();
-            const svgRect = svgRef.current.getBoundingClientRect();
-            
-            // Calculate the actual position of the point in the container
-            const scaleX = svgRect.width / actualWidth;
-            const scaleY = svgRect.height / actualHeight;
-            
-            const tooltipX = (point.x * scaleX) + (containerRect.left - svgRect.left);
-            const tooltipY = (point.y * scaleY) + (containerRect.top - svgRect.top);
-            
+            const mouseX = event.clientX - containerRect.left;
+            const mouseY = event.clientY - containerRect.top;
+
             setTooltip({
-                x: tooltipX,
-                y: tooltipY,
+                x: mouseX,
+                y: mouseY,
                 label: point.label,
                 value: format(point.value),
             });
@@ -225,6 +219,9 @@ export default function LineChart({
                     className="transition-all duration-300"
                 />
 
+                {/* Data points */}
+                {points.map((point, index) => (
+                    <g key={index}>
                         {/* Invisible larger circle for easier hover */}
                         <circle
                             cx={point.x}
@@ -306,7 +303,9 @@ export default function LineChart({
                         transform: "translateX(-50%)",
                     }}
                 >
-                    <div className="font-semibold mb-1 text-white">{tooltip.label}</div>
+                    <div className="font-semibold mb-1 text-white">
+                        {tooltip.label}
+                    </div>
                     <div className="text-gray-300">{tooltip.value}</div>
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
                 </div>

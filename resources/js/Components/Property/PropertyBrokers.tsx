@@ -1,4 +1,4 @@
-import { Broker } from "../../../types";
+import { Broker } from "@/types";
 
 interface PropertyBrokersProps {
     brokers: Broker[];
@@ -42,11 +42,11 @@ export default function PropertyBrokers({ brokers }: PropertyBrokersProps) {
     return (
         <div>
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">
+            <div className="flex items-center gap-4 my-4">
+                <h3 className="text-lg font-semibold text-gray-900 bo">
                     Listing Contacts
                 </h3>
-                <button className="text-sm font-medium text-[#0066CC] hover:text-[#0052A3] transition-colors">
+                <button className="text-sm font-medium text-[#0066CC] hover:text-[#0052A3] transition-colors border border-gray-200 rounded-md px-4 py-2">
                     Submit LOI
                 </button>
             </div>

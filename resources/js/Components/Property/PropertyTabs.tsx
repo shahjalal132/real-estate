@@ -267,7 +267,7 @@ export default function PropertyTabs({
                         </div>
                     )}
                     {/* Tabs Row */}
-                    <div className="flex items-center gap-1 px-2 py-2 overflow-x-auto scrollbar-hide">
+                    <div className="flex items-center justify-center gap-1 px-2 py-2 overflow-x-auto scrollbar-hide">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
@@ -285,7 +285,11 @@ export default function PropertyTabs({
                 </div>
 
                 {/* Desktop: Horizontal Layout */}
-                <div className="hidden lg:flex items-center gap-4 px-4 py-3">
+                <div
+                    className={`hidden lg:flex items-center gap-4 px-4 py-3 ${
+                        isSticky ? "justify-between" : "justify-center"
+                    }`}
+                >
                     {/* Left: Property Thumbnail and Info - Only show when sticky */}
                     {isSticky && (
                         <div className="flex items-center gap-3 shrink-0">
@@ -306,7 +310,11 @@ export default function PropertyTabs({
                     )}
 
                     {/* Middle: Scrollable Tabs with Navigation */}
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div
+                        className={`flex items-center gap-2 ${
+                            isSticky ? "flex-1 min-w-0" : "justify-center"
+                        }`}
+                    >
                         {/* Left Arrow */}
                         {canScrollLeft && (
                             <button
@@ -322,7 +330,9 @@ export default function PropertyTabs({
                         {/* Tabs Container */}
                         <div
                             ref={tabsContainerRef}
-                            className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1"
+                            className={`flex items-center gap-1 overflow-x-auto scrollbar-hide ${
+                                isSticky ? "flex-1" : ""
+                            }`}
                         >
                             {tabs.map((tab) => (
                                 <button
