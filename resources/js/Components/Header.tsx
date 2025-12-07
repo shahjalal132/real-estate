@@ -54,20 +54,6 @@ export default function Header() {
             hasDropdown: true,
         },
         {
-            label: "ZONING",
-            link: "/zoning",
-            type: "megaMenu",
-            megaMenuId: "zoningChanges",
-            hasDropdown: true,
-        },
-        {
-            label: "CONTACTS",
-            link: "/contacts",
-            type: "megaMenu",
-            megaMenuId: "contacts",
-            hasDropdown: true,
-        },
-        {
             label: "PIPELINE",
             link: "/pipeline",
             type: "megaMenu",
@@ -88,11 +74,32 @@ export default function Header() {
             megaMenuId: "settings",
             hasDropdown: true,
         },
+        {
+            label: "ZONING",
+            link: "/zoning",
+            type: "megaMenu",
+            megaMenuId: "zoningChanges",
+            hasDropdown: true,
+        },
+        {
+            label: "CONTACTS",
+            link: "/contacts",
+            type: "megaMenu",
+            megaMenuId: "contacts",
+            hasDropdown: true,
+        },
     ];
 
-    // Split navigation items: first 7 for main nav, last 3 go to right side
-    const mainNavItems = navigationItems.slice(0, 7);
-    const rightNavItems = navigationItems.slice(7);
+    // Split navigation items: first 5 for main nav, last 5 go to right side
+    // Right side order: ZONING, PIPELINE, TOOLS, SETTINGS, CONTACTS
+    const mainNavItems = navigationItems.slice(0, 5);
+    const rightNavItems = [
+        navigationItems[8], // ZONING
+        navigationItems[5], // PIPELINE
+        navigationItems[6], // TOOLS
+        navigationItems[7], // SETTINGS
+        navigationItems[9], // CONTACTS
+    ];
 
     // For medium screens: first 6 visible, rest (excluding last 3) go to "MORE"
     const visibleItems = mainNavItems.slice(0, 6);
