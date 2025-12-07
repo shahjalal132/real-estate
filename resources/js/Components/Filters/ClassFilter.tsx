@@ -19,16 +19,16 @@ export default function ClassFilter({
 
     return (
         <div>
-            <label className="mb-3 block text-sm font-semibold text-gray-900">
+            <label className="mb-2 block text-xs font-semibold text-gray-900">
                 Class
             </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
                 {CLASS_OPTIONS.map((classOption) => (
                     <button
                         key={classOption}
                         type="button"
                         onClick={() => handleToggle(classOption)}
-                        className={`rounded-lg border-2 px-5 py-2.5 text-sm font-semibold transition-all ${
+                        className={`rounded border px-2.5 py-1.5 text-xs font-semibold transition-all ${
                             selectedClasses.includes(classOption)
                                 ? "border-[#0066CC] bg-[#0066CC] text-white shadow-sm"
                                 : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400"

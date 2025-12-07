@@ -32,16 +32,16 @@ export default function ListingTimelineFilter({
 }: ListingTimelineFilterProps) {
     return (
         <div>
-            <label className="mb-3 block text-sm font-semibold text-gray-900">
+            <label className="mb-2 block text-xs font-semibold text-gray-900">
                 Listing Timeline
             </label>
-            <div className="space-y-4">
+            <div className="space-y-2">
                 {/* Toggle: Time Period/Custom Time Period */}
-                <div className="flex gap-2">
+                <div className="flex gap-1.5">
                     <button
                         type="button"
                         onClick={() => onTimelineTypeChange("timePeriod")}
-                        className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-semibold transition-all ${
+                        className={`flex-1 rounded border px-2.5 py-1.5 text-xs font-semibold transition-all ${
                             timelineType === "timePeriod"
                                 ? "border-[#0066CC] bg-[#0066CC] text-white shadow-sm"
                                 : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -52,7 +52,7 @@ export default function ListingTimelineFilter({
                     <button
                         type="button"
                         onClick={() => onTimelineTypeChange("custom")}
-                        className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-semibold transition-all ${
+                        className={`flex-1 rounded border px-2.5 py-1.5 text-xs font-semibold transition-all ${
                             timelineType === "custom"
                                 ? "border-[#0066CC] bg-[#0066CC] text-white shadow-sm"
                                 : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -67,8 +67,10 @@ export default function ListingTimelineFilter({
                     <div className="relative">
                         <select
                             value={timePeriod}
-                            onChange={(e) => onTimePeriodChange?.(e.target.value)}
-                            className="w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-opacity-20"
+                            onChange={(e) =>
+                                onTimePeriodChange?.(e.target.value)
+                            }
+                            className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-1 focus:ring-[#0066CC] focus:ring-opacity-20"
                         >
                             {TIME_PERIODS.map((period) => (
                                 <option key={period} value={period}>
@@ -78,25 +80,27 @@ export default function ListingTimelineFilter({
                         </select>
                     </div>
                 ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                         <div className="relative">
-                            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                            <Calendar className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-gray-400" />
                             <input
                                 type="date"
                                 value={fromDate}
-                                onChange={(e) => onFromDateChange(e.target.value)}
+                                onChange={(e) =>
+                                    onFromDateChange(e.target.value)
+                                }
                                 placeholder="From"
-                                className="w-full rounded-lg border-2 border-gray-300 bg-white pl-10 pr-4 py-2 text-sm text-gray-700 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-opacity-20"
+                                className="w-full rounded border border-gray-300 bg-white pl-7 pr-2 py-1 text-xs text-gray-700 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-1 focus:ring-[#0066CC] focus:ring-opacity-20"
                             />
                         </div>
                         <div className="relative">
-                            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                            <Calendar className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-gray-400" />
                             <input
                                 type="date"
                                 value={toDate}
                                 onChange={(e) => onToDateChange(e.target.value)}
                                 placeholder="To"
-                                className="w-full rounded-lg border-2 border-gray-300 bg-white pl-10 pr-4 py-2 text-sm text-gray-700 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-opacity-20"
+                                className="w-full rounded border border-gray-300 bg-white pl-7 pr-2 py-1 text-xs text-gray-700 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-1 focus:ring-[#0066CC] focus:ring-opacity-20"
                             />
                         </div>
                     </div>
@@ -105,4 +109,3 @@ export default function ListingTimelineFilter({
         </div>
     );
 }
-

@@ -1,0 +1,122 @@
+[
+    {
+        "city": "New York",
+        "state": "NY",
+        "stateName": "New York",
+        "county": "New York County"
+    },
+    {
+        "city": "Los Angeles",
+        "state": "CA",
+        "stateName": "California",
+        "county": "Los Angeles County"
+    },
+    {
+        "city": "Chicago",
+        "state": "IL",
+        "stateName": "Illinois",
+        "county": "Cook County"
+    },
+    {
+        "city": "Houston",
+        "state": "TX",
+        "stateName": "Texas",
+        "county": "Harris County"
+    },
+    {
+        "city": "Phoenix",
+        "state": "AZ",
+        "stateName": "Arizona",
+        "county": "Maricopa County"
+    },
+    {
+        "city": "Philadelphia",
+        "state": "PA",
+        "stateName": "Pennsylvania",
+        "county": "Philadelphia County"
+    },
+    {
+        "city": "San Antonio",
+        "state": "TX",
+        "stateName": "Texas",
+        "county": "Bexar County"
+    },
+    {
+        "city": "San Diego",
+        "state": "CA",
+        "stateName": "California",
+        "county": "San Diego County"
+    },
+    {
+        "city": "Dallas",
+        "state": "TX",
+        "stateName": "Texas",
+        "county": "Dallas County"
+    },
+    {
+        "city": "San Jose",
+        "state": "CA",
+        "stateName": "California",
+        "county": "Santa Clara County"
+    },
+    {
+        "city": "Austin",
+        "state": "TX",
+        "stateName": "Texas",
+        "county": "Travis County"
+    },
+    {
+        "city": "Jacksonville",
+        "state": "FL",
+        "stateName": "Florida",
+        "county": "Duval County"
+    },
+    {
+        "city": "Fort Worth",
+        "state": "TX",
+        "stateName": "Texas",
+        "county": "Tarrant County"
+    },
+    {
+        "city": "Columbus",
+        "state": "OH",
+        "stateName": "Ohio",
+        "county": "Franklin County"
+    },
+    {
+        "city": "Charlotte",
+        "state": "NC",
+        "stateName": "North Carolina",
+        "county": "Mecklenburg County"
+    },
+    {
+        "city": "San Francisco",
+        "state": "CA",
+        "stateName": "California",
+        "county": "San Francisco County"
+    },
+    {
+        "city": "Indianapolis",
+        "state": "IN",
+        "stateName": "Indiana",
+        "county": "Marion County"
+    },
+    {
+        "city": "Seattle",
+        "state": "WA",
+        "stateName": "Washington",
+        "county": "King County"
+    },
+    {
+        "city": "Denver",
+        "state": "CO",
+        "stateName": "Colorado",
+        "county": "Denver County"
+    },
+    {
+        "city": "Washington",
+        "state": "DC",
+        "stateName": "District of Columbia",
+        "county": "District of Columbia"
+    }
+]
