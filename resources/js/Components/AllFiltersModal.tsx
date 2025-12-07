@@ -382,7 +382,7 @@ export default function AllFiltersModal({
             />
 
             {/* Modal - Full Page */}
-            <div className="fixed left-0 top-0 z-50 h-full w-full bg-white shadow-xl transition-transform duration-300 ease-in-out translate-x-0 overflow-hidden">
+            <div className="fixed left-0 top-0 z-50 h-full max-w-[95%] bg-white rounded-r-2xl shadow-xl transition-transform duration-300 ease-in-out translate-x-0 overflow-hidden">
                 <div className="flex h-full flex-col overflow-hidden">
                     {/* Header */}
                     <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
@@ -409,9 +409,9 @@ export default function AllFiltersModal({
 
                     {/* Scrollable Content - Four Columns */}
                     <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4">
-                        <div className="grid grid-cols-4 gap-4 min-w-0">
+                        <div className="grid grid-cols-4 gap-8 min-w-0">
                             {/* Column 1 */}
-                            <div className="space-y-4 min-w-0 bg-slate-50 rounded-lg p-4">
+                            <div className="space-y-4 space-x-8 min-w-0 bg-slate-50 rounded-lg p-4">
                                 <LocationFilter
                                     value={location}
                                     onChange={setLocation}

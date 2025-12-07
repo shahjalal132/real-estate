@@ -4,6 +4,7 @@ interface LineChartProps {
     color?: string;
     showArea?: boolean;
     formatValue?: (value: number) => string;
+    compact?: boolean;
 }
 
 export default function LineChart({
@@ -12,24 +13,59 @@ export default function LineChart({
     color = "#0066CC",
     showArea = true,
     formatValue,
+    compact = false,
 }: LineChartProps) {
     const maxValue = Math.max(...data.map((d) => d.value));
     const minValue = Math.min(...data.map((d) => d.value));
     const range = maxValue - minValue || 1;
 
-    // Use actual pixel dimensions
-    const width = 100;
-    const padding = { top: 30, right: 15, bottom: 35, left: 60 };
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
+    // Calculate nice rounded Y-axis tick values
+    const getNiceTicks = (
+        min: number,
+        max: number,
+        count: number
+    ): number[] => {
+        const niceRange = max - min;
+        const tickSpacing = niceRange / (count - 1);
 
-    // Calculate Y-axis tick values (5 ticks)
-    const yTicks = 5;
-    const tickValues: number[] = [];
-    for (let i = 0; i < yTicks; i++) {
-        const ratio = i / (yTicks - 1);
-        tickValues.push(minValue + ratio * range);
-    }
+        // Round to nice numbers
+        const magnitude = Math.pow(10, Math.floor(Math.log10(tickSpacing)));
+        const normalizedSpacing = tickSpacing / magnitude;
+        let niceSpacing;
+
+        if (normalizedSpacing <= 1) niceSpacing = 1;
+        else if (normalizedSpacing <= 2) niceSpacing = 2;
+        else if (normalizedSpacing <= 5) niceSpacing = 5;
+        else niceSpacing = 10;
+
+        niceSpacing *= magnitude;
+
+        // Start from a nice number below min
+        const niceMin = Math.floor(min / niceSpacing) * niceSpacing;
+        const ticks: number[] = [];
+
+        for (let i = 0; i < count; i++) {
+            ticks.push(niceMin + i * niceSpacing);
+        }
+
+        return ticks;
+    };
+
+    // Use actual pixel dimensions for better rendering
+    const actualWidth = compact ? 280 : 400;
+    const actualHeight = height;
+    const padding = compact
+        ? { top: 10, right: 10, bottom: 25, left: 45 }
+        : { top: 20, right: 20, bottom: 35, left: 60 };
+    const chartWidth = actualWidth - padding.left - padding.right;
+    const chartHeight = actualHeight - padding.top - padding.bottom;
+
+    // Calculate Y-axis tick values with nice rounding
+    const yTicks = compact ? 5 : 5;
+    const tickValues = getNiceTicks(minValue, maxValue, yTicks);
+    const actualMin = Math.min(...tickValues);
+    const actualMax = Math.max(...tickValues);
+    const actualRange = actualMax - actualMin || 1;
 
     // Calculate points
     const points = data.map((item, index) => {
@@ -37,7 +73,7 @@ export default function LineChart({
         const y =
             padding.top +
             chartHeight -
-            ((item.value - minValue) / range) * chartHeight;
+            ((item.value - actualMin) / actualRange) * chartHeight;
         return { x, y, value: item.value, label: item.label };
     });
 
@@ -51,18 +87,18 @@ export default function LineChart({
     // Build area path for gradient fill
     const areaPath =
         linePath +
-        ` L ${points[points.length - 1].x} ${height - padding.bottom} L ${
+        ` L ${points[points.length - 1].x} ${actualHeight - padding.bottom} L ${
             points[0].x
-        } ${height - padding.bottom} Z`;
+        } ${actualHeight - padding.bottom} Z`;
 
     const format = formatValue || ((val) => val.toLocaleString());
-    const gradientId = `gradient-${color.replace("#", "")}`;
+    const gradientId = `gradient-${Math.random().toString(36).substr(2, 9)}`;
 
     return (
-        <div className="w-full" style={{ height: `${height}px` }}>
+        <div className="w-full" style={{ height: `${actualHeight}px` }}>
             <svg
-                viewBox={`0 0 ${width} ${height}`}
-                preserveAspectRatio="xMidYMid meet"
+                width={actualWidth}
+                height={actualHeight}
                 className="w-full h-full"
             >
                 <defs>
@@ -76,47 +112,48 @@ export default function LineChart({
                         <stop
                             offset="0%"
                             stopColor={color}
-                            stopOpacity="0.25"
+                            stopOpacity="0.15"
                         />
                         <stop
                             offset="100%"
                             stopColor={color}
-                            stopOpacity="0.05"
+                            stopOpacity="0.02"
                         />
                     </linearGradient>
                 </defs>
 
                 {/* Grid lines */}
                 {tickValues.map((value, index) => {
-                    const ratio = index / (tickValues.length - 1);
+                    const ratio = (value - actualMin) / actualRange;
                     const y = padding.top + chartHeight - ratio * chartHeight;
                     return (
                         <line
                             key={index}
                             x1={padding.left}
                             y1={y}
-                            x2={width - padding.right}
+                            x2={actualWidth - padding.right}
                             y2={y}
                             stroke="#E5E7EB"
-                            strokeWidth="0.5"
-                            strokeDasharray="3 3"
+                            strokeWidth="1"
+                            strokeDasharray={compact ? "2 2" : "3 3"}
                         />
                     );
                 })}
 
                 {/* Y-axis labels */}
                 {tickValues.map((value, index) => {
-                    const ratio = index / (tickValues.length - 1);
+                    const ratio = (value - actualMin) / actualRange;
                     const y = padding.top + chartHeight - ratio * chartHeight;
                     return (
                         <text
                             key={index}
-                            x={padding.left - 10}
+                            x={padding.left - 8}
                             y={y + 4}
                             textAnchor="end"
                             fill="#6B7280"
-                            fontSize="10"
+                            fontSize={compact ? "9" : "10"}
                             fontFamily="system-ui, -apple-system, sans-serif"
+                            fontWeight="400"
                         >
                             {format(value)}
                         </text>
@@ -124,43 +161,50 @@ export default function LineChart({
                 })}
 
                 {/* Area fill */}
-                {showArea && <path d={areaPath} fill={`url(#${gradientId})`} />}
+                {showArea && (
+                    <path
+                        d={areaPath}
+                        fill={`url(#${gradientId})`}
+                        className="transition-opacity duration-300"
+                    />
+                )}
 
                 {/* Line */}
                 <path
                     d={linePath}
                     fill="none"
                     stroke={color}
-                    strokeWidth="3"
+                    strokeWidth={compact ? "2.5" : "3"}
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    className="transition-all duration-300"
                 />
 
                 {/* Data points */}
                 {points.map((point, index) => (
                     <g key={index}>
-                        {/* Outer blue circle */}
+                        {/* Outer circle with glow */}
                         <circle
                             cx={point.x}
                             cy={point.y}
-                            r="6"
+                            r={compact ? "5" : "6"}
                             fill={color}
-                            opacity="0.2"
+                            opacity="0.15"
                         />
                         {/* White middle circle */}
                         <circle
                             cx={point.x}
                             cy={point.y}
-                            r="5"
+                            r={compact ? "4" : "5"}
                             fill="white"
                             stroke={color}
-                            strokeWidth="2.5"
+                            strokeWidth={compact ? "2" : "2.5"}
                         />
                         {/* Inner blue circle */}
                         <circle
                             cx={point.x}
                             cy={point.y}
-                            r="2.5"
+                            r={compact ? "2" : "2.5"}
                             fill={color}
                         />
                     </g>
@@ -171,10 +215,10 @@ export default function LineChart({
                     <text
                         key={index}
                         x={point.x}
-                        y={height - 12}
+                        y={actualHeight - padding.bottom + 18}
                         textAnchor="middle"
                         fill="#374151"
-                        fontSize="11"
+                        fontSize={compact ? "10" : "11"}
                         fontWeight="500"
                         fontFamily="system-ui, -apple-system, sans-serif"
                     >

@@ -1,7 +1,5 @@
-import { MapPin, TrendingUp, Users, Building2 } from "lucide-react";
-import BarChart from "./Charts/BarChart";
-import PieChart from "./Charts/PieChart";
-import LineChart from "./Charts/LineChart";
+import { TrendingUp, Users, Building2 } from "lucide-react";
+
 import PropertyAreaMap from "./PropertyAreaMap";
 
 interface LocationInsightsProps {
@@ -17,36 +15,36 @@ export default function LocationInsights({
     centerLat,
     centerLng,
 }: LocationInsightsProps) {
-    const nearbyProperties = [
-        { label: "Retail", value: 45, color: "#0066CC" },
-        { label: "Office", value: 28, color: "#0052A3" },
-        { label: "Industrial", value: 15, color: "#004080" },
-        { label: "Mixed Use", value: 12, color: "#003366" },
-    ];
+    // const nearbyProperties = [
+    //     { label: "Retail", value: 45, color: "#0066CC" },
+    //     { label: "Office", value: 28, color: "#0052A3" },
+    //     { label: "Industrial", value: 15, color: "#004080" },
+    //     { label: "Mixed Use", value: 12, color: "#003366" },
+    // ];
 
-    const trafficData = [
-        { label: "Mon", value: 12500 },
-        { label: "Tue", value: 13200 },
-        { label: "Wed", value: 12800 },
-        { label: "Thu", value: 14000 },
-        { label: "Fri", value: 15000 },
-        { label: "Sat", value: 11000 },
-        { label: "Sun", value: 8500 },
-    ];
+    // const trafficData = [
+    //     { label: "Mon", value: 12500 },
+    //     { label: "Tue", value: 13200 },
+    //     { label: "Wed", value: 12800 },
+    //     { label: "Thu", value: 14000 },
+    //     { label: "Fri", value: 15000 },
+    //     { label: "Sat", value: 11000 },
+    //     { label: "Sun", value: 8500 },
+    // ];
 
-    const walkabilityScore = [
-        { label: "Walk Score", value: 78 },
-        { label: "Transit Score", value: 65 },
-        { label: "Bike Score", value: 82 },
-    ];
+    // const walkabilityScore = [
+    //     { label: "Walk Score", value: 78 },
+    //     { label: "Transit Score", value: 65 },
+    //     { label: "Bike Score", value: 82 },
+    // ];
 
-    const populationGrowth = [
-        { label: "2020", value: 125000 },
-        { label: "2021", value: 128500 },
-        { label: "2022", value: 132000 },
-        { label: "2023", value: 135800 },
-        { label: "2024", value: 139500 },
-    ];
+    // const populationGrowth = [
+    //     { label: "2020", value: 125000 },
+    //     { label: "2021", value: 128500 },
+    //     { label: "2022", value: 132000 },
+    //     { label: "2023", value: 135800 },
+    //     { label: "2024", value: 139500 },
+    // ];
 
     return (
         <div className="bg-white border border-gray-200 rounded-lg p-8">
@@ -107,35 +105,35 @@ export default function LocationInsights({
             </div>
 
             {/* Nearby Properties Distribution */}
-            <div className="mb-8">
+            {/* <div className="mb-8">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
                     Nearby Properties by Type
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-6">
                     <PieChart data={nearbyProperties} size={220} />
                 </div>
-            </div>
+            </div> */}
 
             {/* Traffic Pattern, Walkability Scores, and Population Growth - Combined Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {/* Weekly Traffic Pattern */}
-                <div className="bg-gray-50 rounded-lg p-6">
+            {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"> */}
+            {/* Weekly Traffic Pattern */}
+            {/* <div className="bg-gray-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                         Weekly Traffic Pattern
                     </h3>
                     <BarChart data={trafficData} height={220} />
-                </div>
+                </div> */}
 
-                {/* Walkability Scores */}
-                <div className="bg-gray-50 rounded-lg p-6">
+            {/* Walkability Scores */}
+            {/* <div className="bg-gray-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                         Walkability Scores
                     </h3>
                     <BarChart data={walkabilityScore} height={220} />
-                </div>
+                </div> */}
 
-                {/* Population Growth */}
-                <div className="bg-gray-50 rounded-lg p-6">
+            {/* Population Growth */}
+            {/* <div className="bg-gray-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                         Population Growth
                     </h3>
@@ -151,8 +149,8 @@ export default function LocationInsights({
                     <div className="text-xs text-gray-500 mt-2 text-center">
                         Values in thousands
                     </div>
-                </div>
-            </div>
+                </div> */}
+            {/* </div> */}
         </div>
     );
 }

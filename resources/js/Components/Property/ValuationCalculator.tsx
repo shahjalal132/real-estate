@@ -124,14 +124,14 @@ export default function ValuationCalculator() {
                     </div>
 
                     {/* Payment Breakdown Chart */}
-                    <div className="mt-6">
+                    {/* <div className="mt-6">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">
                             Payment Breakdown
                         </h3>
                         <div className="bg-gray-50 rounded-lg p-6">
                             <BarChart data={paymentBreakdown} height={200} />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

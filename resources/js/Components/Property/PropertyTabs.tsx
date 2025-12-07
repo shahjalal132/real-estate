@@ -28,6 +28,14 @@ export default function PropertyTabs({ onTabClick }: PropertyTabsProps) {
 
     useEffect(() => {
         const handleScroll = () => {
+            // Don't update active tab if a modal is open (check for modal backdrop)
+            const modalBackdrop = document.querySelector(
+                '[class*="z-[100]"], [class*="z-100"]'
+            );
+            if (modalBackdrop) {
+                return; // Modal is open, don't update active tab
+            }
+
             const scrollPosition = window.scrollY + 150; // Offset for sticky tabs bar
 
             // Check tabs in reverse order to get the topmost visible section
@@ -82,7 +90,7 @@ export default function PropertyTabs({ onTabClick }: PropertyTabsProps) {
     };
 
     return (
-        <div className="border-b border-gray-200 mb-6 sticky top-0 bg-white z-50 shadow-md">
+        <div className="border-b border-gray-200 mb-6 sticky top-0 bg-white z-40 shadow-md">
             <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
                 {tabs.map((tab) => (
                     <button

@@ -1,9 +1,14 @@
 interface PieChartProps {
     data: { label: string; value: number; color?: string }[];
     size?: number;
+    showLegend?: boolean;
 }
 
-export default function PieChart({ data, size = 200 }: PieChartProps) {
+export default function PieChart({
+    data,
+    size = 200,
+    showLegend = true,
+}: PieChartProps) {
     const total = data.reduce((sum, item) => sum + item.value, 0);
     let currentAngle = -90; // Start from top
 
@@ -57,31 +62,35 @@ export default function PieChart({ data, size = 200 }: PieChartProps) {
                     </g>
                 ))}
             </svg>
-            <div className="mt-4 space-y-2 w-full">
-                {data.map((item, index) => (
-                    <div
-                        key={index}
-                        className="flex items-center justify-between text-sm"
-                    >
-                        <div className="flex items-center gap-2">
-                            <div
-                                className="w-3 h-3 rounded"
-                                style={{
-                                    backgroundColor:
-                                        paths[index]?.color ||
-                                        `hsl(${
-                                            (index * 360) / data.length
-                                        }, 70%, 50%)`,
-                                }}
-                            />
-                            <span className="text-gray-700">{item.label}</span>
+            {showLegend && (
+                <div className="mt-4 space-y-2 w-full">
+                    {data.map((item, index) => (
+                        <div
+                            key={index}
+                            className="flex items-center justify-between text-sm"
+                        >
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className="w-3 h-3 rounded"
+                                    style={{
+                                        backgroundColor:
+                                            paths[index]?.color ||
+                                            `hsl(${
+                                                (index * 360) / data.length
+                                            }, 70%, 50%)`,
+                                    }}
+                                />
+                                <span className="text-gray-700">
+                                    {item.label}
+                                </span>
+                            </div>
+                            <span className="text-gray-900 font-semibold">
+                                {paths[index]?.percentage}%
+                            </span>
                         </div>
-                        <span className="text-gray-900 font-semibold">
-                            {paths[index]?.percentage}%
-                        </span>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

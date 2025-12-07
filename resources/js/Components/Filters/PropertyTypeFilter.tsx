@@ -111,13 +111,13 @@ export default function PropertyTypeFilter({
     selectedTypes,
     onChange,
 }: PropertyTypeFilterProps) {
-    // Initialize all categories with subtypes as expanded
+    // Initialize all categories with subtypes as collapsed
     const [expandedTypes, setExpandedTypes] = useState<Record<string, boolean>>(
         () => {
             const expanded: Record<string, boolean> = {};
             PROPERTY_TYPES.forEach((pt) => {
                 if (pt.subtypes.length > 0) {
-                    expanded[pt.type] = true;
+                    expanded[pt.type] = false;
                 }
             });
             return expanded;
@@ -247,15 +247,28 @@ export default function PropertyTypeFilter({
         }));
     };
 
-    // Expand all accordions
-    const expandAll = () => {
-        const allExpanded: Record<string, boolean> = {};
+    // Expand/Collapse all accordions toggle
+    const toggleExpandAll = () => {
+        // Check if all types with subtypes are already expanded
+        const allExpanded = PROPERTY_TYPES.filter(
+            (pt) => pt.subtypes.length > 0
+        ).every((pt) => expandedTypes[pt.type]);
+
+        const newExpandedState: Record<string, boolean> = {};
         PROPERTY_TYPES.forEach((pt) => {
             if (pt.subtypes.length > 0) {
-                allExpanded[pt.type] = true;
+                // Toggle: if all are expanded, collapse all; otherwise expand all
+                newExpandedState[pt.type] = !allExpanded;
             }
         });
-        setExpandedTypes(allExpanded);
+        setExpandedTypes(newExpandedState);
+    };
+
+    // Check if all types with subtypes are expanded
+    const areAllExpanded = () => {
+        return PROPERTY_TYPES.filter((pt) => pt.subtypes.length > 0).every(
+            (pt) => expandedTypes[pt.type]
+        );
     };
 
     // Get the visual state for a type checkbox (checked, indeterminate, or unchecked)
@@ -294,16 +307,16 @@ export default function PropertyTypeFilter({
                             onChange={handleAllToggle}
                             className="h-3.5 w-3.5 rounded border-gray-300 text-[#0066CC] focus:ring-[#0066CC] accent-[#0066CC]"
                         />
-                        <span className="text-xs text-gray-700 font-medium">
+                        <span className="text-sm text-gray-700 font-medium">
                             All
                         </span>
                     </label>
                     <button
                         type="button"
-                        onClick={expandAll}
-                        className="text-xs text-[#0066CC] hover:text-[#004C99] transition-colors font-medium"
+                        onClick={toggleExpandAll}
+                        className="text-sm text-[#0066CC] hover:text-[#004C99] transition-colors font-medium"
                     >
-                        view all subtypes
+                        {areAllExpanded() ? "show less" : "view all subtypes"}
                     </button>
                 </div>
 
@@ -334,7 +347,7 @@ export default function PropertyTypeFilter({
                                         }
                                         className="h-3.5 w-3.5 rounded border-gray-300 text-[#0066CC] focus:ring-[#0066CC] accent-[#0066CC]"
                                     />
-                                    <span className="text-xs text-gray-700 font-medium">
+                                    <span className="text-sm text-gray-700 font-medium">
                                         {propertyType.type}
                                     </span>
                                 </label>
@@ -381,7 +394,7 @@ export default function PropertyTypeFilter({
                                                     }
                                                     className="h-3.5 w-3.5 rounded border-gray-300 text-[#0066CC] focus:ring-[#0066CC] accent-[#0066CC]"
                                                 />
-                                                <span className="text-xs text-gray-600">
+                                                <span className="text-sm text-gray-600">
                                                     {subtype}
                                                 </span>
                                             </label>

@@ -7,6 +7,7 @@ import PropertyOverview from "../../../Components/Property/PropertyOverview";
 import PropertyTopTabs from "../../../Components/Property/PropertyTopTabs";
 import PropertyTabs from "../../../Components/Property/PropertyTabs";
 import PropertyDescription from "../../../Components/Property/PropertyDescription";
+import PropertyInvestmentHighlights from "../../../Components/Property/PropertyInvestmentHighlights";
 import PropertyDetailsGrid from "../../../Components/Property/PropertyDetailsGrid";
 import PropertyLocationMap from "../../../Components/Property/PropertyLocationMap";
 import PropertyBrokers from "../../../Components/Property/PropertyBrokers";
@@ -17,9 +18,11 @@ import ValuationMetrics from "../../../Components/Property/ValuationMetrics";
 import Demographics from "../../../Components/Property/Demographics";
 import ClimateRisk from "../../../Components/Property/ClimateRisk";
 import LocationInsights from "../../../Components/Property/LocationInsights";
+import SimilarProperties from "../../../Components/Property/SimilarProperties";
 
 interface PageProps extends InertiaPageProps {
     property: Property;
+    similarProperties?: Property[];
 }
 
 interface ExtendedPropertyImage {
@@ -32,7 +35,7 @@ interface ExtendedPropertyImage {
 
 export default function PropertyShow() {
     const { props } = usePage<PageProps>();
-    const { property } = props;
+    const { property, similarProperties = [] } = props;
 
     // Refs for scrolling to sections
     const sectionRefs = {
@@ -146,8 +149,7 @@ export default function PropertyShow() {
                         images={images}
                         formattedPrice={formattedPrice}
                         fullAddress={fullAddress}
-                        onViewMap={handleViewMap}
-                        onViewStreetView={handleViewStreetView}
+                        mapUrl={mapUrl}
                     />
 
                     {/* Tabs Navigation */}
@@ -172,6 +174,7 @@ export default function PropertyShow() {
                         >
                             <PropertyDetailsGrid
                                 details={details}
+                                property={property}
                                 isInOpportunityZone={
                                     property.is_in_opportunity_zone
                                 }
@@ -188,6 +191,15 @@ export default function PropertyShow() {
                                 description={property.description}
                                 marketingDescription={
                                     property.marketing_description
+                                }
+                            />
+                        </div>
+
+                        {/* Investment Highlights Section */}
+                        <div id="highlights" className="scroll-mt-20">
+                            <PropertyInvestmentHighlights
+                                investmentHighlights={
+                                    property.details?.investment_highlights
                                 }
                             />
                         </div>
@@ -214,21 +226,30 @@ export default function PropertyShow() {
                         </div>
 
                         {/* Property History Section */}
-                        <div
+                        {/* <div
                             id="history"
                             ref={sectionRefs.history}
                             className="scroll-mt-20"
                         >
                             <PropertyHistory />
-                        </div>
+                        </div> */}
 
                         {/* Tax History Section */}
-                        <div
+                        {/* <div
                             id="tax"
                             ref={sectionRefs.tax}
                             className="scroll-mt-20"
                         >
                             <TaxHistory />
+                        </div> */}
+
+                        {/* Demographics Section */}
+                        <div
+                            id="demographics"
+                            ref={sectionRefs.demographics}
+                            className="scroll-mt-20"
+                        >
+                            <Demographics />
                         </div>
 
                         {/* Valuation Calculator Section */}
@@ -241,22 +262,13 @@ export default function PropertyShow() {
                         </div>
 
                         {/* Valuation Metrics Section */}
-                        <div
+                        {/* <div
                             id="metrics"
                             ref={sectionRefs.metrics}
                             className="scroll-mt-20"
                         >
                             <ValuationMetrics />
-                        </div>
-
-                        {/* Demographics Section */}
-                        <div
-                            id="demographics"
-                            ref={sectionRefs.demographics}
-                            className="scroll-mt-20"
-                        >
-                            <Demographics />
-                        </div>
+                        </div> */}
 
                         {/* Location Insights Section */}
                         <div
@@ -269,6 +281,14 @@ export default function PropertyShow() {
                                 fullAddress={fullAddress}
                                 centerLat={location?.latitude ?? undefined}
                                 centerLng={location?.longitude ?? undefined}
+                            />
+                        </div>
+
+                        {/* Similar Properties Section */}
+                        <div className="scroll-mt-20">
+                            <SimilarProperties
+                                properties={similarProperties}
+                                currentPropertyId={property.id}
                             />
                         </div>
                     </div>

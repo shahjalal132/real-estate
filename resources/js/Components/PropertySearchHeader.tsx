@@ -389,13 +389,13 @@ export default function PropertySearchHeader({
                         </div>
 
                         {/* Search Now Button */}
-                        <button
+                        {/* <button
                             type="button"
                             onClick={handleSearch}
                             className="bg-[#0066CC] hover:bg-[#004C99] text-white px-6 py-2.5 rounded font-semibold whitespace-nowrap transition-colors shadow-sm cursor-pointer"
                         >
                             Search Now
-                        </button>
+                        </button> */}
 
                         {/* Save Search Button */}
                         <button

@@ -1,9 +1,38 @@
-import { Phone, Mail, Star } from "lucide-react";
 import { Broker } from "../../../types";
 
 interface PropertyBrokersProps {
     brokers: Broker[];
 }
+
+// Get initials from full name
+const getInitials = (name: string | null | undefined): string => {
+    if (!name || typeof name !== "string") {
+        return "NA";
+    }
+    const trimmed = name.trim();
+    if (trimmed.length === 0) {
+        return "NA";
+    }
+    const parts = trimmed.split(" ").filter((p) => p.length > 0);
+    if (parts.length >= 2) {
+        return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return trimmed.substring(0, 2).toUpperCase();
+};
+
+// Format phone number
+const formatPhone = (phone: string | null): string => {
+    if (!phone) return "";
+    // Remove all non-digit characters
+    const cleaned = phone.replace(/\D/g, "");
+    // Format as XXX.XXX.XXXX if 10 digits
+    if (cleaned.length === 10) {
+        return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(
+            6
+        )}`;
+    }
+    return phone;
+};
 
 export default function PropertyBrokers({ brokers }: PropertyBrokersProps) {
     if (brokers.length === 0) {
@@ -11,63 +40,94 @@ export default function PropertyBrokers({ brokers }: PropertyBrokersProps) {
     }
 
     return (
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">
-                Listing Agents
-            </h3>
-            <div className="space-y-6">
-                {brokers.map((broker) => (
-                    <div
-                        key={broker.id}
-                        className="pb-6 border-b border-gray-200 last:border-b-0 last:pb-0"
-                    >
-                        <div className="flex items-start gap-4">
-                            <div className="relative shrink-0">
-                                <img
-                                    src={
-                                        broker.thumbnail_url ??
-                                        "/assets/images/broker.jpeg"
-                                    }
-                                    alt={broker.full_name}
-                                    className="h-16 w-16 rounded-full object-cover ring-4 ring-gray-100"
-                                />
-                                {broker.is_platinum && (
-                                    <Star className="absolute -top-1 -right-1 h-6 w-6 fill-yellow-400 text-yellow-400 drop-shadow-lg" />
+        <div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                    Listing Contacts
+                </h3>
+                <button className="text-sm font-medium text-[#0066CC] hover:text-[#0052A3] transition-colors">
+                    Submit LOI
+                </button>
+            </div>
+
+            {/* Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {brokers.map((broker) => {
+                    const fullName =
+                        broker.full_name ||
+                        `${broker.first_name || ""} ${
+                            broker.last_name || ""
+                        }`.trim() ||
+                        "Unknown";
+                    const initials = getInitials(fullName);
+                    const license =
+                        broker.licenses && broker.licenses.length > 0
+                            ? broker.licenses[0]
+                            : null;
+                    const formattedPhone = formatPhone(broker.phone);
+
+                    return (
+                        <div
+                            key={broker.id}
+                            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                        >
+                            {/* Avatar and Name */}
+                            <div className="flex items-start gap-3 mb-3">
+                                {broker.thumbnail_url ? (
+                                    <img
+                                        src={broker.thumbnail_url}
+                                        alt={fullName}
+                                        className="h-12 w-12 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                                        <span className="text-sm font-semibold text-gray-700">
+                                            {initials}
+                                        </span>
+                                    </div>
                                 )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <h4 className="font-bold text-gray-900 text-lg mb-1">
-                                    {broker.full_name}
-                                </h4>
-                                {broker.brokerage && (
-                                    <p className="text-sm text-gray-600 mb-3">
-                                        {broker.brokerage.name}
-                                    </p>
-                                )}
-                                <div className="flex flex-col gap-2">
-                                    {broker.phone && (
-                                        <a
-                                            href={`tel:${broker.phone}`}
-                                            className="flex items-center gap-2 text-sm text-[#0066CC] hover:text-[#0052A3] font-medium transition-colors"
-                                        >
-                                            <Phone className="h-4 w-4" />
-                                            {broker.phone}
-                                        </a>
-                                    )}
-                                    {broker.email && (
-                                        <a
-                                            href={`mailto:${broker.email}`}
-                                            className="flex items-center gap-2 text-sm text-[#0066CC] hover:text-[#0052A3] font-medium transition-colors"
-                                        >
-                                            <Mail className="h-4 w-4" />
-                                            {broker.email}
-                                        </a>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                        {fullName}
+                                    </h4>
+                                    {license && (
+                                        <p className="text-xs text-gray-600">
+                                            LIC: {license}
+                                        </p>
                                     )}
                                 </div>
                             </div>
+
+                            {/* Contact Info */}
+                            <div className="space-y-1.5 mb-3">
+                                {formattedPhone && (
+                                    <p className="text-xs text-gray-700">
+                                        {formattedPhone}
+                                    </p>
+                                )}
+                                {broker.email && (
+                                    <p className="text-xs text-gray-700">
+                                        {broker.email}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Divider */}
+                            <div className="border-t border-gray-200 my-3"></div>
+
+                            {/* Action Links */}
+                            <div className="flex items-center gap-4">
+                                <button className="text-xs font-medium text-[#0066CC] hover:text-[#0052A3] transition-colors">
+                                    Contact
+                                </button>
+                                <button className="text-xs font-medium text-[#0066CC] hover:text-[#0052A3] transition-colors">
+                                    View Profile
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
