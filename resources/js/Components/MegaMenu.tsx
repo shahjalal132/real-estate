@@ -258,8 +258,13 @@ const menus: Record<string, Menu> = {
                         label: "Scout Map",
                         link: "/scout/scout-map",
                         icon: Navigation,
-                        description:
-                            "Market Research Map, VPD, Population, Income etc",
+                        description: "Calculate proximity to location",
+                    },
+                    {
+                        label: "Market Research Map",
+                        link: "/scout/scout-intelligence",
+                        icon: MapPin,
+                        description: "VPD, Population, Income etc.",
                     },
                 ],
             },
@@ -596,7 +601,7 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
 
     return (
         <div
-            className={`absolute top-full mt-0 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
+            className={`absolute top-full mt-5 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
                 shouldRightAlign ? "right-0" : "left-0"
             }`}
             style={{

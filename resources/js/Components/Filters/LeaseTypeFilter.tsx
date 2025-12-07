@@ -1,32 +1,34 @@
-interface TenantCreditFilterProps {
-    selectedCredit: string;
-    onChange: (credit: string) => void;
+interface LeaseTypeFilterProps {
+    selectedLeaseType: string;
+    onChange: (leaseType: string) => void;
 }
 
-const TENANT_CREDIT_OPTIONS = [
-    "Credit Rated",
-    "Corporate Guarantee",
-    "Franchisee",
-    "No Credit Rating",
+const LEASE_TYPE_OPTIONS = [
+    "Net",
+    "NNN",
+    "Absolute Net",
+    "Gross",
+    "Modified",
+    "Ground",
 ];
 
-export default function TenantCreditFilter({
-    selectedCredit,
+export default function LeaseTypeFilter({
+    selectedLeaseType,
     onChange,
-}: TenantCreditFilterProps) {
+}: LeaseTypeFilterProps) {
     return (
         <div>
             <label className="mb-2 block text-xs font-semibold text-gray-900">
-                Tenant Credit
+                Lease Type
             </label>
             <div className="flex flex-wrap gap-1.5">
-                {TENANT_CREDIT_OPTIONS.map((option) => (
+                {LEASE_TYPE_OPTIONS.map((option) => (
                     <button
                         key={option}
                         type="button"
                         onClick={() => onChange(option)}
                         className={`rounded border px-2.5 py-1.5 text-xs font-semibold transition-all ${
-                            selectedCredit === option
+                            selectedLeaseType === option
                                 ? "border-[#0066CC] bg-[#0066CC] text-white shadow-sm"
                                 : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400"
                         }`}

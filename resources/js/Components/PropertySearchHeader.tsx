@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { usePage } from "@inertiajs/react";
 import AllFiltersButton from "./AllFiltersButton";
+import SaveFilterModal from "./SaveFilterModal";
+import { saveFilter } from "../utils/cookies";
+import { FilterValues } from "./AllFiltersModal";
 
 interface PropertySearchHeaderProps {
     onSearch?: (filters: SearchFilters) => void;
@@ -10,6 +14,8 @@ interface PropertySearchHeaderProps {
     viewMode?: "grid" | "map";
     onViewModeChange?: (mode: "grid" | "map") => void;
     activeFiltersCount?: number;
+    currentFilters?: FilterValues | null;
+    hasActiveFilters?: boolean;
 }
 
 export interface SearchFilters {
@@ -65,11 +71,96 @@ export default function PropertySearchHeader({
     viewMode = "grid",
     onViewModeChange,
     activeFiltersCount = 0,
+    currentFilters = null,
+    hasActiveFilters = false,
 }: PropertySearchHeaderProps) {
+    const { url } = usePage();
     const [status, setStatus] = useState("for-sale");
     const [propertyType, setPropertyType] = useState("all");
     const [priceRange, setPriceRange] = useState("any");
     const [capRate, setCapRate] = useState("any");
+    const [showSaveModal, setShowSaveModal] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    // Initialize from URL parameters
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageUrl = url || window.location.pathname;
+
+        // Determine status from URL
+        if (pageUrl.includes("/auctions")) {
+            setStatus("auctions");
+        } else if (pageUrl.includes("/commercial")) {
+            setStatus("commercial");
+        } else if (
+            pageUrl.includes("/rental") ||
+            pageUrl.includes("/for-lease")
+        ) {
+            setStatus("for-lease");
+        } else if (
+            pageUrl.includes("/residential") ||
+            pageUrl.includes("/for-sale")
+        ) {
+            setStatus("for-sale");
+        }
+
+        // Get property type from URL
+        const typeParam =
+            urlParams.get("type") || urlParams.get("property_types");
+        if (typeParam) {
+            const types = typeParam.split(",");
+            if (types.length > 0) {
+                setPropertyType(types[0]);
+            }
+        }
+
+        // Get price range from URL
+        const minPrice =
+            urlParams.get("min_price") || urlParams.get("min_rate");
+        const maxPrice =
+            urlParams.get("max_price") || urlParams.get("max_rate");
+        if (minPrice || maxPrice) {
+            // Convert to price range format
+            const min = minPrice
+                ? parseFloat(minPrice.replace(/[^0-9.]/g, ""))
+                : 0;
+            const max = maxPrice
+                ? parseFloat(maxPrice.replace(/[^0-9.]/g, ""))
+                : Infinity;
+
+            if (min === 0 && max <= 500000) {
+                setPriceRange("0-500k");
+            } else if (min >= 500000 && max <= 1000000) {
+                setPriceRange("500k-1m");
+            } else if (min >= 1000000 && max <= 5000000) {
+                setPriceRange("1m-5m");
+            } else if (min >= 5000000 && max <= 10000000) {
+                setPriceRange("5m-10m");
+            } else if (min >= 10000000) {
+                setPriceRange("10m+");
+            }
+        }
+
+        // Get cap rate from URL
+        const minCapRate = urlParams.get("min_cap_rate");
+        const maxCapRate = urlParams.get("max_cap_rate");
+        if (minCapRate || maxCapRate) {
+            const min = minCapRate ? parseFloat(minCapRate) : 0;
+            const max = maxCapRate ? parseFloat(maxCapRate) : Infinity;
+
+            if (min === 0 && max <= 3) {
+                setCapRate("0-3");
+            } else if (min >= 3 && max <= 5) {
+                setCapRate("3-5");
+            } else if (min >= 5 && max <= 7) {
+                setCapRate("5-7");
+            } else if (min >= 7 && max <= 10) {
+                setCapRate("7-10");
+            } else if (min >= 10) {
+                setCapRate("10+");
+            }
+        }
+    }, [url]);
 
     const [statusOpen, setStatusOpen] = useState(false);
     const [typeOpen, setTypeOpen] = useState(false);
@@ -95,6 +186,55 @@ export default function PropertySearchHeader({
             priceRange,
             capRate,
         });
+    };
+
+    // Get default filter name based on current filters
+    const getDefaultFilterName = (): string => {
+        if (!currentFilters) {
+            return "My Search";
+        }
+
+        if (
+            currentFilters.propertyTypes &&
+            currentFilters.propertyTypes.length > 0 &&
+            !currentFilters.propertyTypes.includes("All")
+        ) {
+            const mainTypes = currentFilters.propertyTypes
+                .filter((type) => type !== "All" && !type.includes(" - "))
+                .slice(0, 3);
+            if (mainTypes.length > 0) {
+                return mainTypes.join(", ");
+            }
+        }
+
+        if (currentFilters.location && currentFilters.location.length > 0) {
+            return currentFilters.location[0];
+        }
+
+        return "My Search";
+    };
+
+    const handleSaveFilter = (name: string, duration: string) => {
+        if (!currentFilters) return;
+
+        setSaving(true);
+        try {
+            saveFilter(name, duration, currentFilters);
+            setShowSaveModal(false);
+            onSaveSearch?.();
+            // Optionally show a success message
+        } catch (error) {
+            console.error("Error saving filter:", error);
+            alert("Failed to save search. Please try again.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSaveSearchClick = () => {
+        if (hasActiveFilters && currentFilters) {
+            setShowSaveModal(true);
+        }
     };
 
     const DropdownButton = ({
@@ -252,7 +392,21 @@ export default function PropertySearchHeader({
                         <button
                             type="button"
                             onClick={handleSearch}
-                            className="bg-[#0066CC] hover:bg-[#004C99] text-white px-6 py-2.5 rounded font-semibold whitespace-nowrap transition-colors shadow-sm"
+                            className="bg-[#0066CC] hover:bg-[#004C99] text-white px-6 py-2.5 rounded font-semibold whitespace-nowrap transition-colors shadow-sm cursor-pointer"
+                        >
+                            Search Now
+                        </button>
+
+                        {/* Save Search Button */}
+                        <button
+                            type="button"
+                            onClick={handleSaveSearchClick}
+                            disabled={!hasActiveFilters}
+                            className={`px-4 py-2 rounded font-semibold whitespace-nowrap transition-colors shadow-sm ${
+                                hasActiveFilters
+                                    ? "bg-gray-500 hover:bg-[#004C99] text-white cursor-pointer"
+                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            }`}
                         >
                             Save Search
                         </button>
@@ -298,6 +452,15 @@ export default function PropertySearchHeader({
                     </div>
                 </div>
             </div>
+
+            {/* Save Filter Modal */}
+            <SaveFilterModal
+                isOpen={showSaveModal}
+                onClose={() => setShowSaveModal(false)}
+                onSave={handleSaveFilter}
+                defaultName={getDefaultFilterName()}
+                saving={saving}
+            />
         </div>
     );
 }

@@ -135,12 +135,12 @@ export default function BrokerAgentFilter({
 
     return (
         <div className="relative" ref={dropdownRef}>
-            <label className="mb-3 block text-sm font-semibold text-gray-900">
+            <label className="mb-2 block text-xs font-semibold text-gray-900">
                 Broker/Agent
             </label>
             <div className="relative">
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-gray-400" />
                     <input
                         ref={inputRef}
                         type="text"
@@ -148,20 +148,20 @@ export default function BrokerAgentFilter({
                         value={searchQuery}
                         onChange={handleInputChange}
                         onFocus={handleInputFocus}
-                        className="w-full rounded-lg border-2 border-gray-300 bg-white pl-10 pr-10 py-3 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-opacity-20"
+                        className="w-full rounded border border-gray-300 bg-white pl-7 pr-7 py-1.5 text-xs text-gray-700 placeholder-gray-400 transition-all focus:border-[#0066CC] focus:outline-none focus:ring-1 focus:ring-[#0066CC] focus:ring-opacity-20"
                     />
                     {selectedBroker && (
                         <button
                             type="button"
                             onClick={handleClear}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
                             aria-label="Clear selection"
                         >
-                            <X className="h-4 w-4" />
+                            <X className="h-3 w-3" />
                         </button>
                     )}
                     {!selectedBroker && (
-                        <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        <ChevronDown className="absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     )}
                 </div>
 
