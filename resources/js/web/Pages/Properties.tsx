@@ -254,7 +254,7 @@ export default function Properties() {
     const hasActiveFilters = activeFiltersData.hasActiveFilters;
 
     const handleSearch = (searchFilters: SearchFilters) => {
-        const params: Record<string, string> = {};
+        const params: Record<string, any> = {};
 
         // Map status to route path
         let basePath = "/properties";
@@ -271,24 +271,96 @@ export default function Properties() {
             basePath = "/properties/rental";
         }
 
-        if (searchFilters.propertyType !== "all") {
+        // Property Type filter
+        if (
+            searchFilters.propertyType &&
+            searchFilters.propertyType !== "all"
+        ) {
+            params.property_types = searchFilters.propertyType;
+            // Also set 'type' for backward compatibility
             params.type = searchFilters.propertyType;
         }
-        if (searchFilters.priceRange !== "any") {
-            const [min, max] = searchFilters.priceRange.split("-");
-            if (min)
-                params.min_price = min
-                    .replace("k", "000")
-                    .replace("m", "000000");
-            if (max)
-                params.max_price = max
-                    .replace("k", "000")
-                    .replace("m", "000000");
+
+        // Price Range filter
+        if (searchFilters.priceRange && searchFilters.priceRange !== "any") {
+            const rangeParts = searchFilters.priceRange.split("-");
+            if (rangeParts.length === 2) {
+                const minStr = rangeParts[0].trim();
+                const maxStr = rangeParts[1].trim();
+
+                // Convert to numeric values
+                let minValue = 0;
+                let maxValue = 0;
+
+                if (minStr.endsWith("k")) {
+                    minValue = parseFloat(minStr.replace("k", "")) * 1000;
+                } else if (minStr.endsWith("m")) {
+                    minValue = parseFloat(minStr.replace("m", "")) * 1000000;
+                } else {
+                    minValue = parseFloat(minStr) || 0;
+                }
+
+                if (maxStr.endsWith("k")) {
+                    maxValue = parseFloat(maxStr.replace("k", "")) * 1000;
+                } else if (maxStr.endsWith("m")) {
+                    maxValue = parseFloat(maxStr.replace("m", "")) * 1000000;
+                } else if (maxStr.endsWith("+")) {
+                    // For "10m+", set min only
+                    params.min_price = minValue.toString();
+                    params.min_rate = minValue.toString();
+                } else {
+                    maxValue = parseFloat(maxStr) || 0;
+                }
+
+                if (minValue > 0) {
+                    params.min_price = minValue.toString();
+                    params.min_rate = minValue.toString();
+                }
+                if (maxValue > 0 && !maxStr.endsWith("+")) {
+                    params.max_price = maxValue.toString();
+                    params.max_rate = maxValue.toString();
+                }
+            } else if (searchFilters.priceRange.endsWith("+")) {
+                // Handle "10m+" case
+                const valueStr = searchFilters.priceRange.replace("+", "");
+                let minValue = 0;
+                if (valueStr.endsWith("k")) {
+                    minValue = parseFloat(valueStr.replace("k", "")) * 1000;
+                } else if (valueStr.endsWith("m")) {
+                    minValue = parseFloat(valueStr.replace("m", "")) * 1000000;
+                }
+                if (minValue > 0) {
+                    params.min_price = minValue.toString();
+                    params.min_rate = minValue.toString();
+                }
+            }
+        }
+
+        // Cap Rate filter
+        if (searchFilters.capRate && searchFilters.capRate !== "any") {
+            const rangeParts = searchFilters.capRate.split("-");
+            if (rangeParts.length === 2) {
+                const minCap = parseFloat(rangeParts[0].trim()) || 0;
+                const maxCap = parseFloat(rangeParts[1].trim()) || 0;
+                if (minCap >= 0) {
+                    params.min_cap_rate = minCap.toString();
+                }
+                if (maxCap > 0) {
+                    params.max_cap_rate = maxCap.toString();
+                }
+            } else if (searchFilters.capRate.endsWith("+")) {
+                // Handle "10+" case
+                const minCap =
+                    parseFloat(searchFilters.capRate.replace("+", "")) || 0;
+                if (minCap >= 0) {
+                    params.min_cap_rate = minCap.toString();
+                }
+            }
         }
 
         router.get(basePath, params, {
-            preserveState: true,
-            preserveScroll: true,
+            preserveState: false,
+            preserveScroll: false,
         });
     };
 
@@ -330,6 +402,7 @@ export default function Properties() {
                     <div className="flex items-center gap-6">
                         {/* Results Count */}
                         <div className="text-sm text-gray-600">
+                            <strong>Total Result:</strong>
                             <span className="font-semibold">
                                 {filteredListings.length}
                             </span>{" "}

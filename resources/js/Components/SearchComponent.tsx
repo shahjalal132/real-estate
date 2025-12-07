@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, MapPin, Clock, Target, X } from "lucide-react";
+import { Search, Clock, Target, X } from "lucide-react";
 import { router } from "@inertiajs/react";
-import { getSavedFilters, SavedFilter } from "../utils/cookies";
+import { SavedFilter } from "../utils/cookies";
 
 interface SearchComponentProps {
     onClose?: () => void;
@@ -17,27 +17,43 @@ interface RecentSearch {
 export default function SearchComponent({ onClose }: SearchComponentProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
-    const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
-    const [savedSearches, setSavedSearches] = useState<SavedFilter[]>([]);
+
+    // Static data for now - will be made dynamic later
+    const [recentSearches] = useState<RecentSearch[]>([
+        {
+            id: "1",
+            query: "Los Angeles, CA",
+            type: "For Sale",
+            timestamp: Date.now(),
+        },
+    ]);
+
+    const [savedSearches] = useState<SavedFilter[]>([
+        {
+            id: "1",
+            name: "New York",
+            duration: "daily",
+            filters: {},
+            createdAt: new Date().toISOString(),
+        },
+        {
+            id: "2",
+            name: "Sales Comps",
+            duration: "weekly",
+            filters: {},
+            createdAt: new Date().toISOString(),
+        },
+        {
+            id: "3",
+            name: "Nnn in KY",
+            duration: "monthly",
+            filters: {},
+            createdAt: new Date().toISOString(),
+        },
+    ]);
+
     const searchRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-
-    // Load recent searches from localStorage
-    useEffect(() => {
-        const stored = localStorage.getItem("recent_searches");
-        if (stored) {
-            try {
-                setRecentSearches(JSON.parse(stored));
-            } catch (error) {
-                console.error("Error loading recent searches:", error);
-            }
-        }
-    }, []);
-
-    // Load saved searches from cookies
-    useEffect(() => {
-        setSavedSearches(getSavedFilters());
-    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -50,10 +66,14 @@ export default function SearchComponent({ onClose }: SearchComponentProps) {
             }
         };
 
-        document.addEventListener("mousedown", handleClickOutside);
-        return () =>
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
             document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+        };
+    }, [isOpen]);
 
     // Focus input when dropdown opens
     useEffect(() => {
@@ -67,22 +87,6 @@ export default function SearchComponent({ onClose }: SearchComponentProps) {
         type: "For Sale" | "For Lease" = "For Sale"
     ) => {
         if (!query.trim()) return;
-
-        // Add to recent searches
-        const newRecent: RecentSearch = {
-            id: Date.now().toString(),
-            query: query.trim(),
-            type,
-            timestamp: Date.now(),
-        };
-
-        const updated = [
-            newRecent,
-            ...recentSearches.filter((s) => s.query !== query.trim()),
-        ].slice(0, 10); // Keep only last 10
-
-        setRecentSearches(updated);
-        localStorage.setItem("recent_searches", JSON.stringify(updated));
 
         // Navigate to search results
         const route =
@@ -121,9 +125,8 @@ export default function SearchComponent({ onClose }: SearchComponentProps) {
 
     const handleRemoveRecent = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        const updated = recentSearches.filter((s) => s.id !== id);
-        setRecentSearches(updated);
-        localStorage.setItem("recent_searches", JSON.stringify(updated));
+        // For now, just prevent default - will implement removal when dynamic
+        console.log("Remove recent search:", id);
     };
 
     const handleSavedSearchClick = (savedSearch: SavedFilter) => {
@@ -214,7 +217,7 @@ export default function SearchComponent({ onClose }: SearchComponentProps) {
                                                         search.type
                                                     )
                                                 }
-                                                className="px-3 py-1 rounded bg-[#0066CC] text-white text-xs font-semibold hover:bg-[#004C99] transition-colors whitespace-nowrap flex-shrink-0"
+                                                className="px-3 py-1 rounded bg-[#0066CC] text-white text-xs font-semibold hover:bg-[#004C99] transition-colors whitespace-nowrap shrink-0"
                                             >
                                                 {search.type}
                                             </button>
@@ -224,7 +227,7 @@ export default function SearchComponent({ onClose }: SearchComponentProps) {
                                             onClick={(e) =>
                                                 handleRemoveRecent(search.id, e)
                                             }
-                                            className="ml-2 p-1 rounded-full hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+                                            className="ml-2 p-1 rounded-full hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
                                             aria-label="Remove search"
                                         >
                                             <X className="h-4 w-4 text-gray-500" />
@@ -248,8 +251,11 @@ export default function SearchComponent({ onClose }: SearchComponentProps) {
                                 {savedSearches.map((savedSearch) => (
                                     <div
                                         key={savedSearch.id}
-                                        className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors group"
+                                        className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors"
                                     >
+                                        <span className="text-sm text-gray-700 flex-1">
+                                            {savedSearch.name}
+                                        </span>
                                         <button
                                             type="button"
                                             onClick={() =>
@@ -257,21 +263,7 @@ export default function SearchComponent({ onClose }: SearchComponentProps) {
                                                     savedSearch
                                                 )
                                             }
-                                            className="flex items-center gap-3 flex-1 min-w-0 text-left"
-                                        >
-                                            <span className="text-sm text-gray-700 truncate">
-                                                {savedSearch.name}
-                                            </span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleSavedSearchClick(
-                                                    savedSearch
-                                                );
-                                            }}
-                                            className="px-3 py-1 rounded bg-[#0066CC] text-white text-xs font-semibold hover:bg-[#004C99] transition-colors whitespace-nowrap flex-shrink-0"
+                                            className="px-3 py-1 rounded bg-[#0066CC] text-white text-xs font-semibold hover:bg-[#004C99] transition-colors whitespace-nowrap shrink-0"
                                         >
                                             For Sale
                                         </button>
