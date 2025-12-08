@@ -139,9 +139,9 @@ export default function PropertyShow() {
     return (
         <AppLayout title={property.name}>
             <div className="min-h-screen bg-white">
+                <PropertyTopTabs />
                 <div className="max-w-[95%] mx-auto px-3  py-4">
                     {/* Top Tabs */}
-                    <PropertyTopTabs />
 
                     {/* Property Overview */}
                     <PropertyOverview
