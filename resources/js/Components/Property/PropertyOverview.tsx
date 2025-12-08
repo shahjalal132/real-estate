@@ -357,7 +357,7 @@ export default function PropertyOverview({
             {/* Title Section */}
             <div className="flex items-start justify-between mb-6 py-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2 font-literata">
                         {fullAddress}
                     </h1>
                     <p className="text-lg text-gray-700">{propertyName}</p>

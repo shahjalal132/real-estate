@@ -139,9 +139,9 @@ export default function PropertyShow() {
     return (
         <AppLayout title={property.name}>
             <div className="min-h-screen bg-white">
+                <PropertyTopTabs />
                 <div className="max-w-[95%] mx-auto px-3  py-4">
                     {/* Top Tabs */}
-                    <PropertyTopTabs />
 
                     {/* Property Overview */}
                     <PropertyOverview
@@ -278,14 +278,6 @@ export default function PropertyShow() {
                                 centerLat={location?.latitude ?? undefined}
                                 centerLng={location?.longitude ?? undefined}
                             />
-                        </div>
-                        {/* Valuation Calculator Section */}
-                        <div
-                            id="valuation"
-                            ref={sectionRefs.valuation}
-                            className="scroll-mt-20"
-                        >
-                            <ValuationCalculator />
                         </div>
 
                         {/* Similar Properties Section */}
