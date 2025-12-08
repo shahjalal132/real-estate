@@ -20,10 +20,10 @@ export default function PropertyTopTabs() {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`px-3 py-2 text-xs font-semibold transition-all rounded-t-xl border-t border-l border-r border-b-0 ${
+                        className={`px-3 py-2 text-xs font-semibold cursor-pointer transition-all rounded-t-xl border-t border-l border-r border-b-0 ${
                             activeTab === tab.id
                                 ? "text-[#0066CC] bg-white border-[#0066CC]"
-                                : "text-gray-600 bg-white border-gray-300 hover:text-gray-900 hover:border-gray-400"
+                                : "text-gray-600 bg-gray-50 border-gray-300 hover:text-gray-900 hover:border-gray-400"
                         }`}
                     >
                         {tab.label}

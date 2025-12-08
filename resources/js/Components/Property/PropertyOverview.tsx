@@ -143,7 +143,7 @@ export default function PropertyOverview({
                 );
             case "noi":
                 return summaryDetails["NOI"]
-                    ? `$${summaryDetails["NOI"]}`
+                    ? `${summaryDetails["NOI"]}`
                     : "N/A";
             case "lease-type":
                 return (
@@ -355,17 +355,17 @@ export default function PropertyOverview({
     return (
         <div className="mb-8">
             {/* Title Section */}
-            <div className="flex items-start justify-between mb-6 py-4">
+            <div className="flex items-start justify-between py-3">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2 font-literata">
+                    <h1 className="text-xl font-bold text-gray-900 font-literata">
                         {fullAddress}
                     </h1>
-                    <p className="text-lg text-gray-700">{propertyName}</p>
+                    <p className="text-sm text-gray-700">{propertyName}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                     <button
                         type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Notes"
                     >
                         <FileText className="w-4 h-4" />
@@ -373,7 +373,7 @@ export default function PropertyOverview({
                     </button>
                     <button
                         type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Print"
                     >
                         <Printer className="w-4 h-4" />
@@ -381,7 +381,7 @@ export default function PropertyOverview({
                     </button>
                     <button
                         type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Share"
                     >
                         <Share2 className="w-4 h-4" />
@@ -389,7 +389,7 @@ export default function PropertyOverview({
                     </button>
                     <button
                         type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
                         aria-label="Save"
                     >
                         <Star className="w-4 h-4" />
@@ -398,10 +398,10 @@ export default function PropertyOverview({
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Left: Main Image/Map/Street View */}
                 <div className="flex flex-col">
-                    <div className="relative h-[450px] rounded-lg overflow-hidden bg-gray-100 mb-4">
+                    <div className="relative h-[450px] rounded-xl overflow-hidden bg-gray-100 mb-4">
                         {/* Image View */}
                         {viewMode === "image" && (
                             <>
@@ -461,7 +461,7 @@ export default function PropertyOverview({
                         )}
 
                         {/* Buttons Overlay - Bottom */}
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 z-20">
+                        <div className="absolute bottom-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 z-20">
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={handleViewMap}
@@ -519,14 +519,14 @@ export default function PropertyOverview({
                 {/* Right: Property Details */}
                 <div className="flex flex-col">
                     {/* Price and Action Buttons Card */}
-                    <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div className="bg-white border border-gray-200 rounded-lg mb-2 overflow-hidden">
                         {/* First Row: Price and Info */}
-                        <div className="px-5 py-4 border-b border-gray-200">
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="text-3xl font-bold text-[#0066CC]">
+                        <div className="px-5 py-2">
+                            <div className="flex items-center justify-start gap-4">
+                                <div className="text-l font-bold text-gray-900 border-r border-gray-300 pr-4">
                                     {formattedPrice}
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600">
+                                <div className="flex items-center gap-3 text-xs text-gray-800">
                                     <span>{daysOnMarket} days on market</span>
                                     <div className="w-px h-4 bg-gray-300"></div>
                                     <span>
@@ -537,24 +537,24 @@ export default function PropertyOverview({
                         </div>
                         {/* Second Row: Action Buttons */}
                         <div className="px-5 py-3 flex items-start gap-2">
-                            <button className="px-3 py-2 bg-[#0066CC] text-white rounded-lg hover:bg-[#0052A3] transition-colors text-xs font-medium shadow-sm hover:shadow-md">
+                            <button className="px-2 py-2 bg-[#0066CC] text-white rounded-lg text-xs font-medium cursor-pointer ">
                                 Request Info
                             </button>
-                            <button className="px-3 py-2 bg-white border border-[#0066CC] text-[#0066CC] rounded-lg hover:bg-blue-50 transition-colors text-xs font-medium shadow-sm hover:shadow-md">
+                            <button className="px-2 py-2 bg-white border border-[#0066CC] text-[#0066CC] rounded-lg hover:bg-blue-50 transition-colors text-xs font-medium cursor-pointer">
                                 View Flyer
                             </button>
                         </div>
                     </div>
 
                     {/* At A Glance Section - Dynamic based on user selection */}
-                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                        <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-200 flex items-center justify-between">
-                            <h3 className="text-base font-semibold text-gray-900">
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-start gap-4">
+                            <h3 className="text-sm font-semibold text-gray-900">
                                 At A Glance
                             </h3>
                             <button
                                 onClick={() => setIsCustomizeModalOpen(true)}
-                                className="text-sm text-[#0066CC] hover:text-[#0052A3] font-medium"
+                                className="text-xs cursor-pointer text-[#0066CC] hover:text-[#0052A3] font-medium"
                             >
                                 Customize
                             </button>
