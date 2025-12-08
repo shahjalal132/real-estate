@@ -279,14 +279,6 @@ export default function PropertyShow() {
                                 centerLng={location?.longitude ?? undefined}
                             />
                         </div>
-                        {/* Valuation Calculator Section */}
-                        <div
-                            id="valuation"
-                            ref={sectionRefs.valuation}
-                            className="scroll-mt-20"
-                        >
-                            <ValuationCalculator />
-                        </div>
 
                         {/* Similar Properties Section */}
                         <div className="scroll-mt-20">
