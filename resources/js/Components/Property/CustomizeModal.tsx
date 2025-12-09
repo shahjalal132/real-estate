@@ -47,10 +47,6 @@ export default function CustomizeModal({
         setSelected(["property-type", "sub-type", "square-footage"]);
     };
 
-    const unselectedPoints = availableDataPoints.filter(
-        (point) => !selected.includes(point.id)
-    );
-
     if (!isOpen) return null;
 
     return (
@@ -62,7 +58,7 @@ export default function CustomizeModal({
             />
 
             {/* Modal */}
-            <div className="fixed left-1/2 top-1/2 z-[110] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white shadow-xl">
+            <div className="fixed left-1/2 top-1/2 z-[110] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white shadow-xl">
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
                     <h2 className="text-lg font-semibold text-gray-900">
@@ -111,19 +107,36 @@ export default function CustomizeModal({
                                     onClick={() => setIsDropdownOpen(false)}
                                 />
                                 <div className="absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg max-h-60 overflow-auto">
-                                    {unselectedPoints.map((point) => (
-                                        <button
-                                            key={point.id}
-                                            type="button"
-                                            onClick={() => {
-                                                toggleSelection(point.id);
-                                                setIsDropdownOpen(false);
-                                            }}
-                                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                                        >
-                                            {point.label}
-                                        </button>
-                                    ))}
+                                    {availableDataPoints.map((point) => {
+                                        const isSelected = selected.includes(
+                                            point.id
+                                        );
+                                        return (
+                                            <button
+                                                key={point.id}
+                                                type="button"
+                                                onClick={() => {
+                                                    toggleSelection(point.id);
+                                                }}
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                            >
+                                                <div
+                                                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-colors ${
+                                                        isSelected
+                                                            ? "border-[#0066CC] bg-[#0066CC]"
+                                                            : "border-gray-300 bg-white"
+                                                    }`}
+                                                >
+                                                    {isSelected && (
+                                                        <Check className="h-2.5 w-2.5 text-white" />
+                                                    )}
+                                                </div>
+                                                <span className="flex-1">
+                                                    {point.label}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </>
                         )}
@@ -144,8 +157,8 @@ export default function CustomizeModal({
                         </button>
                     </div>
 
-                    {/* Selected Items */}
-                    <div className="space-y-2">
+                    {/* Selected Items - 3 Column Grid */}
+                    <div className="grid grid-cols-3 gap-2">
                         {selected.map((id) => {
                             const point = availableDataPoints.find(
                                 (p) => p.id === id
@@ -155,20 +168,21 @@ export default function CustomizeModal({
                             return (
                                 <div
                                     key={id}
-                                    className="flex items-center gap-3 rounded-md border border-gray-200 bg-white p-3"
+                                    className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2.5"
                                 >
                                     <button
                                         type="button"
                                         onClick={() => toggleSelection(id)}
-                                        className="flex h-5 w-5 items-center justify-center rounded border-2 border-[#0066CC] bg-[#0066CC] text-white"
+                                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 border-[#0066CC] bg-[#0066CC] text-white hover:bg-[#0052A3] hover:border-[#0052A3] transition-colors"
+                                        aria-label={`Deselect ${point.label}`}
                                     >
                                         <Check className="h-3 w-3" />
                                     </button>
-                                    <span className="flex-1 text-sm font-medium text-gray-900">
+                                    <span className="flex-1 text-sm font-medium text-gray-900 truncate">
                                         {point.label}
                                     </span>
-                                    <div className="cursor-move text-gray-400">
-                                        <GripVertical className="h-5 w-5" />
+                                    <div className="cursor-move text-gray-400 shrink-0">
+                                        <GripVertical className="h-4 w-4" />
                                     </div>
                                 </div>
                             );

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import {
     ChevronLeft,
     ChevronRight,
@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Property } from "../../types";
 import ImageGallery from "./ImageGallery";
-import CustomizeModal, { DataPoint } from "./CustomizeModal";
+import AtAGlance from "./AtAGlance";
 
 interface ExtendedPropertyImage {
     id: number | string;
@@ -47,12 +47,6 @@ export default function PropertyOverview({
     const [viewMode, setViewMode] = useState<"image" | "map" | "street">(
         "image"
     );
-    const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
-    const [selectedDataPoints, setSelectedDataPoints] = useState<string[]>([
-        "property-type",
-        "sub-type",
-        "square-footage",
-    ]);
 
     const getImageUrl = (index: number): string => {
         const image = images[index];
@@ -92,216 +86,6 @@ export default function PropertyOverview({
 
     // Extract property name (business name or property name)
     const propertyName = property.name || "Property";
-
-    // Get property types with count
-    const propertyTypes = property.types || [];
-    const propertyTypesDisplay =
-        propertyTypes.length > 0
-            ? propertyTypes.slice(0, 2).join(", ") +
-              (propertyTypes.length > 2
-                  ? ` (+${propertyTypes.length - 2})`
-                  : "")
-            : "N/A";
-
-    // Get subtypes from property
-    const subtypes = property.subtypes || [];
-    const subtypesDisplay =
-        subtypes.length > 0
-            ? subtypes.slice(0, 2).join(", ") +
-              (subtypes.length > 2 ? ` (+${subtypes.length - 2})` : "")
-            : "N/A";
-
-    // Get square footage
-    const squareFootage =
-        property.details?.summary_details?.building_size ||
-        property.details?.summary_details?.square_footage ||
-        property.details?.summary_details?.["Square Feet"] ||
-        property.details?.summary_details?.["Sqft"] ||
-        "N/A";
-
-    const squareFootageDisplay =
-        typeof squareFootage === "number"
-            ? squareFootage.toLocaleString()
-            : squareFootage;
-
-    // Get value for a data point
-    const getDataPointValue = (id: string): string => {
-        const summaryDetails = property.details?.summary_details || {};
-
-        switch (id) {
-            case "property-type":
-                return propertyTypesDisplay;
-            case "sub-type":
-                return subtypesDisplay;
-            case "square-footage":
-                return squareFootageDisplay;
-            case "cap-rate":
-                return (
-                    summaryDetails["Cap Rate"] ||
-                    summaryDetails["Cap Rate %"] ||
-                    "N/A"
-                );
-            case "noi":
-                return summaryDetails["NOI"]
-                    ? `${summaryDetails["NOI"]}`
-                    : "N/A";
-            case "lease-type":
-                return (
-                    summaryDetails["Lease Type"] ||
-                    summaryDetails["Lease"] ||
-                    "N/A"
-                );
-            case "brand-tenant":
-                const tenant =
-                    summaryDetails["Tenant"] ||
-                    summaryDetails["Brand"] ||
-                    summaryDetails["Tenant Name"] ||
-                    summaryDetails["Brand Name"];
-                return tenant || propertyName;
-            case "remaining-term":
-                return summaryDetails["Remaining Term"]
-                    ? `${summaryDetails["Remaining Term"]} years`
-                    : "N/A";
-            case "lease-expiration":
-                return (
-                    summaryDetails["Lease Expiration"] ||
-                    summaryDetails["lease_expiration"] ||
-                    "N/A"
-                );
-            case "occupancy":
-                return summaryDetails["Occupancy"]
-                    ? `${summaryDetails["Occupancy"]}%`
-                    : "N/A";
-            case "tenancy":
-                return (
-                    summaryDetails["Tenancy"] ||
-                    summaryDetails["Tenant Count"] ||
-                    "N/A"
-                );
-            case "lot-size":
-                return property.details?.lot_size_acres
-                    ? `${property.details.lot_size_acres} acres`
-                    : "N/A";
-            case "year-built":
-                return (
-                    summaryDetails["Year Built"] ||
-                    summaryDetails["Year"] ||
-                    "N/A"
-                );
-            case "parking-spaces":
-                return (
-                    summaryDetails["Parking Spaces"] ||
-                    summaryDetails["Parking"] ||
-                    "N/A"
-                );
-            case "zoning":
-                return property.details?.zoning || "N/A";
-            case "price-per-sqft":
-                return (
-                    summaryDetails["Price per Sqft"] ||
-                    summaryDetails["$/SF"] ||
-                    "N/A"
-                );
-            default:
-                return "N/A";
-        }
-    };
-
-    // Define all available data points
-    const availableDataPoints: DataPoint[] = useMemo(() => {
-        const points: DataPoint[] = [
-            {
-                id: "property-type",
-                label: "Property Type",
-                key: "property-type",
-            },
-            { id: "sub-type", label: "Sub Type", key: "sub-type" },
-            {
-                id: "square-footage",
-                label: "Square Footage",
-                key: "square-footage",
-            },
-            { id: "cap-rate", label: "Cap Rate", key: "cap-rate" },
-            { id: "noi", label: "NOI", key: "noi" },
-            { id: "lease-type", label: "Lease Type", key: "lease-type" },
-            { id: "brand-tenant", label: "Brand/Tenant", key: "brand-tenant" },
-            {
-                id: "remaining-term",
-                label: "Remaining Term",
-                key: "remaining-term",
-            },
-            {
-                id: "lease-expiration",
-                label: "Lease Expiration",
-                key: "lease-expiration",
-            },
-            { id: "occupancy", label: "Occupancy", key: "occupancy" },
-            { id: "tenancy", label: "Tenancy", key: "tenancy" },
-            { id: "lot-size", label: "Lot Size", key: "lot-size" },
-            { id: "year-built", label: "Year Built", key: "year-built" },
-            {
-                id: "parking-spaces",
-                label: "Parking Spaces",
-                key: "parking-spaces",
-            },
-            { id: "zoning", label: "Zoning", key: "zoning" },
-            {
-                id: "price-per-sqft",
-                label: "Price per Sqft",
-                key: "price-per-sqft",
-            },
-        ];
-
-        // Filter out data points that don't have data
-        return points.filter((point) => {
-            if (
-                point.id === "property-type" ||
-                point.id === "sub-type" ||
-                point.id === "square-footage"
-            ) {
-                return true; // Always show these
-            }
-            // Check if data exists for this point
-            return getDataPointValue(point.id) !== "N/A";
-        });
-    }, [
-        property,
-        propertyTypesDisplay,
-        subtypesDisplay,
-        squareFootageDisplay,
-        propertyName,
-    ]);
-
-    // Load saved preferences from localStorage
-    useEffect(() => {
-        const saved = localStorage.getItem(`property-overview-${property.id}`);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    setSelectedDataPoints(parsed);
-                }
-            } catch (e) {
-                console.error("Error loading saved preferences:", e);
-            }
-        }
-    }, [property.id]);
-
-    // Save preferences to localStorage
-    const handleSavePreferences = (selectedIds: string[]) => {
-        setSelectedDataPoints(selectedIds);
-        localStorage.setItem(
-            `property-overview-${property.id}`,
-            JSON.stringify(selectedIds)
-        );
-    };
-
-    // Get selected data points in order
-    const displayDataPoints = useMemo(() => {
-        return selectedDataPoints
-            .map((id) => availableDataPoints.find((p) => p.id === id))
-            .filter((p): p is DataPoint => p !== undefined);
-    }, [selectedDataPoints, availableDataPoints]);
 
     // Get map URL if not provided
     const getMapUrl = (): string | null => {
@@ -353,9 +137,9 @@ export default function PropertyOverview({
     };
 
     return (
-        <div className="mb-8">
+        <div className="mb-2">
             {/* Title Section */}
-            <div className="flex items-start justify-between py-3">
+            <div className="flex items-start justify-between pt-3 pb-1">
                 <div>
                     <h1 className="text-xl font-bold text-gray-900 font-literata">
                         {fullAddress}
@@ -546,41 +330,8 @@ export default function PropertyOverview({
                         </div>
                     </div>
 
-                    {/* At A Glance Section - Dynamic based on user selection */}
-                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-start gap-4">
-                            <h3 className="text-sm font-semibold text-gray-900">
-                                At A Glance
-                            </h3>
-                            <button
-                                onClick={() => setIsCustomizeModalOpen(true)}
-                                className="text-xs cursor-pointer text-[#0066CC] hover:text-[#0052A3] font-medium"
-                            >
-                                Customize
-                            </button>
-                        </div>
-
-                        <div className="grid grid-cols-2 divide-x divide-y divide-gray-200">
-                            {displayDataPoints.map((point) => {
-                                const value = getDataPointValue(point.id);
-                                if (value === "N/A") return null;
-
-                                return (
-                                    <div
-                                        key={point.id}
-                                        className="p-4 hover:bg-gray-50 transition-colors"
-                                    >
-                                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                            {point.label}
-                                        </div>
-                                        <div className="text-sm font-semibold text-gray-900">
-                                            {value}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
+                    {/* At A Glance Section */}
+                    <AtAGlance property={property} />
                 </div>
             </div>
 
@@ -592,15 +343,6 @@ export default function PropertyOverview({
                 onClose={() => setIsGalleryOpen(false)}
                 getImageUrl={getImageUrl}
                 propertyName={property.name}
-            />
-
-            {/* Customize Modal */}
-            <CustomizeModal
-                isOpen={isCustomizeModalOpen}
-                onClose={() => setIsCustomizeModalOpen(false)}
-                onSave={handleSavePreferences}
-                availableDataPoints={availableDataPoints}
-                selectedDataPoints={selectedDataPoints}
             />
         </div>
     );
