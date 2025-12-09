@@ -1,4 +1,4 @@
-import { PropertyDetail, Property } from "../../../types";
+import { PropertyDetail, Property } from "@/types";
 
 interface PropertyDetailsGridProps {
     details: PropertyDetail | null;
@@ -9,7 +9,6 @@ interface PropertyDetailsGridProps {
 export default function PropertyDetailsGrid({
     details,
     property,
-    isInOpportunityZone,
 }: PropertyDetailsGridProps) {
     // Format date
     const formatDate = (dateString: string | null | undefined): string => {

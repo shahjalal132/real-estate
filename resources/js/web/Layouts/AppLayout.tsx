@@ -7,18 +7,20 @@ interface AppLayoutProps {
     children: ReactNode;
     title?: string;
     footerClassName?: string;
+    hideHeader?: boolean;
 }
 
 export default function AppLayout({
     children,
     title,
     footerClassName,
+    hideHeader = false,
 }: AppLayoutProps) {
     return (
         <>
             <Head title={title} />
             <div className="min-h-screen bg-white">
-                <Header />
+                {!hideHeader && <Header />}
                 <main className="max-w-full mx-auto"> {children} </main>
                 <Footer className={footerClassName} />
             </div>

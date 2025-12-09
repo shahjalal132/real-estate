@@ -1,6 +1,10 @@
 import { usePage } from "@inertiajs/react";
-import { useRef } from "react";
+import { useRef, useState, useMemo } from "react";
 import AppLayout from "../../Layouts/AppLayout";
+import PrintHeaderBar from "../../../Components/Property/PrintHeaderBar";
+import PrintCustomizeSidebar, {
+    PrintSection,
+} from "../../../Components/Property/PrintCustomizeSidebar";
 import { Property } from "../../../types";
 import { PageProps as InertiaPageProps } from "../../../types";
 import PropertyOverview from "../../../Components/Property/PropertyOverview";
@@ -11,10 +15,10 @@ import PropertyInvestmentHighlights from "../../../Components/Property/PropertyI
 import PropertyDetailsGrid from "../../../Components/Property/PropertyDetailsGrid";
 import PropertyLocationMap from "../../../Components/Property/PropertyLocationMap";
 import PropertyBrokers from "../../../Components/Property/PropertyBrokers";
-import PropertyHistory from "../../../Components/Property/PropertyHistory";
-import TaxHistory from "../../../Components/Property/TaxHistory";
-import ValuationCalculator from "../../../Components/Property/ValuationCalculator";
-import ValuationMetrics from "../../../Components/Property/ValuationMetrics";
+// import PropertyHistory from "../../../Components/Property/PropertyHistory";
+// import TaxHistory from "../../../Components/Property/TaxHistory";
+// import ValuationCalculator from "../../../Components/Property/ValuationCalculator";
+// import ValuationMetrics from "../../../Components/Property/ValuationMetrics";
 import Demographics from "../../../Components/Property/Demographics";
 import ClimateRisk from "../../../Components/Property/ClimateRisk";
 import LocationInsights from "../../../Components/Property/LocationInsights";
@@ -36,6 +40,109 @@ interface ExtendedPropertyImage {
 export default function PropertyShow() {
     const { props } = usePage<PageProps>();
     const { property, similarProperties = [] } = props;
+
+    // Print mode state
+    const [isPrintMode, setIsPrintMode] = useState(false);
+    const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+    const [selectedPrintSections, setSelectedPrintSections] = useState<
+        string[]
+    >([
+        "at-a-glance",
+        "listing-contacts",
+        "details",
+        "description",
+        "highlights",
+        "map",
+        "climate-risk",
+        "property-history",
+        "valuation-calculator",
+        "demographics",
+        "property-photos",
+        "similar-properties",
+        "additional-information",
+    ]);
+
+    // Define print sections
+    const printSections: PrintSection[] = useMemo(
+        () => [
+            { id: "at-a-glance", label: "At a Glance" },
+            { id: "listing-contacts", label: "Listing Contacts" },
+            { id: "details", label: "Detail" },
+            {
+                id: "about-property",
+                label: "About This Property",
+                children: [
+                    { id: "description", label: "Description" },
+                    { id: "highlights", label: "Highlights" },
+                ],
+            },
+            { id: "map", label: "Map" },
+            { id: "climate-risk", label: "Climate Risk" },
+            { id: "property-history", label: "Property History" },
+            { id: "valuation-calculator", label: "Valuation Calculator" },
+            { id: "demographics", label: "Demographics" },
+            { id: "property-photos", label: "Property Photos" },
+            { id: "similar-properties", label: "Similar Properties" },
+            {
+                id: "additional-information",
+                label: "Additional Information",
+            },
+        ],
+        []
+    );
+
+    // Toggle section selection
+    const handleToggleSection = (sectionId: string) => {
+        setSelectedPrintSections((prev) =>
+            prev.includes(sectionId)
+                ? prev.filter((id) => id !== sectionId)
+                : [...prev, sectionId]
+        );
+    };
+
+    // Handle print - ensure content is loaded before printing
+    const handlePrint = () => {
+        // Wait for images and iframes to load
+        const images = document.querySelectorAll("img");
+        const iframes = document.querySelectorAll("iframe");
+
+        const imagePromises = Array.from(images).map((img) => {
+            if ((img as HTMLImageElement).complete) {
+                return Promise.resolve();
+            }
+            return new Promise((resolve) => {
+                (img as HTMLImageElement).onload = resolve;
+                (img as HTMLImageElement).onerror = resolve;
+            });
+        });
+
+        const iframePromises = Array.from(iframes).map((iframe) => {
+            return new Promise((resolve) => {
+                (iframe as HTMLIFrameElement).onload = resolve;
+                // Timeout after 2 seconds to prevent hanging
+                setTimeout(resolve, 2000);
+            });
+        });
+
+        // Wait for all content to load, then print
+        Promise.all([...imagePromises, ...iframePromises]).then(() => {
+            // Small delay to ensure rendering is complete
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        });
+    };
+
+    // Handle customize toggle
+    const handleCustomize = () => {
+        setIsCustomizeOpen(!isCustomizeOpen);
+    };
+
+    // Handle back from print mode
+    const handleBackFromPrint = () => {
+        setIsPrintMode(false);
+        setIsCustomizeOpen(false);
+    };
 
     // Refs for scrolling to sections
     const sectionRefs = {
@@ -137,11 +244,36 @@ export default function PropertyShow() {
     };
 
     return (
-        <AppLayout title={property.name}>
+        <AppLayout title={property.name} hideHeader={isPrintMode}>
             <div className="min-h-screen bg-white">
+                {/* Print Header Bar */}
+                {isPrintMode && (
+                    <PrintHeaderBar
+                        onBack={handleBackFromPrint}
+                        onCustomize={handleCustomize}
+                        onPrint={handlePrint}
+                    />
+                )}
+
+                {/* Print Customize Sidebar */}
+                {isPrintMode && (
+                    <PrintCustomizeSidebar
+                        isOpen={isCustomizeOpen}
+                        onClose={() => setIsCustomizeOpen(false)}
+                        sections={printSections}
+                        selectedSections={selectedPrintSections}
+                        onToggleSection={handleToggleSection}
+                    />
+                )}
+
                 {/* Top Tabs */}
-                <PropertyTopTabs />
-                <div className="max-w-[95%] mx-auto px-3">
+                {!isPrintMode && <PropertyTopTabs />}
+                <div
+                    data-print-content
+                    className={`max-w-[95%] mx-auto px-3 ${
+                        isPrintMode ? "pt-16 print:pt-0" : ""
+                    }`}
+                >
                     {/* Property Overview */}
                     <PropertyOverview
                         property={property}
@@ -149,6 +281,11 @@ export default function PropertyShow() {
                         formattedPrice={formattedPrice}
                         fullAddress={fullAddress}
                         mapUrl={mapUrl}
+                        onPrintClick={() => setIsPrintMode(true)}
+                        showAtAGlance={
+                            !isPrintMode ||
+                            selectedPrintSections.includes("at-a-glance")
+                        }
                     />
 
                     {/* Tabs Navigation */}
@@ -160,132 +297,174 @@ export default function PropertyShow() {
                     />
 
                     {/* All Sections Displayed Serially */}
-                    <div className="space-y-8 mb-8">
+                    <div
+                        className={`space-y-8 mb-8 ${
+                            isPrintMode && isCustomizeOpen
+                                ? "lg:ml-80 print:ml-0"
+                                : ""
+                        }`}
+                    >
                         {/* Listing Contacts Section */}
-                        <div
-                            id="contacts"
-                            ref={sectionRefs.contacts}
-                            className="scroll-mt-20"
-                        >
-                            <PropertyBrokers brokers={brokers} />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes(
+                                "listing-contacts"
+                            )) && (
+                            <div
+                                id="contacts"
+                                ref={sectionRefs.contacts}
+                                className="scroll-mt-20 print-section"
+                                data-print-section
+                            >
+                                <PropertyBrokers brokers={brokers} />
+                            </div>
+                        )}
 
                         {/* Details Section */}
-                        <div
-                            id="details"
-                            ref={sectionRefs.details}
-                            className="scroll-mt-20"
-                        >
-                            <PropertyDetailsGrid
-                                details={details}
-                                property={property}
-                                isInOpportunityZone={
-                                    property.is_in_opportunity_zone
-                                }
-                            />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes("details")) && (
+                            <div
+                                id="details"
+                                ref={sectionRefs.details}
+                                className="scroll-mt-20"
+                            >
+                                <PropertyDetailsGrid
+                                    details={details ?? null}
+                                    property={property}
+                                    isInOpportunityZone={
+                                        property.is_in_opportunity_zone
+                                    }
+                                />
+                            </div>
+                        )}
 
                         {/* About Property Section */}
-                        <div
-                            id="about"
-                            ref={sectionRefs.about}
-                            className="scroll-mt-20"
-                        >
-                            <PropertyDescription
-                                description={property.description}
-                                marketingDescription={
-                                    property.marketing_description
-                                }
-                            />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes("description")) && (
+                            <div
+                                id="about"
+                                ref={sectionRefs.about}
+                                className="scroll-mt-20"
+                            >
+                                <PropertyDescription
+                                    description={property.description}
+                                    marketingDescription={
+                                        property.marketing_description
+                                    }
+                                />
+                            </div>
+                        )}
 
                         {/* Investment Highlights Section */}
-                        <div id="highlights" className="scroll-mt-20">
-                            <PropertyInvestmentHighlights
-                                investmentHighlights={
-                                    property.details?.investment_highlights
-                                }
-                            />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes("highlights")) && (
+                            <div id="highlights" className="scroll-mt-20">
+                                <PropertyInvestmentHighlights
+                                    investmentHighlights={
+                                        property.details?.investment_highlights
+                                    }
+                                />
+                            </div>
+                        )}
 
                         {/* Map Section */}
-                        <div
-                            id="map"
-                            ref={sectionRefs.map}
-                            className="scroll-mt-20"
-                        >
-                            <PropertyLocationMap
-                                mapUrl={mapUrl}
-                                fullAddress={fullAddress}
-                            />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes("map")) && (
+                            <div
+                                id="map"
+                                ref={sectionRefs.map}
+                                className="scroll-mt-20 print-section"
+                                data-print-section
+                            >
+                                <PropertyLocationMap
+                                    mapUrl={mapUrl}
+                                    fullAddress={fullAddress}
+                                />
+                            </div>
+                        )}
 
                         {/* Climate Risk Section */}
-                        <div
-                            id="climate"
-                            ref={sectionRefs.climate}
-                            className="scroll-mt-20"
-                        >
-                            <ClimateRisk />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes("climate-risk")) && (
+                            <div
+                                id="climate"
+                                ref={sectionRefs.climate}
+                                className="scroll-mt-20"
+                            >
+                                <ClimateRisk />
+                            </div>
+                        )}
 
                         {/* Property History Section */}
-                        {/* <div
-                            id="history"
-                            ref={sectionRefs.history}
-                            className="scroll-mt-20"
-                        >
-                            <PropertyHistory />
-                        </div> */}
-
-                        {/* Tax History Section */}
-                        {/* <div
-                            id="tax"
-                            ref={sectionRefs.tax}
-                            className="scroll-mt-20"
-                        >
-                            <TaxHistory />
-                        </div> */}
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes(
+                                "property-history"
+                            )) && (
+                            <div
+                                id="history"
+                                ref={sectionRefs.history}
+                                className="scroll-mt-20"
+                            >
+                                {/* <PropertyHistory /> */}
+                            </div>
+                        )}
 
                         {/* Demographics Section */}
-                        <div
-                            id="demographics"
-                            ref={sectionRefs.demographics}
-                            className="scroll-mt-20"
-                        >
-                            <Demographics />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes("demographics")) && (
+                            <div
+                                id="demographics"
+                                ref={sectionRefs.demographics}
+                                className="scroll-mt-20"
+                            >
+                                <Demographics />
+                            </div>
+                        )}
 
-                        {/* Valuation Metrics Section */}
-                        {/* <div
-                            id="metrics"
-                            ref={sectionRefs.metrics}
-                            className="scroll-mt-20"
-                        >
-                            <ValuationMetrics />
-                        </div> */}
+                        {/* Valuation Calculator Section */}
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes(
+                                "valuation-calculator"
+                            )) && (
+                            <div
+                                id="valuation"
+                                ref={sectionRefs.valuation}
+                                className="scroll-mt-20"
+                            >
+                                {/* <ValuationCalculator /> */}
+                            </div>
+                        )}
 
                         {/* Location Insights Section */}
-                        <div
-                            id="insights"
-                            ref={sectionRefs.insights}
-                            className="scroll-mt-20"
-                        >
-                            <LocationInsights
-                                mapUrl={mapUrl}
-                                fullAddress={fullAddress}
-                                centerLat={location?.latitude ?? undefined}
-                                centerLng={location?.longitude ?? undefined}
-                            />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes(
+                                "additional-information"
+                            )) && (
+                            <div
+                                id="insights"
+                                ref={sectionRefs.insights}
+                                className="scroll-mt-20"
+                            >
+                                <LocationInsights
+                                    mapUrl={mapUrl}
+                                    fullAddress={fullAddress}
+                                    centerLat={location?.latitude ?? undefined}
+                                    centerLng={location?.longitude ?? undefined}
+                                />
+                            </div>
+                        )}
 
                         {/* Similar Properties Section */}
-                        <div className="scroll-mt-20">
-                            <SimilarProperties
-                                properties={similarProperties}
-                                currentPropertyId={property.id}
-                            />
-                        </div>
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes(
+                                "similar-properties"
+                            )) && (
+                            <div className="scroll-mt-20">
+                                <SimilarProperties
+                                    properties={similarProperties}
+                                    currentPropertyId={property.id}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

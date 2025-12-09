@@ -1,19 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     ChevronLeft,
     ChevronRight,
     Camera,
-    Printer,
-    Share2,
-    Star,
     MapPin,
     Eye,
-    FileText,
+    Loader2,
     ChevronRight as ChevronRightIcon,
 } from "lucide-react";
 import { Property } from "../../types";
 import ImageGallery from "./ImageGallery";
 import AtAGlance from "./AtAGlance";
+import NotesButton from "./NotesButton";
+import ShareButton from "./ShareButton";
+import SaveButton from "./SaveButton";
+import PrintButton from "./PrintButton";
 
 interface ExtendedPropertyImage {
     id: number | string;
@@ -31,6 +32,8 @@ interface PropertyOverviewProps {
     onViewMap?: () => void;
     onViewStreetView?: () => void;
     mapUrl?: string | null;
+    onPrintClick?: () => void;
+    showAtAGlance?: boolean;
 }
 
 export default function PropertyOverview({
@@ -41,12 +44,18 @@ export default function PropertyOverview({
     onViewMap,
     onViewStreetView,
     mapUrl,
+    onPrintClick,
+    showAtAGlance = true,
 }: PropertyOverviewProps) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [viewMode, setViewMode] = useState<"image" | "map" | "street">(
         "image"
     );
+    const [isMapLoading, setIsMapLoading] = useState(false);
+    const [isStreetViewLoading, setIsStreetViewLoading] = useState(false);
+    const [mapError, setMapError] = useState(false);
+    const [streetViewError, setStreetViewError] = useState(false);
 
     const getImageUrl = (index: number): string => {
         const image = images[index];
@@ -122,13 +131,28 @@ export default function PropertyOverview({
 
     const streetViewUrl = getStreetViewUrl();
 
+    // Set loading state when switching to map or street view
+    useEffect(() => {
+        if (viewMode === "map" && currentMapUrl) {
+            setIsMapLoading(true);
+            setMapError(false);
+        } else if (viewMode === "street" && streetViewUrl) {
+            setIsStreetViewLoading(true);
+            setStreetViewError(false);
+        }
+    }, [viewMode, currentMapUrl, streetViewUrl]);
+
     const handleViewMap = () => {
         setViewMode("map");
+        setIsMapLoading(true);
+        setMapError(false);
         onViewMap?.();
     };
 
     const handleViewStreetView = () => {
         setViewMode("street");
+        setIsStreetViewLoading(true);
+        setStreetViewError(false);
         onViewStreetView?.();
     };
 
@@ -147,38 +171,16 @@ export default function PropertyOverview({
                     <p className="text-sm text-gray-700">{propertyName}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
-                        aria-label="Notes"
-                    >
-                        <FileText className="w-4 h-4" />
-                        <span>Notes</span>
-                    </button>
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
-                        aria-label="Print"
-                    >
-                        <Printer className="w-4 h-4" />
-                        <span>Print</span>
-                    </button>
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
-                        aria-label="Share"
-                    >
-                        <Share2 className="w-4 h-4" />
-                        <span>Share</span>
-                    </button>
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
-                        aria-label="Save"
-                    >
-                        <Star className="w-4 h-4" />
-                        <span>Save</span>
-                    </button>
+                    <NotesButton propertyId={property.id} />
+                    <PrintButton onPrintClick={onPrintClick || (() => {})} />
+                    <ShareButton
+                        property={property}
+                        propertyImage={getImageUrl(selectedImageIndex)}
+                    />
+                    <SaveButton
+                        property={property}
+                        propertyImage={getImageUrl(selectedImageIndex)}
+                    />
                 </div>
             </div>
 
@@ -198,14 +200,14 @@ export default function PropertyOverview({
                                     <>
                                         <button
                                             onClick={prevImage}
-                                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white rounded-full p-2.5 shadow-lg transition-all z-10"
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white rounded-full p-2.5 shadow-lg transition-all z-10 print:hidden"
                                             aria-label="Previous image"
                                         >
                                             <ChevronLeft className="w-5 h-5 text-gray-700" />
                                         </button>
                                         <button
                                             onClick={nextImage}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white rounded-full p-2.5 shadow-lg transition-all z-10"
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white rounded-full p-2.5 shadow-lg transition-all z-10 print:hidden"
                                             aria-label="Next image"
                                         >
                                             <ChevronRight className="w-5 h-5 text-gray-700" />
@@ -218,34 +220,90 @@ export default function PropertyOverview({
 
                         {/* Map View */}
                         {viewMode === "map" && currentMapUrl && (
-                            <iframe
-                                src={currentMapUrl}
-                                width="100%"
-                                height="100%"
-                                style={{ border: 0 }}
-                                allowFullScreen
-                                loading="lazy"
-                                referrerPolicy="no-referrer-when-downgrade"
-                                className="w-full h-full"
-                            />
+                            <>
+                                {isMapLoading && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+                                        <div className="flex flex-col items-center gap-3">
+                                            <Loader2 className="w-8 h-8 text-[#0066CC] animate-spin" />
+                                            <p className="text-sm text-gray-600">
+                                                Loading map...
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                                {mapError && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+                                        <div className="flex flex-col items-center gap-3">
+                                            <MapPin className="w-8 h-8 text-gray-400" />
+                                            <p className="text-sm text-gray-600">
+                                                Unable to load map
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                                <iframe
+                                    src={currentMapUrl}
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    allowFullScreen
+                                    loading="eager"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    className="w-full h-full print-section"
+                                    data-print-keep
+                                    onLoad={() => setIsMapLoading(false)}
+                                    onError={() => {
+                                        setIsMapLoading(false);
+                                        setMapError(true);
+                                    }}
+                                />
+                            </>
                         )}
 
                         {/* Street View */}
                         {viewMode === "street" && streetViewUrl && (
-                            <iframe
-                                src={streetViewUrl}
-                                width="100%"
-                                height="100%"
-                                style={{ border: 0 }}
-                                allowFullScreen
-                                loading="lazy"
-                                referrerPolicy="no-referrer-when-downgrade"
-                                className="w-full h-full"
-                            />
+                            <>
+                                {isStreetViewLoading && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+                                        <div className="flex flex-col items-center gap-3">
+                                            <Loader2 className="w-8 h-8 text-[#0066CC] animate-spin" />
+                                            <p className="text-sm text-gray-600">
+                                                Loading street view...
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                                {streetViewError && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+                                        <div className="flex flex-col items-center gap-3">
+                                            <Eye className="w-8 h-8 text-gray-400" />
+                                            <p className="text-sm text-gray-600">
+                                                Unable to load street view
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                                <iframe
+                                    src={streetViewUrl}
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    allowFullScreen
+                                    loading="eager"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    className="w-full h-full print-section"
+                                    data-print-keep
+                                    onLoad={() => setIsStreetViewLoading(false)}
+                                    onError={() => {
+                                        setIsStreetViewLoading(false);
+                                        setStreetViewError(true);
+                                    }}
+                                />
+                            </>
                         )}
 
                         {/* Buttons Overlay - Bottom */}
-                        <div className="absolute bottom-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 z-20">
+                        <div className="absolute bottom-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 z-20 print:hidden">
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={handleViewMap}
@@ -291,7 +349,7 @@ export default function PropertyOverview({
                         {viewMode !== "image" && (
                             <button
                                 onClick={handleViewImage}
-                                className="absolute top-4 left-4 bg-white/95 hover:bg-white rounded-lg px-4 py-2 shadow-lg transition-all z-30 flex items-center gap-2 text-sm font-medium text-gray-700"
+                                className="absolute top-4 left-4 bg-white/95 hover:bg-white rounded-lg px-4 py-2 shadow-lg transition-all z-30 flex items-center gap-2 text-sm font-medium text-gray-700 print:hidden"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                                 Back to Photos
@@ -331,7 +389,7 @@ export default function PropertyOverview({
                     </div>
 
                     {/* At A Glance Section */}
-                    <AtAGlance property={property} />
+                    {showAtAGlance && <AtAGlance property={property} />}
                 </div>
             </div>
 

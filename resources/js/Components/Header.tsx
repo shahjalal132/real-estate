@@ -235,7 +235,7 @@ export default function Header() {
 
                                     {/* MORE Dropdown Menu */}
                                     {moreMenuOpen && (
-                                        <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[180px] z-50">
+                                        <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[180px]">
                                             {moreItems.map((item) => (
                                                 <div
                                                     key={item.label}
