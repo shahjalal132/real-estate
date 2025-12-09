@@ -45,6 +45,169 @@ body {
         "Roboto", "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Print Styles */
+@media print {
+    /* Hide print header bar and customize sidebar when printing */
+    [data-print-header],
+    [data-print-sidebar],
+    [data-print-backdrop] {
+        display: none !important;
+    }
+
+    /* Remove padding that was added for fixed header */
+    [data-print-content] {
+        padding-top: 0 !important;
+    }
+
+    /* Ensure content takes full width */
+    [data-print-content] > * {
+        margin-left: 0 !important;
+    }
+
+    /* Hide interactive elements that don't print well */
+    button:not([data-print-keep]),
+    [role="button"]:not([data-print-keep]),
+    .cursor-pointer:not([data-print-keep]),
+    .hover\:bg-blue-50,
+    .hover\:bg-gray-50,
+    .hover\:text-\[#0066CC\] {
+        display: none !important;
+    }
+
+    /* Hide navigation arrows and overlay buttons */
+    .absolute button,
+    .absolute [role="button"] {
+        display: none !important;
+    }
+
+    /* Optimize images for print */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid !important;
+        display: block !important;
+    }
+
+    /* Ensure iframes (maps) are visible and properly sized */
+    iframe {
+        width: 100% !important;
+        min-height: 400px !important;
+        height: 500px !important;
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid !important;
+        display: block !important;
+    }
+
+    /* Force iframe content to load before print */
+    iframe[src] {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Prevent page breaks inside important sections */
+    .print-section,
+    [data-print-section] {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* Optimize text and spacing for print */
+    body {
+        font-size: 12pt !important;
+        line-height: 1.5 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    /* Remove shadows and borders that don't print well */
+    .shadow-lg,
+    .shadow-md,
+    .shadow-sm,
+    .shadow-xl,
+    .shadow-2xl {
+        box-shadow: none !important;
+    }
+
+    /* Ensure proper page breaks */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Remove background colors that waste ink */
+    .bg-gray-50,
+    .bg-gray-100,
+    .bg-blue-50 {
+        background: #fff !important;
+    }
+
+    /* Ensure tables print properly */
+    table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+        page-break-inside: avoid !important;
+    }
+
+    th,
+    td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+    }
+
+    /* Hide scrollbars and overflow indicators */
+    ::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    /* Ensure proper spacing */
+    .space-y-8 > * + * {
+        margin-top: 1.5rem !important;
+    }
+
+    /* Print-friendly link colors */
+    a {
+        color: #000 !important;
+        text-decoration: underline !important;
+    }
+
+    /* Ensure all content is visible */
+    * {
+        visibility: visible !important;
+    }
+
+    /* Optimize rounded corners for print */
+    .rounded-xl,
+    .rounded-lg,
+    .rounded-md {
+        border-radius: 4px !important;
+    }
+
+    /* Ensure gradients don't print */
+    .bg-gradient-to-t,
+    .bg-gradient-to-b,
+    .bg-gradient-to-r,
+    .bg-gradient-to-l {
+        background: #fff !important;
+    }
+
+    /* Hide overlay elements */
+    .absolute.bottom-0,
+    .absolute.top-0 {
+        display: none !important;
+    }
+
+    /* Ensure modals are hidden */
+    [data-modal],
+    [role="dialog"] {
+        display: none !important;
+    }
+}
+
 /* Legacy class for backward compatibility */
 .text-proxima {
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
