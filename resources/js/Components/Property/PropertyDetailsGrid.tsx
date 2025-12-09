@@ -98,7 +98,7 @@ export default function PropertyDetailsGrid({
     const askingPrice =
         property.formatted_price ||
         (property.asking_price
-            ? `$${parseFloat(
+            ? `${parseFloat(
                   property.asking_price.toString().replace(/[^0-9.]/g, "")
               ).toLocaleString()}`
             : "N/A");
@@ -157,8 +157,8 @@ export default function PropertyDetailsGrid({
                                 >
                                     {/* Left Column */}
                                     <td className="px-4 py-3 border-r border-gray-200 w-1/2">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-sm text-gray-600 font-medium">
+                                        <div className="flex justify-between items-center gap-6">
+                                            <span className="text-sm text-gray-600">
                                                 {row.label}
                                             </span>
                                             <span className="text-sm font-semibold text-gray-900">

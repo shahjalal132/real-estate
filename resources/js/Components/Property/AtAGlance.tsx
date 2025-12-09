@@ -48,11 +48,54 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
     // Extract property name (business name or property name)
     const propertyName = property.name || "Property";
 
+    // Format date
+    const formatDate = (dateString: string | null | undefined): string => {
+        if (!dateString) return "N/A";
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            });
+        } catch {
+            return "N/A";
+        }
+    };
+
+    // Calculate days on market
+    const daysOnMarket = property.activated_on
+        ? Math.floor(
+              (new Date().getTime() -
+                  new Date(property.activated_on).getTime()) /
+                  (1000 * 60 * 60 * 24)
+          )
+        : 0;
+
+    // Format asking price
+    const askingPrice = property.formatted_price
+        ? property.formatted_price.replace(/^\$\s*/, "")
+        : property.asking_price
+        ? parseFloat(
+              property.asking_price.toString().replace(/[^0-9.]/g, "")
+          ).toLocaleString()
+        : "N/A";
+
     // Get value for a data point
     const getDataPointValue = (id: string): string => {
         const summaryDetails = property.details?.summary_details || {};
 
         switch (id) {
+            case "date-listed":
+                return formatDate(property.activated_on || property.created_at);
+            case "last-updated":
+                return formatDate(
+                    property.external_updated_on || property.updated_at
+                );
+            case "days-on-market":
+                return `${daysOnMarket} Days`;
+            case "asking-price":
+                return askingPrice;
             case "property-type":
                 return propertyTypesDisplay;
             case "sub-type":
@@ -213,7 +256,13 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
                 );
             case "lot-size":
                 return property.details?.lot_size_acres
-                    ? `${property.details.lot_size_acres} acres`
+                    ? `${property.details.lot_size_acres.toLocaleString(
+                          undefined,
+                          {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                          }
+                      )} acres`
                     : summaryDetails["Lot Size (SqFt)"] ||
                           summaryDetails["Lot Size"] ||
                           "N/A";
@@ -305,6 +354,26 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
     // Define all available data points
     const availableDataPoints: DataPoint[] = useMemo(() => {
         const points: DataPoint[] = [
+            {
+                id: "date-listed",
+                label: "Date Listed",
+                key: "date-listed",
+            },
+            {
+                id: "last-updated",
+                label: "Last Updated",
+                key: "last-updated",
+            },
+            {
+                id: "days-on-market",
+                label: "Days On Market",
+                key: "days-on-market",
+            },
+            {
+                id: "asking-price",
+                label: "Asking Price",
+                key: "asking-price",
+            },
             {
                 id: "property-type",
                 label: "Property Type",
@@ -462,7 +531,11 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
             if (
                 point.id === "property-type" ||
                 point.id === "sub-type" ||
-                point.id === "square-footage"
+                point.id === "square-footage" ||
+                point.id === "date-listed" ||
+                point.id === "last-updated" ||
+                point.id === "days-on-market" ||
+                point.id === "asking-price"
             ) {
                 return true; // Always show these
             }
@@ -523,26 +596,67 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 divide-x divide-y divide-gray-200">
-                    {displayDataPoints.map((point) => {
-                        const value = getDataPointValue(point.id);
-                        if (value === "N/A") return null;
-
-                        return (
-                            <div
-                                key={point.id}
-                                className="p-4 hover:bg-gray-50 transition-colors"
-                            >
-                                <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                    {point.label}
-                                </div>
-                                <div className="text-sm font-semibold text-gray-900">
-                                    {value}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                <table className="w-full">
+                    <tbody>
+                        {displayDataPoints
+                            .filter((point) => {
+                                const value = getDataPointValue(point.id);
+                                return value !== "N/A";
+                            })
+                            .reduce(
+                                (
+                                    acc: Array<{
+                                        left: DataPoint | null;
+                                        right: DataPoint | null;
+                                    }>,
+                                    point,
+                                    index
+                                ) => {
+                                    if (index % 2 === 0) {
+                                        acc.push({ left: point, right: null });
+                                    } else {
+                                        acc[acc.length - 1].right = point;
+                                    }
+                                    return acc;
+                                },
+                                []
+                            )
+                            .map((row, rowIndex) => (
+                                <tr key={rowIndex}>
+                                    {/* Left Column */}
+                                    <td className="px-4 py-3 w-1/2">
+                                        {row.left && (
+                                            <div className="flex justify-between items-center gap-6">
+                                                <span className="text-sm text-gray-600 font-medium">
+                                                    {row.left.label}
+                                                </span>
+                                                <span className="text-sm font-semibold text-gray-900">
+                                                    {getDataPointValue(
+                                                        row.left.id
+                                                    )}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </td>
+                                    {/* Right Column */}
+                                    <td className="px-4 py-3 w-1/2">
+                                        {row.right && (
+                                            <div className="flex justify-between items-center gap-6">
+                                                <span className="text-sm text-gray-600 font-medium">
+                                                    {row.right.label}
+                                                </span>
+                                                <span className="text-sm font-semibold text-gray-900">
+                                                    {getDataPointValue(
+                                                        row.right.id
+                                                    )}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
             </div>
 
             {/* Customize Modal */}

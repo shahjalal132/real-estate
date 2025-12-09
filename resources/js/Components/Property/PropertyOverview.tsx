@@ -137,9 +137,9 @@ export default function PropertyOverview({
     };
 
     return (
-        <div className="mb-8">
+        <div className="mb-2">
             {/* Title Section */}
-            <div className="flex items-start justify-between py-3">
+            <div className="flex items-start justify-between pt-3 pb-1">
                 <div>
                     <h1 className="text-xl font-bold text-gray-900 font-literata">
                         {fullAddress}
