@@ -9,7 +9,7 @@ export default function PrintButton({ onPrintClick }: PrintButtonProps) {
         <button
             type="button"
             onClick={onPrintClick}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
+            className="flex items-center gap-2 px-4 py-2 text-[16px] font-normal cursor-pointer text-gray-600 hover:text-[#0066CC] hover:bg-blue-50 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-100"
             aria-label="Print"
         >
             <Printer className="w-4 h-4" />

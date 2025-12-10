@@ -165,10 +165,10 @@ export default function PropertyOverview({
             {/* Title Section */}
             <div className="flex items-start justify-between pt-3 pb-1">
                 <div>
-                    <h1 className="text-xl font-bold text-gray-900 font-literata">
+                    <h1 className="text-2xl font-semibold text-gray-900 font-literata">
                         {fullAddress}
                     </h1>
-                    <p className="text-sm text-gray-700">{propertyName}</p>
+                    <p className="text-[15px] font-normal text-gray-700">{propertyName}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                     <NotesButton propertyId={property.id} />
@@ -365,10 +365,10 @@ export default function PropertyOverview({
                         {/* First Row: Price and Info */}
                         <div className="px-5 py-2">
                             <div className="flex items-center justify-start gap-4">
-                                <div className="text-l font-bold text-gray-900 border-r border-gray-300 pr-4">
+                                <div className="text-lg font-normal text-gray-900 border-r border-gray-300 pr-4">
                                     {formattedPrice}
                                 </div>
-                                <div className="flex items-center gap-3 text-xs text-gray-800">
+                                <div className="flex items-center gap-3 text-[15px] font-normal text-gray-800">
                                     <span>{daysOnMarket} days on market</span>
                                     <div className="w-px h-4 bg-gray-300"></div>
                                     <span>
