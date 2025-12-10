@@ -157,10 +157,10 @@ export default function PropertyDetailsGrid({
                                     {/* Left Column */}
                                     <td className="px-4 py-3 border-r border-gray-200 w-1/2">
                                         <div className="flex justify-between items-center gap-6">
-                                            <span className="text-sm text-gray-600">
+                                            <span className="text-[15px] text-gray-600">
                                                 {row.label}
                                             </span>
-                                            <span className="text-sm font-semibold text-gray-900">
+                                            <span className="text-[15px] font-semibold text-gray-900">
                                                 {row.value}
                                             </span>
                                         </div>
@@ -169,10 +169,10 @@ export default function PropertyDetailsGrid({
                                     <td className="px-4 py-3 w-1/2">
                                         {rightRow && rightRow.label && (
                                             <div className="flex justify-between items-center">
-                                                <span className="text-sm text-gray-600 font-medium">
+                                                <span className="text-[15px] text-gray-600 font-medium">
                                                     {rightRow.label}
                                                 </span>
-                                                <span className="text-sm font-semibold text-gray-900">
+                                                <span className="text-[15px] font-semibold text-gray-900">
                                                     {rightRow.value}
                                                 </span>
                                             </div>

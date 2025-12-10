@@ -310,7 +310,7 @@ export default function Demographics() {
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
+                            className={`pb-3 px-1 text-lg font-normal transition-colors relative ${
                                 activeTab === tab
                                     ? "text-[#0066CC]"
                                     : "text-gray-600 hover:text-gray-900"
@@ -331,7 +331,7 @@ export default function Demographics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                            <h3 className="text-lg font-semibold text-[#8B5CF6]">
                                 Population
                             </h3>
                             <div className="text-3xl font-bold text-gray-900">
@@ -417,7 +417,7 @@ export default function Demographics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                            <h3 className="text-lg font-semibold text-[#8B5CF6]">
                                 Household Income
                             </h3>
                             <div className="flex items-baseline gap-3">
@@ -492,7 +492,7 @@ export default function Demographics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                            <h3 className="text-lg font-semibold text-[#8B5CF6]">
                                 Age Demographics
                             </h3>
                             <div className="flex items-baseline gap-3">
@@ -568,7 +568,7 @@ export default function Demographics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-[#8B5CF6]">
+                            <h3 className="text-lg font-semibold text-[#8B5CF6]">
                                 Number of Employees
                             </h3>
                             <div className="text-2xl font-bold text-gray-900">
@@ -595,7 +595,7 @@ export default function Demographics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-[#0066CC]">
+                            <h3 className="text-lg font-semibold text-[#0066CC]">
                                 Housing Occupancy Ratio
                             </h3>
                             <div className="flex items-baseline gap-3">
@@ -630,7 +630,7 @@ export default function Demographics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-[#0066CC]">
+                            <h3 className="text-lg font-semibold text-[#0066CC]">
                                 Renter to Homeowner Ratio
                             </h3>
                             <div className="flex items-baseline gap-3">
