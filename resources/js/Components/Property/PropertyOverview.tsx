@@ -163,7 +163,7 @@ export default function PropertyOverview({
     return (
         <div className="mb-2">
             {/* Title Section */}
-            <div className="flex items-start justify-between pt-3 pb-1">
+            <div className="flex items-start justify-between pt-3 md:py-[15px]">
                 <div>
                     <h1 className="text-2xl font-semibold text-gray-900 font-literata">
                         {fullAddress}
@@ -378,11 +378,11 @@ export default function PropertyOverview({
                             </div>
                         </div>
                         {/* Second Row: Action Buttons */}
-                        <div className="px-5 py-3 flex items-start gap-2">
-                            <button className="px-2 py-2 bg-[#0066CC] text-white rounded-lg text-xs font-medium cursor-pointer ">
+                        <div className="px-5 py-3 flex items-center gap-2">
+                            <button className="px-2 py-2 border border-transparent bg-[#0066CC] text-white rounded-sm text-xs font-medium cursor-pointer ">
                                 Request Info
                             </button>
-                            <button className="px-2 py-2 bg-white border border-[#0066CC] text-[#0066CC] rounded-lg hover:bg-blue-50 transition-colors text-xs font-medium cursor-pointer">
+                            <button className="px-2 py-2 bg-white border border-[#0066CC] text-[#0066CC] rounded-sm hover:bg-blue-50 transition-colors text-xs font-medium cursor-pointer">
                                 View Flyer
                             </button>
                         </div>
