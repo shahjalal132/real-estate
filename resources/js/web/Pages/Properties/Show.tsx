@@ -268,6 +268,7 @@ export default function PropertyShow() {
 
                 {/* Top Tabs */}
                 {!isPrintMode && <PropertyTopTabs />}
+                
                 <div
                     data-print-content
                     className={`max-w-[95%] mx-auto px-3 ${
