@@ -163,12 +163,12 @@ export default function PropertyOverview({
     return (
         <div className="mb-2">
             {/* Title Section */}
-            <div className="flex items-start justify-between pt-3 pb-1">
+            <div className="flex items-start justify-between pt-3 md:py-[15px]">
                 <div>
-                    <h1 className="text-xl font-bold text-gray-900 font-literata">
+                    <h1 className="text-2xl font-semibold text-gray-900 font-literata">
                         {fullAddress}
                     </h1>
-                    <p className="text-sm text-gray-700">{propertyName}</p>
+                    <p className="text-[15px] font-normal text-gray-700">{propertyName}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                     <NotesButton propertyId={property.id} />
@@ -365,10 +365,10 @@ export default function PropertyOverview({
                         {/* First Row: Price and Info */}
                         <div className="px-5 py-2">
                             <div className="flex items-center justify-start gap-4">
-                                <div className="text-l font-bold text-gray-900 border-r border-gray-300 pr-4">
+                                <div className="text-lg font-normal text-gray-900 border-r border-gray-300 pr-4">
                                     {formattedPrice}
                                 </div>
-                                <div className="flex items-center gap-3 text-xs text-gray-800">
+                                <div className="flex items-center gap-3 text-[15px] font-normal text-gray-800">
                                     <span>{daysOnMarket} days on market</span>
                                     <div className="w-px h-4 bg-gray-300"></div>
                                     <span>
@@ -378,11 +378,11 @@ export default function PropertyOverview({
                             </div>
                         </div>
                         {/* Second Row: Action Buttons */}
-                        <div className="px-5 py-3 flex items-start gap-2">
-                            <button className="px-2 py-2 bg-[#0066CC] text-white rounded-lg text-xs font-medium cursor-pointer ">
+                        <div className="px-5 py-3 flex items-center gap-2">
+                            <button className="px-2 py-2 border border-transparent bg-[#0066CC] text-white rounded-sm text-xs font-medium cursor-pointer ">
                                 Request Info
                             </button>
-                            <button className="px-2 py-2 bg-white border border-[#0066CC] text-[#0066CC] rounded-lg hover:bg-blue-50 transition-colors text-xs font-medium cursor-pointer">
+                            <button className="px-2 py-2 bg-white border border-[#0066CC] text-[#0066CC] rounded-sm hover:bg-blue-50 transition-colors text-xs font-medium cursor-pointer">
                                 View Flyer
                             </button>
                         </div>

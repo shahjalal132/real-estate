@@ -88,11 +88,11 @@ export default function PropertyBrokers({ brokers }: PropertyBrokersProps) {
                                     </div>
                                 )}
                                 <div className="flex-1 min-w-0">
-                                    <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    <h4 className="text-[16px] font-semibold text-gray-900 mb-1">
                                         {fullName}
                                     </h4>
                                     {license && (
-                                        <p className="text-xs text-gray-600">
+                                        <p className="text-[15px] font-normal text-gray-600">
                                             LIC: {license}
                                         </p>
                                     )}
@@ -118,10 +118,10 @@ export default function PropertyBrokers({ brokers }: PropertyBrokersProps) {
 
                             {/* Action Links */}
                             <div className="flex items-center gap-4">
-                                <button className="text-xs font-medium text-[#0066CC] hover:text-[#0052A3] transition-colors">
+                                <button className="text-[15px] font-normal text-[#0066CC] hover:text-[#0052A3] transition-colors">
                                     Contact
                                 </button>
-                                <button className="text-xs font-medium text-[#0066CC] hover:text-[#0052A3] transition-colors">
+                                <button className="text-[15px] font-normal text-[#0066CC] hover:text-[#0052A3] transition-colors">
                                     View Profile
                                 </button>
                             </div>
