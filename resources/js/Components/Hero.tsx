@@ -91,9 +91,9 @@ export default function Hero({ content }: HeroProps) {
 
                 {/* Search Bar */}
                 <div className="mb-7 sm:mb-0 mx-auto w-full max-w-4xl">
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-0 rounded-lg bg-white shadow-lg overflow-hidden">
+                    <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-0 rounded-lg bg-white shadow-lg ${propertyTypeOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
                         {/* Property Type Dropdown */}
-                        <div className="relative shrink-0">
+                        <div className="relative shrink-0 z-30">
                             <button
                                 type="button"
                                 onClick={() =>
@@ -113,12 +113,12 @@ export default function Hero({ content }: HeroProps) {
                             {propertyTypeOpen && (
                                 <>
                                     <div
-                                        className="fixed inset-0 z-10"
+                                        className="fixed inset-0 z-40"
                                         onClick={() =>
                                             setPropertyTypeOpen(false)
                                         }
                                     />
-                                    <div className="absolute left-0 sm:left-auto right-0 sm:right-auto z-20 mt-1 w-full sm:w-48 rounded-md border border-gray-200 bg-white shadow-lg">
+                                    <div className="absolute left-0 top-full mt-1 z-50 w-full sm:w-48 rounded-md border border-gray-200 bg-white shadow-lg">
                                         <div className="py-1 max-h-60 overflow-y-auto">
                                             {propertyTypes.map((type) => (
                                                 <button
@@ -154,7 +154,7 @@ export default function Hero({ content }: HeroProps) {
                         {/* Search Button */}
                         <button
                             type="button"
-                            className="rounded-b-lg sm:rounded-b-none sm:rounded-r-lg bg-[#0066CC] px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-[#0052A3] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2"
+                            className="rounded-l-none md:rounded-r-[10px] bg-[#0066CC] md:mr-0.5 px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-[#0052A3] focus:outline-none"
                             aria-label="Search"
                         >
                             Search
