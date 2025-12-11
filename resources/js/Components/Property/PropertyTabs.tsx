@@ -227,11 +227,12 @@ export default function PropertyTabs({
             : fullAddress;
 
     return (
-        <div ref={stickyContainerRef}>
-            <div
-                className="sticky z-40 bg-white border-b  border-gray-200"
-                style={{ top: `${topPosition}px` }}
-            >
+        <div
+            ref={stickyContainerRef}
+            className="sticky z-40 bg-white border-b  border-gray-200"
+            style={{ top: `${topPosition}px` }}
+        >
+            <div>
                 {/* Mobile: Stacked Layout */}
                 <div className="lg:hidden">
                     {/* Property Info Row - Only show when sticky */}
@@ -341,7 +342,7 @@ export default function PropertyTabs({
                                     className={`shrink-0 px-2 py-2 text-[15px] font-normal whitespace-nowrap border-b-2 transition-all duration-200 ${
                                         activeTab === tab.id
                                             ? "border-[#0066CC] text-[#0066CC] font-semibold"
-                                            : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
+                                            : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-200"
                                     }`}
                                 >
                                     {tab.label}
