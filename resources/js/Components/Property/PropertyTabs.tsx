@@ -227,11 +227,12 @@ export default function PropertyTabs({
             : fullAddress;
 
     return (
-        <div ref={stickyContainerRef}>
-            <div
-                className="sticky z-40 bg-white border-b  border-gray-200"
-                style={{ top: `${topPosition}px` }}
-            >
+        <div
+            ref={stickyContainerRef}
+            className="sticky z-40 bg-white border-b  border-gray-200"
+            style={{ top: `${topPosition}px` }}
+        >
+            <div>
                 {/* Mobile: Stacked Layout */}
                 <div className="lg:hidden">
                     {/* Property Info Row - Only show when sticky */}
