@@ -400,7 +400,7 @@ export default function Demographics() {
                                 </span>
                             </div>
                         </div>
-                        <div className="w-full h-40">
+                        <div className="w-full h-40 max-h-40 overflow-y-auto">
                             <LineChart
                                 data={data.population.chartData}
                                 height={160}
@@ -472,7 +472,7 @@ export default function Demographics() {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full flex justify-center">
+                        <div className="w-full flex justify-center max-h-48 overflow-y-auto">
                             <PieChart
                                 data={data.householdIncome.pieData.map(
                                     (item) => ({
@@ -547,7 +547,7 @@ export default function Demographics() {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full flex justify-center">
+                        <div className="w-full flex justify-center max-h-48 overflow-y-auto">
                             <PieChart
                                 data={data.ageDemographics.pieData.map(
                                     (item) => ({
@@ -578,7 +578,7 @@ export default function Demographics() {
                         <div className="text-xs text-gray-600 mb-2">
                             Top Employment Categories
                         </div>
-                        <div className="w-full h-48">
+                        <div className="w-full h-48 max-h-48 overflow-y-auto">
                             <HorizontalBarChart
                                 data={data.employees.categories.map((item) => ({
                                     ...item,
@@ -609,7 +609,7 @@ export default function Demographics() {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full h-32">
+                        <div className="w-full h-32 max-h-32 overflow-y-auto">
                             <HorizontalBarChart
                                 data={data.housingOccupancy.data.map(
                                     (item) => ({
@@ -644,7 +644,7 @@ export default function Demographics() {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full h-32">
+                        <div className="w-full h-32 max-h-32 overflow-y-auto">
                             <HorizontalBarChart
                                 data={data.renterHomeowner.data.map((item) => ({
                                     ...item,
