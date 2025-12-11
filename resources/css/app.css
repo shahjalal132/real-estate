@@ -5,50 +5,12 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-/* Proxima Nova Font Faces */
-@font-face {
-    font-family: "Proxima Nova";
-    src: url("/assets/fonts/proximanova-light.woff") format("woff");
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Proxima Nova";
-    src: url("/assets/fonts/proximanova-regular.woff") format("woff");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Proxima Nova";
-    src: url("/assets/fonts/proximanova-medium.woff") format("woff");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Proxima Nova";
-    src: url("/assets/fonts/proximanova-semibold.woff") format("woff");
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Proxima Nova";
-    src: url("/assets/fonts/proximanova-bold.woff") format("woff");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
+/* Inter Font - Similar to Proxima Nova with excellent symbol support */
+/* Inter is loaded via Google Fonts in app.blade.php */
 
 @theme {
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Helvetica Neue", Arial, sans-serif, "Proxima Nova";
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Roboto", "Helvetica Neue", Arial, sans-serif;
 
     /* Primary Colors */
     --color-primary-blue: #0066cc;
@@ -75,20 +37,204 @@
 }
 
 /* 
- * Comprehensive solution for missing keyboard symbols in Proxima Nova font
- * 
- * System fonts are prioritized first to ensure all symbols display correctly.
- * Proxima Nova is used as a fallback for characters it supports.
+ * Inter font - Similar to Proxima Nova with excellent Unicode/symbol support
+ * Inter handles all keyboard symbols and special characters correctly
  */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Helvetica Neue", Arial, sans-serif, "Proxima Nova";
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Roboto", "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Use Proxima Nova for text content that doesn't need special symbols */
+/* Print Styles */
+@media print {
+    /* Hide print header bar and customize sidebar when printing */
+    [data-print-header],
+    [data-print-sidebar],
+    [data-print-backdrop] {
+        display: none !important;
+    }
+
+    /* Remove padding that was added for fixed header */
+    [data-print-content] {
+        padding-top: 0 !important;
+    }
+
+    /* Ensure content takes full width */
+    [data-print-content] > * {
+        margin-left: 0 !important;
+    }
+
+    /* Hide interactive elements that don't print well */
+    button:not([data-print-keep]),
+    [role="button"]:not([data-print-keep]),
+    .cursor-pointer:not([data-print-keep]),
+    .hover\:bg-blue-50,
+    .hover\:bg-gray-50,
+    .hover\:text-\[#0066CC\] {
+        display: none !important;
+    }
+
+    /* Hide navigation arrows and overlay buttons */
+    .absolute button,
+    .absolute [role="button"] {
+        display: none !important;
+    }
+
+    /* Optimize images for print */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid !important;
+        display: block !important;
+    }
+
+    /* Ensure iframes (maps) are visible and properly sized */
+    iframe {
+        width: 100% !important;
+        min-height: 400px !important;
+        height: 500px !important;
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid !important;
+        display: block !important;
+    }
+
+    /* Force iframe content to load before print */
+    iframe[src] {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Prevent page breaks inside important sections */
+    .print-section,
+    [data-print-section] {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* Optimize text and spacing for print */
+    body {
+        font-size: 12pt !important;
+        line-height: 1.5 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    /* Remove shadows and borders that don't print well */
+    .shadow-lg,
+    .shadow-md,
+    .shadow-sm,
+    .shadow-xl,
+    .shadow-2xl {
+        box-shadow: none !important;
+    }
+
+    /* Ensure proper page breaks */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Remove background colors that waste ink */
+    .bg-gray-50,
+    .bg-gray-100,
+    .bg-blue-50 {
+        background: #fff !important;
+    }
+
+    /* Ensure tables print properly */
+    table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+        page-break-inside: avoid !important;
+    }
+
+    th,
+    td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+    }
+
+    /* Hide scrollbars and overflow indicators */
+    ::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    /* Ensure proper spacing */
+    .space-y-8 > * + * {
+        margin-top: 1.5rem !important;
+    }
+
+    /* Print-friendly link colors */
+    a {
+        color: #000 !important;
+        text-decoration: underline !important;
+    }
+
+    /* Ensure all content is visible */
+    * {
+        visibility: visible !important;
+    }
+
+    /* Optimize rounded corners for print */
+    .rounded-xl,
+    .rounded-lg,
+    .rounded-md {
+        border-radius: 4px !important;
+    }
+
+    /* Ensure gradients don't print */
+    .bg-gradient-to-t,
+    .bg-gradient-to-b,
+    .bg-gradient-to-r,
+    .bg-gradient-to-l {
+        background: #fff !important;
+    }
+
+    /* Hide overlay elements */
+    .absolute.bottom-0,
+    .absolute.top-0 {
+        display: none !important;
+    }
+
+    /* Ensure modals are hidden */
+    [data-modal],
+    [role="dialog"] {
+        display: none !important;
+    }
+}
+
+/* Legacy class for backward compatibility */
 .text-proxima {
-    font-family: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
         "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Literata Font - For property titles and specific cases */
+.font-literata {
+    font-family: "Literata", "Inter", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "Roboto", "Helvetica Neue", Arial, serif;
+}
+
+/* Property title specific styling */
+.property-title {
+    font-family: "Literata", "Inter", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "Roboto", "Helvetica Neue", Arial, serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+/* For headings that should use Literata */
+h1.font-literata,
+h2.font-literata,
+h3.font-literata {
+    font-family: "Literata", "Inter", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "Roboto", "Helvetica Neue", Arial, serif;
+    letter-spacing: -0.01em;
 }
 
 /* Force system fonts for symbol-heavy content to ensure proper rendering */
@@ -287,4 +433,113 @@ article .price *,
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+/* Lollipop Map Markers */
+.lollipop-marker {
+    background: transparent !important;
+    border: none !important;
+}
+
+.lollipop-marker-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.lollipop-marker-container:hover {
+    transform: scale(1.15);
+    z-index: 1000;
+}
+
+.lollipop-marker-container.selected {
+    z-index: 1001;
+}
+
+.lollipop-pin {
+    width: 24px;
+    height: 24px;
+    background: #0d6efd;
+    border: 3px solid white;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.lollipop-pin::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.lollipop-marker-container.selected .lollipop-pin {
+    background: #0b5ed7;
+    border-color: #fff;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
+    transform: rotate(-45deg) scale(1.2);
+}
+
+/* Property Tooltip Styling */
+.property-tooltip .leaflet-tooltip-content-wrapper {
+    background: white;
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+}
+
+.property-tooltip .leaflet-tooltip-content {
+    margin: 0;
+    padding: 10px 12px;
+}
+
+.property-tooltip-content {
+    min-width: 180px;
+    max-width: 220px;
+}
+
+.property-tooltip .leaflet-tooltip-tip {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    border-right: none;
+}
+
+/* Property Popup Styling */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.property-popup .leaflet-popup-content {
+    margin: 16px;
+}
+
+/* Ensure markers don't interfere with map controls */
+.leaflet-marker-icon {
+    z-index: 600;
+}
+
+.lollipop-marker.selected {
+    z-index: 700 !important;
+}
+
+/* Hide scrollbar but maintain scroll functionality */
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
 }

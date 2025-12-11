@@ -37,7 +37,7 @@ class Broker extends Model
 
     public function properties(): BelongsToMany
     {
-        return $this->belongsToMany(Property::class);
+        return $this->belongsToMany(Property::class, 'broker_property', 'broker_id', 'property_id');
     }
 
     public function getFullNameAttribute(): string

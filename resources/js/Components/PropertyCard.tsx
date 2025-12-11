@@ -87,7 +87,7 @@ export default function PropertyCard({
                         {location}
                     </p>
                     <h2
-                        className="line-clamp-1 text-lg sm:text-xl font-semibold"
+                        className="line-clamp-1 text-lg sm:text-xl font-semibold font-literata"
                         title={title}
                     >
                         {title}

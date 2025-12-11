@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
 import Button from "./Button";
-import FilterDropdown from "./FilterDropdown";
+import ChoseView from "./ChoseView";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
@@ -76,7 +76,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             property.thumbnail_url ||
             "https://via.placeholder.com/400x300?text=No+Image",
         location: locationString,
-        href: `/properties/${property.id}`,
+        href: `/properties/${property.id}/${property.url_slug}`,
     };
 }
 
@@ -94,9 +94,11 @@ export default function FeaturedListings({
         return true;
     });
 
-    const viewMoreHref = `/properties?section=featured&filter=${encodeURIComponent(
-        selectedFilter
-    )}`;
+    const viewMoreHref = `/properties${
+        selectedFilter !== "all"
+            ? `?filter=${encodeURIComponent(selectedFilter)}`
+            : ""
+    }`;
 
     if (listings.length === 0) {
         return null;
@@ -118,7 +120,7 @@ export default function FeaturedListings({
                         prevButtonLabel="Previous listings"
                         nextButtonLabel="Next listings"
                     />
-                    <FilterDropdown
+                    <ChoseView
                         value={selectedFilter}
                         onChange={setSelectedFilter}
                     />

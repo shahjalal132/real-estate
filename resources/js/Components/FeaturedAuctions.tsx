@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { router } from "@inertiajs/react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
 import { Property } from "../types";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
-import FilterDropdown from "./FilterDropdown";
+import AllFiltersButton from "./AllFiltersButton";
+import AllFiltersModal, { FilterValues } from "./AllFiltersModal";
 import Button from "./Button";
 import { useSliderControls } from "./useSliderControls";
 
@@ -108,7 +110,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             property.thumbnail_url ||
             "https://via.placeholder.com/400x300?text=No+Image",
         location: locationString,
-        href: `/properties/${property.id}`,
+        href: `/properties/${property.id}/${property.url_slug}`,
     };
 }
 
@@ -116,7 +118,7 @@ export default function FeaturedAuctions({
     auctions = [],
 }: FeaturedAuctionsProps) {
     const { sliderRef, handlePrev, handleNext } = useSliderControls();
-    const [selectedFilter, setSelectedFilter] = useState<string>("all");
+    const [filtersExpanded, setFiltersExpanded] = useState(false);
 
     // Filter properties that have status "On-Market" (auction properties)
     const auctionProperties = auctions.filter(
@@ -128,17 +130,105 @@ export default function FeaturedAuctions({
                 ))
     );
 
-    const filteredListings = auctionProperties.filter((_, index) => {
-        if (selectedFilter === "all") return true;
-        if (selectedFilter === "option1") return index % 3 === 0;
-        if (selectedFilter === "option2") return index % 3 === 1;
-        if (selectedFilter === "option3") return index % 3 === 2;
-        return true;
-    });
+    // Show all properties in the slider (filtering will be done on the properties page)
+    const filteredListings = auctionProperties;
 
-    const viewMoreHref = `/properties/auctions?filter=${encodeURIComponent(
-        selectedFilter
-    )}`;
+    const viewMoreHref = `/properties/auctions`;
+
+    // Handle filter apply - navigate to properties page with filters
+    const handleApplyFilters = (filters: FilterValues) => {
+        // Build query parameters from filter values
+        const params: Record<string, any> = {
+            section: "auctions",
+        };
+
+        // Add location
+        if (filters.location) {
+            params.location = filters.location;
+        }
+
+        // Add keywords
+        if (filters.keywords) {
+            params.keywords = filters.keywords;
+        }
+
+        // Add property types
+        if (filters.propertyTypes && filters.propertyTypes.length > 0) {
+            if (!filters.propertyTypes.includes("All")) {
+                params.property_types = filters.propertyTypes.join(",");
+            }
+        }
+
+        // Add rate range
+        if (filters.minRate && filters.minRate !== "$0") {
+            const minRateValue = filters.minRate.replace(/[$,]/g, "");
+            if (filters.rateType === "yearly") {
+                params.min_yearly_rate = minRateValue;
+            } else {
+                params.min_monthly_rate = minRateValue;
+            }
+        }
+        if (filters.maxRate && !filters.maxRate.includes("+")) {
+            const maxRateValue = filters.maxRate.replace(/[$,+]/g, "");
+            if (filters.rateType === "yearly") {
+                params.max_yearly_rate = maxRateValue;
+            } else {
+                params.max_monthly_rate = maxRateValue;
+            }
+        }
+
+        // Add size range
+        if (filters.minSize && filters.minSize !== "0") {
+            if (filters.sizeType === "sqft") {
+                params.min_sqft = filters.minSize.replace(/[,+]/g, "");
+            } else {
+                params.min_acres = filters.minSize.replace(/[,+]/g, "");
+            }
+        }
+        if (filters.maxSize && !filters.maxSize.includes("+")) {
+            if (filters.sizeType === "sqft") {
+                params.max_sqft = filters.maxSize.replace(/[,+]/g, "");
+            } else {
+                params.max_acres = filters.maxSize.replace(/[,+]/g, "");
+            }
+        }
+
+        // Add broker/agent
+        if (filters.brokerAgent) {
+            params.broker_agent = filters.brokerAgent;
+        }
+
+        // Add brokerage shop
+        if (filters.brokerageShop) {
+            params.brokerage_shop = filters.brokerageShop;
+        }
+
+        // Add tenancy
+        if (filters.tenancy) {
+            params.tenancy = filters.tenancy;
+        }
+
+        // Add property class
+        if (filters.propertyClass && filters.propertyClass.length > 0) {
+            params.property_class = filters.propertyClass.join(",");
+        }
+
+        // Add listing timeline
+        if (
+            filters.timelineType === "timePeriod" &&
+            filters.timePeriod !== "Any"
+        ) {
+            params.time_period = filters.timePeriod;
+        } else if (filters.timelineType === "custom") {
+            if (filters.fromDate) params.from_date = filters.fromDate;
+            if (filters.toDate) params.to_date = filters.toDate;
+        }
+
+        // Navigate to properties page with filters
+        router.get("/properties", params, {
+            preserveState: false,
+        });
+    };
 
     if (auctionProperties.length === 0) {
         return null;
@@ -152,17 +242,20 @@ export default function FeaturedAuctions({
                         <SectionHeading>Featured Auctions</SectionHeading>
                     </div>
 
-                    <div className="flex flex-col items-center gap-2 sm:items-end">
-                        <SliderControls
-                            onPrev={handlePrev}
-                            onNext={handleNext}
-                            prevButtonLabel="Previous properties"
-                            nextButtonLabel="Next properties"
-                        />
-                        <FilterDropdown
-                            value={selectedFilter}
-                            onChange={setSelectedFilter}
-                        />
+                    <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-end">
+                        <div className="flex items-center gap-3">
+                            <SliderControls
+                                onPrev={handlePrev}
+                                onNext={handleNext}
+                                prevButtonLabel="Previous properties"
+                                nextButtonLabel="Next properties"
+                            />
+                            <AllFiltersButton
+                                onClick={() => setFiltersExpanded(true)}
+                                activeFiltersCount={0}
+                                className="whitespace-nowrap"
+                            />
+                        </div>
                     </div>
                 </header>
             </div>
@@ -174,6 +267,7 @@ export default function FeaturedAuctions({
                     onNext={handleNext}
                     prevButtonLabel="Previous properties"
                     nextButtonLabel="Next properties"
+                    className="ml-5 md:ml-0"
                     hideControls={true}
                 >
                     {filteredListings.map((property) => (
@@ -199,6 +293,18 @@ export default function FeaturedAuctions({
                     </Button>
                 </div>
             </div>
+
+            {/* All Filters Modal */}
+            <AllFiltersModal
+                isOpen={filtersExpanded}
+                onClose={() => setFiltersExpanded(false)}
+                activeFiltersCount={0}
+                listingsCount={filteredListings.length}
+                onApply={handleApplyFilters}
+                onReset={() => {
+                    // Reset handled by modal internally
+                }}
+            />
         </section>
     );
 }

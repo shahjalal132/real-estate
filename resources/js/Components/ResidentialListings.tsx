@@ -4,7 +4,7 @@ import Button from "./Button";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
-import FilterDropdown from "./FilterDropdown";
+import ChoseView from "./ChoseView";
 import { useSliderControls } from "./useSliderControls";
 import { Property } from "../types";
 
@@ -76,7 +76,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             property.thumbnail_url ||
             "https://via.placeholder.com/400x300?text=No+Image",
         location: locationString,
-        href: `/properties/${property.id}`,
+        href: `/properties/${property.id}/${property.url_slug}`,
     };
 }
 
@@ -94,9 +94,11 @@ export default function ResidentialListings({
         return true;
     });
 
-    const viewMoreHref = `/properties?section=residential&filter=${encodeURIComponent(
-        selectedFilter
-    )}`;
+    const viewMoreHref = `/properties/residentials${
+        selectedFilter !== "all"
+            ? `?filter=${encodeURIComponent(selectedFilter)}`
+            : ""
+    }`;
 
     if (listings.length === 0) {
         return null;
@@ -118,7 +120,7 @@ export default function ResidentialListings({
                         prevButtonLabel="Previous listings"
                         nextButtonLabel="Next listings"
                     />
-                    <FilterDropdown
+                    <ChoseView
                         value={selectedFilter}
                         onChange={setSelectedFilter}
                     />

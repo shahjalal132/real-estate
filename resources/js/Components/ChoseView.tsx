@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
 
-interface FilterDropdownProps {
+interface ChoseViewProps {
     value: string;
     onChange: (value: string) => void;
 }
 
 const OPTIONS = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { value: "residential", label: "Residential" },
+    { value: "auctions", label: "Auctions" },
+    { value: "commercial", label: "Commercial" },
 ];
 
-export default function FilterDropdown({ value, onChange }: FilterDropdownProps) {
+export default function ChoseView({
+    value,
+    onChange,
+}: ChoseViewProps) {
     const [open, setOpen] = useState(false);
 
     const selectedLabel =
@@ -22,15 +24,14 @@ export default function FilterDropdown({ value, onChange }: FilterDropdownProps)
         <div className="relative inline-block text-left">
             <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full border border-transparent bg-white px-5 py-2 text-sm font-medium text-[#4a4a4a] shadow-sm shadow-gray-200 hover:shadow-md hover:bg-gray-50 focus:outline-none"
+                className="inline-flex items-center gap-2 rounded-full border border-transparent hover:border-[#015EBC] bg-white px-5 py-2 text-sm font-medium text-[#333333] shadow-sm shadow-gray-200 hover:shadow-md hover:bg-gray-50 focus:outline-none"
                 onClick={() => setOpen((prev) => !prev)}
             >
-                <SlidersHorizontal className="h-4 w-4" />
-                <span>Filters</span>
+                <span>Chose View</span>
             </button>
 
             {open && (
-                <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-[#015EBC] focus:outline-none">
                     <div className="py-1 text-sm text-gray-700">
                         <button
                             type="button"
