@@ -11,6 +11,7 @@ import {
 import { Property } from "../../types";
 import ImageGallery from "./ImageGallery";
 import AtAGlance from "./AtAGlance";
+import MokAiFacts from "./MokAiFacts";
 import NotesButton from "./NotesButton";
 import ShareButton from "./ShareButton";
 import SaveButton from "./SaveButton";
@@ -390,6 +391,10 @@ export default function PropertyOverview({
 
                     {/* At A Glance Section */}
                     {showAtAGlance && <AtAGlance property={property} />}
+                    <div className="my-2">
+                    {/* Mok.Ai Facts Section */}
+                    {showAtAGlance && <MokAiFacts property={property} />}
+                    </div>
                 </div>
             </div>
 
