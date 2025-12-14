@@ -11,7 +11,9 @@ import {
 import { Property } from "../../types";
 import ImageGallery from "./ImageGallery";
 import AtAGlance from "./AtAGlance";
+import MokAiFacts from "./MokAiFacts";
 import NotesButton from "./NotesButton";
+import ListingsButton from "./ListingsButton";
 import ShareButton from "./ShareButton";
 import SaveButton from "./SaveButton";
 import PrintButton from "./PrintButton";
@@ -171,6 +173,7 @@ export default function PropertyOverview({
                     <p className="text-[15px] font-normal text-gray-700">{propertyName}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
+                    <ListingsButton />
                     <NotesButton propertyId={property.id} />
                     <PrintButton onPrintClick={onPrintClick || (() => {})} />
                     <ShareButton
@@ -390,6 +393,10 @@ export default function PropertyOverview({
 
                     {/* At A Glance Section */}
                     {showAtAGlance && <AtAGlance property={property} />}
+                    <div className="my-2">
+                    {/* Mok.Ai Facts Section */}
+                    {showAtAGlance && <MokAiFacts property={property} />}
+                    </div>
                 </div>
             </div>
 

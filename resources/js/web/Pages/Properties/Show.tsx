@@ -152,11 +152,10 @@ export default function PropertyShow() {
         map: useRef<HTMLDivElement>(null),
         climate: useRef<HTMLDivElement>(null),
         history: useRef<HTMLDivElement>(null),
-        tax: useRef<HTMLDivElement>(null),
         valuation: useRef<HTMLDivElement>(null),
-        metrics: useRef<HTMLDivElement>(null),
         demographics: useRef<HTMLDivElement>(null),
         insights: useRef<HTMLDivElement>(null),
+        "similar-properties": useRef<HTMLDivElement>(null),
     };
 
     const location = property.location;
@@ -459,7 +458,11 @@ export default function PropertyShow() {
                             selectedPrintSections.includes(
                                 "similar-properties"
                             )) && (
-                            <div className="scroll-mt-20">
+                            <div
+                                id="similar-properties"
+                                ref={sectionRefs["similar-properties"]}
+                                className="scroll-mt-20"
+                            >
                                 <SimilarProperties
                                     properties={similarProperties}
                                     currentPropertyId={property.id}

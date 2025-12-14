@@ -2,11 +2,11 @@ import { useState, useEffect, useMemo } from "react";
 import { Property } from "../../types";
 import CustomizeModal, { DataPoint } from "./CustomizeModal";
 
-interface AtAGlanceProps {
+interface MokAiFactsProps {
     property: Property;
 }
 
-export default function AtAGlance({ property }: AtAGlanceProps) {
+export default function MokAiFacts({ property }: MokAiFactsProps) {
     const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
     const [selectedDataPoints, setSelectedDataPoints] = useState<string[]>([
         "property-type",
@@ -552,7 +552,7 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
 
     // Load saved preferences from localStorage
     useEffect(() => {
-        const saved = localStorage.getItem(`at-a-glance-${property.id}`);
+        const saved = localStorage.getItem(`mok-ai-facts-${property.id}`);
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -569,7 +569,7 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
     const handleSavePreferences = (selectedIds: string[]) => {
         setSelectedDataPoints(selectedIds);
         localStorage.setItem(
-            `at-a-glance-${property.id}`,
+            `mok-ai-facts-${property.id}`,
             JSON.stringify(selectedIds)
         );
     };
@@ -586,7 +586,7 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                 <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-start gap-4">
                     <h3 className="text-sm font-semibold text-gray-900">
-                        Quick View
+                        Mok.Ai Facts
                     </h3>
                     <button
                         onClick={() => setIsCustomizeModalOpen(true)}
@@ -670,3 +670,4 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
         </>
     );
 }
+
