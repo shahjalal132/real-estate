@@ -61,7 +61,7 @@ class PropertyImportService
                 'types' => $data['types'] ?? [],
                 'subtypes' => $data['subtypes'] ?? [],
                 'url_slug' => $slug,
-                'external_url' => $data['externalUrl'] ?? null,
+                'external_url' => $data['url'] ?? null,
                 'thumbnail_url' => $data['thumbnailUrl'] ?? null,
                 'number_of_images' => $data['numberOfImages'] ?? $data['numberOfGalleryItems'] ?? 0,
                 'has_flyer' => $data['hasFlyer'] ?? false,
