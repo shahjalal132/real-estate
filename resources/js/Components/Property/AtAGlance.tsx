@@ -627,10 +627,10 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
                                     <td className="px-4 py-3 w-1/2">
                                         {row.left && (
                                             <div className="flex justify-between items-center gap-6">
-                                                <span className="text-sm text-gray-600 font-medium">
+                                                <span className="text-xs text-gray-600 font-medium">
                                                     {row.left.label}
                                                 </span>
-                                                <span className="text-sm font-semibold text-gray-900">
+                                                <span className="text-xs font-semibold text-gray-900">
                                                     {getDataPointValue(
                                                         row.left.id
                                                     )}
@@ -642,10 +642,10 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
                                     <td className="px-4 py-3 w-1/2">
                                         {row.right && (
                                             <div className="flex justify-between items-center gap-6">
-                                                <span className="text-sm text-gray-600 font-medium">
+                                                <span className="text-xs text-gray-600 font-medium">
                                                     {row.right.label}
                                                 </span>
-                                                <span className="text-sm font-semibold text-gray-900">
+                                                <span className="text-xs font-semibold text-gray-900">
                                                     {getDataPointValue(
                                                         row.right.id
                                                     )}
