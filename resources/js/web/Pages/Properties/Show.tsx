@@ -431,7 +431,7 @@ export default function PropertyShow() {
                                 ref={sectionRefs.valuation}
                                 className="scroll-mt-20"
                             >
-                                <ValuationCalculator />
+                                <ValuationCalculator property={property} />
                             </div>
                         )}
 
