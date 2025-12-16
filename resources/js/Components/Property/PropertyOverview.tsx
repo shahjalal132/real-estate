@@ -170,10 +170,12 @@ export default function PropertyOverview({
                     <h1 className="text-2xl font-semibold text-gray-900 font-literata">
                         {fullAddress}
                     </h1>
-                    <p className="text-[15px] font-normal text-gray-700">{propertyName}</p>
+                    <p className="text-[15px] font-normal text-gray-700">
+                        {propertyName}
+                    </p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                    <ListingsButton />
+                    <ListingsButton externalLink={property.external_url} />
                     <NotesButton propertyId={property.id} />
                     <PrintButton onPrintClick={onPrintClick || (() => {})} />
                     <ShareButton
@@ -394,8 +396,8 @@ export default function PropertyOverview({
                     {/* At A Glance Section */}
                     {showAtAGlance && <AtAGlance property={property} />}
                     <div className="my-2">
-                    {/* Mok.Ai Facts Section */}
-                    {showAtAGlance && <MokAiFacts property={property} />}
+                        {/* Mok.Ai Facts Section */}
+                        {showAtAGlance && <MokAiFacts property={property} />}
                     </div>
                 </div>
             </div>

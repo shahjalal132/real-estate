@@ -102,10 +102,10 @@ export default function Header() {
     const mainNavItems = navigationItems.slice(0, 5);
     const rightNavItems = [
         navigationItems[8], // ZONING
+        navigationItems[9], // CONTACTS
         navigationItems[5], // PIPELINE
         navigationItems[6], // TOOLS
         navigationItems[7], // SETTINGS
-        navigationItems[9], // CONTACTS
     ];
 
     // For medium screens: first 6 visible, rest (excluding last 3) go to "MORE"
