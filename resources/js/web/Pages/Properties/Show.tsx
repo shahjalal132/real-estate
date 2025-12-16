@@ -23,6 +23,7 @@ import Demographics from "../../../Components/Property/Demographics";
 import ClimateRisk from "../../../Components/Property/ClimateRisk";
 import LocationInsights from "../../../Components/Property/LocationInsights";
 import SimilarProperties from "../../../Components/Property/SimilarProperties";
+import ValuationCalculator from "@/Components/Property/ValuationCalculator";
 
 interface PageProps extends InertiaPageProps {
     property: Property;
@@ -267,7 +268,7 @@ export default function PropertyShow() {
 
                 {/* Top Tabs */}
                 {!isPrintMode && <PropertyTopTabs />}
-                
+
                 <div
                     data-print-content
                     className={`max-w-[95%] mx-auto px-3 ${
@@ -430,7 +431,7 @@ export default function PropertyShow() {
                                 ref={sectionRefs.valuation}
                                 className="scroll-mt-20"
                             >
-                                {/* <ValuationCalculator /> */}
+                                <ValuationCalculator />
                             </div>
                         )}
 
