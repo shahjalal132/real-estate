@@ -33,6 +33,22 @@ export interface PropertyDetail {
     price_per_acre: string | null;
     investment_highlights: string | null;
     summary_details: Record<string, any> | null;
+    investment_type: string | null;
+    investment_sub_type: string | null;
+    class: string | null;
+    lease_type: string | null;
+    tenancy: string | null;
+    lease_expiration: string | null;
+    ground_lease: boolean | null;
+    net_rentable_sqft: number | null;
+    cap_rate: number | null;
+    pro_forma_noi: number | null;
+    price_per_unit: number | null;
+    occupancy_date: string | null;
+    parking_spaces: number | null;
+    ceiling_height: string | null;
+    ownership: string | null;
+    sale_condition: string | null;
 }
 
 export interface Brokerage {

@@ -228,7 +228,7 @@ export default function PropertyTabs({
     return (
         <div
             ref={stickyContainerRef}
-            className="sticky z-40 bg-white border-b  border-gray-200"
+            className="sticky z-40 bg-white border-b border-gray-200 shadow-sm"
             style={{ top: `${topPosition}px` }}
         >
             <div>
@@ -236,11 +236,11 @@ export default function PropertyTabs({
                 <div className="lg:hidden">
                     {/* Property Info Row - Only show when sticky */}
                     {isSticky && (
-                        <div className="flex items-center gap-3 px-4 py-2 border-b border-gray-100">
+                        <div className="flex items-center gap-2.5 px-3 py-1.5 border-b border-gray-100 bg-gray-50/30">
                             <img
                                 src={thumbnailUrl}
                                 alt={property.name || "Property"}
-                                className="w-12 h-9 object-cover rounded border border-gray-200 shrink-0"
+                                className="w-10 h-8 object-cover rounded border border-gray-200 shrink-0"
                             />
                             <div className="min-w-0 flex-1">
                                 <p className="text-xs font-medium text-gray-900 truncate">
@@ -250,16 +250,16 @@ export default function PropertyTabs({
                                     {formattedPrice}
                                 </p>
                             </div>
-                            <div className="flex items-center gap-2 shrink-0">
+                            <div className="flex items-center gap-1.5 shrink-0">
                                 <button
                                     type="button"
-                                    className="px-3 py-1.5 bg-[#0066CC] text-white text-xs font-semibold rounded hover:bg-[#0052A3] transition-colors"
+                                    className="px-2.5 py-1 bg-[#0066CC] text-white text-xs font-semibold rounded hover:bg-[#0052A3] transition-colors"
                                 >
                                     Request Info
                                 </button>
                                 <button
                                     type="button"
-                                    className="px-3 py-1.5 bg-white text-[#0066CC] text-xs font-semibold rounded border border-[#0066CC] hover:bg-blue-50 transition-colors"
+                                    className="px-2.5 py-1 bg-white text-[#0066CC] text-xs font-semibold rounded border border-[#0066CC] hover:bg-blue-50 transition-colors"
                                 >
                                     View Flyer
                                 </button>
@@ -267,12 +267,12 @@ export default function PropertyTabs({
                         </div>
                     )}
                     {/* Tabs Row */}
-                    <div className="flex items-center justify-center gap-1 px-2 py-2 overflow-x-auto scrollbar-hide">
+                    <div className="flex items-center justify-center gap-0.5 px-2 py-1.5 overflow-x-auto scrollbar-hide">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => handleTabClick(tab.id)}
-                                className={`shrink-0 px-3 py-1.5 text-[15px] font-normal whitespace-nowrap border-b-2 transition-all duration-200 ${
+                                className={`shrink-0 px-2.5 py-1 text-sm font-medium whitespace-nowrap border-b-2 transition-all duration-200 ${
                                     activeTab === tab.id
                                         ? "border-[#0066CC] text-[#0066CC] font-semibold"
                                         : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
@@ -286,17 +286,17 @@ export default function PropertyTabs({
 
                 {/* Desktop: Horizontal Layout */}
                 <div
-                    className={`hidden lg:flex items-center gap-4 px-4 py-1 ${
+                    className={`hidden lg:flex items-center gap-3 px-4 py-1 ${
                         isSticky ? "justify-between" : "justify-center"
                     }`}
                 >
                     {/* Left: Property Thumbnail and Info - Only show when sticky */}
                     {isSticky && (
-                        <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-2.5 shrink-0">
                             <img
                                 src={thumbnailUrl}
                                 alt={property.name || "Property"}
-                                className="w-16 h-12 object-cover rounded border border-gray-200"
+                                className="w-14 h-10 object-cover rounded border border-gray-200"
                             />
                             <div className="min-w-0">
                                 <p className="text-xs font-medium text-gray-900 truncate">
@@ -311,7 +311,7 @@ export default function PropertyTabs({
 
                     {/* Middle: Scrollable Tabs with Navigation */}
                     <div
-                        className={`flex items-center gap-2 ${
+                        className={`flex items-center gap-1.5 ${
                             isSticky ? "flex-1 min-w-0" : "justify-center"
                         }`}
                     >
@@ -330,7 +330,7 @@ export default function PropertyTabs({
                         {/* Tabs Container */}
                         <div
                             ref={tabsContainerRef}
-                            className={`flex items-center gap-1 overflow-x-auto scrollbar-hide ${
+                            className={`flex items-center gap-0.5 overflow-x-auto scrollbar-hide ${
                                 isSticky ? "flex-1" : ""
                             }`}
                         >
@@ -338,10 +338,10 @@ export default function PropertyTabs({
                                 <button
                                     key={tab.id}
                                     onClick={() => handleTabClick(tab.id)}
-                                    className={`shrink-0 px-2 py-2 text-[15px] font-normal whitespace-nowrap border-b-2 transition-all duration-200 ${
+                                    className={`shrink-0 px-3 py-1.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all duration-200 ${
                                         activeTab === tab.id
                                             ? "border-[#0066CC] text-[#0066CC] font-semibold"
-                                            : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-200"
+                                            : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                                     }`}
                                 >
                                     {tab.label}
@@ -367,13 +367,13 @@ export default function PropertyTabs({
                         <div className="flex items-center gap-2 shrink-0">
                             <button
                                 type="button"
-                                className="px-4 py-2 bg-[#0066CC] text-white text-sm font-semibold rounded hover:bg-[#0052A3] transition-colors whitespace-nowrap"
+                                className="px-3 py-1.5 bg-[#0066CC] text-white text-xs font-semibold rounded hover:bg-[#0052A3] transition-colors whitespace-nowrap"
                             >
                                 Request Info
                             </button>
                             <button
                                 type="button"
-                                className="px-4 py-2 bg-white text-[#0066CC] text-sm font-semibold rounded border border-[#0066CC] hover:bg-blue-50 transition-colors whitespace-nowrap"
+                                className="px-3 py-1.5 bg-white text-[#0066CC] text-xs font-semibold rounded border border-[#0066CC] hover:bg-blue-50 transition-colors whitespace-nowrap"
                             >
                                 View Flyer
                             </button>

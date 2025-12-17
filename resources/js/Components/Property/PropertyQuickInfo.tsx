@@ -1,5 +1,5 @@
 import { Camera, Video, Globe, FileText } from "lucide-react";
-import { Property } from "../../../types";
+import { Property } from "@/types";
 
 interface PropertyQuickInfoProps {
     property: Property;

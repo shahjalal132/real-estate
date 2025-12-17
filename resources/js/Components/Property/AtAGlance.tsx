@@ -583,14 +583,14 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
 
     return (
         <>
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-start gap-4">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                <div className="bg-gray-50/50 px-4 py-1.5 border-b border-gray-200 flex items-center justify-start gap-3">
                     <h3 className="text-sm font-semibold text-gray-900">
                         Quick View
                     </h3>
                     <button
                         onClick={() => setIsCustomizeModalOpen(true)}
-                        className="text-xs cursor-pointer text-[#0066CC] hover:text-[#0052A3] font-medium"
+                        className="text-xs cursor-pointer text-[#0066CC] hover:text-[#0052A3] font-medium transition-colors"
                     >
                         Customize
                     </button>
@@ -621,40 +621,50 @@ export default function AtAGlance({ property }: AtAGlanceProps) {
                                 },
                                 []
                             )
-                            .map((row, rowIndex) => (
-                                <tr key={rowIndex}>
-                                    {/* Left Column */}
-                                    <td className="px-4 py-3 w-1/2">
-                                        {row.left && (
-                                            <div className="flex justify-between items-center gap-6">
-                                                <span className="text-xs text-gray-600 font-medium">
-                                                    {row.left.label}
-                                                </span>
-                                                <span className="text-xs font-semibold text-gray-900">
-                                                    {getDataPointValue(
-                                                        row.left.id
-                                                    )}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </td>
-                                    {/* Right Column */}
-                                    <td className="px-4 py-3 w-1/2">
-                                        {row.right && (
-                                            <div className="flex justify-between items-center gap-6">
-                                                <span className="text-xs text-gray-600 font-medium">
-                                                    {row.right.label}
-                                                </span>
-                                                <span className="text-xs font-semibold text-gray-900">
-                                                    {getDataPointValue(
-                                                        row.right.id
-                                                    )}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
+                            .map((row, rowIndex) => {
+                                const isEven = rowIndex % 2 === 0;
+                                return (
+                                    <tr
+                                        key={rowIndex}
+                                        className={
+                                            isEven
+                                                ? "bg-gray-50/50 hover:bg-gray-50 transition-colors"
+                                                : "bg-white hover:bg-gray-50/30 transition-colors"
+                                        }
+                                    >
+                                        {/* Left Column */}
+                                        <td className="px-4 py-2 border-r border-gray-200 w-1/2">
+                                            {row.left && (
+                                                <div className="flex justify-between items-center gap-4">
+                                                    <span className="text-xs text-gray-600 font-medium">
+                                                        {row.left.label}
+                                                    </span>
+                                                    <span className="text-xs font-semibold text-gray-900 text-right">
+                                                        {getDataPointValue(
+                                                            row.left.id
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </td>
+                                        {/* Right Column */}
+                                        <td className="px-4 py-2 w-1/2">
+                                            {row.right && (
+                                                <div className="flex justify-between items-center gap-4">
+                                                    <span className="text-xs text-gray-600 font-medium">
+                                                        {row.right.label}
+                                                    </span>
+                                                    <span className="text-xs font-semibold text-gray-900 text-right">
+                                                        {getDataPointValue(
+                                                            row.right.id
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                     </tbody>
                 </table>
             </div>
