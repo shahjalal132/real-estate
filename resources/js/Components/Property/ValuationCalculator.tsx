@@ -6,25 +6,19 @@ interface ValuationCalculatorProps {
     property?: Property;
 }
 
-// Helper function to format number with commas
+// Helper function to format number with commas (no decimals for currency)
 const formatNumber = (value: string | number): string => {
     const numStr = typeof value === "number" ? value.toString() : value;
     // Remove all non-digit characters except decimal point
     const cleaned = numStr.replace(/[^\d.]/g, "");
     if (!cleaned) return "";
 
-    // Split into integer and decimal parts
-    const parts = cleaned.split(".");
-    const integerPart = parts[0];
-    const decimalPart = parts[1];
+    // Round to whole number to avoid floating point errors
+    const numValue = parseFloat(cleaned);
+    const rounded = Math.round(numValue);
 
-    // Format integer part with commas
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // Combine with decimal part if exists
-    return decimalPart !== undefined
-        ? `${formattedInteger}.${decimalPart}`
-        : formattedInteger;
+    // Format integer part with commas (no decimals)
+    return rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 // Helper function to parse formatted number string to number
@@ -78,6 +72,12 @@ export default function ValuationCalculator({
         return 0;
     }, [purchasePriceNum, downPaymentNum]);
 
+    // Calculate Down Payment percentage (100 - LTV)
+    const downPaymentPercent = useMemo(() => {
+        const ltv = isLtvControlled ? loanToValue : calculatedLtv;
+        return 100 - ltv;
+    }, [isLtvControlled, loanToValue, calculatedLtv]);
+
     // Sync LTV slider when down payment or purchase price changes manually
     useEffect(() => {
         if (!isLtvControlled && purchasePriceNum > 0) {
@@ -89,7 +89,9 @@ export default function ValuationCalculator({
     const handleLtvChange = (newLtv: number) => {
         setIsLtvControlled(true);
         setLoanToValue(newLtv);
-        const newDownPayment = purchasePriceNum * (1 - newLtv / 100);
+        const newDownPayment = Math.round(
+            purchasePriceNum * (1 - newLtv / 100)
+        );
         setDownPayment(formatNumber(newDownPayment.toString()));
     };
 
@@ -140,17 +142,23 @@ export default function ValuationCalculator({
               (Math.pow(1 + monthlyRate, numPayments) - 1)
             : 0;
 
-    const annualDebtService = monthlyPayment * 12;
-    const annualCashFlow = noiNum - annualDebtService;
-    const monthlyCashFlow = annualCashFlow / 12;
+    // Round to avoid floating point precision issues
+    const annualDebtService = Math.round(monthlyPayment * 12 * 100) / 100;
+    const annualCashFlow = Math.round((noiNum - annualDebtService) * 100) / 100;
+    const monthlyCashFlow = Math.round((annualCashFlow / 12) * 100) / 100;
 
-    // Valuation Metrics
-    const dscr = annualDebtService > 0 ? noiNum / annualDebtService : 0;
+    // Valuation Metrics - round to 2 decimal places
+    const dscr =
+        annualDebtService > 0
+            ? Math.round((noiNum / annualDebtService) * 100) / 100
+            : 0;
     const capRate =
-        purchasePriceNum > 0 ? (noiNum / purchasePriceNum) * 100 : 0;
-    const roi =
+        purchasePriceNum > 0
+            ? Math.round((noiNum / purchasePriceNum) * 10000) / 100
+            : 0;
+    const cashOnCash =
         downPaymentNum > 0 && annualCashFlow > 0
-            ? (annualCashFlow / downPaymentNum) * 100
+            ? Math.round((annualCashFlow / downPaymentNum) * 10000) / 100
             : 0;
 
     // Info icon component
@@ -216,10 +224,7 @@ export default function ValuationCalculator({
                                     className="w-full pl-8 pr-16 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-[#0066CC]"
                                 />
                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600 font-medium">
-                                    {isLtvControlled
-                                        ? loanToValue
-                                        : calculatedLtv}
-                                    %
+                                    {downPaymentPercent}%
                                 </span>
                             </div>
                             {/* LTV Slider */}
@@ -319,9 +324,8 @@ export default function ValuationCalculator({
                         </div>
                         <div className="text-2xl font-bold text-[#0066CC]">
                             $
-                            {loanAmount.toLocaleString(undefined, {
-                                maximumFractionDigits: 2,
-                                minimumFractionDigits: 2,
+                            {Math.round(loanAmount).toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
                             })}
                         </div>
                     </div>
@@ -336,17 +340,21 @@ export default function ValuationCalculator({
                         </div>
                         <div className="text-2xl font-bold text-[#0066CC]">
                             $
-                            {annualDebtService.toLocaleString(undefined, {
-                                maximumFractionDigits: 2,
-                                minimumFractionDigits: 2,
-                            })}
+                            {Math.round(annualDebtService).toLocaleString(
+                                undefined,
+                                {
+                                    maximumFractionDigits: 0,
+                                }
+                            )}
                         </div>
                         <div className="text-sm text-gray-600 mt-1">
                             $
-                            {monthlyPayment.toLocaleString(undefined, {
-                                maximumFractionDigits: 2,
-                                minimumFractionDigits: 2,
-                            })}
+                            {Math.round(monthlyPayment).toLocaleString(
+                                undefined,
+                                {
+                                    maximumFractionDigits: 0,
+                                }
+                            )}
                             /mo
                         </div>
                     </div>
@@ -361,17 +369,21 @@ export default function ValuationCalculator({
                         </div>
                         <div className="text-2xl font-bold text-[#0066CC]">
                             $
-                            {annualCashFlow.toLocaleString(undefined, {
-                                maximumFractionDigits: 2,
-                                minimumFractionDigits: 2,
-                            })}
+                            {Math.round(annualCashFlow).toLocaleString(
+                                undefined,
+                                {
+                                    maximumFractionDigits: 0,
+                                }
+                            )}
                         </div>
                         <div className="text-sm text-gray-600 mt-1">
                             $
-                            {monthlyCashFlow.toLocaleString(undefined, {
-                                maximumFractionDigits: 2,
-                                minimumFractionDigits: 2,
-                            })}
+                            {Math.round(monthlyCashFlow).toLocaleString(
+                                undefined,
+                                {
+                                    maximumFractionDigits: 0,
+                                }
+                            )}
                             /mo
                         </div>
                     </div>
@@ -417,21 +429,21 @@ export default function ValuationCalculator({
                         <InfoIcon tooltip="Capitalization Rate: NOI divided by Purchase Price, expressed as a percentage" />
                     </div>
 
-                    {/* ROI */}
+                    {/* Cash on Cash */}
                     <div className="flex items-center justify-between">
                         <div>
                             <div className="text-2xl font-bold text-gray-900">
-                                {roi.toLocaleString(undefined, {
+                                {cashOnCash.toLocaleString(undefined, {
                                     maximumFractionDigits: 2,
                                     minimumFractionDigits: 2,
                                 })}
                                 %
                             </div>
                             <div className="text-sm text-gray-600 mt-1">
-                                ROI
+                                Cash on Cash
                             </div>
                         </div>
-                        <InfoIcon tooltip="Return on Investment: Annual Cash Flow divided by Down Payment, expressed as a percentage" />
+                        <InfoIcon tooltip="Cash on Cash Return: Annual Cash Flow divided by Down Payment, expressed as a percentage" />
                     </div>
                 </div>
             </div>

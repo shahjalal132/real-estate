@@ -164,26 +164,24 @@ export default function PropertyShow() {
     const actualImages = property.images || [];
     const brokers = property.brokers || [];
 
-    // Create image array with placeholders based on number_of_images
-    const totalImages = property.number_of_images || actualImages.length || 1;
-    const images: ExtendedPropertyImage[] = Array.from(
-        { length: totalImages },
-        (_, index) => {
-            if (index < actualImages.length) {
-                return {
-                    ...actualImages[index],
-                    isPlaceholder: false,
-                };
-            }
-            return {
-                id: `placeholder-${index}`,
-                url: "/assets/images/placeholder.png",
-                position: index,
-                is_thumbnail: false,
-                isPlaceholder: true,
-            };
-        }
-    );
+    // Only use actual images - don't create placeholders
+    // The number_of_images field may not match actual stored images (especially for old format)
+    // So we only show images we actually have
+    const images: ExtendedPropertyImage[] = actualImages.map((img) => ({
+        ...img,
+        isPlaceholder: false,
+    }));
+
+    // If no images but we have a thumbnail, use that
+    if (images.length === 0 && property.thumbnail_url) {
+        images.push({
+            id: "thumbnail",
+            url: property.thumbnail_url,
+            position: 0,
+            is_thumbnail: true,
+            isPlaceholder: false,
+        });
+    }
 
     // Format price
     const formattedPrice =

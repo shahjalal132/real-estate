@@ -1,0 +1,822 @@
+[
+    {
+        "subtypes": ["Apartment Building"],
+        "investmentHighlights": "<ul><li>​<p><span style=\"color: rgba(48, 48, 48, 1)\">UNIT MIX: 36 Units (18) 2 Bedroom/1 Bathroom & (18) 2 Bedroom/2 Bathroom</span></p></li><li>​<p><span style=\"color: rgba(48, 48, 48, 1)\">LOCATION: 5-minute walk from Oakland Park Blvd retail centers, which include national retailers such as Publix, Truist, Pollo Tropical, etc.</span></p></li><li>​<p><span style=\"color: rgba(48, 48, 48, 1)\">BUILDING FEATURES: Up-to-date appliances, lakeview, 18 storage units, assigned parking for each unit, all units have individual central A/C, each unit has washer and dryer</span></p></li><li>​<p><span style=\"color: rgba(48, 48, 48, 1)\">OWNERSHIP ADVANTAGE: This investment has multiple exit strategies due to the owner controlling 100% of the units in the HOA</span></p></li><li>​<p><span style=\"color: rgba(48, 48, 48, 1)\">RENTAL UPSIDE: 10% upside in rents with yearly leases fully occupied</span></p><p></p></li></ul>",
+        "escrowPeriodCap": 30,
+        "earnestDepositAmount": 10,
+        "earnestDepositAmountInPercent": true,
+        "qualFormRequired": false,
+        "marketingDescription": "<p><strong><span style=\"color: rgba(51, 51, 51, 1)\">For registration requirements and regulations, please review </span></strong><a href=\"https://learn.crexi.com/how-to-register-for-an-auction-crexi-help-center\"><strong><span style=\"color: rgba(0, 82, 204, 1)\">here</span></strong></a><strong><span style=\"color: rgba(0, 0, 255, 1)\"> </span><span style=\"color: rgba(51, 51, 51, 1)\">or contact </span><span style=\"color: rgba(0, 0, 0, 1)\">Bianca Diorio | 954-302-3810 | bianca@crexi.​com.​</span></strong></p><p><strong>Touring is available December 12th from 10am-2pm.​ Please RSVP with Erik Leon at erik.​leon@matthews.​com.​</strong></p><p>Introducing INVERRARY ON THE LAKE, a prime investment opportunity located at 2561, 2571, 2581 and 2591 NW 56th Ave, Lauderhill, FL 33313.​ This 36-unit apartment complex offers a mix of spacious floor plans, including two-bedroom layouts, all set in a picturesque lakeside environment.​ With market rents set to increase significantly, this property presents strong income potential, boasting modern amenities like a community pool and clubhouse.​ Situated close to major highways and various amenities, Inverrary on the Lake provides convenience for both residents and potential investors.​ The property also includes additional income opportunities with 18 storage units and individual central A/C in each unit.​ Don't miss out on this unique chance to own a well-located asset with solid growth prospects in a rapidly developing area.​ For sale price and further details, contact the broker today!</p><p style=\"text-align: justify\"><span style=\"color: rgba(17, 17, 17, 1)\">·       </span><strong><span style=\"color: rgba(17, 17, 17, 1)\">Non-Contingent</span></strong></p><p style=\"text-align: justify\"><span style=\"color: rgba(17, 17, 17, 1)\">·       </span><strong><span style=\"color: rgba(17, 17, 17, 1)\">Earnest Money Deposit is Greater of $20,000 or 10% of the Purchase Price</span></strong></p><p style=\"text-align: justify\"><span style=\"color: rgba(17, 17, 17, 1)\">·       </span><strong><span style=\"color: rgba(17, 17, 17, 1)\">Marketing Fee: 5% of the Winning Bid Amount, $20,000 minimum</span></strong></p><p style=\"text-align: justify\"><span style=\"color: rgba(17, 17, 17, 1)\">·       </span><strong><span style=\"color: rgba(17, 17, 17, 1)\">$10,000 Participation Deposit</span></strong></p><p> </p><p>2561, 2571, 2581 and 2591 NW 56th Ave, Lauderhill, FL 33313</p>",
+        "hasVault": true,
+        "hasPrivateVault": true,
+        "hideAddress": false,
+        "hideStreetView": false,
+        "details": {
+            "Starting Bid": "$2,000,000",
+            "Property Type": "Multifamily",
+            "Sub Type": "Apartment Building",
+            "Square Footage": "99,805",
+            "Net Rentable (SqFt)": "33,246",
+            "Occupancy": "100%",
+            "NOI": "$513,455",
+            "Units": "36",
+            "Year Built": "1988",
+            "Buildings": "4",
+            "Stories": "2",
+            "Zoning": "RM-18",
+            "Lot Size (acres)": "2.29",
+            "Broker Co-Op": "Yes",
+            "APN": "See INVERRARY ON THE LAKE_Parcel IDs in DD vault"
+        },
+        "summaryDetails": [
+            {
+                "key": "AskingPrice",
+                "value": 2000000,
+                "valueType": "Money",
+                "label": "Asking Price",
+                "display": "$2,000,000"
+            },
+            {
+                "key": "PropertyType",
+                "value": ["Multifamily"],
+                "valueType": "Array",
+                "label": "Property Type",
+                "display": "Multifamily"
+            },
+            {
+                "key": "SubType",
+                "value": ["Apartment Building"],
+                "valueType": "Array",
+                "label": "Subtype",
+                "display": "Apartment Building"
+            },
+            {
+                "key": "SquareFootage",
+                "value": 99805,
+                "valueType": "IntegerType",
+                "label": "Square Footage",
+                "display": "99,805"
+            },
+            {
+                "key": "NetRentableArea",
+                "value": 33246,
+                "valueType": "IntegerType",
+                "label": "Net Rentable (SqFt)",
+                "display": "33,246"
+            },
+            {
+                "key": "Occupancy",
+                "value": "100",
+                "valueType": "Text",
+                "label": "Occupancy",
+                "display": "100%"
+            },
+            {
+                "key": "Noi",
+                "value": 513455,
+                "valueType": "Money",
+                "label": "NOI",
+                "display": "$513,455"
+            },
+            {
+                "key": "Units",
+                "value": 36,
+                "valueType": "IntegerType",
+                "label": "Units",
+                "display": "36"
+            },
+            {
+                "key": "YearBuilt",
+                "value": "1988",
+                "valueType": "Text",
+                "label": "Year Built",
+                "display": "1988"
+            },
+            {
+                "key": "Buildings",
+                "value": 4,
+                "valueType": "IntegerType",
+                "label": "Buildings",
+                "display": "4"
+            },
+            {
+                "key": "Stories",
+                "value": 2,
+                "valueType": "IntegerType",
+                "label": "Stories",
+                "display": "2"
+            },
+            {
+                "key": "PermittedZoning",
+                "value": "RM-18",
+                "valueType": "Text",
+                "label": "Permitted Zoning",
+                "display": "RM-18"
+            },
+            {
+                "key": "LotSize",
+                "value": 2.29,
+                "valueType": "IntegerType",
+                "label": "Lot Size (acres)",
+                "display": "2.29"
+            },
+            {
+                "key": "BrokerCoOp",
+                "value": "Yes",
+                "valueType": "Text",
+                "label": "Broker Co-Op",
+                "display": "Yes"
+            },
+            {
+                "key": "Apn",
+                "value": "See INVERRARY ON THE LAKE_Parcel IDs in DD vault",
+                "valueType": "Text",
+                "label": "APN",
+                "display": "See INVERRARY ON THE LAKE_Parcel IDs in DD vault"
+            }
+        ],
+        "loanDetails": {},
+        "assetUiConfiguration": {
+            "hideCapRate": false,
+            "hideAddress": false,
+            "hideStreetView": false,
+            "hideOpportunityZone": false,
+            "hidePropertyHistory": true,
+            "hideValuationCalculator": true,
+            "hidePlacerInsights": false,
+            "hideDemographicInsights": false,
+            "hideSubmitLOI": false,
+            "hideViewFlyer": false,
+            "hideViewOM": false,
+            "hideDueDiligence": false,
+            "hideIntelComponents": false
+        },
+        "createdOn": "2025-11-10T21:05:47.527Z",
+        "activatedOn": "2025-11-17T20:26:24.534Z",
+        "vaultAccessStatus": "AuthRequired",
+        "hasBrokerOfRecord": true,
+        "brokerOfRecordName": "Kyle Matthews",
+        "brokerOfRecordLicense": "FL CQ1052263",
+        "brokerOfRecordBrokerageName": "Matthews Real Estate Investment Services, Inc.",
+        "brokerOfRecordPhone": "",
+        "locations": [
+            {
+                "cityVerified": "Lauderhill",
+                "stateVerified": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "address": "2561 NW 56th Ave",
+                "city": "Lauderhill",
+                "county": "Broward County",
+                "state": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "zip": "33313",
+                "latitude": 26.1579355,
+                "longitude": -80.2273649
+            },
+            {
+                "cityVerified": "Lauderhill",
+                "stateVerified": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "address": "2571 NW 56th Ave",
+                "city": "Lauderhill",
+                "county": "Broward County",
+                "state": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "zip": "33313",
+                "latitude": 26.1576702,
+                "longitude": -80.2273606
+            },
+            {
+                "cityVerified": "Lauderhill",
+                "stateVerified": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "address": "2581 NW 56th Ave",
+                "city": "Lauderhill",
+                "county": "Broward County",
+                "state": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "zip": "33313",
+                "latitude": 26.1579346,
+                "longitude": -80.2273651
+            },
+            {
+                "cityVerified": "Lauderhill",
+                "stateVerified": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "address": "2591 NW 56th Ave",
+                "city": "Lauderhill",
+                "county": "Broward County",
+                "state": {
+                    "code": "FL",
+                    "name": "Florida"
+                },
+                "zip": "33313",
+                "latitude": 26.1584239,
+                "longitude": -80.2274985
+            }
+        ],
+        "feeAgreementIsRequired": false,
+        "userCanDownloadMd": false,
+        "userExecutedCA": false,
+        "isSavedToBoards": false,
+        "caPrincipalInfoType": "None",
+        "allLoiFieldsRequired": true,
+        "hasClosing": false,
+        "usePrintViewAsFlyer": false,
+        "isInOpportunityZone": false,
+        "netOperatingIncome": 513455,
+        "pricePerItemType": "Unit",
+        "isNoteLoan": false,
+        "hasVirtualTour": false,
+        "hidePropertyHistory": true,
+        "hideValuationCalculator": true,
+        "hideClimateRisk": false,
+        "hidePlacerInsights": false,
+        "hideDemographicInsights": false,
+        "depositOption": "Credit Card",
+        "participationDepositAmount": 10000,
+        "brokerProducts": ["All Pro", "Legacy Sale Pro"],
+        "hasDefaultSummaryDetails": false,
+        "offersDueOn": "2025-12-17T17:40:00Z",
+        "showCountdownAsDate": false,
+        "askingPrice": 2000000,
+        "userIsAssetOwner": false,
+        "isSold": false,
+        "isPaused": false,
+        "updatedOn": "2025-12-16T19:31:32.794Z",
+        "isOutdated": false,
+        "hasOM": true,
+        "hasFlyer": false,
+        "types": ["Multifamily"],
+        "status": "Auction",
+        "id": "2250454",
+        "name": "36 Unit, Two-Story Apartment Complex",
+        "description": "Inverrary on the Lake",
+        "thumbnailUrl": "https://images.crexi.com/assets/2250454/3a22619eae7f44ec84d792c2169025aa_716x444.jpg",
+        "isPrivate": false,
+        "urlSlug": "florida-inverrary-on-the-lake-36-units",
+        "isComp": false,
+        "isElite": false,
+        "isSellSubjectTo": false,
+        "hasAuctioneer": false,
+        "realtorBoards": [],
+        "isValid": true,
+        "ajaxUrl": "https://api.crexi.com/assets/2250454",
+        "label": "GET_DETAILS",
+        "propertyRecord": null,
+        "media": [
+            {
+                "id": 28375135,
+                "type": "Video",
+                "isPending": false,
+                "hasModeration": false,
+                "embedCode": "<div style=\"padding:56.25% 0 0 0;position:relative;\"><iframe src=\"https://player.vimeo.com/video/1137275876?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" style=\"position:absolute;top:0;left:0;width:100%;height:100%;\" title=\"Multifamily for Auction | 2561, 2571, 2581 and 2591 NW 56th Ave, Lauderhill, FL 33313\"></iframe></div><script src=\"https://player.vimeo.com/api/player.js\"></script>"
+            },
+            {
+                "id": 28883267,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/3a22619eae7f44ec84d792c2169025aa_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/3a22619eae7f44ec84d792c2169025aa_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/3a22619eae7f44ec84d792c2169025aa_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/3a22619eae7f44ec84d792c2169025aa_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/3a22619eae7f44ec84d792c2169025aa_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28285927,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/f6ff5ce7f06145a3b0030f0f109f34cc_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/f6ff5ce7f06145a3b0030f0f109f34cc_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/f6ff5ce7f06145a3b0030f0f109f34cc_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/f6ff5ce7f06145a3b0030f0f109f34cc_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/f6ff5ce7f06145a3b0030f0f109f34cc_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28375137,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/80d4668259f047a58724e70084c8cda6_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/80d4668259f047a58724e70084c8cda6_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/80d4668259f047a58724e70084c8cda6_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/80d4668259f047a58724e70084c8cda6_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/80d4668259f047a58724e70084c8cda6_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28285931,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/495780c9a37f42d1a1b018aa02206eec_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/495780c9a37f42d1a1b018aa02206eec_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/495780c9a37f42d1a1b018aa02206eec_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/495780c9a37f42d1a1b018aa02206eec_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/495780c9a37f42d1a1b018aa02206eec_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28285926,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/359f864a95b3444b93cf63b6ed0734a2_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/359f864a95b3444b93cf63b6ed0734a2_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/359f864a95b3444b93cf63b6ed0734a2_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/359f864a95b3444b93cf63b6ed0734a2_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/359f864a95b3444b93cf63b6ed0734a2_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28285928,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/80744d4b2c4c4225aa9114029b383c57_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/80744d4b2c4c4225aa9114029b383c57_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/80744d4b2c4c4225aa9114029b383c57_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/80744d4b2c4c4225aa9114029b383c57_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/80744d4b2c4c4225aa9114029b383c57_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28285929,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/7c04ec605d9949ee94c02508d9316647_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/7c04ec605d9949ee94c02508d9316647_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/7c04ec605d9949ee94c02508d9316647_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/7c04ec605d9949ee94c02508d9316647_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/7c04ec605d9949ee94c02508d9316647_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28285930,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/fde26ecd7d01451885df7993d849521d_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/fde26ecd7d01451885df7993d849521d_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/fde26ecd7d01451885df7993d849521d_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/fde26ecd7d01451885df7993d849521d_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/fde26ecd7d01451885df7993d849521d_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28285932,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/d9525487e8df49fe9151c2e73b0d72a4_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/d9525487e8df49fe9151c2e73b0d72a4_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/d9525487e8df49fe9151c2e73b0d72a4_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/d9525487e8df49fe9151c2e73b0d72a4_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/d9525487e8df49fe9151c2e73b0d72a4_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28289099,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/38302ae3149346bf9254f4dd2da54e3f_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/38302ae3149346bf9254f4dd2da54e3f_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/38302ae3149346bf9254f4dd2da54e3f_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/38302ae3149346bf9254f4dd2da54e3f_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/38302ae3149346bf9254f4dd2da54e3f_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290539,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/df5372dbb93445c4be3201fb3a76931b_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/df5372dbb93445c4be3201fb3a76931b_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/df5372dbb93445c4be3201fb3a76931b_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/df5372dbb93445c4be3201fb3a76931b_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/df5372dbb93445c4be3201fb3a76931b_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290540,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/81ccc0b2a6b54a3e954d553443c5820f_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/81ccc0b2a6b54a3e954d553443c5820f_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/81ccc0b2a6b54a3e954d553443c5820f_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/81ccc0b2a6b54a3e954d553443c5820f_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/81ccc0b2a6b54a3e954d553443c5820f_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290552,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/d39e0aa65fa04553bd6507ae6023db0e_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/d39e0aa65fa04553bd6507ae6023db0e_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/d39e0aa65fa04553bd6507ae6023db0e_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/d39e0aa65fa04553bd6507ae6023db0e_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/d39e0aa65fa04553bd6507ae6023db0e_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290553,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/f45baa56cd2b47469a0a13d1a673be56_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/f45baa56cd2b47469a0a13d1a673be56_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/f45baa56cd2b47469a0a13d1a673be56_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/f45baa56cd2b47469a0a13d1a673be56_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/f45baa56cd2b47469a0a13d1a673be56_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290554,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/e5bfb1982f4440d095f321a04ba11bc7_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/e5bfb1982f4440d095f321a04ba11bc7_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/e5bfb1982f4440d095f321a04ba11bc7_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/e5bfb1982f4440d095f321a04ba11bc7_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/e5bfb1982f4440d095f321a04ba11bc7_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290555,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/45975a344a384a5789808a6483b16e79_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/45975a344a384a5789808a6483b16e79_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/45975a344a384a5789808a6483b16e79_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/45975a344a384a5789808a6483b16e79_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/45975a344a384a5789808a6483b16e79_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290556,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/eb5967c999e441dbbd8f59be7888ecbe_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/eb5967c999e441dbbd8f59be7888ecbe_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/eb5967c999e441dbbd8f59be7888ecbe_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/eb5967c999e441dbbd8f59be7888ecbe_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/eb5967c999e441dbbd8f59be7888ecbe_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290557,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/77d01602aff14d6090583e13d5c2e21c_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/77d01602aff14d6090583e13d5c2e21c_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/77d01602aff14d6090583e13d5c2e21c_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/77d01602aff14d6090583e13d5c2e21c_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/77d01602aff14d6090583e13d5c2e21c_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290558,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/1b4edd240f8440caaa0cb0772032b1ee_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/1b4edd240f8440caaa0cb0772032b1ee_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/1b4edd240f8440caaa0cb0772032b1ee_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/1b4edd240f8440caaa0cb0772032b1ee_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/1b4edd240f8440caaa0cb0772032b1ee_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290559,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/9bfa27093c2643439233583ecd16d8dd_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/9bfa27093c2643439233583ecd16d8dd_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/9bfa27093c2643439233583ecd16d8dd_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/9bfa27093c2643439233583ecd16d8dd_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/9bfa27093c2643439233583ecd16d8dd_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290560,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/834ecd75488c47998ad9ad17d27e7a2b_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/834ecd75488c47998ad9ad17d27e7a2b_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/834ecd75488c47998ad9ad17d27e7a2b_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/834ecd75488c47998ad9ad17d27e7a2b_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/834ecd75488c47998ad9ad17d27e7a2b_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290561,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/2770f51606164175a2b942a3598042ee_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/2770f51606164175a2b942a3598042ee_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/2770f51606164175a2b942a3598042ee_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/2770f51606164175a2b942a3598042ee_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/2770f51606164175a2b942a3598042ee_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290562,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/29557d6716e04c4aa10b822a49fa7944_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/29557d6716e04c4aa10b822a49fa7944_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/29557d6716e04c4aa10b822a49fa7944_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/29557d6716e04c4aa10b822a49fa7944_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/29557d6716e04c4aa10b822a49fa7944_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290563,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/fbd5b76e92f245098bfcf9171363ea14_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/fbd5b76e92f245098bfcf9171363ea14_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/fbd5b76e92f245098bfcf9171363ea14_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/fbd5b76e92f245098bfcf9171363ea14_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/fbd5b76e92f245098bfcf9171363ea14_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290564,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/3d5f305124994198b97c880f385a32c2_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/3d5f305124994198b97c880f385a32c2_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/3d5f305124994198b97c880f385a32c2_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/3d5f305124994198b97c880f385a32c2_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/3d5f305124994198b97c880f385a32c2_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290565,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/3ee5a21528b149a59f29b2528fbce0a1_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/3ee5a21528b149a59f29b2528fbce0a1_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/3ee5a21528b149a59f29b2528fbce0a1_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/3ee5a21528b149a59f29b2528fbce0a1_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/3ee5a21528b149a59f29b2528fbce0a1_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290566,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/7476987b31624d1088764c9979af50f6_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/7476987b31624d1088764c9979af50f6_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/7476987b31624d1088764c9979af50f6_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/7476987b31624d1088764c9979af50f6_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/7476987b31624d1088764c9979af50f6_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28290567,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/b15b2d715fe14dd394790bad26b25c0a_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/b15b2d715fe14dd394790bad26b25c0a_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/b15b2d715fe14dd394790bad26b25c0a_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/b15b2d715fe14dd394790bad26b25c0a_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/b15b2d715fe14dd394790bad26b25c0a_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28200018,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/ca8920f270e540c894d5bb21ddce3d4d_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/ca8920f270e540c894d5bb21ddce3d4d_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/ca8920f270e540c894d5bb21ddce3d4d_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/ca8920f270e540c894d5bb21ddce3d4d_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/ca8920f270e540c894d5bb21ddce3d4d_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28200017,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/1a00ec8def3042ce9d9adbe8801c7706_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/1a00ec8def3042ce9d9adbe8801c7706_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/1a00ec8def3042ce9d9adbe8801c7706_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/1a00ec8def3042ce9d9adbe8801c7706_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/1a00ec8def3042ce9d9adbe8801c7706_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28375136,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/02ff4ae6ee30438985391edd275962c8_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/02ff4ae6ee30438985391edd275962c8_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/02ff4ae6ee30438985391edd275962c8_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/02ff4ae6ee30438985391edd275962c8_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/02ff4ae6ee30438985391edd275962c8_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28375140,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/b78a66fa755348078cc1c27283bcf7be_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/b78a66fa755348078cc1c27283bcf7be_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/b78a66fa755348078cc1c27283bcf7be_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/b78a66fa755348078cc1c27283bcf7be_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/b78a66fa755348078cc1c27283bcf7be_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28375139,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/4edb571b63bf4238a2176b182bbb503c_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/4edb571b63bf4238a2176b182bbb503c_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/4edb571b63bf4238a2176b182bbb503c_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/4edb571b63bf4238a2176b182bbb503c_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/4edb571b63bf4238a2176b182bbb503c_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            },
+            {
+                "id": 28375138,
+                "type": "Image",
+                "imageUrl": "https://images.crexi.com/assets/2250454/aa0afc17cad2421eaf985bb2209641ee_3000x2000_resize.jpg",
+                "wideTnUrl": "https://images.crexi.com/assets/2250454/aa0afc17cad2421eaf985bb2209641ee_1306x734.jpg",
+                "bigTnUrl": "https://images.crexi.com/assets/2250454/aa0afc17cad2421eaf985bb2209641ee_1292x808.jpg",
+                "mediumTnUrl": "https://images.crexi.com/assets/2250454/aa0afc17cad2421eaf985bb2209641ee_716x444.jpg",
+                "smallTnUrl": "https://images.crexi.com/assets/2250454/aa0afc17cad2421eaf985bb2209641ee_230x150.jpg",
+                "isPending": false,
+                "hasModeration": false
+            }
+        ],
+        "brokers": [
+            {
+                "capabilities": [],
+                "brokerage": {
+                    "location": {
+                        "address": "201 E Las Olas Blvd",
+                        "city": "Fort Lauderdale",
+                        "county": "",
+                        "country": "United States",
+                        "state": {
+                            "code": "FL",
+                            "name": "Florida"
+                        },
+                        "zip": "33301",
+                        "aptNumber": "150",
+                        "latitude": 0,
+                        "longitude": 0
+                    },
+                    "name": "Matthews",
+                    "logoUrl": "https://images.crexi.com/user-accounts/78388/101d4c98228043b8b2067e3f89863d07_150x100_resize.jpg",
+                    "website": "https://www.matthews.com/"
+                },
+                "badges": [],
+                "numberOfAssets": 4,
+                "isInternal": false,
+                "isPlatinum": false,
+                "globalId": "dc7df677-6d60-478d-a4bf-8d3c81676e03",
+                "id": 1957199,
+                "firstName": "erik",
+                "lastName": "leon",
+                "thumbnailUrl": "https://images.crexi.com/users/1957199/42bd0dadd52447e88834c0695a241325_164x164.jpg",
+                "createdOn": "2024-02-05T18:17:53.795Z",
+                "publicProfileId": "erikleo",
+                "licenses": ["FL SL3600080"],
+                "licenseDetails": [
+                    {
+                        "brokerId": 1957199,
+                        "position": 0,
+                        "number": "FL SL3600080",
+                        "createdOn": "2024-05-23T14:34:17.352Z",
+                        "isAuctioneer": false
+                    }
+                ],
+                "isAuctioneer": false,
+                "verificationMethod": "None"
+            },
+            {
+                "capabilities": [
+                    {
+                        "kind": "Chats"
+                    }
+                ],
+                "brokerage": {
+                    "location": {
+                        "address": "3161 Michelson Dr",
+                        "city": "Irvine",
+                        "county": "",
+                        "country": "United States",
+                        "state": {
+                            "code": "CA",
+                            "name": "California"
+                        },
+                        "zip": "92612",
+                        "aptNumber": "1050",
+                        "latitude": 0,
+                        "longitude": 0
+                    },
+                    "name": "Matthews",
+                    "logoUrl": "https://images.crexi.com/user-accounts/93903/1a492abe7d3345d7b86e8a722d399cee_150x100_resize.jpg",
+                    "website": "https://www.matthews.com/"
+                },
+                "badges": [
+                    {
+                        "title": "PRO"
+                    }
+                ],
+                "numberOfAssets": 157,
+                "isInternal": false,
+                "isPlatinum": true,
+                "globalId": "3623427f-6636-417c-84ab-b06f2b46bb15",
+                "id": 1515822,
+                "firstName": "Robert",
+                "lastName": "Anderson",
+                "thumbnailUrl": "https://images.crexi.com/users/1515822/56a1a676e1544fe4a1a7aed99ee55d4f_164x164.jpg",
+                "createdOn": "2023-04-10T23:48:09.623Z",
+                "publicProfileId": "robertanderson25",
+                "licenses": ["CA 01738687"],
+                "licenseDetails": [
+                    {
+                        "brokerId": 1515822,
+                        "position": 0,
+                        "number": "CA 01738687",
+                        "createdOn": "2025-05-19T14:07:23.364Z",
+                        "brokerTitle": "Vice President, Auction Services",
+                        "brokerageName": "Robert Anderson",
+                        "brokerageAddress": "3161 Michelson Drive",
+                        "brokerageCity": "Irvine",
+                        "brokerageCounty": "Orange County",
+                        "brokerageStateCode": "CA",
+                        "brokerageZip": "92612",
+                        "brokerageCountry": "United States",
+                        "isAuctioneer": false
+                    }
+                ],
+                "isAuctioneer": false,
+                "verificationMethod": "None"
+            },
+            {
+                "capabilities": [
+                    {
+                        "kind": "Chats"
+                    }
+                ],
+                "brokerage": {
+                    "location": {
+                        "address": "5510 Lincoln Blvd",
+                        "city": "Los Angeles",
+                        "county": "",
+                        "country": "United States",
+                        "state": {
+                            "code": "CA",
+                            "name": "California"
+                        },
+                        "zip": "90094",
+                        "aptNumber": "400",
+                        "latitude": 0,
+                        "longitude": 0
+                    },
+                    "name": "Commercial Real Estate Exchange Inc",
+                    "logoUrl": "https://images.crexi.com/user-accounts/4390/f16aade5cf4d4825879aea769075077d_150x100_resize.jpg",
+                    "website": "www.crexi.com"
+                },
+                "badges": [],
+                "numberOfAssets": 199,
+                "isInternal": true,
+                "isPlatinum": false,
+                "globalId": "bc8aa805-b271-4b68-a946-99538f395a06",
+                "id": 534059,
+                "firstName": "Bianca",
+                "lastName": "Diorio",
+                "thumbnailUrl": "https://images.crexi.com/users/534059/769af406347c47b78bd2af0611cb59e9_164x164.jpg",
+                "createdOn": "2021-01-04T19:08:56.793Z",
+                "publicProfileId": "biancadi",
+                "licenses": ["N/A"],
+                "licenseDetails": [
+                    {
+                        "brokerId": 534059,
+                        "position": 0,
+                        "number": "N/A",
+                        "createdOn": "2025-04-18T20:52:13.724Z",
+                        "isAuctioneer": false
+                    }
+                ],
+                "isAuctioneer": false,
+                "verificationMethod": "None"
+            }
+        ]
+    }
+]
