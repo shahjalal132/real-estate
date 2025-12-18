@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { usePage } from "@inertiajs/react";
 import AllFiltersButton from "./AllFiltersButton";
 import SaveFilterModal from "./SaveFilterModal";
@@ -16,6 +16,7 @@ interface PropertySearchHeaderProps {
     activeFiltersCount?: number;
     currentFilters?: FilterValues | null;
     hasActiveFilters?: boolean;
+    isSearching?: boolean;
 }
 
 export interface SearchFilters {
@@ -73,6 +74,7 @@ export default function PropertySearchHeader({
     activeFiltersCount = 0,
     currentFilters = null,
     hasActiveFilters = false,
+    isSearching = false,
 }: PropertySearchHeaderProps) {
     const { url } = usePage();
     const [status, setStatus] = useState("for-sale");
@@ -81,39 +83,54 @@ export default function PropertySearchHeader({
     const [capRate, setCapRate] = useState("any");
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // Initialize from URL parameters
+    // Initialize from URL parameters (only once on mount)
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const pageUrl = url || window.location.pathname;
 
-        // Determine status from URL
-        if (pageUrl.includes("/auctions")) {
-            setStatus("auctions");
-        } else if (pageUrl.includes("/commercial")) {
-            setStatus("commercial");
-        } else if (
-            pageUrl.includes("/rental") ||
-            pageUrl.includes("/for-lease")
-        ) {
-            setStatus("for-lease");
-        } else if (
-            pageUrl.includes("/residential") ||
-            pageUrl.includes("/for-sale")
-        ) {
-            setStatus("for-sale");
-        }
+        // Determine status from URL query parameters first, then path
+        const urlType = urlParams.get("type");
+        const urlStatus = urlParams.get("status");
 
-        // Get property type from URL
-        const typeParam =
-            urlParams.get("type") || urlParams.get("property_types");
-        if (typeParam) {
-            const types = typeParam.split(",");
-            if (types.length > 0) {
-                setPropertyType(types[0]);
+        let initialStatus = "for-sale";
+        if (urlStatus === "auctions") {
+            initialStatus = "auctions";
+        } else if (urlType === "for-lease") {
+            initialStatus = "for-lease";
+        } else if (urlType === "for-sale") {
+            initialStatus = "for-sale";
+        } else {
+            // Fallback to path-based detection
+            if (pageUrl.includes("/auctions")) {
+                initialStatus = "auctions";
+            } else if (pageUrl.includes("/commercial")) {
+                initialStatus = "commercial";
+            } else if (
+                pageUrl.includes("/rental") ||
+                pageUrl.includes("/for-lease")
+            ) {
+                initialStatus = "for-lease";
+            } else if (
+                pageUrl.includes("/residential") ||
+                pageUrl.includes("/for-sale")
+            ) {
+                initialStatus = "for-sale";
             }
         }
 
+        let initialPropertyType = "all";
+        // Get property type from URL
+        const typeParam = urlParams.get("property_types");
+        if (typeParam) {
+            const types = typeParam.split(",");
+            if (types.length > 0) {
+                initialPropertyType = types[0];
+            }
+        }
+
+        let initialPriceRange = "any";
         // Get price range from URL
         const minPrice =
             urlParams.get("min_price") || urlParams.get("min_rate");
@@ -129,18 +146,19 @@ export default function PropertySearchHeader({
                 : Infinity;
 
             if (min === 0 && max <= 500000) {
-                setPriceRange("0-500k");
+                initialPriceRange = "0-500k";
             } else if (min >= 500000 && max <= 1000000) {
-                setPriceRange("500k-1m");
+                initialPriceRange = "500k-1m";
             } else if (min >= 1000000 && max <= 5000000) {
-                setPriceRange("1m-5m");
+                initialPriceRange = "1m-5m";
             } else if (min >= 5000000 && max <= 10000000) {
-                setPriceRange("5m-10m");
+                initialPriceRange = "5m-10m";
             } else if (min >= 10000000) {
-                setPriceRange("10m+");
+                initialPriceRange = "10m+";
             }
         }
 
+        let initialCapRate = "any";
         // Get cap rate from URL
         const minCapRate = urlParams.get("min_cap_rate");
         const maxCapRate = urlParams.get("max_cap_rate");
@@ -149,23 +167,44 @@ export default function PropertySearchHeader({
             const max = maxCapRate ? parseFloat(maxCapRate) : Infinity;
 
             if (min === 0 && max <= 3) {
-                setCapRate("0-3");
+                initialCapRate = "0-3";
             } else if (min >= 3 && max <= 5) {
-                setCapRate("3-5");
+                initialCapRate = "3-5";
             } else if (min >= 5 && max <= 7) {
-                setCapRate("5-7");
+                initialCapRate = "5-7";
             } else if (min >= 7 && max <= 10) {
-                setCapRate("7-10");
+                initialCapRate = "7-10";
             } else if (min >= 10) {
-                setCapRate("10+");
+                initialCapRate = "10+";
             }
         }
+
+        // Set all initial values at once
+        setStatus(initialStatus);
+        setPropertyType(initialPropertyType);
+        setPriceRange(initialPriceRange);
+        setCapRate(initialCapRate);
+
+        // Store initial values and mark as initialized
+        previousFiltersRef.current = {
+            status: initialStatus,
+            propertyType: initialPropertyType,
+            priceRange: initialPriceRange,
+            capRate: initialCapRate,
+        };
+        setIsInitialized(true);
     }, [url]);
 
     const [statusOpen, setStatusOpen] = useState(false);
     const [typeOpen, setTypeOpen] = useState(false);
     const [priceOpen, setPriceOpen] = useState(false);
     const [capRateOpen, setCapRateOpen] = useState(false);
+    const previousFiltersRef = useRef<{
+        status: string;
+        propertyType: string;
+        priceRange: string;
+        capRate: string;
+    } | null>(null);
 
     const selectedStatus =
         STATUS_OPTIONS.find((opt) => opt.value === status)?.label || "For Sale";
@@ -179,14 +218,55 @@ export default function PropertySearchHeader({
         CAP_RATE_OPTIONS.find((opt) => opt.value === capRate)?.label ||
         "Any CAP Rate";
 
-    const handleSearch = () => {
-        onSearch?.({
-            status,
-            propertyType,
-            priceRange,
-            capRate,
-        });
-    };
+    // Auto-trigger search when filters change (after initial load)
+    useEffect(() => {
+        // Skip if not initialized yet (waiting for URL params to load)
+        if (!isInitialized) {
+            return;
+        }
+
+        // Only trigger search if values actually changed
+        const currentFilters = { status, propertyType, priceRange, capRate };
+        const previousFilters = previousFiltersRef.current;
+
+        if (
+            previousFilters &&
+            (previousFilters.status !== currentFilters.status ||
+                previousFilters.propertyType !== currentFilters.propertyType ||
+                previousFilters.priceRange !== currentFilters.priceRange ||
+                previousFilters.capRate !== currentFilters.capRate)
+        ) {
+            // Update previous filters
+            previousFiltersRef.current = currentFilters;
+
+            // Trigger search automatically when any filter changes
+            if (onSearch) {
+                onSearch({
+                    status,
+                    propertyType,
+                    priceRange,
+                    capRate,
+                });
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [status, propertyType, priceRange, capRate, isInitialized]);
+
+    const handleStatusChange = useCallback((value: string) => {
+        setStatus(value);
+    }, []);
+
+    const handlePropertyTypeChange = useCallback((value: string) => {
+        setPropertyType(value);
+    }, []);
+
+    const handlePriceRangeChange = useCallback((value: string) => {
+        setPriceRange(value);
+    }, []);
+
+    const handleCapRateChange = useCallback((value: string) => {
+        setCapRate(value);
+    }, []);
 
     // Get default filter name based on current filters
     const getDefaultFilterName = (): string => {
@@ -242,23 +322,32 @@ export default function PropertySearchHeader({
         isOpen,
         onClick,
         className = "",
+        disabled = false,
     }: {
         label: string;
         isOpen: boolean;
         onClick: () => void;
         className?: string;
+        disabled?: boolean;
     }) => (
         <button
             type="button"
             onClick={onClick}
-            className={`inline-flex items-center justify-between gap-2 rounded-md border-2 border-[#0066CC] cursor-pointer bg-white px-4 py-2.5 text-sm font-semibold text-[#0066CC] hover:bg-[#F0F7FF] transition-colors min-w-[140px] shadow-sm ${className}`}
+            disabled={disabled}
+            className={`inline-flex items-center justify-between gap-2 rounded-md border-2 border-[#0066CC] cursor-pointer bg-white px-4 py-2.5 text-sm font-semibold text-[#0066CC] hover:bg-[#F0F7FF] transition-all min-w-[140px] shadow-sm ${
+                disabled ? "opacity-60 cursor-not-allowed hover:bg-white" : ""
+            } ${className}`}
         >
             <span>{label}</span>
-            <ChevronDown
-                className={`h-4 w-4 transition-transform ${
-                    isOpen ? "rotate-180" : ""
-                }`}
-            />
+            {isSearching && !isOpen ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+                <ChevronDown
+                    className={`h-4 w-4 transition-transform ${
+                        isOpen ? "rotate-180" : ""
+                    }`}
+                />
+            )}
         </button>
     );
 
@@ -303,7 +392,18 @@ export default function PropertySearchHeader({
     };
 
     return (
-        <div className="w-full bg-white border-b border-gray-200 py-4 shadow-sm">
+        <div className="w-full bg-white border-b border-gray-200 py-4 shadow-sm relative">
+            {/* Loading overlay */}
+            {isSearching && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="flex items-center gap-2 text-[#0066CC]">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span className="text-sm font-medium">
+                            Searching...
+                        </span>
+                    </div>
+                </div>
+            )}
             <div className="mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     {/* Left Side: Dropdowns and Search Button */}
@@ -313,18 +413,21 @@ export default function PropertySearchHeader({
                             <DropdownButton
                                 label={selectedStatus}
                                 isOpen={statusOpen}
+                                disabled={isSearching}
                                 onClick={() => {
-                                    setStatusOpen(!statusOpen);
-                                    setTypeOpen(false);
-                                    setPriceOpen(false);
-                                    setCapRateOpen(false);
+                                    if (!isSearching) {
+                                        setStatusOpen(!statusOpen);
+                                        setTypeOpen(false);
+                                        setPriceOpen(false);
+                                        setCapRateOpen(false);
+                                    }
                                 }}
                             />
                             <DropdownMenu
-                                isOpen={statusOpen}
+                                isOpen={statusOpen && !isSearching}
                                 onClose={() => setStatusOpen(false)}
                                 options={STATUS_OPTIONS}
-                                onSelect={setStatus}
+                                onSelect={handleStatusChange}
                             />
                         </div>
 
@@ -333,18 +436,21 @@ export default function PropertySearchHeader({
                             <DropdownButton
                                 label={selectedType}
                                 isOpen={typeOpen}
+                                disabled={isSearching}
                                 onClick={() => {
-                                    setTypeOpen(!typeOpen);
-                                    setStatusOpen(false);
-                                    setPriceOpen(false);
-                                    setCapRateOpen(false);
+                                    if (!isSearching) {
+                                        setTypeOpen(!typeOpen);
+                                        setStatusOpen(false);
+                                        setPriceOpen(false);
+                                        setCapRateOpen(false);
+                                    }
                                 }}
                             />
                             <DropdownMenu
-                                isOpen={typeOpen}
+                                isOpen={typeOpen && !isSearching}
                                 onClose={() => setTypeOpen(false)}
                                 options={PROPERTY_TYPE_OPTIONS}
-                                onSelect={setPropertyType}
+                                onSelect={handlePropertyTypeChange}
                             />
                         </div>
 
@@ -353,18 +459,21 @@ export default function PropertySearchHeader({
                             <DropdownButton
                                 label={selectedPrice}
                                 isOpen={priceOpen}
+                                disabled={isSearching}
                                 onClick={() => {
-                                    setPriceOpen(!priceOpen);
-                                    setStatusOpen(false);
-                                    setTypeOpen(false);
-                                    setCapRateOpen(false);
+                                    if (!isSearching) {
+                                        setPriceOpen(!priceOpen);
+                                        setStatusOpen(false);
+                                        setTypeOpen(false);
+                                        setCapRateOpen(false);
+                                    }
                                 }}
                             />
                             <DropdownMenu
-                                isOpen={priceOpen}
+                                isOpen={priceOpen && !isSearching}
                                 onClose={() => setPriceOpen(false)}
                                 options={PRICE_RANGE_OPTIONS}
-                                onSelect={setPriceRange}
+                                onSelect={handlePriceRangeChange}
                             />
                         </div>
 
@@ -373,29 +482,23 @@ export default function PropertySearchHeader({
                             <DropdownButton
                                 label={selectedCapRate}
                                 isOpen={capRateOpen}
+                                disabled={isSearching}
                                 onClick={() => {
-                                    setCapRateOpen(!capRateOpen);
-                                    setStatusOpen(false);
-                                    setTypeOpen(false);
-                                    setPriceOpen(false);
+                                    if (!isSearching) {
+                                        setCapRateOpen(!capRateOpen);
+                                        setStatusOpen(false);
+                                        setTypeOpen(false);
+                                        setPriceOpen(false);
+                                    }
                                 }}
                             />
                             <DropdownMenu
-                                isOpen={capRateOpen}
+                                isOpen={capRateOpen && !isSearching}
                                 onClose={() => setCapRateOpen(false)}
                                 options={CAP_RATE_OPTIONS}
-                                onSelect={setCapRate}
+                                onSelect={handleCapRateChange}
                             />
                         </div>
-
-                        {/* Search Now Button */}
-                        {/* <button
-                            type="button"
-                            onClick={handleSearch}
-                            className="bg-[#0066CC] hover:bg-[#004C99] text-white px-6 py-2.5 rounded font-semibold whitespace-nowrap transition-colors shadow-sm cursor-pointer"
-                        >
-                            Search Now
-                        </button> */}
 
                         {/* Save Search Button */}
                         <button
