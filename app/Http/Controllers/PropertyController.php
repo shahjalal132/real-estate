@@ -14,10 +14,88 @@ class PropertyController extends Controller
     {
         $section = $request->query('section');
         $filter = $request->query('filter', 'all');
+        $type = $request->query('type'); // for-sale, for-lease
+        $category = $request->query('category'); // commercial, residential
+        $listingType = $request->query('listing_type'); // off-market, on-market
+        $status = $request->query('status'); // auctions
 
         $query = Property::with(['location', 'images', 'brokers.brokerage', 'details']);
 
-        // Apply section-based filtering
+        // Apply type-based filtering (for-sale vs for-lease)
+        if ($type === 'for-sale') {
+            $query->where('status', '!=', 'Sold')
+                ->where(function ($q) {
+                    $q->whereDoesntHave('details', function ($detailQuery) {
+                        $detailQuery->whereNotNull('lease_type')
+                            ->where('lease_type', '!=', '');
+                    })
+                        ->orWhereIn('status', ['On-Market', 'Off-Market', 'Auction', 'Pending', 'Under Contract']);
+                });
+        } elseif ($type === 'for-lease') {
+            $query->where('status', '!=', 'Sold')
+                ->where(function ($q) {
+                    $q->whereHas('details', function ($detailQuery) {
+                        $detailQuery->whereNotNull('lease_type')
+                            ->where('lease_type', '!=', '');
+                    })
+                        ->orWhere(function ($subQ) {
+                            $subQ->whereJsonContains('types', 'Residential')
+                                ->orWhereJsonContains('types', 'Multifamily');
+                        });
+                });
+        }
+
+        // Apply category-based filtering (commercial vs residential)
+        if ($category === 'residential') {
+            $query->where(function ($q) {
+                $q->whereJsonContains('types', 'Residential')
+                    ->orWhere(function ($subQ) {
+                        // Multifamily that is residential-focused (not commercial multifamily)
+                        $subQ->whereJsonContains('types', 'Multifamily')
+                            ->whereDoesntHave('details', function ($detailQuery) {
+                                // Exclude commercial multifamily (check subtypes or details)
+                                $detailQuery->whereJsonContains('subtypes', 'Commercial')
+                                    ->orWhere('class', 'like', '%Commercial%');
+                            });
+                    });
+            });
+        } elseif ($category === 'commercial') {
+            // Commercial: Commercial, Land, Office, Retail, Industrial, OR Commercial Multifamily
+            $query->where(function ($q) {
+                $q->whereJsonContains('types', 'Commercial')
+                    ->orWhereJsonContains('types', 'Land')
+                    ->orWhereJsonContains('types', 'Office')
+                    ->orWhereJsonContains('types', 'Retail')
+                    ->orWhereJsonContains('types', 'Industrial')
+                    ->orWhereJsonContains('types', 'Hospitality')
+                    ->orWhereJsonContains('types', 'Mixed Use')
+                    ->orWhere(function ($subQ) {
+                        // Commercial Multifamily (apartment buildings, commercial multifamily)
+                        $subQ->whereJsonContains('types', 'Multifamily')
+                            ->where(function ($multifamilyQ) {
+                                $multifamilyQ->whereHas('details', function ($detailQuery) {
+                                    $detailQuery->whereJsonContains('subtypes', 'Commercial')
+                                        ->orWhere('class', 'like', '%Commercial%');
+                                })
+                                    ->orWhereJsonContains('subtypes', 'Commercial');
+                            });
+                    });
+            })
+                // Exclude pure residential
+                ->where(function ($excludeQ) {
+                    $excludeQ->whereJsonDoesntContain('types', 'Residential')
+                        ->orWhere(function ($residentialQ) {
+                            // Allow Residential only if it's also Commercial or Mixed Use
+                            $residentialQ->whereJsonContains('types', 'Residential')
+                                ->where(function ($mixedQ) {
+                                    $mixedQ->whereJsonContains('types', 'Commercial')
+                                        ->orWhereJsonContains('types', 'Mixed Use');
+                                });
+                        });
+                });
+        }
+
+        // Apply section-based filtering (backward compatibility)
         if ($section === 'residential') {
             $query->where(function ($q) {
                 $q->whereJsonContains('types', 'Multifamily')
@@ -35,6 +113,35 @@ class PropertyController extends Controller
             })
                 ->whereJsonDoesntContain('types', 'Residential')
                 ->where('status', '!=', 'Sold');
+        }
+
+        // Apply listing type filtering (off-market, on-market)
+        if ($listingType === 'off-market') {
+            $query->where('status', 'Off-Market');
+        } elseif ($listingType === 'on-market') {
+            $query->whereIn('status', ['On-Market', 'Auction', 'Pending', 'Under Contract']);
+        }
+
+        // Apply status filtering (auctions)
+        if ($status === 'auctions') {
+            // Auctions have status "Auction" or may be On-Market with auction indicators
+            $query->where(function ($q) {
+                $q->where('status', 'Auction')
+                    ->orWhere(function ($subQ) {
+                        // Check if property has auction-related details
+                        $subQ->where('status', 'On-Market')
+                            ->where(function ($auctionQ) {
+                                $auctionQ->whereHas('details', function ($detailQuery) {
+                                    $detailQuery->where('sale_condition', 'like', '%Auction%')
+                                        ->orWhere('investment_type', 'like', '%Auction%')
+                                        ->orWhereRaw("JSON_EXTRACT(summary_details, '$[*].key') LIKE '%Auction%'")
+                                        ->orWhereRaw("JSON_EXTRACT(summary_details, '$[*].label') LIKE '%Auction%'");
+                                })
+                                    ->orWhere('name', 'like', '%Auction%')
+                                    ->orWhere('marketing_description', 'like', '%Auction%');
+                            });
+                    });
+            });
         }
 
         // Always exclude properties without thumbnails
@@ -67,7 +174,7 @@ class PropertyController extends Controller
         return Inertia::render('Properties', [
             'properties' => $properties,
             'filter' => $filter,
-            'section' => $section,
+            'section' => $section ?: ($category ?: null),
             'filters' => $request->only([
                 'location',
                 'keywords',
@@ -84,7 +191,11 @@ class PropertyController extends Controller
                 'from_date',
                 'to_date',
                 'time_period',
-                'property_class'
+                'property_class',
+                'type',
+                'category',
+                'listing_type',
+                'status'
             ]),
         ]);
     }

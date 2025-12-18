@@ -141,14 +141,26 @@ export default function Properties() {
         filters: initialFilters = {},
     } = props;
 
-    // Determine section from current route
+    // Determine section from current route or query parameters
     const currentSection = useMemo(() => {
+        // Check URL path first (backward compatibility)
         if (url.includes("/properties/auctions")) return "auctions";
         if (url.includes("/properties/residential")) return "residentials";
         if (url.includes("/properties/commercial")) return "commercial";
         if (url.includes("/properties/rental")) return "rental";
+
+        // Check query parameters from filters
+        if (initialFilters?.category) {
+            return initialFilters.category === "commercial"
+                ? "commercial"
+                : initialFilters.category === "residential"
+                ? "residentials"
+                : null;
+        }
+
+        // Fall back to section prop
         return section || null;
-    }, [url, section]);
+    }, [url, section, initialFilters]);
 
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
     const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
@@ -621,15 +633,31 @@ export default function Properties() {
                             params.owner_user = "1";
                         }
 
-                        // Determine base path based on current section
+                        // Always use /properties as base path and preserve query parameters
                         let basePath = "/properties";
-                        if (currentSection === "auctions") {
+
+                        // Preserve existing query parameters (type, category, listing_type, status)
+                        if (initialFilters?.type) {
+                            params.type = initialFilters.type;
+                        }
+                        if (initialFilters?.category) {
+                            params.category = initialFilters.category;
+                        }
+                        if (initialFilters?.listing_type) {
+                            params.listing_type = initialFilters.listing_type;
+                        }
+                        if (initialFilters?.status) {
+                            params.status = initialFilters.status;
+                        }
+
+                        // Backward compatibility: check URL path for old routes
+                        if (url.includes("/properties/auctions")) {
                             basePath = "/properties/auctions";
-                        } else if (currentSection === "residentials") {
+                        } else if (url.includes("/properties/residential")) {
                             basePath = "/properties/residential";
-                        } else if (currentSection === "commercial") {
+                        } else if (url.includes("/properties/commercial")) {
                             basePath = "/properties/commercial";
-                        } else if (currentSection === "rental") {
+                        } else if (url.includes("/properties/rental")) {
                             basePath = "/properties/rental";
                         }
 
@@ -639,21 +667,38 @@ export default function Properties() {
                         });
                     }}
                     onReset={() => {
-                        // Determine base path based on current section
+                        // Always use /properties as base path
                         let basePath = "/properties";
-                        if (currentSection === "auctions") {
+                        const params: Record<string, any> = {};
+
+                        // Preserve existing query parameters (type, category, listing_type, status)
+                        if (initialFilters?.type) {
+                            params.type = initialFilters.type;
+                        }
+                        if (initialFilters?.category) {
+                            params.category = initialFilters.category;
+                        }
+                        if (initialFilters?.listing_type) {
+                            params.listing_type = initialFilters.listing_type;
+                        }
+                        if (initialFilters?.status) {
+                            params.status = initialFilters.status;
+                        }
+
+                        // Backward compatibility: check URL path for old routes
+                        if (url.includes("/properties/auctions")) {
                             basePath = "/properties/auctions";
-                        } else if (currentSection === "residentials") {
+                        } else if (url.includes("/properties/residential")) {
                             basePath = "/properties/residential";
-                        } else if (currentSection === "commercial") {
+                        } else if (url.includes("/properties/commercial")) {
                             basePath = "/properties/commercial";
-                        } else if (currentSection === "rental") {
+                        } else if (url.includes("/properties/rental")) {
                             basePath = "/properties/rental";
                         }
 
                         router.get(
                             basePath,
-                            {},
+                            Object.keys(params).length > 0 ? params : {},
                             {
                                 preserveState: false,
                             }
