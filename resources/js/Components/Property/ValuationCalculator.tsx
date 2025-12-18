@@ -163,9 +163,9 @@ export default function ValuationCalculator({
 
     // Info icon component
     const InfoIcon = ({ tooltip }: { tooltip: string }) => (
-        <div className="group relative inline-flex items-center">
+        <div className="group relative inline-flex items-center overflow-visible">
             <Info className="h-4 w-4 text-gray-400 cursor-help" />
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 overflow-visible">
                 {tooltip}
                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
             </div>
@@ -173,11 +173,11 @@ export default function ValuationCalculator({
     );
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg p-8">
+        <div className="bg-white border border-gray-200 rounded-lg p-8 overflow-x-hidden">
             <h2 className="text-xl font-bold text-gray-900 mb-6">
                 Valuation Calculator
             </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 {/* Left Column - Input Fields */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -313,7 +313,7 @@ export default function ValuationCalculator({
                 </div>
 
                 {/* Right Column - Calculated Summaries */}
-                <div className="space-y-4">
+                <div className="space-y-4 lg:sticky lg:top-4">
                     {/* Loan Amount */}
                     <div className="bg-blue-50 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-1">
