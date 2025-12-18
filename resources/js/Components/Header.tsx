@@ -144,14 +144,14 @@ export default function Header() {
             if (!isInMoreMenu && item.type === "megaMenu") {
                 closeTimeoutRef.current = setTimeout(() => {
                     setActiveMenu(null);
-                }, 200); // 200ms delay to allow movement to mega menu
+                }, 400); // Increased delay to 400ms for better UX
             }
         };
 
         return (
             <div
                 key={item.label}
-                className="relative overflow-visible"
+                className="relative overflow-visible group"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
@@ -203,40 +203,53 @@ export default function Header() {
                     </Link>
                 )}
                 {item.type === "megaMenu" && activeMenu === item.megaMenuId && (
-                    <div
-                        className="absolute top-full left-0 pt-3 -mt-1"
-                        onMouseEnter={() => {
-                            // Clear timeout and keep menu open
-                            if (closeTimeoutRef.current) {
-                                clearTimeout(closeTimeoutRef.current);
-                                closeTimeoutRef.current = null;
-                            }
-                            setActiveMenu(item.megaMenuId || null);
-                        }}
-                        onMouseLeave={() => {
-                            // Delay closing when leaving mega menu area
-                            closeTimeoutRef.current = setTimeout(() => {
-                                setActiveMenu(null);
-                                if (isInMoreMenu) {
-                                    setMoreMenuOpen(false);
-                                }
-                            }, 150);
-                        }}
-                    >
-                        <MegaMenu
-                            menuId={item.megaMenuId!}
-                            onClose={() => {
+                    <>
+                        {/* Bridge element to prevent gap between nav item and dropdown */}
+                        <div
+                            className="absolute top-full left-0 right-0 h-4"
+                            onMouseEnter={() => {
                                 if (closeTimeoutRef.current) {
                                     clearTimeout(closeTimeoutRef.current);
                                     closeTimeoutRef.current = null;
                                 }
-                                setActiveMenu(null);
-                                if (isInMoreMenu) {
-                                    setMoreMenuOpen(false);
-                                }
+                                setActiveMenu(item.megaMenuId || null);
                             }}
                         />
-                    </div>
+                        <div
+                            className="absolute top-full left-0 pt-4"
+                            onMouseEnter={() => {
+                                // Clear timeout and keep menu open
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                setActiveMenu(item.megaMenuId || null);
+                            }}
+                            onMouseLeave={() => {
+                                // Delay closing when leaving mega menu area
+                                closeTimeoutRef.current = setTimeout(() => {
+                                    setActiveMenu(null);
+                                    if (isInMoreMenu) {
+                                        setMoreMenuOpen(false);
+                                    }
+                                }, 300);
+                            }}
+                        >
+                            <MegaMenu
+                                menuId={item.megaMenuId!}
+                                onClose={() => {
+                                    if (closeTimeoutRef.current) {
+                                        clearTimeout(closeTimeoutRef.current);
+                                        closeTimeoutRef.current = null;
+                                    }
+                                    setActiveMenu(null);
+                                    if (isInMoreMenu) {
+                                        setMoreMenuOpen(false);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </>
                 )}
             </div>
         );
@@ -292,7 +305,7 @@ export default function Header() {
                                             closeTimeoutRef.current =
                                                 setTimeout(() => {
                                                     setMoreMenuOpen(false);
-                                                }, 200);
+                                                }, 400);
                                         }
                                     }}
                                 >
@@ -316,154 +329,139 @@ export default function Header() {
 
                                     {/* MORE Dropdown Menu */}
                                     {moreMenuOpen && (
-                                        <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[180px]">
-                                            {moreItems.map((item) => (
-                                                <div
-                                                    key={item.label}
-                                                    className="relative"
-                                                    onMouseEnter={() => {
-                                                        if (
+                                        <>
+                                            {/* Bridge element to prevent gap */}
+                                            <div
+                                                className="absolute top-full left-0 right-0 h-2"
+                                                onMouseEnter={() => {
+                                                    if (
+                                                        closeTimeoutRef.current
+                                                    ) {
+                                                        clearTimeout(
                                                             closeTimeoutRef.current
-                                                        ) {
-                                                            clearTimeout(
+                                                        );
+                                                        closeTimeoutRef.current =
+                                                            null;
+                                                    }
+                                                    setMoreMenuOpen(true);
+                                                }}
+                                            />
+                                            <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[180px]">
+                                                {moreItems.map((item) => (
+                                                    <div
+                                                        key={item.label}
+                                                        className="relative"
+                                                        onMouseEnter={() => {
+                                                            if (
                                                                 closeTimeoutRef.current
-                                                            );
-                                                            closeTimeoutRef.current =
-                                                                null;
-                                                        }
-                                                        if (
-                                                            item.type ===
-                                                            "megaMenu"
-                                                        ) {
-                                                            setActiveMenu(
-                                                                item.megaMenuId ||
-                                                                    null
-                                                            );
-                                                        }
-                                                    }}
-                                                    onMouseLeave={() => {
-                                                        if (
-                                                            activeMenu !==
-                                                            item.megaMenuId
-                                                        ) {
-                                                            closeTimeoutRef.current =
-                                                                setTimeout(
-                                                                    () => {
-                                                                        setActiveMenu(
-                                                                            null
-                                                                        );
-                                                                    },
-                                                                    200
+                                                            ) {
+                                                                clearTimeout(
+                                                                    closeTimeoutRef.current
                                                                 );
-                                                        }
-                                                    }}
-                                                >
-                                                    {item.type === "megaMenu" &&
-                                                    item.hasDropdown ? (
-                                                        <button
-                                                            type="button"
-                                                            className={`block w-full text-left px-4 py-2 text-sm tracking-[0.5px] transition-colors capitalize ${
-                                                                activeMenu ===
+                                                                closeTimeoutRef.current =
+                                                                    null;
+                                                            }
+                                                            if (
+                                                                item.type ===
+                                                                "megaMenu"
+                                                            ) {
+                                                                setActiveMenu(
+                                                                    item.megaMenuId ||
+                                                                        null
+                                                                );
+                                                            }
+                                                        }}
+                                                        onMouseLeave={() => {
+                                                            if (
+                                                                activeMenu !==
                                                                 item.megaMenuId
-                                                                    ? "text-[#0066cc] bg-[#F0F7FF]"
-                                                                    : "text-[#4A4A4A] hover:bg-gray-50"
-                                                            }`}
-                                                        >
-                                                            <div className="flex items-center justify-between">
-                                                                {item.label}
-                                                                {item.hasDropdown && (
-                                                                    <ChevronDown
-                                                                        className={`h-3 w-3 transition-all duration-300 ${
-                                                                            activeMenu ===
-                                                                            item.megaMenuId
-                                                                                ? "rotate-180 text-[#0066cc]"
-                                                                                : "text-[#4a4a4a]"
-                                                                        }`}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        </button>
-                                                    ) : (
-                                                        <Link
-                                                            href={item.link}
-                                                            className={`block px-4 py-2 text-sm tracking-[0.5px] transition-colors capitalize ${
-                                                                activeMenu ===
-                                                                item.megaMenuId
-                                                                    ? "text-[#0066cc] bg-[#F0F7FF]"
-                                                                    : "text-[#4A4A4A] hover:bg-gray-50"
-                                                            }`}
-                                                        >
-                                                            <div className="flex items-center justify-between">
-                                                                {item.label}
-                                                                {item.hasDropdown && (
-                                                                    <ChevronDown
-                                                                        className={`h-3 w-3 transition-all duration-300 ${
-                                                                            activeMenu ===
-                                                                            item.megaMenuId
-                                                                                ? "rotate-180 text-[#0066cc]"
-                                                                                : "text-[#4a4a4a]"
-                                                                        }`}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        </Link>
-                                                    )}
-                                                    {item.type === "megaMenu" &&
-                                                        activeMenu ===
-                                                            item.megaMenuId && (
-                                                            <div
-                                                                className={`absolute top-0 z-[60] pt-2 -mt-1 ${
-                                                                    // Right-align menus (pipeline, tools, settings, contacts) to prevent overflow
-                                                                    [
-                                                                        "pipeline",
-                                                                        "tools",
-                                                                        "settings",
-                                                                        "contacts",
-                                                                    ].includes(
-                                                                        item.megaMenuId ||
-                                                                            ""
-                                                                    )
-                                                                        ? item.megaMenuId ===
-                                                                          "tools"
-                                                                            ? "right-0"
-                                                                            : "right-full mr-1"
-                                                                        : "left-full ml-1"
-                                                                }`}
-                                                                onMouseEnter={() => {
-                                                                    if (
-                                                                        closeTimeoutRef.current
-                                                                    ) {
-                                                                        clearTimeout(
-                                                                            closeTimeoutRef.current
-                                                                        );
-                                                                        closeTimeoutRef.current =
-                                                                            null;
-                                                                    }
-                                                                    setActiveMenu(
-                                                                        item.megaMenuId ||
-                                                                            null
+                                                            ) {
+                                                                closeTimeoutRef.current =
+                                                                    setTimeout(
+                                                                        () => {
+                                                                            setActiveMenu(
+                                                                                null
+                                                                            );
+                                                                        },
+                                                                        400
                                                                     );
-                                                                }}
-                                                                onMouseLeave={() => {
-                                                                    closeTimeoutRef.current =
-                                                                        setTimeout(
-                                                                            () => {
-                                                                                setActiveMenu(
-                                                                                    null
-                                                                                );
-                                                                                setMoreMenuOpen(
-                                                                                    false
-                                                                                );
-                                                                            },
-                                                                            150
-                                                                        );
-                                                                }}
+                                                            }
+                                                        }}
+                                                    >
+                                                        {item.type ===
+                                                            "megaMenu" &&
+                                                        item.hasDropdown ? (
+                                                            <button
+                                                                type="button"
+                                                                className={`block w-full text-left px-4 py-2 text-sm tracking-[0.5px] transition-colors capitalize ${
+                                                                    activeMenu ===
+                                                                    item.megaMenuId
+                                                                        ? "text-[#0066cc] bg-[#F0F7FF]"
+                                                                        : "text-[#4A4A4A] hover:bg-gray-50"
+                                                                }`}
                                                             >
-                                                                <MegaMenu
-                                                                    menuId={
-                                                                        item.megaMenuId!
-                                                                    }
-                                                                    onClose={() => {
+                                                                <div className="flex items-center justify-between">
+                                                                    {item.label}
+                                                                    {item.hasDropdown && (
+                                                                        <ChevronDown
+                                                                            className={`h-3 w-3 transition-all duration-300 ${
+                                                                                activeMenu ===
+                                                                                item.megaMenuId
+                                                                                    ? "rotate-180 text-[#0066cc]"
+                                                                                    : "text-[#4a4a4a]"
+                                                                            }`}
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                            </button>
+                                                        ) : (
+                                                            <Link
+                                                                href={item.link}
+                                                                className={`block px-4 py-2 text-sm tracking-[0.5px] transition-colors capitalize ${
+                                                                    activeMenu ===
+                                                                    item.megaMenuId
+                                                                        ? "text-[#0066cc] bg-[#F0F7FF]"
+                                                                        : "text-[#4A4A4A] hover:bg-gray-50"
+                                                                }`}
+                                                            >
+                                                                <div className="flex items-center justify-between">
+                                                                    {item.label}
+                                                                    {item.hasDropdown && (
+                                                                        <ChevronDown
+                                                                            className={`h-3 w-3 transition-all duration-300 ${
+                                                                                activeMenu ===
+                                                                                item.megaMenuId
+                                                                                    ? "rotate-180 text-[#0066cc]"
+                                                                                    : "text-[#4a4a4a]"
+                                                                            }`}
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                            </Link>
+                                                        )}
+                                                        {item.type ===
+                                                            "megaMenu" &&
+                                                            activeMenu ===
+                                                                item.megaMenuId && (
+                                                                <div
+                                                                    className={`absolute top-0 z-[60] pt-2 -mt-1 ${
+                                                                        // Right-align menus (pipeline, tools, settings, contacts) to prevent overflow
+                                                                        [
+                                                                            "pipeline",
+                                                                            "tools",
+                                                                            "settings",
+                                                                            "contacts",
+                                                                        ].includes(
+                                                                            item.megaMenuId ||
+                                                                                ""
+                                                                        )
+                                                                            ? item.megaMenuId ===
+                                                                              "tools"
+                                                                                ? "right-0"
+                                                                                : "right-full mr-1"
+                                                                            : "left-full ml-1"
+                                                                    }`}
+                                                                    onMouseEnter={() => {
                                                                         if (
                                                                             closeTimeoutRef.current
                                                                         ) {
@@ -474,18 +472,53 @@ export default function Header() {
                                                                                 null;
                                                                         }
                                                                         setActiveMenu(
-                                                                            null
-                                                                        );
-                                                                        setMoreMenuOpen(
-                                                                            false
+                                                                            item.megaMenuId ||
+                                                                                null
                                                                         );
                                                                     }}
-                                                                />
-                                                            </div>
-                                                        )}
-                                                </div>
-                                            ))}
-                                        </div>
+                                                                    onMouseLeave={() => {
+                                                                        closeTimeoutRef.current =
+                                                                            setTimeout(
+                                                                                () => {
+                                                                                    setActiveMenu(
+                                                                                        null
+                                                                                    );
+                                                                                    setMoreMenuOpen(
+                                                                                        false
+                                                                                    );
+                                                                                },
+                                                                                300
+                                                                            );
+                                                                    }}
+                                                                >
+                                                                    <MegaMenu
+                                                                        menuId={
+                                                                            item.megaMenuId!
+                                                                        }
+                                                                        onClose={() => {
+                                                                            if (
+                                                                                closeTimeoutRef.current
+                                                                            ) {
+                                                                                clearTimeout(
+                                                                                    closeTimeoutRef.current
+                                                                                );
+                                                                                closeTimeoutRef.current =
+                                                                                    null;
+                                                                            }
+                                                                            setActiveMenu(
+                                                                                null
+                                                                            );
+                                                                            setMoreMenuOpen(
+                                                                                false
+                                                                            );
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
                                     )}
                                 </div>
                             )}

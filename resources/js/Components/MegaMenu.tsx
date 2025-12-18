@@ -299,20 +299,20 @@ const menus: Record<string, Menu> = {
                     },
                     {
                         label: "Dispensaries for Sale",
-                        link: "/properties?property_types=Dispensary&type=for-sale",
+                        link: "#",
                         icon: DollarSign,
                         description: "Eligible dispensary for sale",
                     },
                     {
                         label: "All Dispensaries",
-                        link: "/properties?property_types=Dispensary",
+                        link: "#",
                         icon: Grid3X3,
                         featured: true,
                         description: "View all available properties",
                     },
                     {
                         label: "OCM Map",
-                        link: "/dispensaries/ocm-map",
+                        link: "#",
                         icon: MapPin,
                         description: "View dispensary-eligible zones",
                     },

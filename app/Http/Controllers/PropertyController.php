@@ -185,8 +185,15 @@ class PropertyController extends Controller
             $properties = $filteredProperties->values();
         }
 
+        // Get property_types filter for title generation
+        $propertyTypes = $request->has('property_types') && $request->input('property_types')
+            ? (is_array($request->input('property_types'))
+                ? $request->input('property_types')
+                : explode(',', $request->input('property_types')))
+            : null;
+
         // Generate listing title based on filters
-        $listingTitle = $this->generateListingTitle($type, $category, $listingType, $status, $section);
+        $listingTitle = $this->generateListingTitle($type, $category, $listingType, $status, $section, $propertyTypes);
 
         return Inertia::render('Properties', [
             'properties' => $properties,
@@ -520,8 +527,26 @@ class PropertyController extends Controller
     /**
      * Generate listing title based on filters and URL parameters
      */
-    protected function generateListingTitle($type, $category, $listingType, $status, $section): string
+    protected function generateListingTitle($type, $category, $listingType, $status, $section, $propertyTypes = null): string
     {
+        // Handle property type filters (e.g., Dispensary)
+        if ($propertyTypes && is_array($propertyTypes) && count($propertyTypes) > 0) {
+            $primaryType = $propertyTypes[0]; // Use first property type for title
+            $typeLabel = ucfirst($primaryType);
+
+            if ($type === 'for-lease') {
+                return $typeLabel . ' For Lease';
+            } elseif ($type === 'for-sale') {
+                return $typeLabel . ' For Sale';
+            } elseif ($status === 'auctions') {
+                return $typeLabel . ' Auctions For Sale';
+            } elseif ($listingType === 'off-market') {
+                return 'Off-Market ' . $typeLabel;
+            } else {
+                return $typeLabel . ' Properties';
+            }
+        }
+
         // Handle "all-commercial" and "all-residential" - show "All" prefix
         // These should be checked before specific filters to show the correct title
         if ($category === 'all-commercial') {
