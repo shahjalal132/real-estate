@@ -18,6 +18,7 @@ interface PageProps {
     properties?: Property[];
     filter: string;
     section: string | null;
+    listingTitle?: string;
     filters?: Record<string, any>;
     [key: string]: unknown;
 }
@@ -138,6 +139,7 @@ export default function Properties() {
         properties = [],
         filter,
         section,
+        listingTitle,
         filters: initialFilters = {},
     } = props;
 
@@ -183,11 +185,14 @@ export default function Properties() {
         [sortedProperties, filter]
     );
 
-    const sectionTitle = currentSection
-        ? currentSection.charAt(0).toUpperCase() +
-          currentSection.slice(1) +
-          " Properties"
-        : "All Properties";
+    // Use listingTitle from server if available, otherwise generate from currentSection
+    const sectionTitle =
+        listingTitle ||
+        (currentSection
+            ? currentSection.charAt(0).toUpperCase() +
+              currentSection.slice(1) +
+              " Properties"
+            : "All Properties");
 
     // Calculate active filters count and check if any filters are active
     const activeFiltersData = useMemo(() => {

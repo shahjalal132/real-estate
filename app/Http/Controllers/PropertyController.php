@@ -171,10 +171,14 @@ class PropertyController extends Controller
             $properties = $filteredProperties->values();
         }
 
+        // Generate listing title based on filters
+        $listingTitle = $this->generateListingTitle($type, $category, $listingType, $status, $section);
+
         return Inertia::render('Properties', [
             'properties' => $properties,
             'filter' => $filter,
             'section' => $section ?: ($category ?: null),
+            'listingTitle' => $listingTitle,
             'filters' => $request->only([
                 'location',
                 'keywords',
@@ -296,6 +300,7 @@ class PropertyController extends Controller
             'properties' => $properties,
             'filter' => $filter,
             'section' => 'auctions',
+            'listingTitle' => 'Auctions',
             'filters' => $request->only([
                 'location',
                 'keywords',
@@ -358,6 +363,7 @@ class PropertyController extends Controller
             'properties' => $properties,
             'filter' => $filter,
             'section' => 'residentials',
+            'listingTitle' => 'Residential Properties',
             'filters' => $request->only([
                 'location',
                 'keywords',
@@ -426,6 +432,7 @@ class PropertyController extends Controller
             'properties' => $properties,
             'filter' => $filter,
             'section' => 'commercial',
+            'listingTitle' => 'Commercial Properties',
             'filters' => $request->only([
                 'location',
                 'keywords',
@@ -491,8 +498,73 @@ class PropertyController extends Controller
 
         return Inertia::render('Properties/Rental', [
             'properties' => $properties,
+            'listingTitle' => 'Rental Properties',
             'filters' => $request->only(['search', 'min_price', 'max_price', 'sort', 'direction']),
         ]);
+    }
+
+    /**
+     * Generate listing title based on filters and URL parameters
+     */
+    protected function generateListingTitle($type, $category, $listingType, $status, $section): string
+    {
+        // Build title parts
+        $parts = [];
+
+        // Handle status first (auctions)
+        if ($status === 'auctions') {
+            if ($category === 'commercial') {
+                return 'Commercial Auctions for Sale';
+            } elseif ($category === 'residential') {
+                return 'Residential Auctions For Sale';
+            } else {
+                return 'Auctions For Sale';
+            }
+        }
+
+        // Handle listing type (off-market)
+        if ($listingType === 'off-market') {
+            if ($category === 'commercial') {
+                return 'Off-Market Commercial';
+            } elseif ($category === 'residential') {
+                return 'Off-Market Residential';
+            } else {
+                return 'Off-Market Properties';
+            }
+        }
+
+        // Handle type (for-sale vs for-lease)
+        if ($type === 'for-sale') {
+            if ($category === 'commercial') {
+                return 'Commercial For Sale';
+            } elseif ($category === 'residential') {
+                return 'Residential For Sale';
+            } else {
+                return 'Properties For Sale';
+            }
+        } elseif ($type === 'for-lease') {
+            if ($category === 'commercial') {
+                return 'Commercial Lease';
+            } elseif ($category === 'residential') {
+                return 'Residential Lease';
+            } else {
+                return 'All For Lease';
+            }
+        }
+
+        // Handle section (backward compatibility)
+        if ($section === 'residential' || $section === 'residentials') {
+            return 'Residential Properties';
+        } elseif ($section === 'commercial') {
+            return 'Commercial Properties';
+        } elseif ($section === 'auctions') {
+            return 'Auctions';
+        } elseif ($section === 'rental') {
+            return 'Rental Properties';
+        }
+
+        // Default title
+        return 'All Properties';
     }
 
     /**
