@@ -407,18 +407,6 @@ export default function PropertyShow() {
                             </div>
                         )}
 
-                        {/* Demographics Section */}
-                        {(!isPrintMode ||
-                            selectedPrintSections.includes("demographics")) && (
-                            <div
-                                id="demographics"
-                                ref={sectionRefs.demographics}
-                                className="scroll-mt-20"
-                            >
-                                <Demographics />
-                            </div>
-                        )}
-
                         {/* Valuation Calculator Section */}
                         {(!isPrintMode ||
                             selectedPrintSections.includes(
@@ -430,6 +418,18 @@ export default function PropertyShow() {
                                 className="scroll-mt-20"
                             >
                                 <ValuationCalculator property={property} />
+                            </div>
+                        )}
+
+                        {/* Demographics Section */}
+                        {(!isPrintMode ||
+                            selectedPrintSections.includes("demographics")) && (
+                            <div
+                                id="demographics"
+                                ref={sectionRefs.demographics}
+                                className="scroll-mt-20"
+                            >
+                                <Demographics />
                             </div>
                         )}
 
