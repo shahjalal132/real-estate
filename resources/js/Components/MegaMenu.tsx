@@ -151,7 +151,7 @@ const menus: Record<string, Menu> = {
                     },
                     {
                         label: "All Commercial For Sale",
-                        link: "/properties?type=for-sale&category=commercial",
+                        link: "/properties?type=for-sale&category=all-commercial",
                         icon: Grid3X3,
                         featured: true,
                     },
@@ -178,7 +178,7 @@ const menus: Record<string, Menu> = {
                     },
                     {
                         label: "All Residential For Sale",
-                        link: "/properties?type=for-sale&category=residential",
+                        link: "/properties?type=for-sale&category=all-residential",
                         icon: Grid3X3,
                         featured: true,
                     },

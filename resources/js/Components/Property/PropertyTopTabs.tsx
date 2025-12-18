@@ -34,7 +34,7 @@ export default function PropertyTopTabs() {
     return (
         <div
             id="property-top-tabs"
-            className="sticky top-[54px] z-50 bg-gray-100 w-full"
+            className="sticky top-[58px] z-50 bg-gray-100 w-full"
         >
             <div className="flex items-center gap-2 w-[95%] mx-auto px-2 pt-2">
                 {tabs.map((tab) => (

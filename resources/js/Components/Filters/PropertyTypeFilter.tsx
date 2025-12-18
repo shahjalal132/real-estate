@@ -72,6 +72,10 @@ const PROPERTY_TYPES = [
         ],
     },
     {
+        type: "Residential",
+        subtypes: [],
+    },
+    {
         type: "Self Storage",
         subtypes: [],
     },

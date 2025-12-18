@@ -21,8 +21,17 @@ class PropertyController extends Controller
 
         $query = Property::with(['location', 'images', 'brokers.brokerage', 'details']);
 
+        // Check if this is "all-commercial" or "all-residential" (includes all listing types)
+        $isAllCategory = ($category === 'all-commercial' || $category === 'all-residential');
+
+        // Normalize category for filtering (remove "all-" prefix)
+        $normalizedCategory = $isAllCategory
+            ? str_replace('all-', '', $category)
+            : $category;
+
         // Apply type-based filtering (for-sale vs for-lease)
-        if ($type === 'for-sale') {
+        // Skip type filtering for "all-commercial" and "all-residential" as they include all types
+        if (!$isAllCategory && $type === 'for-sale') {
             $query->where('status', '!=', 'Sold')
                 ->where(function ($q) {
                     $q->whereDoesntHave('details', function ($detailQuery) {
@@ -31,7 +40,7 @@ class PropertyController extends Controller
                     })
                         ->orWhereIn('status', ['On-Market', 'Off-Market', 'Auction', 'Pending', 'Under Contract']);
                 });
-        } elseif ($type === 'for-lease') {
+        } elseif (!$isAllCategory && $type === 'for-lease') {
             $query->where('status', '!=', 'Sold')
                 ->where(function ($q) {
                     $q->whereHas('details', function ($detailQuery) {
@@ -45,8 +54,13 @@ class PropertyController extends Controller
                 });
         }
 
+        // For "all-commercial" and "all-residential", exclude Sold status but include all other statuses
+        if ($isAllCategory) {
+            $query->where('status', '!=', 'Sold');
+        }
+
         // Apply category-based filtering (commercial vs residential)
-        if ($category === 'residential') {
+        if ($normalizedCategory === 'residential') {
             $query->where(function ($q) {
                 $q->whereJsonContains('types', 'Residential')
                     ->orWhere(function ($subQ) {
@@ -59,7 +73,7 @@ class PropertyController extends Controller
                             });
                     });
             });
-        } elseif ($category === 'commercial') {
+        } elseif ($normalizedCategory === 'commercial') {
             // Commercial: Commercial, Land, Office, Retail, Industrial, OR Commercial Multifamily
             $query->where(function ($q) {
                 $q->whereJsonContains('types', 'Commercial')
@@ -508,10 +522,27 @@ class PropertyController extends Controller
      */
     protected function generateListingTitle($type, $category, $listingType, $status, $section): string
     {
-        // Build title parts
-        $parts = [];
+        // Handle "all-commercial" and "all-residential" - show "All" prefix
+        // These should be checked before specific filters to show the correct title
+        if ($category === 'all-commercial') {
+            // If there are specific filters (auctions, off-market), still show "All" but be more specific
+            if ($status === 'auctions') {
+                return 'All Commercial Auctions For Sale';
+            } elseif ($listingType === 'off-market') {
+                return 'All Off-Market Commercial';
+            }
+            return 'All Commercial For Sale';
+        } elseif ($category === 'all-residential') {
+            // If there are specific filters (auctions, off-market), still show "All" but be more specific
+            if ($status === 'auctions') {
+                return 'All Residential Auctions For Sale';
+            } elseif ($listingType === 'off-market') {
+                return 'All Off-Market Residential';
+            }
+            return 'All Residential For Sale';
+        }
 
-        // Handle status first (auctions)
+        // Handle status first (auctions) - specific filter, no "All"
         if ($status === 'auctions') {
             if ($category === 'commercial') {
                 return 'Commercial Auctions for Sale';
@@ -522,7 +553,7 @@ class PropertyController extends Controller
             }
         }
 
-        // Handle listing type (off-market)
+        // Handle listing type (off-market) - specific filter, no "All"
         if ($listingType === 'off-market') {
             if ($category === 'commercial') {
                 return 'Off-Market Commercial';
@@ -533,7 +564,7 @@ class PropertyController extends Controller
             }
         }
 
-        // Handle type (for-sale vs for-lease)
+        // Handle type (for-sale vs for-lease) - specific filter, no "All"
         if ($type === 'for-sale') {
             if ($category === 'commercial') {
                 return 'Commercial For Sale';
@@ -550,6 +581,14 @@ class PropertyController extends Controller
             } else {
                 return 'All For Lease';
             }
+        }
+
+        // Handle category only (no specific type/status/listingType) - show "All" prefix
+        // This means showing all: auctions, sales, and off-market
+        if ($category === 'commercial') {
+            return 'All Commercial For Sale';
+        } elseif ($category === 'residential') {
+            return 'All Residential For Sale';
         }
 
         // Handle section (backward compatibility)
