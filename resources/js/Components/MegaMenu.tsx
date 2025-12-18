@@ -136,22 +136,22 @@ const menus: Record<string, Menu> = {
                 items: [
                     {
                         label: "Commercial For Sale",
-                        link: "/for-sale/commercial",
+                        link: "/properties?type=for-sale&category=commercial",
                         icon: Building2,
                     },
                     {
                         label: "Commercial Auctions",
-                        link: "/for-sale/commercial-auctions",
+                        link: "/properties?type=for-sale&category=commercial&status=auctions",
                         icon: Megaphone,
                     },
                     {
                         label: "Off-Market Commercial",
-                        link: "/for-sale/commercial-off-market",
+                        link: "/properties?type=for-sale&category=commercial&listing_type=off-market",
                         icon: Lock,
                     },
                     {
                         label: "All Commercial For Sale",
-                        link: "/for-commercial-sale/all",
+                        link: "/properties?type=for-sale&category=commercial",
                         icon: Grid3X3,
                         featured: true,
                     },
@@ -163,22 +163,22 @@ const menus: Record<string, Menu> = {
                 items: [
                     {
                         label: "Residential For Sale",
-                        link: "/for-sale/residential",
+                        link: "/properties?type=for-sale&category=residential",
                         icon: Home,
                     },
                     {
                         label: "Residential Auctions",
-                        link: "/for-sale/residential-auctions",
+                        link: "/properties?type=for-sale&category=residential&status=auctions",
                         icon: Megaphone,
                     },
                     {
                         label: "Off-Market Residential",
-                        link: "/for-sale/residential-off-market",
+                        link: "/properties?type=for-sale&category=residential&listing_type=off-market",
                         icon: Lock,
                     },
                     {
                         label: "All Residential For Sale",
-                        link: "/for-residential-sale/all",
+                        link: "/properties?type=for-sale&category=residential",
                         icon: Grid3X3,
                         featured: true,
                     },
@@ -197,19 +197,19 @@ const menus: Record<string, Menu> = {
                 items: [
                     {
                         label: "Commercial Lease",
-                        link: "/for-lease/commercial",
+                        link: "/properties?type=for-lease&category=commercial",
                         icon: Building,
                         description: "Office, retail, industrial spaces",
                     },
                     {
                         label: "Residential Lease",
-                        link: "/for-lease/residential",
+                        link: "/properties?type=for-lease&category=residential",
                         icon: Home,
                         description: "Apartments and houses for rent",
                     },
                     {
                         label: "All For Lease",
-                        link: "/for-lease/all",
+                        link: "/properties?type=for-lease",
                         icon: Grid3X3,
                         featured: true,
                         description: "View all available leases",
@@ -293,19 +293,19 @@ const menus: Record<string, Menu> = {
                 items: [
                     {
                         label: "Dispensaries for Lease",
-                        link: "/dispensaries/lease",
+                        link: "/properties?property_types=Dispensary&type=for-lease",
                         icon: Store,
                         description: "Eligible dispensary for lease",
                     },
                     {
                         label: "Dispensaries for Sale",
-                        link: "/dispensaries/sale",
+                        link: "/properties?property_types=Dispensary&type=for-sale",
                         icon: DollarSign,
                         description: "Eligible dispensary for sale",
                     },
                     {
                         label: "All Dispensaries",
-                        link: "/dispensaries/all",
+                        link: "/properties?property_types=Dispensary",
                         icon: Grid3X3,
                         featured: true,
                         description: "View all available properties",
@@ -612,7 +612,7 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
 
     return (
         <div
-            className={`absolute top-full mt-0 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
+            className={`absolute top-0 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
                 shouldRightAlign ? "right-0" : "left-0"
             }`}
             style={{
@@ -623,6 +623,9 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
                         right: "0",
                         transform: "none",
                     }),
+            }}
+            onMouseEnter={() => {
+                // Keep menu open when hovering over it - parent handles this
             }}
             onMouseLeave={onClose}
         >
