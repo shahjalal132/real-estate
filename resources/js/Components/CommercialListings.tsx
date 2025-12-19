@@ -58,7 +58,9 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
                 ? property.types[0]
                 : "Property",
         isFeatured: property.is_in_opportunity_zone || false,
-        price: property.formatted_price || "Undisclosed",
+        asking_price: property.formatted_price
+            ? property.formatted_price.replace(/^\$\s*/, "").trim()
+            : "Undisclosed",
         priceUnit: "/Sqft",
         description:
             property.marketing_description ||
@@ -76,6 +78,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             property.thumbnail_url ||
             "https://via.placeholder.com/400x300?text=No+Image",
         location: locationString,
+        locationObject: property.location,
         href: `/properties/${property.id}/${property.url_slug}`,
     };
 }
