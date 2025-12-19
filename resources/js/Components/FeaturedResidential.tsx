@@ -110,6 +110,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
             property.thumbnail_url ||
             "https://via.placeholder.com/400x300?text=No+Image",
         location: locationString,
+        locationObject: property.location,
         href: `/properties/${property.id}/${property.url_slug}`,
     };
 }
