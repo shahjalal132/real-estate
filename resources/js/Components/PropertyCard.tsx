@@ -9,6 +9,7 @@ import {
     Star,
 } from "lucide-react";
 import { Link } from "@inertiajs/react";
+import { PropertyLocation } from "../types";
 
 export interface PropertyCardProps {
     title: string;
@@ -25,6 +26,7 @@ export interface PropertyCardProps {
     photosCount?: number;
     image: string;
     location: string;
+    locationObject?: PropertyLocation;
     startingBid?: string;
     href?: string;
 }
@@ -43,8 +45,16 @@ export default function PropertyCard({
     photosCount = 0,
     image,
     location,
+    locationObject,
     href,
 }: PropertyCardProps) {
+    // Get full address using the same logic as Show.tsx
+    const fullAddress =
+        locationObject?.full_address ||
+        (locationObject
+            ? `${locationObject.address}, ${locationObject.city}, ${locationObject.state_name} ${locationObject.zip}`
+            : title);
+
     const cardContent = (
         <div className="flex h-full flex-col rounded-xl sm:rounded-2xl bg-white p-2 sm:p-4 shadow-lg">
             <div className="relative flex h-44 sm:h-52 justify-center overflow-hidden rounded-lg sm:rounded-xl">
@@ -88,9 +98,9 @@ export default function PropertyCard({
                     </p>
                     <h2
                         className="line-clamp-1 text-lg sm:text-xl font-semibold font-literata"
-                        title={title}
+                        title={fullAddress}
                     >
-                        {title}
+                        {fullAddress}
                     </h2>
                     <p className="price mt-2 inline-flex items-baseline gap-1 rounded-xl font-semibold text-blue-900">
                         <span className="text-sm">

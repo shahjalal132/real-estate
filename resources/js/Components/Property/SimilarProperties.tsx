@@ -94,6 +94,7 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
         photosCount: property.number_of_images || 0,
         image: property.thumbnail_url || "/assets/images/placeholder.png",
         location: locationString,
+        locationObject: property.location,
         href: `/properties/${property.id}/${property.url_slug}`,
     };
 }
