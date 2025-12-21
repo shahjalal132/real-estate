@@ -2,22 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\FiltersProperties;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
+    use FiltersProperties;
+
     private const FEATURED_LIMIT = 12;
 
     public function index(Request $request)
     {
+        $hasFilters = $this->hasFilterParameters($request);
         $staticContent = $this->getStaticContent();
-        // dd($this->getFeaturedResidential());
+
         return Inertia::render('Home', array_merge([
-            'featuredAuctions' => $this->getFeaturedAuctions(),
-            'featuredResidential' => $this->getFeaturedResidential(),
-            'featuredCommercial' => $this->getFeaturedCommercial(),
+            'hasFilters' => $hasFilters,
+            'featuredAuctions' => $hasFilters ? [] : $this->getFeaturedAuctions(),
+            'featuredResidential' => $this->getFeaturedResidential($request, $hasFilters),
+            'featuredCommercial' => $hasFilters ? [] : $this->getFeaturedCommercial(),
         ], $staticContent));
     }
     /**
@@ -36,19 +41,32 @@ class HomeController extends Controller
     /**
      * Get featured residential properties (properties with "Residential" type)
      */
-    private function getFeaturedResidential()
+    private function getFeaturedResidential(Request $request = null, bool $hasFilters = false)
     {
-        return Property::with(['location', 'images', 'brokers', 'details'])
+        $query = Property::with(['location', 'images', 'brokers.brokerage', 'details'])
             ->where(function ($query) {
                 $query->whereJsonContains('types', 'Residential')
                     ->orWhereJsonContains('types', 'Multifamily');
             })
             ->where('status', '!=', 'Sold')
-            ->whereNotNull('thumbnail_url')
-            ->orderBy('created_at', 'desc')
-            ->limit(self::FEATURED_LIMIT)
-            ->get();
+            ->whereNotNull('thumbnail_url');
+
+        // Apply filters if request has filter parameters
+        if ($request && $hasFilters) {
+            $query = $this->applyFilters($query, $request);
+        }
+
+        $query->orderBy('created_at', 'desc');
+
+        // If filters are applied, return all results without limit
+        // Otherwise, limit to featured limit
+        if ($hasFilters) {
+            return $query->get();
+        }
+
+        return $query->limit(self::FEATURED_LIMIT)->get();
     }
+
 
     /**
      * Get featured commercial properties (Commercial types excluding Residential)

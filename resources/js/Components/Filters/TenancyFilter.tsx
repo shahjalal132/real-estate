@@ -1,6 +1,6 @@
 interface TenancyFilterProps {
-    tenancy: "vacant" | "single" | "multi";
-    onChange: (tenancy: "vacant" | "single" | "multi") => void;
+    tenancy: "vacant" | "single" | "multi" | "";
+    onChange: (tenancy: "vacant" | "single" | "multi" | "") => void;
 }
 
 export default function TenancyFilter({

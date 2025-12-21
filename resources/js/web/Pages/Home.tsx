@@ -67,6 +67,7 @@ interface DataPowered {
 }
 
 interface HomeProps {
+    hasFilters?: boolean;
     featuredAuctions?: Property[];
     featuredResidential?: Property[];
     featuredCommercial?: Property[];
@@ -81,6 +82,7 @@ interface HomeProps {
 }
 
 export default function Home({
+    hasFilters = false,
     featuredAuctions = [],
     featuredResidential = [],
     featuredCommercial = [],
@@ -95,15 +97,22 @@ export default function Home({
     return (
         <AppLayout title="Home" footerClassName="pt-32">
             <Hero content={heroContent} />
-            <FeaturedResidential properties={featuredResidential} />
-            <FeaturedAuctions auctions={featuredAuctions} />
-            <FeaturedCommercial properties={featuredCommercial} />
-            <DataPowered content={dataPowered} />
-            <MarketplaceExplainer content={marketplaceExplainer} />
-            <Features features={features} />
-            <News news={news} />
-            <Testimonials testimonials={testimonials} />
-            <CTABanner content={ctaBanner} />
+            <FeaturedResidential
+                properties={featuredResidential}
+                hasFilters={hasFilters}
+            />
+            {!hasFilters && (
+                <>
+                    <FeaturedAuctions auctions={featuredAuctions} />
+                    <FeaturedCommercial properties={featuredCommercial} />
+                    <DataPowered content={dataPowered} />
+                    <MarketplaceExplainer content={marketplaceExplainer} />
+                    <Features features={features} />
+                    <News news={news} />
+                    <Testimonials testimonials={testimonials} />
+                    <CTABanner content={ctaBanner} />
+                </>
+            )}
             <ScrollToTop />
         </AppLayout>
     );
