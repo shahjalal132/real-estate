@@ -77,6 +77,7 @@ interface Menu {
 interface MegaMenuProps {
     menuId: string;
     onClose: () => void;
+    isRightAligned?: boolean;
 }
 
 const menus: Record<string, Menu> = {
@@ -469,7 +470,7 @@ const menus: Record<string, Menu> = {
         id: "tools",
         title: "Investment Tools",
         layout: "four-column",
-        width: "1400px",
+        width: "900px",
         sections: [
             {
                 title: "Calculators",
@@ -595,7 +596,7 @@ const layoutClasses: Record<Menu["layout"], string> = {
     "four-column": "md:grid-cols-4",
 };
 
-export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
+export default function MegaMenu({ menuId, onClose, isRightAligned = false }: MegaMenuProps) {
     const menu =
         menus[menuId] ?? menus[menuAliases[menuId as keyof typeof menuAliases]];
     if (!menu) return null;
@@ -608,53 +609,117 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
         "underwriting",
         "pipeline",
     ];
-    const shouldRightAlign = rightAlignMenus.includes(menuId);
+    const shouldRightAlign = isRightAligned || rightAlignMenus.includes(menuId);
+
+    // Calculate max width based on viewport to prevent overflow
+    // Leave padding on both sides (2rem = 32px on each side)
+    // For very wide menus like tools, ensure they don't exceed viewport
+    const menuWidth = parseInt(menu.width);
+    const viewportPadding = 64; // 2rem on each side
+    const maxWidthValue = typeof window !== 'undefined' 
+        ? Math.min(menuWidth, window.innerWidth - viewportPadding)
+        : menuWidth;
+    const maxWidth = typeof window !== 'undefined'
+        ? `${maxWidthValue}px`
+        : `min(${menu.width}, calc(100vw - 4rem))`;
+
+    // For right-aligned menus, ensure they don't overflow left
+    // Calculate proper positioning to prevent left overflow
+    const positioningStyle: Record<string, string | number> = {};
+    
+    if (shouldRightAlign && typeof window !== 'undefined') {
+        // For right-aligned menus, ensure they align to the right edge
+        // and don't overflow beyond viewport
+        const availableWidth = window.innerWidth - viewportPadding;
+        const finalWidth = Math.min(menuWidth, availableWidth);
+        
+        positioningStyle.right = 0;
+        positioningStyle.maxWidth = `${availableWidth}px`;
+        
+        // If menu is wider than available space, constrain it
+        if (menuWidth > availableWidth) {
+            positioningStyle.width = `${finalWidth}px`;
+        }
+        
+        // Ensure minimum left margin to prevent overflow
+        positioningStyle.minWidth = "280px";
+    }
 
     return (
         <div
-            className={`absolute top-0 bg-white rounded-b-lg shadow-[0_15px_30px_rgba(0,0,0,0.12)] border border-[#E6EAF0] ${
+            className={`relative bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.15)] border border-[#E6EAF0] overflow-visible ${
                 shouldRightAlign ? "right-0" : "left-0"
             }`}
             style={{
                 width: menu.width,
-                maxWidth: "calc(100vw - 25rem)", // Prevent overflow beyond viewport
-                ...(shouldRightAlign &&
-                    menuId === "tools" && {
-                        right: "0",
-                        transform: "none",
-                    }),
+                maxWidth: maxWidth,
+                minWidth: "280px",
+                animation: "fadeInDown 0.2s ease-out",
+                ...positioningStyle,
             }}
             onMouseEnter={() => {
                 // Keep menu open when hovering over it - parent handles this
             }}
             onMouseLeave={onClose}
         >
-            <div className="p-6">
-                {menu.description && (
-                    <p className="text-sm text-[#666666] mb-4">
-                        {menu.description}
-                    </p>
-                )}
+            {/* Message bubble pointer/arrow */}
+            <div
+                className={`absolute -top-2.5 w-5 h-5 bg-white border-l border-t border-[#E6EAF0] transform rotate-45 z-10 ${
+                    shouldRightAlign ? "right-8" : "left-8"
+                }`}
+                style={{
+                    boxShadow: "-2px -2px 6px rgba(0,0,0,0.08)",
+                }}
+            />
+            
+            {/* Header Section */}
+            {(menu.title || menu.description) && (
+                <div className={`border-b border-[#E6EAF0] bg-gradient-to-b from-[#FAFBFC] to-white ${
+                    menuId === "tools" ? "px-5 py-4" : "px-6 py-5 md:px-8 md:py-6"
+                }`}>
+                    {menu.title && (
+                        <h2 className={`font-semibold text-[#0F2343] tracking-wide uppercase ${
+                            menuId === "tools" ? "text-sm mb-1" : "text-base mb-2"
+                        }`}>
+                            {menu.title}
+                        </h2>
+                    )}
+                    {menu.description && (
+                        <p className={`text-[#666666] leading-relaxed ${
+                            menuId === "tools" ? "text-xs" : "text-sm"
+                        }`}>
+                            {menu.description}
+                        </p>
+                    )}
+                </div>
+            )}
+            
+            {/* Menu Content Section */}
+            <div className={`overflow-hidden rounded-b-xl ${
+                menuId === "tools" ? "p-5" : "p-6 md:p-8"
+            }`}>
                 <div
-                    className={`grid gap-6 ${
+                    className={`grid gap-6 md:gap-8 ${
                         layoutClasses[menu.layout] ?? "grid-cols-1"
-                    }`}
+                    } ${menuId === "tools" ? "gap-4 md:gap-5" : ""}`}
                 >
                     {menu.sections.map((section, idx) => (
                         <div
                             key={`${menu.id}-section-${idx}`}
-                            className={`space-y-3 ${
+                            className={`space-y-4 ${
                                 section.fullWidth ? "md:col-span-full" : ""
-                            }`}
+                            } ${menuId === "tools" ? "space-y-2" : ""}`}
                         >
                             {section.title && (
-                                <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-[1.5px]">
+                                <h3 className={`font-semibold text-[#666666] uppercase tracking-[1.5px] mb-3 ${
+                                    menuId === "tools" ? "text-[10px] mb-2" : "text-xs"
+                                }`}>
                                     {section.title}
                                 </h3>
                             )}
                             {section.type === "link-list" &&
                                 section.items &&
-                                renderLinkList(section.items)}
+                                renderLinkList(section.items, menuId)}
                             {section.type === "featured-card" &&
                                 renderFeaturedCard(section)}
                             {section.type === "quick-stats" &&
@@ -669,48 +734,59 @@ export default function MegaMenu({ menuId, onClose }: MegaMenuProps) {
     );
 }
 
-function renderLinkList(items: MenuItem[]) {
+function renderLinkList(items: MenuItem[], menuId?: string) {
+    const isToolsMenu = menuId === "tools";
     return (
-        <ul className="space-y-2">
+        <ul className={`space-y-1 ${isToolsMenu ? "space-y-0.5" : ""}`}>
             {items.map((item) => {
                 const Icon = item.icon;
                 return (
                     <li key={item.label}>
                         <Link
                             href={item.link}
-                            className={`flex items-start gap-3 rounded-md p-3 transition-colors ${
+                            className={`flex items-start gap-3 rounded-lg transition-all duration-200 group ${
+                                isToolsMenu ? "p-2" : "p-3"
+                            } ${
                                 item.featured
-                                    ? "bg-[#0066CC] text-white hover:bg-[#004C99]"
-                                    : "hover:bg-[#F0F7FF]"
+                                    ? "bg-[#0066CC] text-white hover:bg-[#0052A3] shadow-sm hover:shadow-md"
+                                    : "hover:bg-[#F0F7FF] hover:shadow-sm"
                             }`}
                         >
                             <span
-                                className={`flex h-8 w-8 items-center justify-center rounded-md ${
+                                className={`flex items-center justify-center rounded-lg flex-shrink-0 transition-colors ${
+                                    isToolsMenu ? "h-7 w-7" : "h-9 w-9"
+                                } ${
                                     item.featured
                                         ? "bg-white/20 text-white"
                                         : "bg-[#E9F1FF] text-[#0F6BD0]"
                                 }`}
                             >
                                 {Icon ? (
-                                    <Icon className="h-4 w-4" strokeWidth={2} />
+                                    <Icon className={isToolsMenu ? "h-3.5 w-3.5" : "h-4 w-4"} strokeWidth={2.5} />
                                 ) : (
-                                    <Grid3X3 className="h-4 w-4" />
+                                    <Grid3X3 className={isToolsMenu ? "h-3.5 w-3.5" : "h-4 w-4"} />
                                 )}
                             </span>
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
-                                    {item.label}
+                            <div className="flex-1 min-w-0">
+                                <div className={`flex items-center gap-2 font-semibold tracking-wide uppercase ${
+                                    isToolsMenu ? "text-xs" : "text-sm"
+                                }`}>
+                                    <span className="truncate">{item.label}</span>
                                     {item.badge && (
-                                        <span className="bg-[#FF6B00] text-white text-[10px] px-1.5 py-0.5 rounded font-semibold">
+                                        <span className={`bg-[#FF6B00] text-white rounded font-semibold flex-shrink-0 ${
+                                            isToolsMenu ? "text-[9px] px-1 py-0.5" : "text-[10px] px-1.5 py-0.5"
+                                        }`}>
                                             {item.badge}
                                         </span>
                                     )}
                                 </div>
                                 {item.description && (
                                     <p
-                                        className={`text-xs mt-1 ${
+                                        className={`mt-1.5 leading-relaxed ${
+                                            isToolsMenu ? "text-[10px] mt-1" : "text-xs"
+                                        } ${
                                             item.featured
-                                                ? "text-white/80"
+                                                ? "text-white/90"
                                                 : "text-[#666666]"
                                         }`}
                                     >
@@ -729,23 +805,23 @@ function renderLinkList(items: MenuItem[]) {
 function renderFeaturedCard(section: MenuSection) {
     return (
         <div
-            className="rounded-lg p-4"
+            className="rounded-lg p-5 border border-[#E6EAF0]"
             style={{ backgroundColor: section.backgroundColor || "#F5F7FB" }}
         >
             {section.title && (
-                <h4 className="text-sm font-semibold text-[#0F2343] tracking-wide uppercase mb-2">
+                <h4 className="text-sm font-semibold text-[#0F2343] tracking-wide uppercase mb-3">
                     {section.title}
                 </h4>
             )}
             {section.description && (
-                <p className="text-sm text-[#1F2937] mb-4">
+                <p className="text-sm text-[#1F2937] mb-4 leading-relaxed">
                     {section.description}
                 </p>
             )}
             {section.cta && (
                 <Link
                     href={section.cta.link}
-                    className="inline-flex items-center text-sm font-semibold text-[#0F6BD0] hover:underline"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-[#0F6BD0] hover:text-[#0052A3] hover:underline transition-colors"
                 >
                     {section.cta.text} →
                 </Link>
@@ -758,7 +834,7 @@ function renderQuickStats(section: MenuSection) {
     if (!section.stats) return null;
     return (
         <div
-            className="rounded-lg p-4 flex gap-4"
+            className="rounded-lg p-5 flex gap-6 border border-[#E6EAF0]"
             style={{ backgroundColor: section.backgroundColor || "#F5F7FB" }}
         >
             {section.stats.map((stat) => {
@@ -766,9 +842,9 @@ function renderQuickStats(section: MenuSection) {
                 return (
                     <div key={stat.label} className="flex-1 text-center">
                         {Icon && (
-                            <Icon className="mx-auto mb-2 h-5 w-5 text-[#0F6BD0]" />
+                            <Icon className="mx-auto mb-3 h-5 w-5 text-[#0F6BD0]" />
                         )}
-                        <div className="text-2xl font-bold text-[#0F2343]">
+                        <div className="text-2xl font-bold text-[#0F2343] mb-1">
                             {stat.value}
                         </div>
                         <p className="text-xs uppercase tracking-wide text-[#4A4A4A]">
@@ -785,11 +861,11 @@ function renderMarketPreview(section: MenuSection) {
     if (!section.metrics) return null;
     return (
         <div
-            className="rounded-lg p-4"
+            className="rounded-lg p-5 border border-[#E6EAF0]"
             style={{ backgroundColor: section.backgroundColor || "#F5F7FB" }}
         >
             {section.title && (
-                <h4 className="text-sm font-semibold text-[#0F2343] tracking-wide uppercase mb-3">
+                <h4 className="text-sm font-semibold text-[#0F2343] tracking-wide uppercase mb-4">
                     {section.title}
                 </h4>
             )}
@@ -797,7 +873,7 @@ function renderMarketPreview(section: MenuSection) {
                 {section.metrics.map((metric) => (
                     <span
                         key={metric}
-                        className="text-xs font-semibold tracking-wide text-[#0F6BD0] bg-white rounded-full px-3 py-1"
+                        className="text-xs font-semibold tracking-wide text-[#0F6BD0] bg-white rounded-full px-3 py-1.5 border border-[#E6EAF0]"
                     >
                         {metric}
                     </span>
@@ -806,7 +882,7 @@ function renderMarketPreview(section: MenuSection) {
             {section.cta && (
                 <Link
                     href={section.cta.link}
-                    className="inline-flex items-center text-sm font-semibold text-[#0F6BD0] hover:underline"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-[#0F6BD0] hover:text-[#0052A3] hover:underline transition-colors"
                 >
                     {section.cta.text} →
                 </Link>
