@@ -68,6 +68,7 @@ interface DataPowered {
 
 interface HomeProps {
     hasFilters?: boolean;
+    filterSection?: string | null;
     featuredAuctions?: Property[];
     featuredResidential?: Property[];
     featuredCommercial?: Property[];
@@ -83,6 +84,7 @@ interface HomeProps {
 
 export default function Home({
     hasFilters = false,
+    filterSection = null,
     featuredAuctions = [],
     featuredResidential = [],
     featuredCommercial = [],
@@ -99,12 +101,18 @@ export default function Home({
             <Hero content={heroContent} />
             <FeaturedResidential
                 properties={featuredResidential}
-                hasFilters={hasFilters}
+                hasFilters={hasFilters && filterSection === "residential"}
+            />
+            <FeaturedAuctions
+                auctions={featuredAuctions}
+                hasFilters={hasFilters && filterSection === "auctions"}
+            />
+            <FeaturedCommercial
+                properties={featuredCommercial}
+                hasFilters={hasFilters && filterSection === "commercial"}
             />
             {!hasFilters && (
                 <>
-                    <FeaturedAuctions auctions={featuredAuctions} />
-                    <FeaturedCommercial properties={featuredCommercial} />
                     <DataPowered content={dataPowered} />
                     <MarketplaceExplainer content={marketplaceExplainer} />
                     <Features features={features} />

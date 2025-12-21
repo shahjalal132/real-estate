@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import LocationFilter from "./Filters/LocationFilter";
 import SaveFilterModal from "./SaveFilterModal";
-import { saveFilter } from "../utils/cookies";
+import SavedFiltersDropdown from "./SavedFiltersDropdown";
+import { saveFilter, getSavedFilters } from "../utils/cookies";
 import KeywordsFilter from "./Filters/KeywordsFilter";
 import PropertyTypeFilter from "./Filters/PropertyTypeFilter";
 import PriceFilter from "./Filters/PriceFilter";
@@ -136,6 +137,71 @@ export default function AllFiltersModal({
     const [saveSearch, setSaveSearch] = useState(false);
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [savingSearch, setSavingSearch] = useState(false);
+
+    // Load saved filters when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            // Check if there are saved filters to hint to user
+            const saved = getSavedFilters();
+            if (saved.length > 0) {
+                // Saved filters are available - user can see them in dropdown
+            }
+        }
+    }, [isOpen]);
+
+    // Function to load saved filter values into state
+    const loadSavedFilter = (filters: FilterValues) => {
+        setLocation(filters.location || []);
+        setKeywords(filters.keywords || "");
+        setPropertyTypes(filters.propertyTypes || ["All"]);
+        setMinPrice(filters.minPrice || "$0");
+        setMaxPrice(filters.maxPrice || "$10,000,000+");
+        setExcludeUnpriced(filters.excludeUnpriced || false);
+        setMinCapRate(filters.minCapRate || "0%");
+        setMaxCapRate(filters.maxCapRate || "15%+");
+        setTenantBrand(filters.tenantBrand || "");
+        setRemainingTerm(filters.remainingTerm || [0, 100]);
+        setBrokerAgent(filters.brokerAgent || "");
+        setBrokerageShop(filters.brokerageShop || "");
+        setTenancy(filters.tenancy || "");
+        setLeaseType(filters.leaseType || "");
+        setMeasurementType(filters.measurementType || "units");
+        setMinUnits(filters.minUnits || "");
+        setMaxUnits(filters.maxUnits || "");
+        setMinSqft(filters.minSqft || "");
+        setMaxSqft(filters.maxSqft || "");
+        setMinPricePerSqft(filters.minPricePerSqft || "");
+        setMaxPricePerSqft(filters.maxPricePerSqft || "");
+        setMinAcres(filters.minAcres || "");
+        setMaxAcres(filters.maxAcres || "");
+        setTenantCredit(filters.tenantCredit || "");
+        setMinOccupancy(filters.minOccupancy || "0%");
+        setMaxOccupancy(filters.maxOccupancy || "100%");
+        setTimelineType(filters.timelineType || "timePeriod");
+        setFromDate(filters.fromDate || "");
+        setToDate(filters.toDate || "");
+        setTimePeriod(filters.timePeriod || "Any");
+        setListingStatus(
+            filters.listingStatus || [
+                "Active Listings",
+                "On-Market",
+                "Auction",
+                "Highest & Best",
+            ]
+        );
+        setOpportunityZone(filters.opportunityZone || false);
+        setPropertyClass(filters.propertyClass || []);
+        setBrokerAgentCoOp(filters.brokerAgentCoOp || false);
+        setOwnerUser(filters.ownerUser || false);
+    };
+
+    // Handle applying saved filter
+    const handleApplySavedFilter = (filters: FilterValues) => {
+        loadSavedFilter(filters);
+        // Optional: Auto-apply or just load into modal
+        // onApply?.(filters);
+        // onClose();
+    };
 
     const handleReset = () => {
         setLocation([]);
@@ -397,14 +463,19 @@ export default function AllFiltersModal({
                                 </span>
                             )}
                         </div>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="rounded-full p-1.5 lg:p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all"
-                            aria-label="Close filters"
-                        >
-                            <X className="h-4 w-4 lg:h-5 lg:w-5" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <SavedFiltersDropdown
+                                onApplyFilter={handleApplySavedFilter}
+                            />
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="rounded-full p-1.5 lg:p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all"
+                                aria-label="Close filters"
+                            >
+                                <X className="h-4 w-4 lg:h-5 lg:w-5" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Scrollable Content - Responsive Columns */}

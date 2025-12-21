@@ -16,32 +16,50 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $hasFilters = $this->hasFilterParameters($request);
+        $section = $request->query('section', 'residential'); // Default to residential
         $staticContent = $this->getStaticContent();
 
         return Inertia::render('Home', array_merge([
             'hasFilters' => $hasFilters,
-            'featuredAuctions' => $hasFilters ? [] : $this->getFeaturedAuctions(),
-            'featuredResidential' => $this->getFeaturedResidential($request, $hasFilters),
-            'featuredCommercial' => $hasFilters ? [] : $this->getFeaturedCommercial(),
+            'filterSection' => $hasFilters ? $section : null,
+            'featuredAuctions' => $this->getFeaturedAuctions($request, $hasFilters, $section),
+            'featuredResidential' => $this->getFeaturedResidential($request, $hasFilters, $section),
+            'featuredCommercial' => $this->getFeaturedCommercial($request, $hasFilters, $section),
         ], $staticContent));
     }
     /**
      * Get featured auction properties (On-Market status)
      */
-    private function getFeaturedAuctions()
+    private function getFeaturedAuctions(Request $request = null, bool $hasFilters = false, string $section = 'residential')
     {
-        return Property::with(['location', 'images', 'brokers', 'details'])
+        $query = Property::with(['location', 'images', 'brokers.brokerage', 'details'])
             ->where('status', 'On-Market')
-            ->whereNotNull('thumbnail_url')
-            ->orderBy('created_at', 'desc')
-            ->limit(self::FEATURED_LIMIT)
-            ->get();
+            ->whereNotNull('thumbnail_url');
+
+        // Apply filters if request has filter parameters and section is auctions
+        if ($request && $hasFilters && $section === 'auctions') {
+            $query = $this->applyFilters($query, $request);
+        }
+
+        $query->orderBy('created_at', 'desc');
+
+        // If filters are applied for auctions section, return all results without limit
+        if ($hasFilters && $section === 'auctions') {
+            return $query->get();
+        }
+
+        // Otherwise, limit to featured limit and only show if not filtering
+        if ($hasFilters && $section !== 'auctions') {
+            return collect([]); // Return empty if filtering another section
+        }
+
+        return $query->limit(self::FEATURED_LIMIT)->get();
     }
 
     /**
      * Get featured residential properties (properties with "Residential" type)
      */
-    private function getFeaturedResidential(Request $request = null, bool $hasFilters = false)
+    private function getFeaturedResidential(Request $request = null, bool $hasFilters = false, string $section = 'residential')
     {
         $query = Property::with(['location', 'images', 'brokers.brokerage', 'details'])
             ->where(function ($query) {
@@ -51,17 +69,21 @@ class HomeController extends Controller
             ->where('status', '!=', 'Sold')
             ->whereNotNull('thumbnail_url');
 
-        // Apply filters if request has filter parameters
-        if ($request && $hasFilters) {
+        // Apply filters if request has filter parameters and section is residential
+        if ($request && $hasFilters && $section === 'residential') {
             $query = $this->applyFilters($query, $request);
         }
 
         $query->orderBy('created_at', 'desc');
 
-        // If filters are applied, return all results without limit
-        // Otherwise, limit to featured limit
-        if ($hasFilters) {
+        // If filters are applied for residential section, return all results without limit
+        if ($hasFilters && $section === 'residential') {
             return $query->get();
+        }
+
+        // Otherwise, limit to featured limit and only show if not filtering
+        if ($hasFilters && $section !== 'residential') {
+            return collect([]); // Return empty if filtering another section
         }
 
         return $query->limit(self::FEATURED_LIMIT)->get();
@@ -71,9 +93,9 @@ class HomeController extends Controller
     /**
      * Get featured commercial properties (Commercial types excluding Residential)
      */
-    private function getFeaturedCommercial()
+    private function getFeaturedCommercial(Request $request = null, bool $hasFilters = false, string $section = 'residential')
     {
-        return Property::with(['location', 'images', 'brokers', 'details'])
+        $query = Property::with(['location', 'images', 'brokers.brokerage', 'details'])
             ->where(function ($query) {
                 $query->whereJsonContains('types', 'Commercial')
                     ->orWhereJsonContains('types', 'Land')
@@ -86,10 +108,26 @@ class HomeController extends Controller
                 $query->whereJsonDoesntContain('types', 'Residential');
             })
             ->where('status', '!=', 'Sold')
-            ->whereNotNull('thumbnail_url')
-            ->orderBy('created_at', 'desc')
-            ->limit(self::FEATURED_LIMIT)
-            ->get();
+            ->whereNotNull('thumbnail_url');
+
+        // Apply filters if request has filter parameters and section is commercial
+        if ($request && $hasFilters && $section === 'commercial') {
+            $query = $this->applyFilters($query, $request);
+        }
+
+        $query->orderBy('created_at', 'desc');
+
+        // If filters are applied for commercial section, return all results without limit
+        if ($hasFilters && $section === 'commercial') {
+            return $query->get();
+        }
+
+        // Otherwise, limit to featured limit and only show if not filtering
+        if ($hasFilters && $section !== 'commercial') {
+            return collect([]); // Return empty if filtering another section
+        }
+
+        return $query->limit(self::FEATURED_LIMIT)->get();
     }
 
     /**
