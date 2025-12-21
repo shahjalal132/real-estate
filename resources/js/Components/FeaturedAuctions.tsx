@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
 import { Property } from "../types";
@@ -7,11 +7,15 @@ import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
 import AllFiltersButton from "./AllFiltersButton";
 import AllFiltersModal, { FilterValues } from "./AllFiltersModal";
+import SavedFiltersDropdown from "./SavedFiltersDropdown";
+import SaveFilterNotification from "./SaveFilterNotification";
 import Button from "./Button";
 import { useSliderControls } from "./useSliderControls";
+import { saveFilter } from "../utils/cookies";
 
 interface FeaturedAuctionsProps {
     auctions?: Property[];
+    hasFilters?: boolean;
 }
 
 // Helper function to map Property to PropertyCardProps
@@ -117,9 +121,14 @@ function mapPropertyToCardProps(property: Property): PropertyCardProps {
 
 export default function FeaturedAuctions({
     auctions = [],
+    hasFilters = false,
 }: FeaturedAuctionsProps) {
     const { sliderRef, handlePrev, handleNext } = useSliderControls();
     const [filtersExpanded, setFiltersExpanded] = useState(false);
+    const [showSaveNotification, setShowSaveNotification] = useState(false);
+    const [currentFilters, setCurrentFilters] = useState<FilterValues | null>(
+        null
+    );
 
     // Filter properties that have status "On-Market" (auction properties)
     const auctionProperties = auctions.filter(
@@ -136,8 +145,61 @@ export default function FeaturedAuctions({
 
     const viewMoreHref = `/properties/auctions`;
 
-    // Handle filter apply - navigate to properties page with filters
+    // Check for saved filters on mount and when hasFilters changes
+    useEffect(() => {
+        // Show notification if filters are applied and user hasn't dismissed it recently
+        if (
+            hasFilters &&
+            !localStorage.getItem("save_notification_dismissed")
+        ) {
+            // Delay showing notification slightly for better UX
+            const timer = setTimeout(() => {
+                setShowSaveNotification(true);
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [hasFilters]);
+
+    // Get default filter name
+    const getDefaultFilterName = (filters: FilterValues): string => {
+        if (
+            filters.propertyTypes &&
+            filters.propertyTypes.length > 0 &&
+            !filters.propertyTypes.includes("All")
+        ) {
+            const mainTypes = filters.propertyTypes
+                .filter((type) => type !== "All" && !type.includes(" - "))
+                .slice(0, 3);
+            return mainTypes.length > 0
+                ? mainTypes.join(", ")
+                : "Custom Search";
+        }
+        return "Auction Properties";
+    };
+
+    // Handle saving filter
+    const handleSaveFilter = (name: string, duration: string) => {
+        if (currentFilters) {
+            saveFilter(name, duration, currentFilters);
+            setShowSaveNotification(false);
+            localStorage.setItem("save_notification_dismissed", "true");
+            // Reset after 24 hours
+            setTimeout(() => {
+                localStorage.removeItem("save_notification_dismissed");
+            }, 24 * 60 * 60 * 1000);
+        }
+    };
+
+    // Handle applying saved filter
+    const handleApplySavedFilter = (filters: FilterValues) => {
+        handleApplyFilters(filters);
+    };
+
+    // Handle filter apply - apply filters on landing page
     const handleApplyFilters = (filters: FilterValues) => {
+        // Store current filters for save notification
+        setCurrentFilters(filters);
+
         // Build query parameters from filter values
         const params: Record<string, any> = {
             section: "auctions",
@@ -160,38 +222,28 @@ export default function FeaturedAuctions({
             }
         }
 
-        // Add rate range
-        if (filters.minRate && filters.minRate !== "$0") {
-            const minRateValue = filters.minRate.replace(/[$,]/g, "");
-            if (filters.rateType === "yearly") {
-                params.min_yearly_rate = minRateValue;
-            } else {
-                params.min_monthly_rate = minRateValue;
-            }
+        // Add price/rate range (use minPrice/maxPrice from FilterValues)
+        if (filters.minPrice && filters.minPrice !== "$0") {
+            const minPriceValue = filters.minPrice.replace(/[$,]/g, "");
+            params.min_rate = minPriceValue;
         }
-        if (filters.maxRate && !filters.maxRate.includes("+")) {
-            const maxRateValue = filters.maxRate.replace(/[$,+]/g, "");
-            if (filters.rateType === "yearly") {
-                params.max_yearly_rate = maxRateValue;
-            } else {
-                params.max_monthly_rate = maxRateValue;
-            }
+        if (filters.maxPrice && !filters.maxPrice.includes("+")) {
+            const maxPriceValue = filters.maxPrice.replace(/[$,+]/g, "");
+            params.max_rate = maxPriceValue;
         }
 
-        // Add size range
-        if (filters.minSize && filters.minSize !== "0") {
-            if (filters.sizeType === "sqft") {
-                params.min_sqft = filters.minSize.replace(/[,+]/g, "");
-            } else {
-                params.min_acres = filters.minSize.replace(/[,+]/g, "");
-            }
+        // Add size range (use minSqft/maxSqft and minAcres/maxAcres from FilterValues)
+        if (filters.minSqft && filters.minSqft !== "0") {
+            params.min_sqft = filters.minSqft.replace(/[,+]/g, "");
         }
-        if (filters.maxSize && !filters.maxSize.includes("+")) {
-            if (filters.sizeType === "sqft") {
-                params.max_sqft = filters.maxSize.replace(/[,+]/g, "");
-            } else {
-                params.max_acres = filters.maxSize.replace(/[,+]/g, "");
-            }
+        if (filters.maxSqft && !filters.maxSqft.includes("+")) {
+            params.max_sqft = filters.maxSqft.replace(/[,+]/g, "");
+        }
+        if (filters.minAcres && filters.minAcres !== "0") {
+            params.min_acres = filters.minAcres.replace(/[,+]/g, "");
+        }
+        if (filters.maxAcres && !filters.maxAcres.includes("+")) {
+            params.max_acres = filters.maxAcres.replace(/[,+]/g, "");
         }
 
         // Add broker/agent
@@ -219,15 +271,26 @@ export default function FeaturedAuctions({
             filters.timelineType === "timePeriod" &&
             filters.timePeriod !== "Any"
         ) {
+            params.timeline_type = "timePeriod";
             params.time_period = filters.timePeriod;
         } else if (filters.timelineType === "custom") {
+            params.timeline_type = "custom";
             if (filters.fromDate) params.from_date = filters.fromDate;
             if (filters.toDate) params.to_date = filters.toDate;
         }
 
-        // Navigate to properties page with filters
-        router.get("/properties", params, {
+        // Navigate to home page with filters applied (stay on landing page)
+        router.get("/", params, {
             preserveState: false,
+            preserveScroll: true,
+            onSuccess: () => {
+                // Show save notification after filters are applied
+                if (!localStorage.getItem("save_notification_dismissed")) {
+                    setTimeout(() => {
+                        setShowSaveNotification(true);
+                    }, 1500);
+                }
+            },
         });
     };
 
@@ -235,6 +298,79 @@ export default function FeaturedAuctions({
         return null;
     }
 
+    // If filters are applied, show all items in a grid without slider
+    if (hasFilters) {
+        return (
+            <section className="w-full overflow-hidden py-6 sm:py-8">
+                <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2 mb-4!">
+                    <header className="mb-4 sm:mb-2 flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex-1 text-center sm:text-left">
+                            <SectionHeading>
+                                Filtered Auction Properties
+                            </SectionHeading>
+                        </div>
+
+                        <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-end">
+                            <SavedFiltersDropdown
+                                onApplyFilter={handleApplySavedFilter}
+                            />
+                            <AllFiltersButton
+                                onClick={() => setFiltersExpanded(true)}
+                                activeFiltersCount={0}
+                                className="whitespace-nowrap"
+                            />
+                        </div>
+                    </header>
+                </div>
+
+                <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                        {filteredListings.map((property) => (
+                            <PropertyCard
+                                key={property.id}
+                                {...mapPropertyToCardProps(property)}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* All Filters Modal */}
+                <AllFiltersModal
+                    isOpen={filtersExpanded}
+                    onClose={() => setFiltersExpanded(false)}
+                    activeFiltersCount={0}
+                    listingsCount={filteredListings.length}
+                    onApply={handleApplyFilters}
+                    onReset={() => {
+                        // Reset handled by modal internally
+                    }}
+                />
+
+                {/* Save Filter Notification */}
+                {showSaveNotification && currentFilters && (
+                    <SaveFilterNotification
+                        filters={currentFilters}
+                        onSave={handleSaveFilter}
+                        onDismiss={() => {
+                            setShowSaveNotification(false);
+                            localStorage.setItem(
+                                "save_notification_dismissed",
+                                "true"
+                            );
+                            setTimeout(() => {
+                                localStorage.removeItem(
+                                    "save_notification_dismissed"
+                                );
+                            }, 24 * 60 * 60 * 1000);
+                        }}
+                        defaultName={getDefaultFilterName(currentFilters)}
+                    />
+                )}
+            </section>
+        );
+    }
+
+    // Default view with slider (no filters)
     return (
         <section className="w-full overflow-hidden py-6 sm:py-8">
             <div className="mx-auto w-[95%] max-w-full px-2 sm:px-4 md:px-6 lg:px-2">

@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import SectionHeading from "./SectionHeading";
 import SliderWithControls from "./SliderWithControls";
 import SliderControls from "./SliderControls";
 import AllFiltersButton from "./AllFiltersButton";
 import AllFiltersModal, { FilterValues } from "./AllFiltersModal";
+import SavedFiltersDropdown from "./SavedFiltersDropdown";
+import SaveFilterNotification from "./SaveFilterNotification";
 import Button from "./Button";
 import { useSliderControls } from "./useSliderControls";
 import { Property } from "../types";
 import PropertyCard, { PropertyCardProps } from "./PropertyCard";
+import { saveFilter } from "../utils/cookies";
 
 interface FeaturedResidentialProps {
     properties?: Property[];
@@ -122,6 +125,10 @@ export default function FeaturedResidential({
 }: FeaturedResidentialProps) {
     const { sliderRef, handlePrev, handleNext } = useSliderControls();
     const [filtersExpanded, setFiltersExpanded] = useState(false);
+    const [showSaveNotification, setShowSaveNotification] = useState(false);
+    const [currentFilters, setCurrentFilters] = useState<FilterValues | null>(
+        null
+    );
     const residentialProperties = Array.isArray(properties) ? properties : [];
 
     // Show all properties in the slider (filtering will be done on the properties page)
@@ -129,8 +136,61 @@ export default function FeaturedResidential({
 
     const viewMoreHref = `/properties/residential`;
 
+    // Check for saved filters on mount and when hasFilters changes
+    useEffect(() => {
+        // Show notification if filters are applied and user hasn't dismissed it recently
+        if (
+            hasFilters &&
+            !localStorage.getItem("save_notification_dismissed")
+        ) {
+            // Delay showing notification slightly for better UX
+            const timer = setTimeout(() => {
+                setShowSaveNotification(true);
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [hasFilters]);
+
+    // Get default filter name
+    const getDefaultFilterName = (filters: FilterValues): string => {
+        if (
+            filters.propertyTypes &&
+            filters.propertyTypes.length > 0 &&
+            !filters.propertyTypes.includes("All")
+        ) {
+            const mainTypes = filters.propertyTypes
+                .filter((type) => type !== "All" && !type.includes(" - "))
+                .slice(0, 3);
+            return mainTypes.length > 0
+                ? mainTypes.join(", ")
+                : "Custom Search";
+        }
+        return "All Properties";
+    };
+
+    // Handle saving filter
+    const handleSaveFilter = (name: string, duration: string) => {
+        if (currentFilters) {
+            saveFilter(name, duration, currentFilters);
+            setShowSaveNotification(false);
+            localStorage.setItem("save_notification_dismissed", "true");
+            // Reset after 24 hours
+            setTimeout(() => {
+                localStorage.removeItem("save_notification_dismissed");
+            }, 24 * 60 * 60 * 1000);
+        }
+    };
+
+    // Handle applying saved filter
+    const handleApplySavedFilter = (filters: FilterValues) => {
+        handleApplyFilters(filters);
+    };
+
     // Handle filter apply - apply filters on landing page
     const handleApplyFilters = (filters: FilterValues) => {
+        // Store current filters for save notification
+        setCurrentFilters(filters);
+
         // Build query parameters from filter values
         const params: Record<string, any> = {};
 
@@ -212,6 +272,14 @@ export default function FeaturedResidential({
         router.get("/", params, {
             preserveState: false,
             preserveScroll: true,
+            onSuccess: () => {
+                // Show save notification after filters are applied
+                if (!localStorage.getItem("save_notification_dismissed")) {
+                    setTimeout(() => {
+                        setShowSaveNotification(true);
+                    }, 1500);
+                }
+            },
         });
     };
 
@@ -233,6 +301,9 @@ export default function FeaturedResidential({
                         </div>
 
                         <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-end">
+                            <SavedFiltersDropdown
+                                onApplyFilter={handleApplySavedFilter}
+                            />
                             <AllFiltersButton
                                 onClick={() => setFiltersExpanded(true)}
                                 activeFiltersCount={0}
@@ -264,6 +335,27 @@ export default function FeaturedResidential({
                         // Reset handled by modal internally
                     }}
                 />
+
+                {/* Save Filter Notification */}
+                {showSaveNotification && currentFilters && (
+                    <SaveFilterNotification
+                        filters={currentFilters}
+                        onSave={handleSaveFilter}
+                        onDismiss={() => {
+                            setShowSaveNotification(false);
+                            localStorage.setItem(
+                                "save_notification_dismissed",
+                                "true"
+                            );
+                            setTimeout(() => {
+                                localStorage.removeItem(
+                                    "save_notification_dismissed"
+                                );
+                            }, 24 * 60 * 60 * 1000);
+                        }}
+                        defaultName={getDefaultFilterName(currentFilters)}
+                    />
+                )}
             </section>
         );
     }
