@@ -115,10 +115,17 @@ export default function Header() {
 
     const renderNavItem = (
         item: NavigationItem,
-        isInMoreMenu: boolean = false
+        isInMoreMenu: boolean = false,
+        isRightNav: boolean = false
     ) => {
         // For items with mega menus, use a button instead of Link to prevent direct navigation
         const isMegaMenu = item.type === "megaMenu" && item.hasDropdown;
+
+        // Determine if this menu should be right-aligned
+        const rightAlignMenus = ["contacts", "tools", "settings", "pipeline"];
+        const shouldRightAlign = rightAlignMenus.includes(
+            item.megaMenuId || ""
+        );
 
         const handleMouseEnter = () => {
             // Clear any pending close timeout
@@ -144,7 +151,7 @@ export default function Header() {
             if (!isInMoreMenu && item.type === "megaMenu") {
                 closeTimeoutRef.current = setTimeout(() => {
                     setActiveMenu(null);
-                }, 400); // Increased delay to 400ms for better UX
+                }, 300); // Optimized delay for better UX
             }
         };
 
@@ -158,18 +165,18 @@ export default function Header() {
                 {isMegaMenu ? (
                     <button
                         type="button"
-                        className={`relative group tracking-[0.5px] font-normal transition-colors whitespace-nowrap text-xs md:text-sm capitalize cursor-pointer ${
+                        className={`relative group tracking-[0.5px] font-normal transition-all duration-200 whitespace-nowrap text-xs md:text-sm capitalize cursor-pointer px-1 py-1.5 rounded-md ${
                             activeMenu === item.megaMenuId
-                                ? "text-[#0066cc]"
-                                : "text-[#4A4A4A]"
+                                ? "text-[#0066cc] bg-[#F0F7FF]"
+                                : "text-[#4A4A4A] hover:text-[#0066cc] hover:bg-[#F0F7FF]/50"
                         }`}
                     >
-                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0066cc] group-hover:w-full group-hover:transition-all transition-all"></span>
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#0066cc] group-hover:w-[calc(100%-0.5rem)] transition-all duration-200"></span>
                         <div className="flex items-center justify-between gap-1.5 md:gap-2">
                             {item.label}
                             {item.hasDropdown && (
                                 <ChevronDown
-                                    className={`h-3 w-3 flex-shrink-0 transition-all duration-300 ${
+                                    className={`h-3 w-3 shrink-0 transition-transform duration-200 ${
                                         activeMenu === item.megaMenuId
                                             ? "rotate-180 text-[#0066cc]"
                                             : "text-[#4a4a4a]"
@@ -181,18 +188,18 @@ export default function Header() {
                 ) : (
                     <Link
                         href={item.link}
-                        className={`relative group tracking-[0.5px] font-normal transition-colors whitespace-nowrap text-xs md:text-sm capitalize ${
+                        className={`relative group tracking-[0.5px] font-normal transition-all duration-200 whitespace-nowrap text-xs md:text-sm capitalize px-1 py-1.5 rounded-md ${
                             activeMenu === item.megaMenuId
-                                ? "text-[#0066cc]"
-                                : "text-[#4A4A4A]"
+                                ? "text-[#0066cc] bg-[#F0F7FF]"
+                                : "text-[#4A4A4A] hover:text-[#0066cc] hover:bg-[#F0F7FF]/50"
                         }`}
                     >
-                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0066cc] group-hover:w-full group-hover:transition-all transition-all"></span>
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#0066cc] group-hover:w-[calc(100%-0.5rem)] transition-all duration-200"></span>
                         <div className="flex items-center justify-between gap-1.5 md:gap-2">
                             {item.label}
                             {item.hasDropdown && (
                                 <ChevronDown
-                                    className={`h-3 w-3 flex-shrink-0 transition-all duration-300 ${
+                                    className={`h-3 w-3 shrink-0 transition-transform duration-200 ${
                                         activeMenu === item.megaMenuId
                                             ? "rotate-180 text-[#0066cc]"
                                             : "text-[#4a4a4a]"
@@ -206,7 +213,7 @@ export default function Header() {
                     <>
                         {/* Bridge element to prevent gap between nav item and dropdown */}
                         <div
-                            className="absolute top-full left-0 right-0 h-4"
+                            className="absolute top-full left-0 right-0 h-4 z-[99] pointer-events-auto"
                             onMouseEnter={() => {
                                 if (closeTimeoutRef.current) {
                                     clearTimeout(closeTimeoutRef.current);
@@ -216,7 +223,11 @@ export default function Header() {
                             }}
                         />
                         <div
-                            className="absolute top-full left-0 pt-4"
+                            className={`absolute top-full pt-4 z-[100] ${
+                                shouldRightAlign || isRightNav
+                                    ? "right-0"
+                                    : "left-0"
+                            }`}
                             onMouseEnter={() => {
                                 // Clear timeout and keep menu open
                                 if (closeTimeoutRef.current) {
@@ -232,11 +243,12 @@ export default function Header() {
                                     if (isInMoreMenu) {
                                         setMoreMenuOpen(false);
                                     }
-                                }, 300);
+                                }, 150);
                             }}
                         >
                             <MegaMenu
                                 menuId={item.megaMenuId!}
+                                isRightAligned={shouldRightAlign || isRightNav}
                                 onClose={() => {
                                     if (closeTimeoutRef.current) {
                                         clearTimeout(closeTimeoutRef.current);
@@ -256,7 +268,7 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-100 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
+        <header className="sticky top-0 z-[100] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
             <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 pt-4 pb-3 h-full overflow-visible">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-6 flex-1 min-w-0">
@@ -283,7 +295,7 @@ export default function Header() {
                         <nav className="hidden md:flex lg:hidden items-center space-x-1 sm:space-x-2 overflow-visible flex-1 min-w-0">
                             <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
                                 {visibleItems.map((item) =>
-                                    renderNavItem(item)
+                                    renderNavItem(item, false, false)
                                 )}
                             </div>
 
@@ -310,16 +322,16 @@ export default function Header() {
                                     }}
                                 >
                                     <button
-                                        className={`relative group tracking-[0.5px] font-normal transition-colors whitespace-nowrap flex items-center gap-1.5 md:gap-2 text-xs md:text-sm capitalize ${
+                                        className={`relative group tracking-[0.5px] font-normal transition-all duration-200 whitespace-nowrap flex items-center gap-1.5 md:gap-2 text-xs md:text-sm capitalize px-1 py-1.5 rounded-md ${
                                             moreMenuOpen
-                                                ? "text-[#0066cc]"
-                                                : "text-[#4A4A4A]"
+                                                ? "text-[#0066cc] bg-[#F0F7FF]"
+                                                : "text-[#4A4A4A] hover:text-[#0066cc] hover:bg-[#F0F7FF]/50"
                                         }`}
                                     >
-                                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0066cc] group-hover:w-full group-hover:transition-all transition-all"></span>
+                                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#0066cc] group-hover:w-[calc(100%-0.5rem)] transition-all duration-200"></span>
                                         More
                                         <ChevronDown
-                                            className={`h-3 w-3 flex-shrink-0 transition-all duration-300 ${
+                                            className={`h-3 w-3 shrink-0 transition-transform duration-200 ${
                                                 moreMenuOpen
                                                     ? "rotate-180 text-[#0066cc]"
                                                     : "text-[#4a4a4a]"
@@ -346,7 +358,7 @@ export default function Header() {
                                                     setMoreMenuOpen(true);
                                                 }}
                                             />
-                                            <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[180px]">
+                                            <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl py-2 min-w-[180px] animate-in fade-in slide-in-from-top-1 duration-200">
                                                 {moreItems.map((item) => (
                                                     <div
                                                         key={item.label}
@@ -444,7 +456,7 @@ export default function Header() {
                                                             activeMenu ===
                                                                 item.megaMenuId && (
                                                                 <div
-                                                                    className={`absolute top-0 z-[60] pt-2 -mt-1 ${
+                                                                    className={`absolute top-0 z-[100] pt-2 ${
                                                                         // Right-align menus (pipeline, tools, settings, contacts) to prevent overflow
                                                                         [
                                                                             "pipeline",
@@ -455,11 +467,8 @@ export default function Header() {
                                                                             item.megaMenuId ||
                                                                                 ""
                                                                         )
-                                                                            ? item.megaMenuId ===
-                                                                              "tools"
-                                                                                ? "right-0"
-                                                                                : "right-full mr-1"
-                                                                            : "left-full ml-1"
+                                                                            ? "right-0"
+                                                                            : "left-full ml-2"
                                                                     }`}
                                                                     onMouseEnter={() => {
                                                                         if (
@@ -487,7 +496,7 @@ export default function Header() {
                                                                                         false
                                                                                     );
                                                                                 },
-                                                                                300
+                                                                                150
                                                                             );
                                                                     }}
                                                                 >
@@ -495,6 +504,15 @@ export default function Header() {
                                                                         menuId={
                                                                             item.megaMenuId!
                                                                         }
+                                                                        isRightAligned={[
+                                                                            "pipeline",
+                                                                            "tools",
+                                                                            "settings",
+                                                                            "contacts",
+                                                                        ].includes(
+                                                                            item.megaMenuId ||
+                                                                                ""
+                                                                        )}
                                                                         onClose={() => {
                                                                             if (
                                                                                 closeTimeoutRef.current
@@ -526,7 +544,9 @@ export default function Header() {
 
                         {/* Large Screen Navigation (first 8 items) */}
                         <nav className="hidden lg:flex items-center space-x-2 xl:space-x-3 overflow-visible flex-1 min-w-0 flex-wrap">
-                            {mainNavItems.map((item) => renderNavItem(item))}
+                            {mainNavItems.map((item) =>
+                                renderNavItem(item, false, false)
+                            )}
                         </nav>
                     </div>
 
@@ -534,7 +554,9 @@ export default function Header() {
                     <div className="flex items-center py-6 lg:py-0 space-x-4">
                         {/* Last 3 Menu Items (with gaps) - visible on md and up */}
                         <nav className="hidden md:flex items-center space-x-2 xl:space-x-3 overflow-visible">
-                            {rightNavItems.map((item) => renderNavItem(item))}
+                            {rightNavItems.map((item) =>
+                                renderNavItem(item, false, true)
+                            )}
                         </nav>
 
                         {/* CTA Button */}
