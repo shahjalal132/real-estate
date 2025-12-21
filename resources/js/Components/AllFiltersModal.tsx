@@ -45,7 +45,7 @@ export interface FilterValues {
     remainingTerm: [number, number];
     brokerAgent: string;
     brokerageShop: string;
-    tenancy: "vacant" | "single" | "multi";
+    tenancy: "vacant" | "single" | "multi" | "";
     leaseType: string;
     measurementType: "units" | "keys" | "beds" | "pads" | "pumps";
     minUnits: string;
@@ -95,8 +95,8 @@ export default function AllFiltersModal({
     ]);
     const [brokerAgent, setBrokerAgent] = useState("");
     const [brokerageShop, setBrokerageShop] = useState("");
-    const [tenancy, setTenancy] = useState<"vacant" | "single" | "multi">(
-        "single"
+    const [tenancy, setTenancy] = useState<"vacant" | "single" | "multi" | "">(
+        ""
     );
     const [leaseType, setLeaseType] = useState("");
     const [measurementType, setMeasurementType] = useState<
@@ -150,7 +150,7 @@ export default function AllFiltersModal({
         setRemainingTerm([0, 100]);
         setBrokerAgent("");
         setBrokerageShop("");
-        setTenancy("single");
+        setTenancy("");
         setLeaseType("");
         setMeasurementType("units");
         setMinUnits("");
