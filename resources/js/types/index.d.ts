@@ -131,3 +131,82 @@ export interface PaginatedData<T> {
     to: number;
     total: number;
 }
+
+export interface TennentCompany {
+    id: number;
+    tenant_name: string;
+    industry: string | null;
+    territory: string | null;
+    hq_market: string | null;
+    locations: number | null;
+    sf_occupied: string | null;
+    highest_use_by_sf: string | null;
+    employees: number | null;
+    growth: string | null;
+    revenue: string | null;
+    credit_rating: string | null;
+    established: number | null;
+    parent_company: string | null;
+    website: string | null;
+    hq_phone: string | null;
+    hq_city: string | null;
+    hq_state: string | null;
+    hq_postal_code: string | null;
+    hq_country: string | null;
+    naics: string | null;
+    sic: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface TennentLocation {
+    id: number;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    country: string | null;
+    tenant_name: string;
+    sf_occupied: string | null;
+    floor: string | null;
+    space_use: string | null;
+    moved_in: string | null;
+    commencement: string | null;
+    expiration: string | null;
+    percent_of_building: string | null;
+    occupancy_type: string | null;
+    rent_per_sf_year: string | null;
+    rent_type: string | null;
+    employees: number | null;
+    sf_per_employee: string | null;
+    industry: string | null;
+    star_rating: number | null;
+    green_rating: string | null;
+    building_name: string | null;
+    building_park: string | null;
+    center_name: string | null;
+    property_type: string | null;
+    secondary_type: string | null;
+    center_type: string | null;
+    market: string | null;
+    submarket: string | null;
+    location_type: string | null;
+    landlord: string | null;
+    landlord_representative: string | null;
+    tenant_representative: string | null;
+    best_tenant_contact: string | null;
+    best_tenant_phone: string | null;
+    location_phone: string | null;
+    website: string | null;
+    future_move: string | null;
+    future_move_type: string | null;
+    signed: string | null;
+    suite: string | null;
+    zip: string | null;
+    time_in_building: string | null;
+    store_type: string | null;
+    naics: string | null;
+    sic: string | null;
+    property_id: number | null;
+    created_at: string;
+    updated_at: string;
+}

@@ -36,3 +36,7 @@ Route::get('/optimize', function () {
     Artisan::call('optimize:clear');
     return 'Application optimized!';
 })->name('optimize')->middleware('auth');
+
+// Tenant routes
+Route::get('/contacts/tenants', [\App\Http\Controllers\TenantCompanyController::class, 'index'])->name('contacts.tenants');
+Route::get('/contacts/tenants/locations', [\App\Http\Controllers\TenantLocationController::class, 'index'])->name('contacts.tenants.locations');

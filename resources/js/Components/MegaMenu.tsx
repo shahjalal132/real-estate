@@ -380,7 +380,7 @@ const menus: Record<string, Menu> = {
                         label: "Tenants",
                         link: "/contacts/tenants",
                         icon: Users,
-                        description: "Tenant directory",
+                        description: "Tenant companies and locations",
                     },
                     {
                         label: "Brokers",
@@ -596,7 +596,11 @@ const layoutClasses: Record<Menu["layout"], string> = {
     "four-column": "md:grid-cols-4",
 };
 
-export default function MegaMenu({ menuId, onClose, isRightAligned = false }: MegaMenuProps) {
+export default function MegaMenu({
+    menuId,
+    onClose,
+    isRightAligned = false,
+}: MegaMenuProps) {
     const menu =
         menus[menuId] ?? menus[menuAliases[menuId as keyof typeof menuAliases]];
     if (!menu) return null;
@@ -616,31 +620,33 @@ export default function MegaMenu({ menuId, onClose, isRightAligned = false }: Me
     // For very wide menus like tools, ensure they don't exceed viewport
     const menuWidth = parseInt(menu.width);
     const viewportPadding = 64; // 2rem on each side
-    const maxWidthValue = typeof window !== 'undefined' 
-        ? Math.min(menuWidth, window.innerWidth - viewportPadding)
-        : menuWidth;
-    const maxWidth = typeof window !== 'undefined'
-        ? `${maxWidthValue}px`
-        : `min(${menu.width}, calc(100vw - 4rem))`;
+    const maxWidthValue =
+        typeof window !== "undefined"
+            ? Math.min(menuWidth, window.innerWidth - viewportPadding)
+            : menuWidth;
+    const maxWidth =
+        typeof window !== "undefined"
+            ? `${maxWidthValue}px`
+            : `min(${menu.width}, calc(100vw - 4rem))`;
 
     // For right-aligned menus, ensure they don't overflow left
     // Calculate proper positioning to prevent left overflow
     const positioningStyle: Record<string, string | number> = {};
-    
-    if (shouldRightAlign && typeof window !== 'undefined') {
+
+    if (shouldRightAlign && typeof window !== "undefined") {
         // For right-aligned menus, ensure they align to the right edge
         // and don't overflow beyond viewport
         const availableWidth = window.innerWidth - viewportPadding;
         const finalWidth = Math.min(menuWidth, availableWidth);
-        
+
         positioningStyle.right = 0;
         positioningStyle.maxWidth = `${availableWidth}px`;
-        
+
         // If menu is wider than available space, constrain it
         if (menuWidth > availableWidth) {
             positioningStyle.width = `${finalWidth}px`;
         }
-        
+
         // Ensure minimum left margin to prevent overflow
         positioningStyle.minWidth = "280px";
     }
@@ -671,33 +677,45 @@ export default function MegaMenu({ menuId, onClose, isRightAligned = false }: Me
                     boxShadow: "-2px -2px 6px rgba(0,0,0,0.08)",
                 }}
             />
-            
+
             {/* Header Section */}
             {(menu.title || menu.description) && (
-                <div className={`border-b border-[#E6EAF0] bg-gradient-to-b from-[#FAFBFC] to-white ${
-                    menuId === "tools" ? "px-5 py-4" : "px-6 py-5 md:px-8 md:py-6"
-                }`}>
+                <div
+                    className={`border-b border-[#E6EAF0] bg-gradient-to-b from-[#FAFBFC] to-white ${
+                        menuId === "tools"
+                            ? "px-5 py-4"
+                            : "px-6 py-5 md:px-8 md:py-6"
+                    }`}
+                >
                     {menu.title && (
-                        <h2 className={`font-semibold text-[#0F2343] tracking-wide uppercase ${
-                            menuId === "tools" ? "text-sm mb-1" : "text-base mb-2"
-                        }`}>
+                        <h2
+                            className={`font-semibold text-[#0F2343] tracking-wide uppercase ${
+                                menuId === "tools"
+                                    ? "text-sm mb-1"
+                                    : "text-base mb-2"
+                            }`}
+                        >
                             {menu.title}
                         </h2>
                     )}
                     {menu.description && (
-                        <p className={`text-[#666666] leading-relaxed ${
-                            menuId === "tools" ? "text-xs" : "text-sm"
-                        }`}>
+                        <p
+                            className={`text-[#666666] leading-relaxed ${
+                                menuId === "tools" ? "text-xs" : "text-sm"
+                            }`}
+                        >
                             {menu.description}
                         </p>
                     )}
                 </div>
             )}
-            
+
             {/* Menu Content Section */}
-            <div className={`overflow-hidden rounded-b-xl ${
-                menuId === "tools" ? "p-5" : "p-6 md:p-8"
-            }`}>
+            <div
+                className={`overflow-hidden rounded-b-xl ${
+                    menuId === "tools" ? "p-5" : "p-6 md:p-8"
+                }`}
+            >
                 <div
                     className={`grid gap-6 md:gap-8 ${
                         layoutClasses[menu.layout] ?? "grid-cols-1"
@@ -711,9 +729,13 @@ export default function MegaMenu({ menuId, onClose, isRightAligned = false }: Me
                             } ${menuId === "tools" ? "space-y-2" : ""}`}
                         >
                             {section.title && (
-                                <h3 className={`font-semibold text-[#666666] uppercase tracking-[1.5px] mb-3 ${
-                                    menuId === "tools" ? "text-[10px] mb-2" : "text-xs"
-                                }`}>
+                                <h3
+                                    className={`font-semibold text-[#666666] uppercase tracking-[1.5px] mb-3 ${
+                                        menuId === "tools"
+                                            ? "text-[10px] mb-2"
+                                            : "text-xs"
+                                    }`}
+                                >
                                     {section.title}
                                 </h3>
                             )}
@@ -762,20 +784,41 @@ function renderLinkList(items: MenuItem[], menuId?: string) {
                                 }`}
                             >
                                 {Icon ? (
-                                    <Icon className={isToolsMenu ? "h-3.5 w-3.5" : "h-4 w-4"} strokeWidth={2.5} />
+                                    <Icon
+                                        className={
+                                            isToolsMenu
+                                                ? "h-3.5 w-3.5"
+                                                : "h-4 w-4"
+                                        }
+                                        strokeWidth={2.5}
+                                    />
                                 ) : (
-                                    <Grid3X3 className={isToolsMenu ? "h-3.5 w-3.5" : "h-4 w-4"} />
+                                    <Grid3X3
+                                        className={
+                                            isToolsMenu
+                                                ? "h-3.5 w-3.5"
+                                                : "h-4 w-4"
+                                        }
+                                    />
                                 )}
                             </span>
                             <div className="flex-1 min-w-0">
-                                <div className={`flex items-center gap-2 font-semibold tracking-wide uppercase ${
-                                    isToolsMenu ? "text-xs" : "text-sm"
-                                }`}>
-                                    <span className="truncate">{item.label}</span>
+                                <div
+                                    className={`flex items-center gap-2 font-semibold tracking-wide uppercase ${
+                                        isToolsMenu ? "text-xs" : "text-sm"
+                                    }`}
+                                >
+                                    <span className="truncate">
+                                        {item.label}
+                                    </span>
                                     {item.badge && (
-                                        <span className={`bg-[#FF6B00] text-white rounded font-semibold flex-shrink-0 ${
-                                            isToolsMenu ? "text-[9px] px-1 py-0.5" : "text-[10px] px-1.5 py-0.5"
-                                        }`}>
+                                        <span
+                                            className={`bg-[#FF6B00] text-white rounded font-semibold flex-shrink-0 ${
+                                                isToolsMenu
+                                                    ? "text-[9px] px-1 py-0.5"
+                                                    : "text-[10px] px-1.5 py-0.5"
+                                            }`}
+                                        >
                                             {item.badge}
                                         </span>
                                     )}
@@ -783,7 +826,9 @@ function renderLinkList(items: MenuItem[], menuId?: string) {
                                 {item.description && (
                                     <p
                                         className={`mt-1.5 leading-relaxed ${
-                                            isToolsMenu ? "text-[10px] mt-1" : "text-xs"
+                                            isToolsMenu
+                                                ? "text-[10px] mt-1"
+                                                : "text-xs"
                                         } ${
                                             item.featured
                                                 ? "text-white/90"
