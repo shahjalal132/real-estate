@@ -480,7 +480,16 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                                 {location.country || "—"}
                                             </td>
                                             <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.tenant_name}
+                                                {location.company_id ? (
+                                                    <Link
+                                                        href={`/contacts/tenants/${location.company_id}`}
+                                                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                                                    >
+                                                        {location.tenant_name}
+                                                    </Link>
+                                                ) : (
+                                                    location.tenant_name
+                                                )}
                                             </td>
                                             <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
                                                 {formatSF(location.sf_occupied)}

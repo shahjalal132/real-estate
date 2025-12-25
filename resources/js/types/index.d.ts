@@ -166,6 +166,7 @@ export interface TennentLocation {
     state: string | null;
     country: string | null;
     tenant_name: string;
+    company_id?: number | null;
     sf_occupied: string | null;
     floor: string | null;
     space_use: string | null;

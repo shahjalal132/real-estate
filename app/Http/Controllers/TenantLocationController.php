@@ -70,6 +70,13 @@ class TenantLocationController extends Controller
         $perPage = $request->get('per_page', 20);
         $locations = $query->paginate($perPage);
 
+        // Add company_id to each location
+        $locations->getCollection()->transform(function ($location) {
+            $company = \App\Models\TennentCompany::where('tenant_name', $location->tenant_name)->first();
+            $location->company_id = $company ? $company->id : null;
+            return $location;
+        });
+
         return Inertia::render('Contacts/Tenants/Locations', [
             'locations' => $locations,
             'filters' => $request->only(['search', 'min_sf_occupied', 'max_sf_occupied', 'industry', 'city', 'state', 'market', 'property_type']),

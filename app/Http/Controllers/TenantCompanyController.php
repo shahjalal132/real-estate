@@ -68,4 +68,37 @@ class TenantCompanyController extends Controller
             ],
         ]);
     }
+
+    public function show(Request $request, $id)
+    {
+        $company = TennentCompany::findOrFail($id);
+
+        // Get related locations for this company
+        $locationsQuery = \App\Models\TennentLocation::where('tenant_name', $company->tenant_name);
+
+        // Apply filters if any
+        if ($request->has('view_mode')) {
+            // View mode is handled on frontend
+        }
+
+        // Get locations with pagination
+        $perPage = $request->get('per_page', 20);
+        $locations = $locationsQuery->paginate($perPage);
+
+        // Get related companies (same industry or parent company)
+        $relatedCompanies = TennentCompany::where('id', '!=', $id)
+            ->where(function ($query) use ($company) {
+                $query->where('industry', $company->industry)
+                    ->orWhere('parent_company', $company->tenant_name);
+            })
+            ->limit(10)
+            ->get();
+
+        return Inertia::render('Contacts/Tenants/CompanyDetails', [
+            'company' => $company,
+            'locations' => $locations,
+            'relatedCompanies' => $relatedCompanies,
+            'filters' => $request->only(['search', 'address_search', 'space_use', 'min_sf_occupied', 'max_sf_occupied', 'occupancy', 'view_mode']),
+        ]);
+    }
 }

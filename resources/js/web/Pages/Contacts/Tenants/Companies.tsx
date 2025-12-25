@@ -294,7 +294,12 @@ export default function TenantCompanies({ companies, filters }: PageProps) {
                                             </div>
                                         </td>
                                         <td className="px-4 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                            {company.tenant_name}
+                                            <Link
+                                                href={`/contacts/tenants/${company.id}`}
+                                                className="text-blue-600 hover:text-blue-800 hover:underline"
+                                            >
+                                                {company.tenant_name}
+                                            </Link>
                                         </td>
                                         <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                             {company.industry || "—"}
