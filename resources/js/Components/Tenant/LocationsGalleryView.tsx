@@ -1,4 +1,5 @@
 import { Heart, CheckSquare, Info, Star } from "lucide-react";
+import { Link } from "@inertiajs/react";
 import { TennentLocation } from "../../types";
 
 interface LocationsGalleryViewProps {
@@ -115,7 +116,24 @@ export default function LocationsGalleryView({
                                 {location.building_park && (
                                     <p className="font-medium text-gray-900 line-clamp-1">
                                         {location.building_park}
-                                        {location.tenant_name && ` - ${location.tenant_name}`}
+                                        {location.tenant_name && (
+                                            <>
+                                                {" - "}
+                                                {(location as any).company_id ? (
+                                                    <Link
+                                                        href={`/contacts/tenants/${(location as any).company_id}`}
+                                                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                        }}
+                                                    >
+                                                        {location.tenant_name}
+                                                    </Link>
+                                                ) : (
+                                                    location.tenant_name
+                                                )}
+                                            </>
+                                        )}
                                     </p>
                                 )}
                                 <p className="line-clamp-1">

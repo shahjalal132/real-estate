@@ -1,13 +1,14 @@
 import { useState, useMemo, useEffect } from "react";
-import {
-    MapContainer,
-    TileLayer,
-    Marker,
-    useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 import { TennentLocation } from "../../types";
-import { Heart, CheckSquare, Minus, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+    Heart,
+    CheckSquare,
+    Minus,
+    ChevronLeft,
+    ChevronRight,
+} from "lucide-react";
 
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -33,7 +34,7 @@ function getCoordinates(location: TennentLocation): [number, number] | null {
     if (location.city && location.state) {
         // Simple hash-based positioning for demo
         const hash = location.id * 0.001;
-        return [40.7128 + hash, -74.0060 + hash];
+        return [40.7128 + hash, -74.006 + hash];
     }
     return null;
 }
@@ -102,7 +103,9 @@ export default function LocationsMapView({
     selectedLocationId,
     onLocationClick,
 }: LocationsMapViewProps) {
-    const [currentImageIndex, setCurrentImageIndex] = useState<Record<number, number>>({});
+    const [currentImageIndex, setCurrentImageIndex] = useState<
+        Record<number, number>
+    >({});
 
     const locationsWithCoords = useMemo(() => {
         return locations
@@ -110,13 +113,25 @@ export default function LocationsMapView({
                 const coords = getCoordinates(loc);
                 return coords ? { location: loc, coords } : null;
             })
-            .filter((item): item is { location: TennentLocation; coords: [number, number] } => item !== null);
+            .filter(
+                (
+                    item
+                ): item is {
+                    location: TennentLocation;
+                    coords: [number, number];
+                } => item !== null
+            );
     }, [locations]);
 
     const center = useMemo(() => {
-        if (locationsWithCoords.length === 0) return [40.7128, -74.0060] as [number, number];
-        const avgLat = locationsWithCoords.reduce((sum, item) => sum + item.coords[0], 0) / locationsWithCoords.length;
-        const avgLng = locationsWithCoords.reduce((sum, item) => sum + item.coords[1], 0) / locationsWithCoords.length;
+        if (locationsWithCoords.length === 0)
+            return [40.7128, -74.006] as [number, number];
+        const avgLat =
+            locationsWithCoords.reduce((sum, item) => sum + item.coords[0], 0) /
+            locationsWithCoords.length;
+        const avgLng =
+            locationsWithCoords.reduce((sum, item) => sum + item.coords[1], 0) /
+            locationsWithCoords.length;
         return [avgLat, avgLng] as [number, number];
     }, [locationsWithCoords]);
 
@@ -145,7 +160,8 @@ export default function LocationsMapView({
         }
     };
 
-    const getImageIndex = (locationId: number) => currentImageIndex[locationId] || 0;
+    const getImageIndex = (locationId: number) =>
+        currentImageIndex[locationId] || 0;
     const setImageIndex = (locationId: number, index: number) => {
         setCurrentImageIndex((prev) => ({ ...prev, [locationId]: index }));
     };
@@ -168,11 +184,15 @@ export default function LocationsMapView({
                     {locationsWithCoords.map(({ location, coords }) => {
                         const isSelected = location.id === selectedLocationId;
                         const icon = L.divIcon({
-                            className: `custom-marker ${isSelected ? "selected" : ""}`,
+                            className: `custom-marker ${
+                                isSelected ? "selected" : ""
+                            }`,
                             html: `<div style="
                                 width: 20px;
                                 height: 20px;
-                                background-color: ${isSelected ? "#3B82F6" : "#2563EB"};
+                                background-color: ${
+                                    isSelected ? "#3B82F6" : "#2563EB"
+                                };
                                 border: 2px solid white;
                                 border-radius: 50% 50% 50% 0;
                                 transform: rotate(-45deg);
@@ -203,7 +223,11 @@ export default function LocationsMapView({
                     {locations.map((location) => {
                         const imageIndex = getImageIndex(location.id);
                         const imageCount = 5; // Placeholder
-                        const imageUrl = `https://via.placeholder.com/400x300?text=${encodeURIComponent(location.building_name || location.address || "Location")}`;
+                        const imageUrl = `https://via.placeholder.com/400x300?text=${encodeURIComponent(
+                            location.building_name ||
+                                location.address ||
+                                "Location"
+                        )}`;
 
                         // Format floors display
                         const formatFloors = () => {
@@ -216,13 +240,18 @@ export default function LocationsMapView({
                         };
 
                         // Format full date for expiration
-                        const formatFullDate = (date: string | null | undefined): string => {
+                        const formatFullDate = (
+                            date: string | null | undefined
+                        ): string => {
                             if (!date) return "";
                             try {
-                                return new Date(date).toLocaleDateString("en-US", {
-                                    year: "numeric",
-                                    month: "short",
-                                });
+                                return new Date(date).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                        year: "numeric",
+                                        month: "short",
+                                    }
+                                );
                             } catch {
                                 return "";
                             }
@@ -251,10 +280,14 @@ export default function LocationsMapView({
                                 <div className="relative w-32 h-32 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                                     <img
                                         src={imageUrl}
-                                        alt={location.building_name || location.address || "Location"}
+                                        alt={
+                                            location.building_name ||
+                                            location.address ||
+                                            "Location"
+                                        }
                                         className="w-full h-full object-cover"
                                     />
-                                    
+
                                     {/* Image Counter */}
                                     <div className="absolute bottom-1 left-1 text-white text-[10px] font-medium bg-black/60 px-1.5 py-0.5 rounded">
                                         {imageIndex + 1}/{imageCount}
@@ -264,7 +297,25 @@ export default function LocationsMapView({
                                 {/* Content Section - Middle */}
                                 <div className="flex-1 min-w-0">
                                     <h3 className="font-semibold text-gray-900 mb-0.5 text-sm">
-                                        {location.tenant_name || location.building_name || "Location"}
+                                        {(location as any).company_id ? (
+                                            <a
+                                                href={`/contacts/tenants/${
+                                                    (location as any).company_id
+                                                }`}
+                                                className="text-blue-600 hover:text-blue-800 hover:underline"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                            >
+                                                {location.tenant_name ||
+                                                    location.building_name ||
+                                                    "Location"}
+                                            </a>
+                                        ) : (
+                                            location.tenant_name ||
+                                            location.building_name ||
+                                            "Location"
+                                        )}
                                     </h3>
                                     {fullAddress && (
                                         <p className="text-xs text-gray-600 mb-1.5">
@@ -279,7 +330,8 @@ export default function LocationsMapView({
                                                 <span
                                                     key={star}
                                                     className={`text-xs ${
-                                                        star <= location.star_rating!
+                                                        star <=
+                                                        location.star_rating!
                                                             ? "text-blue-500"
                                                             : "text-gray-300"
                                                     }`}
@@ -300,21 +352,33 @@ export default function LocationsMapView({
                                     {/* Property Details */}
                                     <div className="space-y-0.5 text-xs text-gray-600">
                                         <p>
-                                            {formatSF(location.sf_occupied)} SF · {location.property_type || "Property"}
-                                            {location.floor && ` · ${formatFloors()}`}
+                                            {formatSF(location.sf_occupied)} SF
+                                            ·{" "}
+                                            {location.property_type ||
+                                                "Property"}
+                                            {location.floor &&
+                                                ` · ${formatFloors()}`}
                                         </p>
                                         <p>
                                             {(() => {
-                                                const occupancy = location.occupancy_type || "Leased";
+                                                const occupancy =
+                                                    location.occupancy_type ||
+                                                    "Leased";
                                                 if (occupancy === "Owned") {
                                                     return location.moved_in
-                                                        ? `Owned · Moved ${formatFullDate(location.moved_in)}`
+                                                        ? `Owned · Moved ${formatFullDate(
+                                                              location.moved_in
+                                                          )}`
                                                         : "Owned";
                                                 } else {
                                                     return location.expiration
-                                                        ? `Leased · Expires ${formatFullDate(location.expiration)}`
+                                                        ? `Leased · Expires ${formatFullDate(
+                                                              location.expiration
+                                                          )}`
                                                         : location.moved_in
-                                                        ? `Leased · Moved ${formatFullDate(location.moved_in)}`
+                                                        ? `Leased · Moved ${formatFullDate(
+                                                              location.moved_in
+                                                          )}`
                                                         : "Leased";
                                                 }
                                             })()}
@@ -330,7 +394,11 @@ export default function LocationsMapView({
                                         }}
                                         className="text-gray-400 hover:text-red-500 transition-colors"
                                     >
-                                        <Heart className="h-5 w-5" strokeWidth={1.5} fill="none" />
+                                        <Heart
+                                            className="h-5 w-5"
+                                            strokeWidth={1.5}
+                                            fill="none"
+                                        />
                                     </button>
                                     <button
                                         onClick={(e) => {
@@ -339,7 +407,11 @@ export default function LocationsMapView({
                                         className="hover:opacity-80 transition-opacity"
                                     >
                                         <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
-                                            <CheckSquare className="h-3 w-3 text-white" fill="white" stroke="white" />
+                                            <CheckSquare
+                                                className="h-3 w-3 text-white"
+                                                fill="white"
+                                                stroke="white"
+                                            />
                                         </div>
                                     </button>
                                     <button
@@ -349,7 +421,10 @@ export default function LocationsMapView({
                                         className="hover:opacity-80 transition-opacity"
                                     >
                                         <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
-                                            <Minus className="h-3 w-3 text-white" strokeWidth={2.5} />
+                                            <Minus
+                                                className="h-3 w-3 text-white"
+                                                strokeWidth={2.5}
+                                            />
                                         </div>
                                     </button>
                                 </div>
@@ -361,4 +436,3 @@ export default function LocationsMapView({
         </div>
     );
 }
-

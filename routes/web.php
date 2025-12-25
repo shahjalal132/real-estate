@@ -40,3 +40,4 @@ Route::get('/optimize', function () {
 // Tenant routes
 Route::get('/contacts/tenants', [\App\Http\Controllers\TenantCompanyController::class, 'index'])->name('contacts.tenants');
 Route::get('/contacts/tenants/locations', [\App\Http\Controllers\TenantLocationController::class, 'index'])->name('contacts.tenants.locations');
+Route::get('/contacts/tenants/{id}', [\App\Http\Controllers\TenantCompanyController::class, 'show'])->name('contacts.tenants.show');
