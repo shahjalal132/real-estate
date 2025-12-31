@@ -166,7 +166,15 @@ export default function ResizableTable<T extends Record<string, any>>({
                     <thead className="bg-gray-50">
                         <tr>
                             {renderCheckbox && (
-                                <th className="w-20 px-4 py-3 text-left">
+                                <th
+                                    className="w-12 px-4 py-3 text-left bg-gray-50 sticky left-0 border-r border-gray-200"
+                                    style={{
+                                        boxShadow:
+                                            "2px 0 4px -2px rgba(0, 0, 0, 0.1)",
+                                        zIndex: 40,
+                                        backgroundColor: "#f9fafb",
+                                    }}
+                                >
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="checkbox"
@@ -175,48 +183,67 @@ export default function ResizableTable<T extends Record<string, any>>({
                                     </div>
                                 </th>
                             )}
-                            {columns.map((column) => (
-                                <th
-                                    key={column.key}
-                                    className={`px-4 py-3 text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap relative group select-none ${getAlignmentClass(
-                                        column.align
-                                    )}`}
-                                    style={{ width: columnWidths[column.key] }}
-                                >
-                                    <div
-                                        className={`flex items-center ${
-                                            column.align === "right"
-                                                ? "justify-end pr-2"
-                                                : column.align === "center"
-                                                ? "justify-center pr-2"
-                                                : "justify-between pr-2"
+                            {columns.map((column, index) => {
+                                const isFirstColumn = index === 0;
+                                const leftOffset =
+                                    isFirstColumn && renderCheckbox ? 40 : 0;
+
+                                return (
+                                    <th
+                                        key={column.key}
+                                        className={`px-4 py-3 text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap relative group select-none ${getAlignmentClass(
+                                            column.align
+                                        )} ${
+                                            isFirstColumn
+                                                ? "sticky left-0 border-r border-gray-200"
+                                                : ""
                                         }`}
-                                    >
-                                        <span>{column.label}</span>
-                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                                            <div className="w-0.5 h-3 bg-gray-300 rounded"></div>
-                                            <div className="w-0.5 h-3 bg-gray-300 rounded"></div>
-                                            <div className="w-0.5 h-3 bg-gray-300 rounded"></div>
-                                        </div>
-                                    </div>
-                                    <div
-                                        className={`absolute top-0 right-0 w-3 h-full cursor-col-resize transition-all ${
-                                            resizingColumn === column.key
-                                                ? "bg-blue-500 opacity-100"
-                                                : "bg-transparent group-hover:bg-blue-100 opacity-0 group-hover:opacity-100"
-                                        }`}
-                                        onMouseDown={(e) =>
-                                            handleResizeStart(column.key, e)
-                                        }
                                         style={{
-                                            cursor: "col-resize",
-                                            userSelect: "none",
-                                            zIndex: 10,
+                                            width: columnWidths[column.key],
+                                            ...(isFirstColumn && {
+                                                left: `${leftOffset}px`,
+                                                zIndex: 30,
+                                                backgroundColor: "#f9fafb",
+                                                boxShadow:
+                                                    "2px 0 4px -2px rgba(0, 0, 0, 0.1)",
+                                            }),
                                         }}
-                                        title="Drag to resize column"
-                                    />
-                                </th>
-                            ))}
+                                    >
+                                        <div
+                                            className={`flex items-center ${
+                                                column.align === "right"
+                                                    ? "justify-end pr-2"
+                                                    : column.align === "center"
+                                                    ? "justify-center pr-2"
+                                                    : "justify-between pr-2"
+                                            }`}
+                                        >
+                                            <span>{column.label}</span>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                                                <div className="w-0.5 h-3 bg-gray-300 rounded"></div>
+                                                <div className="w-0.5 h-3 bg-gray-300 rounded"></div>
+                                                <div className="w-0.5 h-3 bg-gray-300 rounded"></div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className={`absolute top-0 right-0 w-3 h-full cursor-col-resize transition-all ${
+                                                resizingColumn === column.key
+                                                    ? "bg-blue-500 opacity-100"
+                                                    : "bg-transparent group-hover:bg-blue-100 opacity-0 group-hover:opacity-100"
+                                            }`}
+                                            onMouseDown={(e) =>
+                                                handleResizeStart(column.key, e)
+                                            }
+                                            style={{
+                                                cursor: "col-resize",
+                                                userSelect: "none",
+                                                zIndex: 10,
+                                            }}
+                                            title="Drag to resize column"
+                                        />
+                                    </th>
+                                );
+                            })}
                             {renderActions && (
                                 <th className="w-20 px-4 py-3 text-left"></th>
                             )}
@@ -232,29 +259,80 @@ export default function ResizableTable<T extends Record<string, any>>({
                                 onClick={() => onRowClick?.(row)}
                             >
                                 {renderCheckbox && (
-                                    <td className="px-4 py-4">
+                                    <td
+                                        className="px-4 py-4 bg-white sticky left-0 border-r border-gray-200"
+                                        style={{
+                                            boxShadow:
+                                                "2px 0 4px -2px rgba(0, 0, 0, 0.1)",
+                                            zIndex: 20,
+                                            backgroundColor: "white",
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor =
+                                                "#f9fafb";
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor =
+                                                "white";
+                                        }}
+                                    >
                                         {renderCheckbox(row)}
                                     </td>
                                 )}
-                                {columns.map((column) => (
-                                    <td
-                                        key={column.key}
-                                        className={`px-4 py-4 text-sm whitespace-nowrap overflow-hidden text-start text-ellipsis ${getAlignmentClass(
-                                            column.align
-                                        )} ${column.className || ""} ${
-                                            column.key === columns[0]?.key
-                                                ? "font-medium text-gray-900"
-                                                : "text-gray-500"
-                                        }`}
-                                        style={{
-                                            width: columnWidths[column.key],
-                                        }}
-                                    >
-                                        {column.render
-                                            ? column.render(row)
-                                            : row[column.key] || "—"}
-                                    </td>
-                                ))}
+                                {columns.map((column, index) => {
+                                    const isFirstColumn = index === 0;
+                                    const leftOffset =
+                                        isFirstColumn && renderCheckbox
+                                            ? 40
+                                            : 0;
+
+                                    return (
+                                        <td
+                                            key={column.key}
+                                            className={`px-4 py-4 text-sm whitespace-nowrap overflow-hidden text-start text-ellipsis ${getAlignmentClass(
+                                                column.align
+                                            )} ${column.className || ""} ${
+                                                isFirstColumn
+                                                    ? "sticky left-0 border-r border-gray-200"
+                                                    : ""
+                                            } ${
+                                                column.key === columns[0]?.key
+                                                    ? "font-medium text-gray-900"
+                                                    : "text-gray-500"
+                                            }`}
+                                            style={{
+                                                width: columnWidths[column.key],
+                                                ...(isFirstColumn && {
+                                                    left: `${leftOffset}px`,
+                                                    zIndex: 10,
+                                                    backgroundColor: "white",
+                                                    boxShadow:
+                                                        "2px 0 4px -2px rgba(0, 0, 0, 0.1)",
+                                                }),
+                                            }}
+                                            onMouseEnter={
+                                                isFirstColumn
+                                                    ? (e) => {
+                                                          e.currentTarget.style.backgroundColor =
+                                                              "#f9fafb";
+                                                      }
+                                                    : undefined
+                                            }
+                                            onMouseLeave={
+                                                isFirstColumn
+                                                    ? (e) => {
+                                                          e.currentTarget.style.backgroundColor =
+                                                              "white";
+                                                      }
+                                                    : undefined
+                                            }
+                                        >
+                                            {column.render
+                                                ? column.render(row)
+                                                : row[column.key] || "—"}
+                                        </td>
+                                    );
+                                })}
                                 {renderActions && (
                                     <td className="px-4 py-4">
                                         {renderActions(row)}
