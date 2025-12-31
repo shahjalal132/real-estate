@@ -1,5 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
+import SummaryMetrics from "@/Components/Owner/SummaryMetrics";
 
 interface OwnerCompany {
     id: number;
@@ -148,47 +149,13 @@ export default function CompanyDetails({
                                 ))}
                             </nav>
                         </div>
-
-                        {/* Key Metrics */}
-                        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div>
-                                <div className="text-sm text-gray-600">
-                                    Properties
-                                </div>
-                                <div className="text-2xl font-bold text-gray-900">
-                                    {formatNumber(company.properties)}
-                                </div>
-                            </div>
-                            <div>
-                                <div className="text-sm text-gray-600">
-                                    Portfolio SF
-                                </div>
-                                <div className="text-2xl font-bold text-gray-900">
-                                    {formatSF(company.portfolio_sf)}
-                                </div>
-                            </div>
-                            <div>
-                                <div className="text-sm text-gray-600">
-                                    Average SF
-                                </div>
-                                <div className="text-2xl font-bold text-gray-900">
-                                    {formatSF(company.average_sf)}
-                                </div>
-                            </div>
-                            <div>
-                                <div className="text-sm text-gray-600">
-                                    Sale Listings
-                                </div>
-                                <div className="text-2xl font-bold text-gray-900">
-                                    {formatNumber(company.sale_listings)}
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
                 {/* Main Content - Summary View */}
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+                    {/* Summary Metrics */}
+                    <SummaryMetrics company={company} />
                     {/* Company Overview */}
                     <div className="bg-white rounded-lg shadow p-6">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">

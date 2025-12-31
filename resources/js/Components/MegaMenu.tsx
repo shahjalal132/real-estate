@@ -372,7 +372,7 @@ const menus: Record<string, Menu> = {
                 items: [
                     {
                         label: "Owners",
-                        link: "/contacts/owners",
+                        link: "/contacts/owners/companies",
                         icon: Bookmark,
                         description: "Property owner database",
                     },
@@ -684,7 +684,7 @@ export default function MegaMenu({
                     className={`border-b border-[#E6EAF0] bg-gradient-to-b from-[#FAFBFC] to-white ${
                         menuId === "tools"
                             ? "px-5 py-4"
-                            : "px-6 py-5 md:px-8 md:py-6"
+                            : "px-6 py-2 md:px-8 md:py-2"
                     }`}
                 >
                     {menu.title && (
@@ -713,7 +713,7 @@ export default function MegaMenu({
             {/* Menu Content Section */}
             <div
                 className={`overflow-hidden rounded-b-xl ${
-                    menuId === "tools" ? "p-5" : "p-6 md:p-8"
+                    menuId === "tools" ? "p-5" : "p-2 md:py-2 md:px-4"
                 }`}
             >
                 <div

@@ -55,13 +55,12 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
     const { url } = usePage();
     const [searchValue, setSearchValue] = useState(filters.search || "");
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-    const activeTab = url.includes("tab=funds") ? "funds" : "companies";
+    const activeTab = url.includes("/funds") ? "funds" : "companies";
 
     const handleSearch = useCallback(() => {
         router.get(
-            "/contacts/owners",
+            "/contacts/owners/companies",
             {
-                tab: "companies",
                 search: searchValue || undefined,
                 ...filters,
             },
@@ -203,7 +202,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                         <div className="flex items-center justify-between py-4">
                             <div className="flex items-center space-x-8">
                                 <Link
-                                    href="/contacts/owners?tab=companies"
+                                    href="/contacts/owners/companies"
                                     className={`border-b-2 pb-2 text-sm font-medium transition-colors ${
                                         activeTab === "companies"
                                             ? "border-red-600 text-gray-900"
@@ -213,7 +212,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                                     Companies
                                 </Link>
                                 <Link
-                                    href="/contacts/owners?tab=funds"
+                                    href="/contacts/owners/funds"
                                     className={`border-b-2 pb-2 text-sm font-medium transition-colors ${
                                         activeTab === "funds"
                                             ? "border-red-600 text-gray-900"
@@ -248,15 +247,12 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                         // Handle export click
                     }}
                     onClearClick={() => {
-                        router.get("/contacts/owners", {
-                            tab: "companies",
-                        });
+                        router.get("/contacts/owners/companies");
                     }}
                     activeFiltersCount={activeFiltersCount}
                     ownerType={filters.owner_type || ""}
                     onOwnerTypeChange={(value) => {
-                        router.get("/contacts/owners", {
-                            tab: "companies",
+                        router.get("/contacts/owners/companies", {
                             search: searchValue || undefined,
                             owner_type: value || undefined,
                             ...filters,
@@ -280,8 +276,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                             "500k-1m": 500000,
                             "1m+": 1000000,
                         };
-                        router.get("/contacts/owners", {
-                            tab: "companies",
+                        router.get("/contacts/owners/companies", {
                             search: searchValue || undefined,
                             min_portfolio_sf: value
                                 ? portfolioMap[value]
@@ -295,8 +290,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                             : ""
                     }
                     onPropertiesOwnedChange={(value) => {
-                        router.get("/contacts/owners", {
-                            tab: "companies",
+                        router.get("/contacts/owners/companies", {
                             search: searchValue || undefined,
                             min_properties: value ? parseInt(value) : undefined,
                             ...filters,
@@ -304,8 +298,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                     }}
                     mainPropertyType={filters.main_property_type || ""}
                     onMainPropertyTypeChange={(value) => {
-                        router.get("/contacts/owners", {
-                            tab: "companies",
+                        router.get("/contacts/owners/companies", {
                             search: searchValue || undefined,
                             main_property_type: value || undefined,
                             ...filters,
@@ -385,12 +378,15 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                                         <select
                                             value={companies.per_page}
                                             onChange={(e) => {
-                                                router.get("/contacts/owners", {
-                                                    tab: "companies",
-                                                    ...filters,
-                                                    per_page: e.target.value,
-                                                    page: 1,
-                                                });
+                                                router.get(
+                                                    "/contacts/owners/companies",
+                                                    {
+                                                        ...filters,
+                                                        per_page:
+                                                            e.target.value,
+                                                        page: 1,
+                                                    }
+                                                );
                                             }}
                                             className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                         >
@@ -490,9 +486,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                                 isOpen={showAdvancedFilters}
                                 onClose={() => setShowAdvancedFilters(false)}
                                 onClear={() => {
-                                    router.get("/contacts/owners", {
-                                        tab: "companies",
-                                    });
+                                    router.get("/contacts/owners/companies");
                                     setShowAdvancedFilters(false);
                                 }}
                                 onDone={() => {
