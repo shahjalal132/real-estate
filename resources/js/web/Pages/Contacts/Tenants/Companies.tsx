@@ -3,14 +3,10 @@ import { Head, Link, router, usePage } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
 import { PaginatedData, TennentCompany } from "../../../../types";
 import CompaniesFilterBar from "../../../../Components/Tenant/CompaniesFilterBar";
-import {
-    Info,
-    Heart,
-    MoreVertical,
-    CheckSquare,
-    Minus,
-    Globe,
-} from "lucide-react";
+import ResizableTable, {
+    ResizableColumn,
+} from "../../../../Components/ResizableTable/ResizableTable";
+import { Info, Heart, MoreVertical, Minus, Globe } from "lucide-react";
 
 interface PageProps {
     companies: PaginatedData<TennentCompany>;
@@ -110,6 +106,177 @@ export default function TenantCompanies({ companies, filters }: PageProps) {
         (v) => v !== undefined && v !== ""
     ).length;
 
+    const columns: ResizableColumn[] = [
+        {
+            key: "tenant_name",
+            label: "Tenant Name",
+            align: "left",
+            defaultWidth: 200,
+            render: (row) => (
+                <Link
+                    href={`/contacts/tenants/${row.id}`}
+                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {row.tenant_name}
+                </Link>
+            ),
+        },
+        {
+            key: "industry",
+            label: "Industry",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "territory",
+            label: "Territory",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "hq_market",
+            label: "HQ Market",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "locations",
+            label: "Locations",
+            align: "right",
+            defaultWidth: 100,
+            render: (row) => formatNumber(row.locations),
+        },
+        {
+            key: "sf_occupied",
+            label: "SF Occupied",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatSF(row.sf_occupied),
+        },
+        {
+            key: "highest_use_by_sf",
+            label: "Highest Use By SF",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "employees",
+            label: "Employees",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatNumber(row.employees),
+        },
+        {
+            key: "growth",
+            label: "Growth",
+            align: "left",
+            defaultWidth: 120,
+            render: (row) => (
+                <span
+                    className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+                        row.growth === "Growing"
+                            ? "bg-green-100 text-green-800"
+                            : row.growth === "Downsizing"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
+                    }`}
+                >
+                    {row.growth || "—"}
+                </span>
+            ),
+        },
+        {
+            key: "revenue",
+            label: "Revenue",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatCurrency(row.revenue),
+        },
+        {
+            key: "credit_rating",
+            label: "Credit Rating",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "established",
+            label: "Established",
+            align: "left",
+            defaultWidth: 120,
+            render: (row) => formatYear(row.established),
+        },
+        {
+            key: "parent_company",
+            label: "Parent Company",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "website",
+            label: "Website",
+            align: "left",
+            defaultWidth: 100,
+            render: (row) =>
+                row.website ? (
+                    <a
+                        href={formatUrl(row.website)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Globe className="h-4 w-4" />
+                    </a>
+                ) : (
+                    "—"
+                ),
+        },
+        {
+            key: "hq_phone",
+            label: "HQ Phone",
+            align: "left",
+            defaultWidth: 120,
+            render: (row) => formatPhone(row.hq_phone),
+        },
+        {
+            key: "hq_city",
+            label: "HQ City",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "hq_state",
+            label: "HQ State",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "hq_postal_code",
+            label: "HQ Postal Code",
+            align: "left",
+            defaultWidth: 130,
+        },
+        {
+            key: "hq_country",
+            label: "HQ Country",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "naics",
+            label: "NAICS",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "sic",
+            label: "SIC",
+            align: "left",
+            defaultWidth: 100,
+        },
+    ];
+
     return (
         <AppLayout>
             <Head title="Tenant Companies" />
@@ -192,204 +359,32 @@ export default function TenantCompanies({ companies, filters }: PageProps) {
 
                 {/* Table */}
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="overflow-x-auto shadow-sm ring-1 ring-gray-200 ring-opacity-5 rounded-lg">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="w-20 px-4 py-3 text-left">
-                                        <div className="flex items-center gap-2">
-                                            <CheckSquare className="h-4 w-4 text-gray-400" />
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Tenant Name
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Industry
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Territory
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        HQ Market
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Locations
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        SF Occupied
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Highest Use By SF
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Employees
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Growth
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Revenue
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Credit Rating
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Established
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Parent Company
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Website
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        HQ Phone
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        HQ City
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        HQ State
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        HQ Postal Code
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        HQ Country
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        NAICS
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        SIC
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
-                                {companies.data.map((company) => (
-                                    <tr
-                                        key={company.id}
-                                        className="group hover:bg-gray-50 transition-colors"
-                                    >
-                                        <td className="px-4 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="checkbox"
-                                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                />
-                                                <button
-                                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
-                                                    onClick={() => {
-                                                        // Handle remove action
-                                                        console.log(
-                                                            "Remove",
-                                                            company.id
-                                                        );
-                                                    }}
-                                                    title="Remove"
-                                                >
-                                                    <Minus className="h-4 w-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                            <Link
-                                                href={`/contacts/tenants/${company.id}`}
-                                                className="text-blue-600 hover:text-blue-800 hover:underline"
-                                            >
-                                                {company.tenant_name}
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.industry || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.territory || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.hq_market || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatNumber(company.locations)}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatSF(company.sf_occupied)}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.highest_use_by_sf || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatNumber(company.employees)}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            <span
-                                                className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                                                    company.growth === "Growing"
-                                                        ? "bg-green-100 text-green-800"
-                                                        : company.growth ===
-                                                          "Downsizing"
-                                                        ? "bg-red-100 text-red-800"
-                                                        : "bg-gray-100 text-gray-800"
-                                                }`}
-                                            >
-                                                {company.growth || "—"}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatCurrency(company.revenue)}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.credit_rating || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {formatYear(company.established)}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.parent_company || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.website ? (
-                                                <a
-                                                    href={formatUrl(
-                                                        company.website
-                                                    )}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:text-blue-800 underline"
-                                                >
-                                                    <Globe className="h-4 w-4" />
-                                                </a>
-                                            ) : (
-                                                "—"
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {formatPhone(company.hq_phone)}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.hq_city || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.hq_state || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.hq_postal_code || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.hq_country || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.naics || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.sic || "—"}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <ResizableTable
+                        columns={columns}
+                        data={companies.data}
+                        storageKey="tenant-companies-column-widths"
+                        renderCheckbox={() => (
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                            </div>
+                        )}
+                        renderActions={(row) => (
+                            <button
+                                className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log("Remove", row.id);
+                                }}
+                                title="Remove"
+                            >
+                                <Minus className="h-4 w-4" />
+                            </button>
+                        )}
+                    />
 
                     {/* Pagination */}
                     <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">

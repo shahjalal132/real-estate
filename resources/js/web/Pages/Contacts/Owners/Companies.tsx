@@ -3,6 +3,9 @@ import { Head, Link, router, usePage } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
 import { PaginatedData } from "@/types";
 import OwnerCompaniesFilterBar from "@/Components/Owner/OwnerCompaniesFilterBar";
+import ResizableTable, {
+    ResizableColumn,
+} from "@/Components/ResizableTable/ResizableTable";
 
 interface OwnerCompany {
     id: number;
@@ -107,6 +110,87 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
         (v) => v !== undefined && v !== ""
     ).length;
 
+    const columns: ResizableColumn[] = [
+        {
+            key: "company",
+            label: "Company",
+            align: "left",
+            defaultWidth: 200,
+            render: (row) => (
+                <Link
+                    href={`/contacts/owners/${row.id}`}
+                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {row.company}
+                </Link>
+            ),
+        },
+        {
+            key: "owner_type",
+            label: "Owner Type",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "hq_location",
+            label: "HQ Location",
+            align: "left",
+            defaultWidth: 180,
+            render: (row) =>
+                row.hq_city && row.hq_state
+                    ? `${row.hq_city}, ${row.hq_state}`
+                    : row.hq_city || row.hq_state || "—",
+        },
+        {
+            key: "properties",
+            label: "Properties",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatNumber(row.properties),
+        },
+        {
+            key: "portfolio_sf",
+            label: "Portfolio SF",
+            align: "right",
+            defaultWidth: 140,
+            render: (row) => formatSF(row.portfolio_sf),
+        },
+        {
+            key: "average_sf",
+            label: "Average SF",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatSF(row.average_sf),
+        },
+        {
+            key: "main_property_type",
+            label: "Main Property Type",
+            align: "left",
+            defaultWidth: 160,
+        },
+        {
+            key: "territory",
+            label: "Territory",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "sale_listings",
+            label: "Sale Listings",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatNumber(row.sale_listings),
+        },
+        {
+            key: "sale_listings_value",
+            label: "Sale Listings Value",
+            align: "right",
+            defaultWidth: 160,
+            render: (row) => formatCurrency(row.sale_listings_value),
+        },
+    ];
+
     return (
         <AppLayout>
             <Head title="Owner Companies" />
@@ -176,96 +260,14 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
 
                 {/* Table */}
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="overflow-x-auto shadow-sm ring-1 ring-gray-200 ring-opacity-5 rounded-lg">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Company
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Owner Type
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        HQ Location
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Properties
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Portfolio SF
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Average SF
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Main Property Type
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Territory
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Sale Listings
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                        Sale Listings Value
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
-                                {companies.data.map((company) => (
-                                    <tr
-                                        key={company.id}
-                                        className="group hover:bg-gray-50 transition-colors"
-                                    >
-                                        <td className="px-4 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                            <Link
-                                                href={`/contacts/owners/${company.id}`}
-                                                className="text-blue-600 hover:text-blue-800 hover:underline"
-                                            >
-                                                {company.company}
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.owner_type || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.hq_city && company.hq_state
-                                                ? `${company.hq_city}, ${company.hq_state}`
-                                                : company.hq_city ||
-                                                  company.hq_state ||
-                                                  "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatNumber(company.properties)}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatSF(company.portfolio_sf)}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatSF(company.average_sf)}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.main_property_type || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {company.territory || "—"}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatNumber(
-                                                company.sale_listings
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                            {formatCurrency(
-                                                company.sale_listings_value
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <ResizableTable
+                        columns={columns}
+                        data={companies.data}
+                        storageKey="owner-companies-column-widths"
+                        onRowClick={(row) => {
+                            router.visit(`/contacts/owners/${row.id}`);
+                        }}
+                    />
 
                     {/* Pagination */}
                     <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
