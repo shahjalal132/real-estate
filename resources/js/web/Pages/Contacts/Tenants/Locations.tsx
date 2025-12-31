@@ -5,6 +5,8 @@ import { PaginatedData, TennentLocation } from "../../../../types";
 import LocationsFilterBar from "../../../../Components/Tenant/LocationsFilterBar";
 import LocationsMapView from "../../../../Components/Tenant/LocationsMapView";
 import LocationsGalleryView from "../../../../Components/Tenant/LocationsGalleryView";
+import ResizableTable, { ResizableColumn } from "../../../../Components/ResizableTable/ResizableTable";
+import LocationsAdvancedFiltersPanel from "../../../../Components/Tenant/LocationsAdvancedFiltersPanel";
 import {
     Info,
     Heart,
@@ -55,6 +57,7 @@ export default function TenantLocations({ locations, filters }: PageProps) {
     const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
         null
     );
+    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const activeTab = url.includes("/locations") ? "locations" : "companies";
 
     // Update view mode from URL on mount and when URL changes (but only if it's different)
@@ -176,6 +179,323 @@ export default function TenantLocations({ locations, filters }: PageProps) {
         (v) => v !== undefined && v !== ""
     ).length;
 
+    const columns: ResizableColumn[] = [
+        {
+            key: "address",
+            label: "Address",
+            align: "left",
+            defaultWidth: 200,
+        },
+        {
+            key: "city",
+            label: "City",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "state",
+            label: "State",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "country",
+            label: "Country",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "tenant_name",
+            label: "Tenant Name",
+            align: "left",
+            defaultWidth: 180,
+            render: (row) =>
+                row.company_id ? (
+                    <Link
+                        href={`/contacts/tenants/${row.company_id}`}
+                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {row.tenant_name}
+                    </Link>
+                ) : (
+                    row.tenant_name
+                ),
+        },
+        {
+            key: "sf_occupied",
+            label: "SF Occupied",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatSF(row.sf_occupied),
+        },
+        {
+            key: "floor",
+            label: "Floor",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "space_use",
+            label: "Space Use",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "moved_in",
+            label: "Moved In",
+            align: "left",
+            defaultWidth: 120,
+            render: (row) => formatDate(row.moved_in),
+        },
+        {
+            key: "commencement",
+            label: "Commencement",
+            align: "left",
+            defaultWidth: 130,
+            render: (row) => formatDate(row.commencement),
+        },
+        {
+            key: "expiration",
+            label: "Expiration",
+            align: "left",
+            defaultWidth: 120,
+            render: (row) => formatDate(row.expiration),
+        },
+        {
+            key: "percent_of_building",
+            label: "% of Building",
+            align: "left",
+            defaultWidth: 120,
+            render: (row) => formatPercent(row.percent_of_building),
+        },
+        {
+            key: "occupancy_type",
+            label: "Occupancy Type",
+            align: "left",
+            defaultWidth: 140,
+        },
+        {
+            key: "rent_per_sf_year",
+            label: "Rent/SF/year",
+            align: "right",
+            defaultWidth: 130,
+            render: (row) => formatCurrency(row.rent_per_sf_year),
+        },
+        {
+            key: "rent_type",
+            label: "Rent Type",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "employees",
+            label: "Employees",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatNumber(row.employees),
+        },
+        {
+            key: "sf_per_employee",
+            label: "SF/Employee",
+            align: "right",
+            defaultWidth: 130,
+            render: (row) => formatSF(row.sf_per_employee),
+        },
+        {
+            key: "industry",
+            label: "Industry",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "star_rating",
+            label: "Star Rating",
+            align: "right",
+            defaultWidth: 120,
+        },
+        {
+            key: "green_rating",
+            label: "Green Rating",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "building_name",
+            label: "Building Name",
+            align: "left",
+            defaultWidth: 180,
+        },
+        {
+            key: "building_park",
+            label: "Building Park",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "center_name",
+            label: "Center Name",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "property_type",
+            label: "Property Type",
+            align: "left",
+            defaultWidth: 140,
+        },
+        {
+            key: "secondary_type",
+            label: "Secondary Type",
+            align: "left",
+            defaultWidth: 140,
+        },
+        {
+            key: "center_type",
+            label: "Center Type",
+            align: "left",
+            defaultWidth: 130,
+        },
+        {
+            key: "market",
+            label: "Market",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "submarket",
+            label: "Submarket",
+            align: "left",
+            defaultWidth: 130,
+        },
+        {
+            key: "location_type",
+            label: "Location Type",
+            align: "left",
+            defaultWidth: 140,
+        },
+        {
+            key: "landlord",
+            label: "Landlord",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "landlord_representative",
+            label: "Landlord Rep",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "tenant_representative",
+            label: "Tenant Rep",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "best_tenant_contact",
+            label: "Best Tenant Contact",
+            align: "left",
+            defaultWidth: 180,
+        },
+        {
+            key: "best_tenant_phone",
+            label: "Best Tenant Phone",
+            align: "left",
+            defaultWidth: 150,
+            render: (row) => formatPhone(row.best_tenant_phone),
+        },
+        {
+            key: "location_phone",
+            label: "Location Phone",
+            align: "left",
+            defaultWidth: 150,
+            render: (row) => formatPhone(row.location_phone),
+        },
+        {
+            key: "website",
+            label: "Website",
+            align: "left",
+            defaultWidth: 100,
+            render: (row) =>
+                row.website ? (
+                    <a
+                        href={formatUrl(row.website)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Globe className="h-4 w-4" />
+                    </a>
+                ) : (
+                    "—"
+                ),
+        },
+        {
+            key: "future_move",
+            label: "Future Move",
+            align: "left",
+            defaultWidth: 130,
+            render: (row) => formatDate(row.future_move),
+        },
+        {
+            key: "future_move_type",
+            label: "Future Move Type",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "signed",
+            label: "Signed",
+            align: "left",
+            defaultWidth: 120,
+            render: (row) => formatDate(row.signed),
+        },
+        {
+            key: "suite",
+            label: "Suite",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "zip",
+            label: "Zip",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "time_in_building",
+            label: "Time in Building",
+            align: "left",
+            defaultWidth: 150,
+        },
+        {
+            key: "store_type",
+            label: "Store Type",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "naics",
+            label: "NAICS",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "sic",
+            label: "SIC",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "property_id",
+            label: "Property ID",
+            align: "left",
+            defaultWidth: 120,
+        },
+    ];
+
     return (
         <AppLayout>
             <Head title="Tenant Locations" />
@@ -239,7 +559,12 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                         handleSearch();
                     }}
                     onFiltersClick={() => {
-                        // Handle filters click
+                        setShowAdvancedFilters((prev) => !prev);
+                    }}
+                    onClearClick={() => {
+                        router.get("/contacts/tenants/locations", {
+                            view_mode: viewMode,
+                        });
                     }}
                     onSortClick={() => {
                         // Handle sort click
@@ -285,376 +610,56 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                             onLocationClick={(location) => {
                                 setSelectedLocationId(location.id);
                             }}
+                            showAdvancedFilters={showAdvancedFilters}
+                            onCloseFilters={() => setShowAdvancedFilters(false)}
+                            onClearFilters={() => {
+                                router.get("/contacts/tenants/locations", {
+                                    view_mode: viewMode,
+                                });
+                                setShowAdvancedFilters(false);
+                            }}
+                            activeFiltersCount={activeFiltersCount}
                         />
                     </div>
                 )}
 
                 {viewMode === "list" && (
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                        <div className="overflow-x-auto shadow-sm ring-1 ring-gray-200 ring-opacity-5 rounded-lg">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="w-20 px-4 py-3 text-left">
-                                            <div className="flex items-center gap-2">
-                                                <CheckSquare className="h-4 w-4 text-gray-400" />
-                                            </div>
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Address
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            City
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            State
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Country
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Tenant Name
-                                        </th>
-                                        <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            SF Occupied
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Floor
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Space Use
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Moved In
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Commencement
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Expiration
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            % of Building
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Occupancy Type
-                                        </th>
-                                        <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Rent/SF/year
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Rent Type
-                                        </th>
-                                        <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Employees
-                                        </th>
-                                        <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            SF/Employee
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Industry
-                                        </th>
-                                        <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Star Rating
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Green Rating
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Building Name
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Building Park
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Center Name
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Property Type
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Secondary Type
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Center Type
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Market
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Submarket
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Location Type
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Landlord
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Landlord Rep
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Tenant Rep
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Best Tenant Contact
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Best Tenant Phone
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Location Phone
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Website
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Future Move
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Future Move Type
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Signed
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Suite
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Zip
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Time in Building
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Store Type
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            NAICS
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            SIC
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap">
-                                            Property ID
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200 bg-white">
-                                    {locations.data.map((location) => (
-                                        <tr
-                                            key={location.id}
-                                            className="group hover:bg-gray-50 transition-colors"
-                                        >
-                                            <td className="px-4 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                    />
-                                                    <button
-                                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
-                                                        onClick={() => {
-                                                            // Handle remove action
-                                                            console.log(
-                                                                "Remove",
-                                                                location.id
-                                                            );
-                                                        }}
-                                                        title="Remove"
-                                                    >
-                                                        <Minus className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                                {location.address || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.city || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.state || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.country || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.company_id ? (
-                                                    <Link
-                                                        href={`/contacts/tenants/${location.company_id}`}
-                                                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                                                    >
-                                                        {location.tenant_name}
-                                                    </Link>
-                                                ) : (
-                                                    location.tenant_name
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                                {formatSF(location.sf_occupied)}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.floor || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.space_use || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatDate(location.moved_in)}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatDate(
-                                                    location.commencement
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatDate(
-                                                    location.expiration
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatPercent(
-                                                    location.percent_of_building
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.occupancy_type || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                                {formatCurrency(
-                                                    location.rent_per_sf_year
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.rent_type || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                                {formatNumber(
-                                                    location.employees
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                                {formatSF(
-                                                    location.sf_per_employee
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.industry || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-right text-sm text-gray-500 whitespace-nowrap">
-                                                {location.star_rating || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.green_rating || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.building_name || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.building_park || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.center_name || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.property_type || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.secondary_type || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.center_type || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.market || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.submarket || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.location_type || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.landlord || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.landlord_representative ||
-                                                    "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.tenant_representative ||
-                                                    "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.best_tenant_contact ||
-                                                    "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatPhone(
-                                                    location.best_tenant_phone
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatPhone(
-                                                    location.location_phone
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.website ? (
-                                                    <a
-                                                        href={formatUrl(
-                                                            location.website
-                                                        )}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-blue-600 hover:text-blue-800 underline"
-                                                    >
-                                                        <Globe className="h-4 w-4" />
-                                                    </a>
-                                                ) : (
-                                                    "—"
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatDate(
-                                                    location.future_move
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.future_move_type ||
-                                                    "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {formatDate(location.signed)}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.suite || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.zip || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.time_in_building ||
-                                                    "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.store_type || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.naics || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.sic || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                                {location.property_id || "—"}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div className="relative flex">
+                        {/* Main Content */}
+                        <div
+                            className={`transition-all duration-300 ${
+                                showAdvancedFilters
+                                    ? "w-[calc(100%-600px)]"
+                                    : "w-full"
+                            }`}
+                        >
+                            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
+                                <ResizableTable
+                            columns={columns}
+                            data={locations.data}
+                            storageKey="tenant-locations-column-widths"
+                            renderCheckbox={(row) => (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                </div>
+                            )}
+                            renderActions={(row) => (
+                                <button
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("Remove", row.id);
+                                    }}
+                                    title="Remove"
+                                >
+                                    <Minus className="h-4 w-4" />
+                                </button>
+                            )}
+                        />
 
                         {/* Pagination */}
                         <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
@@ -805,11 +810,42 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                 </div>
                             </div>
                         </div>
+                            </div>
+                        </div>
+
+                        {/* Advanced Filters Sidebar */}
+                        {showAdvancedFilters && (
+                            <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                                <LocationsAdvancedFiltersPanel
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() => setShowAdvancedFilters(false)}
+                                    onClear={() => {
+                                        router.get("/contacts/tenants/locations", {
+                                            view_mode: viewMode,
+                                        });
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {viewMode === "gallery" && (
-                    <div className="mx-auto max-w-[1920px]">
+                    <div className="relative flex">
+                        {/* Main Content */}
+                        <div
+                            className={`transition-all duration-300 ${
+                                showAdvancedFilters
+                                    ? "w-[calc(100%-600px)]"
+                                    : "w-full"
+                            }`}
+                        >
+                            <div className="mx-auto max-w-[1920px]">
                         <LocationsGalleryView
                             locations={locations.data}
                             onLocationClick={(location) => {
@@ -965,6 +1001,28 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                 </div>
                             </div>
                         </div>
+                            </div>
+                        </div>
+
+                        {/* Advanced Filters Sidebar */}
+                        {showAdvancedFilters && (
+                            <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                                <LocationsAdvancedFiltersPanel
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() => setShowAdvancedFilters(false)}
+                                    onClear={() => {
+                                        router.get("/contacts/tenants/locations", {
+                                            view_mode: viewMode,
+                                        });
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

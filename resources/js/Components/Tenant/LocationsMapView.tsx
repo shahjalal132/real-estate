@@ -9,6 +9,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
+import LocationsAdvancedFiltersPanel from "./LocationsAdvancedFiltersPanel";
 
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -25,6 +26,10 @@ interface LocationsMapViewProps {
     locations: TennentLocation[];
     selectedLocationId?: number | null;
     onLocationClick?: (location: TennentLocation) => void;
+    showAdvancedFilters?: boolean;
+    onCloseFilters?: () => void;
+    onClearFilters?: () => void;
+    activeFiltersCount?: number;
 }
 
 // Helper to get coordinates from address (placeholder - would use geocoding in production)
@@ -102,6 +107,10 @@ export default function LocationsMapView({
     locations,
     selectedLocationId,
     onLocationClick,
+    showAdvancedFilters = false,
+    onCloseFilters,
+    onClearFilters,
+    activeFiltersCount = 0,
 }: LocationsMapViewProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState<
         Record<number, number>
@@ -217,222 +226,238 @@ export default function LocationsMapView({
                 <MapControls />
             </div>
 
-            {/* Property List Section - Right */}
-            <div className="w-96 bg-white border-l border-gray-200 overflow-y-auto">
-                <div className="divide-y divide-gray-200">
-                    {locations.map((location) => {
-                        const imageIndex = getImageIndex(location.id);
-                        const imageCount = 5; // Placeholder
-                        const imageUrl = `https://via.placeholder.com/400x300?text=${encodeURIComponent(
-                            location.building_name ||
-                                location.address ||
-                                "Location"
-                        )}`;
-
-                        // Format floors display
-                        const formatFloors = () => {
-                            if (!location.floor) return "";
-                            const floor = location.floor;
-                            if (floor.includes(",") || floor.includes("-")) {
-                                return `Floors ${floor}`;
-                            }
-                            return `Floor ${floor}`;
-                        };
-
-                        // Format full date for expiration
-                        const formatFullDate = (
-                            date: string | null | undefined
-                        ): string => {
-                            if (!date) return "";
-                            try {
-                                return new Date(date).toLocaleDateString(
-                                    "en-US",
-                                    {
-                                        year: "numeric",
-                                        month: "short",
-                                    }
-                                );
-                            } catch {
-                                return "";
-                            }
-                        };
-
-                        const fullAddress = [
-                            location.address,
-                            location.city,
-                            location.state,
-                            location.zip,
-                        ]
-                            .filter(Boolean)
-                            .join(" ");
-
-                        return (
-                            <div
-                                key={location.id}
-                                className={`flex gap-4 p-4 cursor-pointer transition-all hover:bg-gray-50 ${
-                                    selectedLocationId === location.id
-                                        ? "bg-blue-50 border-l-4 border-blue-500"
-                                        : ""
-                                }`}
-                                onClick={() => onLocationClick?.(location)}
-                            >
-                                {/* Image Section - Left */}
-                                <div className="relative w-32 h-32 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
-                                    <img
-                                        src={imageUrl}
-                                        alt={
-                                            location.building_name ||
-                                            location.address ||
-                                            "Location"
-                                        }
-                                        className="w-full h-full object-cover"
-                                    />
-
-                                    {/* Image Counter */}
-                                    <div className="absolute bottom-1 left-1 text-white text-[10px] font-medium bg-black/60 px-1.5 py-0.5 rounded">
-                                        {imageIndex + 1}/{imageCount}
-                                    </div>
-                                </div>
-
-                                {/* Content Section - Middle */}
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-gray-900 mb-0.5 text-sm">
-                                        {(location as any).company_id ? (
-                                            <a
-                                                href={`/contacts/tenants/${
-                                                    (location as any).company_id
-                                                }`}
-                                                className="text-blue-600 hover:text-blue-800 hover:underline"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                }}
-                                            >
-                                                {location.tenant_name ||
-                                                    location.building_name ||
-                                                    "Location"}
-                                            </a>
-                                        ) : (
-                                            location.tenant_name ||
-                                            location.building_name ||
-                                            "Location"
-                                        )}
-                                    </h3>
-                                    {fullAddress && (
-                                        <p className="text-xs text-gray-600 mb-1.5">
-                                            {fullAddress}
-                                        </p>
-                                    )}
-
-                                    {/* Star Rating */}
-                                    {location.star_rating && (
-                                        <div className="flex gap-0.5 mb-2">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <span
-                                                    key={star}
-                                                    className={`text-xs ${
-                                                        star <=
-                                                        location.star_rating!
-                                                            ? "text-blue-500"
-                                                            : "text-gray-300"
-                                                    }`}
-                                                >
-                                                    ★
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Building Name */}
-                                    {location.building_name && (
-                                        <p className="text-xs font-medium text-gray-900 mb-1">
-                                            {location.building_name}
-                                        </p>
-                                    )}
-
-                                    {/* Property Details */}
-                                    <div className="space-y-0.5 text-xs text-gray-600">
-                                        <p>
-                                            {formatSF(location.sf_occupied)} SF
-                                            ·{" "}
-                                            {location.property_type ||
-                                                "Property"}
-                                            {location.floor &&
-                                                ` · ${formatFloors()}`}
-                                        </p>
-                                        <p>
-                                            {(() => {
-                                                const occupancy =
-                                                    location.occupancy_type ||
-                                                    "Leased";
-                                                if (occupancy === "Owned") {
-                                                    return location.moved_in
-                                                        ? `Owned · Moved ${formatFullDate(
-                                                              location.moved_in
-                                                          )}`
-                                                        : "Owned";
-                                                } else {
-                                                    return location.expiration
-                                                        ? `Leased · Expires ${formatFullDate(
-                                                              location.expiration
-                                                          )}`
-                                                        : location.moved_in
-                                                        ? `Leased · Moved ${formatFullDate(
-                                                              location.moved_in
-                                                          )}`
-                                                        : "Leased";
-                                                }
-                                            })()}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Action Icons - Right */}
-                                <div className="flex flex-col gap-2.5 flex-shrink-0 pt-1">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                        }}
-                                        className="text-gray-400 hover:text-red-500 transition-colors"
-                                    >
-                                        <Heart
-                                            className="h-5 w-5"
-                                            strokeWidth={1.5}
-                                            fill="none"
-                                        />
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                        }}
-                                        className="hover:opacity-80 transition-opacity"
-                                    >
-                                        <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
-                                            <CheckSquare
-                                                className="h-3 w-3 text-white"
-                                                fill="white"
-                                                stroke="white"
-                                            />
-                                        </div>
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                        }}
-                                        className="hover:opacity-80 transition-opacity"
-                                    >
-                                        <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
-                                            <Minus
-                                                className="h-3 w-3 text-white"
-                                                strokeWidth={2.5}
-                                            />
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    })}
+            {/* Property List Section or Advanced Filters - Right */}
+            {showAdvancedFilters ? (
+                <div className="w-[600px] bg-white border-l border-gray-200 overflow-hidden flex flex-col">
+                    <LocationsAdvancedFiltersPanel
+                        isOpen={showAdvancedFilters}
+                        onClose={onCloseFilters || (() => {})}
+                        onClear={onClearFilters || (() => {})}
+                        onDone={onCloseFilters || (() => {})}
+                        activeFiltersCount={activeFiltersCount || 0}
+                    />
                 </div>
-            </div>
+            ) : (
+                <div className="w-96 bg-white border-l border-gray-200 overflow-y-auto">
+                    <div className="divide-y divide-gray-200">
+                        {locations.map((location) => {
+                            const imageIndex = getImageIndex(location.id);
+                            const imageCount = 5; // Placeholder
+                            const imageUrl = `https://via.placeholder.com/400x300?text=${encodeURIComponent(
+                                location.building_name ||
+                                    location.address ||
+                                    "Location"
+                            )}`;
+
+                            // Format floors display
+                            const formatFloors = () => {
+                                if (!location.floor) return "";
+                                const floor = location.floor;
+                                if (
+                                    floor.includes(",") ||
+                                    floor.includes("-")
+                                ) {
+                                    return `Floors ${floor}`;
+                                }
+                                return `Floor ${floor}`;
+                            };
+
+                            // Format full date for expiration
+                            const formatFullDate = (
+                                date: string | null | undefined
+                            ): string => {
+                                if (!date) return "";
+                                try {
+                                    return new Date(date).toLocaleDateString(
+                                        "en-US",
+                                        {
+                                            year: "numeric",
+                                            month: "short",
+                                        }
+                                    );
+                                } catch {
+                                    return "";
+                                }
+                            };
+
+                            const fullAddress = [
+                                location.address,
+                                location.city,
+                                location.state,
+                                location.zip,
+                            ]
+                                .filter(Boolean)
+                                .join(" ");
+
+                            return (
+                                <div
+                                    key={location.id}
+                                    className={`flex gap-4 p-4 cursor-pointer transition-all hover:bg-gray-50 ${
+                                        selectedLocationId === location.id
+                                            ? "bg-blue-50 border-l-4 border-blue-500"
+                                            : ""
+                                    }`}
+                                    onClick={() => onLocationClick?.(location)}
+                                >
+                                    {/* Image Section - Left */}
+                                    <div className="relative w-32 h-32 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                                        <img
+                                            src={imageUrl}
+                                            alt={
+                                                location.building_name ||
+                                                location.address ||
+                                                "Location"
+                                            }
+                                            className="w-full h-full object-cover"
+                                        />
+
+                                        {/* Image Counter */}
+                                        <div className="absolute bottom-1 left-1 text-white text-[10px] font-medium bg-black/60 px-1.5 py-0.5 rounded">
+                                            {imageIndex + 1}/{imageCount}
+                                        </div>
+                                    </div>
+
+                                    {/* Content Section - Middle */}
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-semibold text-gray-900 mb-0.5 text-sm">
+                                            {(location as any).company_id ? (
+                                                <a
+                                                    href={`/contacts/tenants/${
+                                                        (location as any)
+                                                            .company_id
+                                                    }`}
+                                                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                    }}
+                                                >
+                                                    {location.tenant_name ||
+                                                        location.building_name ||
+                                                        "Location"}
+                                                </a>
+                                            ) : (
+                                                location.tenant_name ||
+                                                location.building_name ||
+                                                "Location"
+                                            )}
+                                        </h3>
+                                        {fullAddress && (
+                                            <p className="text-xs text-gray-600 mb-1.5">
+                                                {fullAddress}
+                                            </p>
+                                        )}
+
+                                        {/* Star Rating */}
+                                        {location.star_rating && (
+                                            <div className="flex gap-0.5 mb-2">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <span
+                                                        key={star}
+                                                        className={`text-xs ${
+                                                            star <=
+                                                            location.star_rating!
+                                                                ? "text-blue-500"
+                                                                : "text-gray-300"
+                                                        }`}
+                                                    >
+                                                        ★
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Building Name */}
+                                        {location.building_name && (
+                                            <p className="text-xs font-medium text-gray-900 mb-1">
+                                                {location.building_name}
+                                            </p>
+                                        )}
+
+                                        {/* Property Details */}
+                                        <div className="space-y-0.5 text-xs text-gray-600">
+                                            <p>
+                                                {formatSF(location.sf_occupied)}{" "}
+                                                SF ·{" "}
+                                                {location.property_type ||
+                                                    "Property"}
+                                                {location.floor &&
+                                                    ` · ${formatFloors()}`}
+                                            </p>
+                                            <p>
+                                                {(() => {
+                                                    const occupancy =
+                                                        location.occupancy_type ||
+                                                        "Leased";
+                                                    if (occupancy === "Owned") {
+                                                        return location.moved_in
+                                                            ? `Owned · Moved ${formatFullDate(
+                                                                  location.moved_in
+                                                              )}`
+                                                            : "Owned";
+                                                    } else {
+                                                        return location.expiration
+                                                            ? `Leased · Expires ${formatFullDate(
+                                                                  location.expiration
+                                                              )}`
+                                                            : location.moved_in
+                                                            ? `Leased · Moved ${formatFullDate(
+                                                                  location.moved_in
+                                                              )}`
+                                                            : "Leased";
+                                                    }
+                                                })()}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Icons - Right */}
+                                    <div className="flex flex-col gap-2.5 flex-shrink-0 pt-1">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                            className="text-gray-400 hover:text-red-500 transition-colors"
+                                        >
+                                            <Heart
+                                                className="h-5 w-5"
+                                                strokeWidth={1.5}
+                                                fill="none"
+                                            />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                            className="hover:opacity-80 transition-opacity"
+                                        >
+                                            <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
+                                                <CheckSquare
+                                                    className="h-3 w-3 text-white"
+                                                    fill="white"
+                                                    stroke="white"
+                                                />
+                                            </div>
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                            className="hover:opacity-80 transition-opacity"
+                                        >
+                                            <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
+                                                <Minus
+                                                    className="h-3 w-3 text-white"
+                                                    strokeWidth={2.5}
+                                                />
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
