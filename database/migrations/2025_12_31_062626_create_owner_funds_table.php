@@ -13,31 +13,32 @@ return new class extends Migration
     {
         Schema::create('owner_funds', function (Blueprint $table) {
             $table->id();
-            $table->string('fund_name');
-            $table->string('hierarchy')->nullable();
-            $table->string('owner_type')->nullable();
-            $table->string('hq_city')->nullable();
-            $table->string('hq_state')->nullable();
-            $table->string('hq_country')->nullable();
+            $table->string('company')->nullable();
+            $table->string('fund');
+            $table->decimal('fund_size', 15, 2)->nullable();
+            $table->string('status')->nullable();
+            $table->decimal('dry_powder', 15, 2)->nullable();
+            $table->decimal('aum', 15, 2)->nullable();
+            $table->string('vintage')->nullable();
+            $table->string('property_focus')->nullable();
+            $table->string('country_focus')->nullable();
+            $table->string('region_focus')->nullable();
+            $table->string('strategy')->nullable();
+            $table->string('fund_structure')->nullable();
+            $table->date('launch_date')->nullable();
+            $table->date('final_close_date')->nullable();
+            $table->integer('months_in_market')->nullable();
+            $table->decimal('target_irr_gross', 10, 2)->nullable();
+            $table->decimal('target_irr_net', 10, 2)->nullable();
+            $table->string('min_fund_manager_loc')->nullable();
             $table->integer('properties')->nullable();
-            $table->decimal('portfolio_sf', 15, 2)->nullable();
-            $table->decimal('average_sf', 15, 2)->nullable();
-            $table->integer('apt_units')->nullable();
-            $table->integer('hotel_rooms')->nullable();
-            $table->decimal('land_acre', 15, 2)->nullable();
-            $table->string('main_property_type')->nullable();
-            $table->decimal('sf_delivered_24_months', 15, 2)->nullable();
-            $table->decimal('sf_under_construction', 15, 2)->nullable();
-            $table->string('continental_focus')->nullable();
-            $table->string('primary_country')->nullable();
-            $table->string('territory')->nullable();
-            $table->integer('sale_listings')->nullable();
-            $table->decimal('sale_listings_value', 15, 2)->nullable();
+            $table->decimal('portfolio_size_sf', 15, 2)->nullable();
             $table->decimal('acquisitions_24_months', 15, 2)->nullable();
             $table->decimal('dispositions_24_months', 15, 2)->nullable();
             $table->timestamps();
-            
-            $table->index('fund_name');
+
+            $table->index('fund');
+            $table->index('company');
         });
     }
 

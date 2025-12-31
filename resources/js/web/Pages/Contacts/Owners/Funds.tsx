@@ -10,26 +10,26 @@ import AdvancedFiltersPanel from "@/Components/Owner/AdvancedFiltersPanel";
 
 interface OwnerFund {
     id: number;
-    fund_name: string;
-    hierarchy?: string;
-    owner_type?: string;
-    hq_city?: string;
-    hq_state?: string;
-    hq_country?: string;
+    company?: string;
+    fund: string;
+    fund_size?: number;
+    status?: string;
+    dry_powder?: number;
+    aum?: number;
+    vintage?: string;
+    property_focus?: string;
+    country_focus?: string;
+    region_focus?: string;
+    strategy?: string;
+    fund_structure?: string;
+    launch_date?: string;
+    final_close_date?: string;
+    months_in_market?: number;
+    target_irr_gross?: number;
+    target_irr_net?: number;
+    min_fund_manager_loc?: string;
     properties?: number;
-    portfolio_sf?: number;
-    average_sf?: number;
-    apt_units?: number;
-    hotel_rooms?: number;
-    land_acre?: number;
-    main_property_type?: string;
-    sf_delivered_24_months?: number;
-    sf_under_construction?: number;
-    continental_focus?: string;
-    primary_country?: string;
-    territory?: string;
-    sale_listings?: number;
-    sale_listings_value?: number;
+    portfolio_size_sf?: number;
     acquisitions_24_months?: number;
     dispositions_24_months?: number;
 }
@@ -41,9 +41,12 @@ interface PageProps {
         min_properties?: number;
         min_portfolio_sf?: number;
         max_portfolio_sf?: number;
-        owner_type?: string;
-        territory?: string;
-        main_property_type?: string;
+        company?: string;
+        status?: string;
+        property_focus?: string;
+        country_focus?: string;
+        region_focus?: string;
+        strategy?: string;
     };
     sort: {
         by: string;
@@ -113,73 +116,117 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
 
     const columns: ResizableColumn[] = [
         {
-            key: "fund_name",
-            label: "Fund Name",
+            key: "fund",
+            label: "Fund",
             align: "left",
             defaultWidth: 200,
         },
         {
-            key: "owner_type",
-            label: "Owner Type",
+            key: "company",
+            label: "Company",
+            align: "left",
+            defaultWidth: 180,
+        },
+        {
+            key: "fund_size",
+            label: "Fund Size",
+            align: "right",
+            defaultWidth: 140,
+            render: (row) => formatCurrency(row.fund_size),
+        },
+        {
+            key: "status",
+            label: "Status",
+            align: "left",
+            defaultWidth: 120,
+        },
+        {
+            key: "aum",
+            label: "AUM",
+            align: "right",
+            defaultWidth: 140,
+            render: (row) => formatCurrency(row.aum),
+        },
+        {
+            key: "dry_powder",
+            label: "Dry Powder",
+            align: "right",
+            defaultWidth: 140,
+            render: (row) => formatCurrency(row.dry_powder),
+        },
+        {
+            key: "vintage",
+            label: "Vintage",
+            align: "left",
+            defaultWidth: 100,
+        },
+        {
+            key: "property_focus",
+            label: "Property Focus",
+            align: "left",
+            defaultWidth: 160,
+        },
+        {
+            key: "country_focus",
+            label: "Country Focus",
             align: "left",
             defaultWidth: 150,
         },
         {
-            key: "hq_location",
-            label: "HQ Location",
+            key: "region_focus",
+            label: "Region Focus",
             align: "left",
-            defaultWidth: 180,
-            render: (row) =>
-                row.hq_city && row.hq_state
-                    ? `${row.hq_city}, ${row.hq_state}`
-                    : row.hq_city || row.hq_state || "—",
+            defaultWidth: 150,
+        },
+        {
+            key: "strategy",
+            label: "Strategy",
+            align: "left",
+            defaultWidth: 160,
         },
         {
             key: "properties",
-            label: "Properties",
+            label: "Properties (#)",
             align: "right",
             defaultWidth: 120,
             render: (row) => formatNumber(row.properties),
         },
         {
-            key: "portfolio_sf",
-            label: "Portfolio SF",
-            align: "right",
-            defaultWidth: 140,
-            render: (row) => formatSF(row.portfolio_sf),
-        },
-        {
-            key: "average_sf",
-            label: "Average SF",
-            align: "right",
-            defaultWidth: 120,
-            render: (row) => formatSF(row.average_sf),
-        },
-        {
-            key: "main_property_type",
-            label: "Main Property Type",
-            align: "left",
-            defaultWidth: 160,
-        },
-        {
-            key: "territory",
-            label: "Territory",
-            align: "left",
-            defaultWidth: 120,
-        },
-        {
-            key: "sale_listings",
-            label: "Sale Listings",
-            align: "right",
-            defaultWidth: 120,
-            render: (row) => formatNumber(row.sale_listings),
-        },
-        {
-            key: "sale_listings_value",
-            label: "Sale Listings Value",
+            key: "portfolio_size_sf",
+            label: "Portfolio Size (SF)",
             align: "right",
             defaultWidth: 160,
-            render: (row) => formatCurrency(row.sale_listings_value),
+            render: (row) => formatSF(row.portfolio_size_sf),
+        },
+        {
+            key: "target_irr_gross",
+            label: "Target IRR - Gross",
+            align: "right",
+            defaultWidth: 160,
+            render: (row) =>
+                row.target_irr_gross ? `${row.target_irr_gross}%` : "—",
+        },
+        {
+            key: "target_irr_net",
+            label: "Target IRR - Net",
+            align: "right",
+            defaultWidth: 160,
+            render: (row) =>
+                row.target_irr_net ? `${row.target_irr_net}%` : "—",
+        },
+        {
+            key: "acquisitions_24_months",
+            label: "Acquisitions 24M",
+            align: "right",
+            defaultWidth: 160,
+            render: (row) => formatCurrency(row.acquisitions_24_months),
+        },
+        {
+            key: "dispositions_24_months",
+            label: "Dispositions 24M",
+            align: "right",
+            defaultWidth: 160,
+            render: (row) => formatCurrency(row.dispositions_24_months),
         },
     ];
 
@@ -240,11 +287,11 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                         router.get("/contacts/owners/funds", {});
                     }}
                     activeFiltersCount={activeFiltersCount}
-                    ownerType={filters.owner_type || ""}
+                    ownerType={filters.status || ""}
                     onOwnerTypeChange={(value) => {
                         router.get("/contacts/owners/funds", {
                             search: searchValue || undefined,
-                            owner_type: value || undefined,
+                            status: value || undefined,
                             ...filters,
                         });
                     }}
@@ -286,11 +333,11 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                             ...filters,
                         });
                     }}
-                    mainPropertyType={filters.main_property_type || ""}
+                    mainPropertyType={filters.property_focus || ""}
                     onMainPropertyTypeChange={(value) => {
                         router.get("/contacts/owners/funds", {
                             search: searchValue || undefined,
-                            main_property_type: value || undefined,
+                            property_focus: value || undefined,
                             ...filters,
                         });
                     }}

@@ -7,10 +7,10 @@ import {
     TennentLocation,
 } from "../../../../types";
 import CompanyDetailsHeader from "../../../../Components/Tenant/CompanyDetailsHeader";
-import CompanyMetrics from "../../../../Components/Tenant/CompanyMetrics";
 import CompanyOverview from "../../../../Components/Tenant/CompanyOverview";
 import RelatedCompaniesTable from "../../../../Components/Tenant/RelatedCompaniesTable";
 import CompanyLocationsMap from "../../../../Components/Tenant/CompanyLocationsMap";
+import SummaryMetrics from "../../../../Components/Tenant/SummaryMetrics";
 
 interface PageProps {
     company: TennentCompany;
@@ -82,7 +82,7 @@ export default function CompanyDetails({
                         <CompanyDetailsHeader company={company} />
 
                         {/* Tabs */}
-                        <div className="border-b border-gray-200">
+                        <div className="border-b border-gray-200 mt-6">
                             <nav className="-mb-px flex space-x-8">
                                 {tabs.map((tab) => (
                                     <Link
@@ -99,17 +99,16 @@ export default function CompanyDetails({
                                 ))}
                             </nav>
                         </div>
-
-                        {/* Key Metrics */}
-                        <CompanyMetrics
-                            company={company}
-                            totalLocations={totalLocations}
-                        />
                     </div>
                 </div>
 
                 {/* Main Content - Summary View */}
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+                    {/* Summary Metrics */}
+                    <SummaryMetrics
+                        company={company}
+                        totalLocations={totalLocations}
+                    />
                     {/* Company Locations Map - Full Width */}
                     <div className="w-full h-[600px] bg-white rounded-lg shadow overflow-hidden">
                         <CompanyLocationsMap

@@ -69,36 +69,57 @@ class TenantCompanyController extends Controller
         ]);
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, $id, $tab = 'summary')
     {
         $company = TennentCompany::findOrFail($id);
 
-        // Get related locations for this company
-        $locationsQuery = \App\Models\TennentLocation::where('tenant_name', $company->tenant_name);
+        // If it's the summary tab, render the full details page
+        if ($tab === 'summary') {
+            // Get related locations for this company
+            $locationsQuery = \App\Models\TennentLocation::where('tenant_name', $company->tenant_name);
 
-        // Apply filters if any
-        if ($request->has('view_mode')) {
-            // View mode is handled on frontend
+            // Apply filters if any
+            if ($request->has('view_mode')) {
+                // View mode is handled on frontend
+            }
+
+            // Get locations with pagination
+            $perPage = $request->get('per_page', 20);
+            $locations = $locationsQuery->paginate($perPage);
+
+            // Get related companies (same industry or parent company)
+            $relatedCompanies = TennentCompany::where('id', '!=', $id)
+                ->where(function ($query) use ($company) {
+                    $query->where('industry', $company->industry)
+                        ->orWhere('parent_company', $company->tenant_name);
+                })
+                ->limit(10)
+                ->get();
+
+            return Inertia::render('Contacts/Tenants/CompanyDetails', [
+                'company' => $company,
+                'locations' => $locations,
+                'relatedCompanies' => $relatedCompanies,
+                'filters' => $request->only(['search', 'address_search', 'space_use', 'min_sf_occupied', 'max_sf_occupied', 'occupancy', 'view_mode']),
+            ]);
         }
 
-        // Get locations with pagination
-        $perPage = $request->get('per_page', 20);
-        $locations = $locationsQuery->paginate($perPage);
+        // For other tabs, render the tab page with coming soon
+        $tabLabels = [
+            'locations' => 'Locations',
+            'transactions' => 'Transactions',
+            'lease-expirations' => 'Lease Expirations',
+            'contacts' => 'Contacts',
+            'relationships' => 'Relationships',
+            'news' => 'News',
+        ];
 
-        // Get related companies (same industry or parent company)
-        $relatedCompanies = TennentCompany::where('id', '!=', $id)
-            ->where(function ($query) use ($company) {
-                $query->where('industry', $company->industry)
-                    ->orWhere('parent_company', $company->tenant_name);
-            })
-            ->limit(10)
-            ->get();
+        $tabLabel = $tabLabels[$tab] ?? ucfirst(str_replace('-', ' ', $tab));
 
-        return Inertia::render('Contacts/Tenants/CompanyDetails', [
+        return Inertia::render('Contacts/Tenants/CompanyTab', [
             'company' => $company,
-            'locations' => $locations,
-            'relatedCompanies' => $relatedCompanies,
-            'filters' => $request->only(['search', 'address_search', 'space_use', 'min_sf_occupied', 'max_sf_occupied', 'occupancy', 'view_mode']),
+            'tab' => $tab,
+            'tabLabel' => $tabLabel,
         ]);
     }
 }
