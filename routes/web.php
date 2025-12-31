@@ -39,7 +39,11 @@ Route::get('/optimize', function () {
 Route::get('/contacts/tenants', [\App\Http\Controllers\TenantCompanyController::class, 'index'])->name('contacts.tenants');
 Route::get('/contacts/tenants/locations', [\App\Http\Controllers\TenantLocationController::class, 'index'])->name('contacts.tenants.locations');
 Route::get('/contacts/tenants/{id}', [\App\Http\Controllers\TenantCompanyController::class, 'show'])->name('contacts.tenants.show');
-Route::get('/contacts/owners', [\App\Http\Controllers\OwnerCompanyController::class, 'index'])->name('contacts.owners');
+Route::get('/contacts/owners', function () {
+    return redirect('/contacts/owners/companies');
+});
+Route::get('/contacts/owners/companies', [\App\Http\Controllers\OwnerCompanyController::class, 'companies'])->name('contacts.owners.companies');
+Route::get('/contacts/owners/funds', [\App\Http\Controllers\OwnerCompanyController::class, 'funds'])->name('contacts.owners.funds');
 Route::get('/contacts/owners/{id}', [\App\Http\Controllers\OwnerCompanyController::class, 'show'])->name('contacts.owners.show');
 Route::get('/contacts/brokers', [\App\Http\Controllers\MiscController::class, 'contactsBrokers'])->name('contacts.brokers');
 Route::get('/contacts/all', [\App\Http\Controllers\MiscController::class, 'contactsAll'])->name('contacts.all');

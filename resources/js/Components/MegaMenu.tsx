@@ -372,7 +372,7 @@ const menus: Record<string, Menu> = {
                 items: [
                     {
                         label: "Owners",
-                        link: "/contacts/owners",
+                        link: "/contacts/owners/companies",
                         icon: Bookmark,
                         description: "Property owner database",
                     },
