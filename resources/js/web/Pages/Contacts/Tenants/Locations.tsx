@@ -6,6 +6,7 @@ import LocationsFilterBar from "../../../../Components/Tenant/LocationsFilterBar
 import LocationsMapView from "../../../../Components/Tenant/LocationsMapView";
 import LocationsGalleryView from "../../../../Components/Tenant/LocationsGalleryView";
 import ResizableTable, { ResizableColumn } from "../../../../Components/ResizableTable/ResizableTable";
+import LocationsAdvancedFiltersPanel from "../../../../Components/Tenant/LocationsAdvancedFiltersPanel";
 import {
     Info,
     Heart,
@@ -56,6 +57,7 @@ export default function TenantLocations({ locations, filters }: PageProps) {
     const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
         null
     );
+    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const activeTab = url.includes("/locations") ? "locations" : "companies";
 
     // Update view mode from URL on mount and when URL changes (but only if it's different)
@@ -557,7 +559,12 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                         handleSearch();
                     }}
                     onFiltersClick={() => {
-                        // Handle filters click
+                        setShowAdvancedFilters((prev) => !prev);
+                    }}
+                    onClearClick={() => {
+                        router.get("/contacts/tenants/locations", {
+                            view_mode: viewMode,
+                        });
                     }}
                     onSortClick={() => {
                         // Handle sort click
@@ -603,13 +610,31 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                             onLocationClick={(location) => {
                                 setSelectedLocationId(location.id);
                             }}
+                            showAdvancedFilters={showAdvancedFilters}
+                            onCloseFilters={() => setShowAdvancedFilters(false)}
+                            onClearFilters={() => {
+                                router.get("/contacts/tenants/locations", {
+                                    view_mode: viewMode,
+                                });
+                                setShowAdvancedFilters(false);
+                            }}
+                            activeFiltersCount={activeFiltersCount}
                         />
                     </div>
                 )}
 
                 {viewMode === "list" && (
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                        <ResizableTable
+                    <div className="relative flex">
+                        {/* Main Content */}
+                        <div
+                            className={`transition-all duration-300 ${
+                                showAdvancedFilters
+                                    ? "w-[calc(100%-600px)]"
+                                    : "w-full"
+                            }`}
+                        >
+                            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
+                                <ResizableTable
                             columns={columns}
                             data={locations.data}
                             storageKey="tenant-locations-column-widths"
@@ -785,11 +810,42 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                 </div>
                             </div>
                         </div>
+                            </div>
+                        </div>
+
+                        {/* Advanced Filters Sidebar */}
+                        {showAdvancedFilters && (
+                            <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                                <LocationsAdvancedFiltersPanel
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() => setShowAdvancedFilters(false)}
+                                    onClear={() => {
+                                        router.get("/contacts/tenants/locations", {
+                                            view_mode: viewMode,
+                                        });
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {viewMode === "gallery" && (
-                    <div className="mx-auto max-w-[1920px]">
+                    <div className="relative flex">
+                        {/* Main Content */}
+                        <div
+                            className={`transition-all duration-300 ${
+                                showAdvancedFilters
+                                    ? "w-[calc(100%-600px)]"
+                                    : "w-full"
+                            }`}
+                        >
+                            <div className="mx-auto max-w-[1920px]">
                         <LocationsGalleryView
                             locations={locations.data}
                             onLocationClick={(location) => {
@@ -945,6 +1001,28 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                 </div>
                             </div>
                         </div>
+                            </div>
+                        </div>
+
+                        {/* Advanced Filters Sidebar */}
+                        {showAdvancedFilters && (
+                            <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                                <LocationsAdvancedFiltersPanel
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() => setShowAdvancedFilters(false)}
+                                    onClear={() => {
+                                        router.get("/contacts/tenants/locations", {
+                                            view_mode: viewMode,
+                                        });
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
