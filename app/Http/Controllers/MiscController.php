@@ -297,4 +297,45 @@ class MiscController extends Controller
             'description' => 'Manage your subscription plan and billing',
         ]);
     }
+
+    // Insights routes
+    public function insights()
+    {
+        return Inertia::render('Insights', [
+            'title' => 'Coming soon: Insights',
+            'description' => 'Gain an advantage over competitors. With data-backed market insights, real-time property valuations, industry news, and more, we\'ll help you make smarter decisions.',
+            'features' => [
+                'Data-backed market insights',
+                'Real-time property valuations',
+                'Industry news and trends',
+                'Market intelligence reports',
+                'Analytics and forecasting',
+            ],
+        ]);
+    }
+
+    // News routes
+    public function news()
+    {
+        return Inertia::render('News/Index', [
+            'title' => 'Coming soon: Latest Marketplace News',
+            'description' => 'Stay informed with industry insights, market updates, and the latest trends in commercial real estate.',
+            'features' => [
+                'Latest industry news and updates',
+                'Market insights and analysis',
+                'Auction reports and calendars',
+                'Expert interviews and articles',
+                'Quarterly market reports',
+            ],
+        ]);
+    }
+
+    public function newsShow($slug)
+    {
+        return Inertia::render('News/Show', [
+            'title' => 'Coming soon: News Article',
+            'description' => 'This news article will be available soon. Check back later for the latest updates.',
+            'slug' => $slug,
+        ]);
+    }
 }
