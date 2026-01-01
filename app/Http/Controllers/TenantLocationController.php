@@ -12,23 +12,44 @@ class TenantLocationController extends Controller
     {
         $query = TennentLocation::query();
 
-        // Search by tenant name, address, city, building name
+        // Search by tenant name (separate from address search)
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('tenant_name', 'like', '%' . $search . '%')
-                    ->orWhere('address', 'like', '%' . $search . '%')
-                    ->orWhere('city', 'like', '%' . $search . '%')
-                    ->orWhere('building_name', 'like', '%' . $search . '%');
+            $query->where('tenant_name', 'like', '%' . $request->search . '%');
+        }
+
+        // Address search (address, city, building name)
+        if ($request->has('address_search') && $request->address_search) {
+            $addressSearch = $request->address_search;
+            $query->where(function ($q) use ($addressSearch) {
+                $q->where('address', 'like', '%' . $addressSearch . '%')
+                    ->orWhere('city', 'like', '%' . $addressSearch . '%')
+                    ->orWhere('building_name', 'like', '%' . $addressSearch . '%');
             });
         }
 
         // Filter: Size Occupied (SF Occupied)
-        if ($request->has('min_sf_occupied')) {
-            $query->where('sf_occupied', '>=', $request->min_sf_occupied);
+        if ($request->has('min_sf_occupied') && $request->min_sf_occupied !== null) {
+            $query->whereRaw('CAST(sf_occupied AS UNSIGNED) >= ?', [$request->min_sf_occupied]);
         }
-        if ($request->has('max_sf_occupied')) {
-            $query->where('sf_occupied', '<=', $request->max_sf_occupied);
+        if ($request->has('max_sf_occupied') && $request->max_sf_occupied !== null) {
+            $query->whereRaw('CAST(sf_occupied AS UNSIGNED) <= ?', [$request->max_sf_occupied]);
+        }
+
+        // Space Use filter
+        if ($request->has('space_use') && $request->space_use) {
+            $query->where('space_use', $request->space_use);
+        }
+
+        // Occupancy filter (using percent_of_building field)
+        if ($request->has('occupancy') && $request->occupancy) {
+            // Parse occupancy range (e.g., "0-25", "26-50", etc.)
+            $occupancyRange = explode('-', $request->occupancy);
+            if (count($occupancyRange) === 2) {
+                $minOccupancy = (float) $occupancyRange[0];
+                $maxOccupancy = (float) $occupancyRange[1];
+                $query->where('percent_of_building', '>=', $minOccupancy)
+                      ->where('percent_of_building', '<=', $maxOccupancy);
+            }
         }
 
         // Industry filter
@@ -79,7 +100,7 @@ class TenantLocationController extends Controller
 
         return Inertia::render('Contacts/Tenants/Locations', [
             'locations' => $locations,
-            'filters' => $request->only(['search', 'min_sf_occupied', 'max_sf_occupied', 'industry', 'city', 'state', 'market', 'property_type']),
+            'filters' => $request->only(['search', 'address_search', 'min_sf_occupied', 'max_sf_occupied', 'space_use', 'occupancy', 'industry', 'city', 'state', 'market', 'property_type']),
             'sort' => [
                 'by' => $sortBy,
                 'dir' => $sortDir,
