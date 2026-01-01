@@ -89,3 +89,10 @@ Route::get('/settings/buy-box', [\App\Http\Controllers\MiscController::class, 's
 Route::get('/settings/notifications', [\App\Http\Controllers\MiscController::class, 'settingsNotifications'])->name('settings.notifications');
 Route::get('/settings/account', [\App\Http\Controllers\MiscController::class, 'settingsAccount'])->name('settings.account');
 Route::get('/settings/subscription', [\App\Http\Controllers\MiscController::class, 'settingsSubscription'])->name('settings.subscription');
+
+// Insights routes
+Route::get('/insights', [\App\Http\Controllers\MiscController::class, 'insights'])->name('insights');
+
+// News routes
+Route::get('/news', [\App\Http\Controllers\MiscController::class, 'news'])->name('news.index');
+Route::get('/news/{slug}', [\App\Http\Controllers\MiscController::class, 'newsShow'])->name('news.show');
