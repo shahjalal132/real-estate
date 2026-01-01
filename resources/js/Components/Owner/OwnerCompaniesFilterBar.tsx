@@ -1,5 +1,5 @@
-import { Search, Filter, ChevronDown, Download } from "lucide-react";
-import { useState } from "react";
+import { Search, Filter, ChevronDown, Download, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 interface OwnerCompaniesFilterBarProps {
     searchValue?: string;
@@ -12,14 +12,50 @@ interface OwnerCompaniesFilterBarProps {
     activeFiltersCount?: number;
     // Filter values
     ownerType?: string;
-    onOwnerTypeChange?: (value: string) => void;
-    portfolioSize?: string;
-    onPortfolioSizeChange?: (value: string) => void;
-    propertiesOwned?: string;
-    onPropertiesOwnedChange?: (value: string) => void;
+    onOwnerTypeChange?: (value: string | null) => void;
+    minPortfolioSf?: number;
+    maxPortfolioSf?: number;
+    onPortfolioSizeChange?: (min: number | null, max: number | null) => void;
+    minProperties?: number;
+    onPropertiesOwnedChange?: (value: number | null) => void;
     mainPropertyType?: string;
-    onMainPropertyTypeChange?: (value: string) => void;
+    onMainPropertyTypeChange?: (value: string | null) => void;
 }
+
+const PORTFOLIO_SIZE_OPTIONS = [
+    { label: "All Sizes", value: null, min: null, max: null },
+    { label: "0 - 100K SF", value: "0-100k", min: 0, max: 100000 },
+    { label: "100K - 500K SF", value: "100k-500k", min: 100000, max: 500000 },
+    { label: "500K - 1M SF", value: "500k-1m", min: 500000, max: 1000000 },
+    { label: "1M+ SF", value: "1m+", min: 1000000, max: null },
+];
+
+const PROPERTIES_OPTIONS = [
+    { label: "All Properties", value: null },
+    { label: "1+ Properties", value: 1 },
+    { label: "5+ Properties", value: 5 },
+    { label: "10+ Properties", value: 10 },
+    { label: "25+ Properties", value: 25 },
+    { label: "50+ Properties", value: 50 },
+    { label: "100+ Properties", value: 100 },
+];
+
+const OWNER_TYPE_OPTIONS = [
+    { label: "All Owner Types", value: null },
+    { label: "REIT", value: "REIT" },
+    { label: "Private", value: "Private" },
+    { label: "Public", value: "Public" },
+    { label: "Institutional", value: "Institutional" },
+];
+
+const PROPERTY_TYPE_OPTIONS = [
+    { label: "All Property Types", value: null },
+    { label: "Office", value: "Office" },
+    { label: "Retail", value: "Retail" },
+    { label: "Industrial", value: "Industrial" },
+    { label: "Multifamily", value: "Multifamily" },
+    { label: "Mixed Use", value: "Mixed Use" },
+];
 
 export default function OwnerCompaniesFilterBar({
     searchValue = "",
@@ -30,98 +66,153 @@ export default function OwnerCompaniesFilterBar({
     onExportClick,
     onClearClick,
     activeFiltersCount = 0,
-    ownerType = "",
+    ownerType,
     onOwnerTypeChange,
-    portfolioSize = "",
+    minPortfolioSf,
+    maxPortfolioSf,
     onPortfolioSizeChange,
-    propertiesOwned = "",
+    minProperties,
     onPropertiesOwnedChange,
-    mainPropertyType = "",
+    mainPropertyType,
     onMainPropertyTypeChange,
 }: OwnerCompaniesFilterBarProps) {
+    const [localSearchValue, setLocalSearchValue] = useState(searchValue);
     const [showPortfolioSizeMenu, setShowPortfolioSizeMenu] = useState(false);
     const [showPropertiesMenu, setShowPropertiesMenu] = useState(false);
+    const portfolioSizeRef = useRef<HTMLDivElement>(null);
+    const propertiesRef = useRef<HTMLDivElement>(null);
+
+    // Update local search when prop changes
+    useEffect(() => {
+        setLocalSearchValue(searchValue);
+    }, [searchValue]);
+
+    // Debounced search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (onSearchChange && localSearchValue !== searchValue) {
+                onSearchChange(localSearchValue);
+                onSearch?.();
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [localSearchValue, searchValue, onSearchChange, onSearch]);
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                portfolioSizeRef.current &&
+                !portfolioSizeRef.current.contains(event.target as Node)
+            ) {
+                setShowPortfolioSizeMenu(false);
+            }
+            if (
+                propertiesRef.current &&
+                !propertiesRef.current.contains(event.target as Node)
+            ) {
+                setShowPropertiesMenu(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
+            onSearchChange?.(localSearchValue);
             onSearch?.();
         }
     };
 
-    const portfolioSizeOptions = [
-        { label: "All", value: "" },
-        { label: "0 - 100K SF", value: "0-100k" },
-        { label: "100K - 500K SF", value: "100k-500k" },
-        { label: "500K - 1M SF", value: "500k-1m" },
-        { label: "1M+ SF", value: "1m+" },
-    ];
-
-    const propertiesOptions = [
-        { label: "All", value: "" },
-        { label: "5+ Properties", value: "5" },
-        { label: "10+ Properties", value: "10" },
-        { label: "25+ Properties", value: "25" },
-        { label: "50+ Properties", value: "50" },
-        { label: "100+ Properties", value: "100" },
-    ];
+    const handleClearSearch = () => {
+        setLocalSearchValue("");
+        onSearchChange?.("");
+        onSearch?.();
+    };
 
     const getPortfolioSizeLabel = () => {
-        const option = portfolioSizeOptions.find(
-            (opt) => opt.value === portfolioSize
+        const option = PORTFOLIO_SIZE_OPTIONS.find(
+            (opt) => opt.min === minPortfolioSf && opt.max === maxPortfolioSf
         );
-        return option ? option.label : "Portfolio SF";
+        return option?.label || "Portfolio SF";
     };
 
     const getPropertiesLabel = () => {
-        const option = propertiesOptions.find(
-            (opt) => opt.value === propertiesOwned
+        const option = PROPERTIES_OPTIONS.find(
+            (opt) => opt.value === minProperties
         );
-        return option ? option.label : "Properties";
+        return option?.label || "Properties";
     };
+
+    const hasActiveFilters =
+        activeFiltersCount > 0 ||
+        minPortfolioSf !== null ||
+        maxPortfolioSf !== null ||
+        minProperties !== null ||
+        ownerType !== null ||
+        mainPropertyType !== null ||
+        localSearchValue;
 
     return (
         <div className="border-b border-gray-200 bg-white">
             <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between gap-4 py-4">
                     {/* Left Side - Filters */}
-                    <div className="flex items-center gap-3 flex-1">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
                         {/* Owner Name or Ticker Search */}
-                        <div className="relative min-w-[200px]">
-                            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        <div className="relative min-w-[200px] shrink-0">
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                             <input
                                 type="text"
-                                value={searchValue}
+                                value={localSearchValue}
                                 onChange={(e) =>
-                                    onSearchChange?.(e.target.value)
+                                    setLocalSearchValue(e.target.value)
                                 }
                                 onKeyPress={handleKeyPress}
                                 placeholder="Owner Name or Ticker"
-                                className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
+                            {localSearchValue && (
+                                <button
+                                    onClick={handleClearSearch}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                            )}
                         </div>
 
-                        {/* Owner Type Select */}
-                        <div className="relative">
+                        {/* Owner Type Dropdown */}
+                        <div className="relative shrink-0">
                             <select
-                                value={ownerType}
+                                value={ownerType || ""}
                                 onChange={(e) =>
-                                    onOwnerTypeChange?.(e.target.value)
+                                    onOwnerTypeChange?.(e.target.value || null)
                                 }
-                                className="appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                                className={`appearance-none rounded-md border px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer transition-colors ${
+                                    ownerType
+                                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                                        : "border-gray-300 bg-white text-gray-700"
+                                }`}
                             >
-                                <option value="">Owner Type</option>
-                                <option value="REIT">REIT</option>
-                                <option value="Private">Private</option>
-                                <option value="Public">Public</option>
-                                <option value="Institutional">
-                                    Institutional
-                                </option>
+                                {OWNER_TYPE_OPTIONS.map((option) => (
+                                    <option
+                                        key={option.value ?? "all"}
+                                        value={option.value ?? ""}
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
                             </select>
                             <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                         </div>
 
                         {/* Portfolio Size Button with Dropdown */}
-                        <div className="relative">
+                        <div className="relative" ref={portfolioSizeRef}>
                             <button
                                 type="button"
                                 onClick={() =>
@@ -129,71 +220,87 @@ export default function OwnerCompaniesFilterBar({
                                         !showPortfolioSizeMenu
                                     )
                                 }
-                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                                    minPortfolioSf !== null ||
+                                    maxPortfolioSf !== null
+                                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                }`}
                             >
-                                <span>{getPortfolioSizeLabel()}</span>
-                                <ChevronDown className="h-4 w-4 text-gray-400" />
+                                <span className="whitespace-nowrap">
+                                    {getPortfolioSizeLabel()}
+                                </span>
+                                <ChevronDown
+                                    className={`h-4 w-4 text-gray-400 transition-transform ${
+                                        showPortfolioSizeMenu
+                                            ? "rotate-180"
+                                            : ""
+                                    }`}
+                                />
                             </button>
                             {showPortfolioSizeMenu && (
-                                <>
-                                    <div
-                                        className="fixed inset-0 z-10"
-                                        onClick={() =>
-                                            setShowPortfolioSizeMenu(false)
-                                        }
-                                    />
-                                    <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                                        {portfolioSizeOptions.map((option) => (
-                                            <button
-                                                key={option.value}
-                                                type="button"
-                                                onClick={() => {
-                                                    onPortfolioSizeChange?.(
-                                                        option.value
-                                                    );
-                                                    setShowPortfolioSizeMenu(
-                                                        false
-                                                    );
-                                                }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${
-                                                    portfolioSize ===
-                                                    option.value
-                                                        ? "bg-blue-50 text-blue-700"
-                                                        : "text-gray-700"
-                                                }`}
-                                            >
-                                                {option.label}
-                                            </button>
-                                        ))}
+                                <div className="absolute left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
+                                    <div className="py-1">
+                                        {PORTFOLIO_SIZE_OPTIONS.map(
+                                            (option) => (
+                                                <button
+                                                    key={option.value ?? "all"}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        onPortfolioSizeChange?.(
+                                                            option.min ?? null,
+                                                            option.max ?? null
+                                                        );
+                                                        setShowPortfolioSizeMenu(
+                                                            false
+                                                        );
+                                                    }}
+                                                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
+                                                        minPortfolioSf ===
+                                                            option.min &&
+                                                        maxPortfolioSf ===
+                                                            option.max
+                                                            ? "bg-blue-50 text-blue-700 font-medium"
+                                                            : "text-gray-700"
+                                                    }`}
+                                                >
+                                                    {option.label}
+                                                </button>
+                                            )
+                                        )}
                                     </div>
-                                </>
+                                </div>
                             )}
                         </div>
 
                         {/* Properties Owned Button with Dropdown */}
-                        <div className="relative">
+                        <div className="relative" ref={propertiesRef}>
                             <button
                                 type="button"
                                 onClick={() =>
                                     setShowPropertiesMenu(!showPropertiesMenu)
                                 }
-                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                                    minProperties !== null
+                                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                }`}
                             >
-                                <span>{getPropertiesLabel()}</span>
-                                <ChevronDown className="h-4 w-4 text-gray-400" />
+                                <span className="whitespace-nowrap">
+                                    {getPropertiesLabel()}
+                                </span>
+                                <ChevronDown
+                                    className={`h-4 w-4 text-gray-400 transition-transform ${
+                                        showPropertiesMenu ? "rotate-180" : ""
+                                    }`}
+                                />
                             </button>
                             {showPropertiesMenu && (
-                                <>
-                                    <div
-                                        className="fixed inset-0 z-10"
-                                        onClick={() =>
-                                            setShowPropertiesMenu(false)
-                                        }
-                                    />
-                                    <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                                        {propertiesOptions.map((option) => (
+                                <div className="absolute left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
+                                    <div className="py-1">
+                                        {PROPERTIES_OPTIONS.map((option) => (
                                             <button
-                                                key={option.value}
+                                                key={option.value ?? "all"}
                                                 type="button"
                                                 onClick={() => {
                                                     onPropertiesOwnedChange?.(
@@ -203,10 +310,10 @@ export default function OwnerCompaniesFilterBar({
                                                         false
                                                     );
                                                 }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${
-                                                    propertiesOwned ===
+                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
+                                                    minProperties ===
                                                     option.value
-                                                        ? "bg-blue-50 text-blue-700"
+                                                        ? "bg-blue-50 text-blue-700 font-medium"
                                                         : "text-gray-700"
                                                 }`}
                                             >
@@ -214,37 +321,45 @@ export default function OwnerCompaniesFilterBar({
                                             </button>
                                         ))}
                                     </div>
-                                </>
+                                </div>
                             )}
                         </div>
 
-                        {/* Main Property Type Select */}
-                        <div className="relative">
+                        {/* Main Property Type Dropdown */}
+                        <div className="relative shrink-0">
                             <select
-                                value={mainPropertyType}
+                                value={mainPropertyType || ""}
                                 onChange={(e) =>
-                                    onMainPropertyTypeChange?.(e.target.value)
+                                    onMainPropertyTypeChange?.(
+                                        e.target.value || null
+                                    )
                                 }
-                                className="appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                                className={`appearance-none rounded-md border px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer transition-colors ${
+                                    mainPropertyType
+                                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                                        : "border-gray-300 bg-white text-gray-700"
+                                }`}
                             >
-                                <option value="">Main Property Type</option>
-                                <option value="Office">Office</option>
-                                <option value="Retail">Retail</option>
-                                <option value="Industrial">Industrial</option>
-                                <option value="Multifamily">Multifamily</option>
-                                <option value="Mixed Use">Mixed Use</option>
+                                {PROPERTY_TYPE_OPTIONS.map((option) => (
+                                    <option
+                                        key={option.value ?? "all"}
+                                        value={option.value ?? ""}
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
                             </select>
                             <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                         </div>
                     </div>
 
                     {/* Right Side - Action Buttons */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                         {/* Clear Button */}
-                        {activeFiltersCount > 0 && (
+                        {hasActiveFilters && (
                             <button
                                 onClick={onClearClick}
-                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500"
                             >
                                 Clear
                             </button>
@@ -253,7 +368,7 @@ export default function OwnerCompaniesFilterBar({
                         {/* Filters Button with Badge */}
                         <button
                             onClick={onFiltersClick}
-                            className="relative flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="relative flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         >
                             <Filter className="h-4 w-4" />
                             <span>Filters</span>
@@ -270,7 +385,7 @@ export default function OwnerCompaniesFilterBar({
                         <div className="relative">
                             <button
                                 onClick={onSaveClick}
-                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                             >
                                 <span>Save</span>
                                 <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -280,7 +395,7 @@ export default function OwnerCompaniesFilterBar({
                         {/* Export Button */}
                         <button
                             onClick={onExportClick}
-                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         >
                             <Download className="h-4 w-4" />
                             <span>Export</span>

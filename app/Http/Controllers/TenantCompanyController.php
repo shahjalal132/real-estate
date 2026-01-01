@@ -23,11 +23,11 @@ class TenantCompanyController extends Controller
         }
 
         // Filter: Size Occupied (SF Occupied)
-        if ($request->has('min_sf_occupied')) {
-            $query->where('sf_occupied', '>=', $request->min_sf_occupied);
+        if ($request->has('min_sf_occupied') && $request->min_sf_occupied !== null) {
+            $query->whereRaw('CAST(sf_occupied AS UNSIGNED) >= ?', [$request->min_sf_occupied]);
         }
-        if ($request->has('max_sf_occupied')) {
-            $query->where('sf_occupied', '<=', $request->max_sf_occupied);
+        if ($request->has('max_sf_occupied') && $request->max_sf_occupied !== null) {
+            $query->whereRaw('CAST(sf_occupied AS UNSIGNED) <= ?', [$request->max_sf_occupied]);
         }
 
         // Filter: Retailers Only

@@ -28,27 +28,65 @@ interface PageProps {
 
 export default function TenantCompanies({ companies, filters }: PageProps) {
     const { url } = usePage();
-    const [searchValue, setSearchValue] = useState(filters.search || "");
-    const [retailersOnly, setRetailersOnly] = useState(
-        filters.retailers_only || false
-    );
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const activeTab = url.includes("/locations") ? "locations" : "companies";
 
+    const updateFilters = useCallback(
+        (newFilters: Record<string, any>) => {
+            router.get(
+                "/contacts/tenants",
+                {
+                    ...filters,
+                    ...newFilters,
+                },
+                {
+                    preserveState: true,
+                    preserveScroll: false,
+                    replace: false,
+                }
+            );
+        },
+        [filters]
+    );
+
+    const handleSearchChange = useCallback(
+        (value: string) => {
+            updateFilters({ search: value || undefined });
+        },
+        [updateFilters]
+    );
+
     const handleSearch = useCallback(() => {
-        router.get(
-            "/contacts/tenants",
-            {
-                search: searchValue || undefined,
-                retailers_only: retailersOnly || undefined,
-                ...filters,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-            }
-        );
-    }, [searchValue, retailersOnly, filters]);
+        updateFilters({ search: filters.search || undefined });
+    }, [updateFilters, filters.search]);
+
+    const handleRetailersOnlyChange = useCallback(
+        (value: boolean) => {
+            updateFilters({ retailers_only: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleMinLocationsChange = useCallback(
+        (value: number | null) => {
+            updateFilters({ min_locations: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleSfOccupiedChange = useCallback(
+        (min: number | null, max: number | null) => {
+            updateFilters({
+                min_sf_occupied: min || undefined,
+                max_sf_occupied: max || undefined,
+            });
+        },
+        [updateFilters]
+    );
+
+    const handleClearFilters = useCallback(() => {
+        router.get("/contacts/tenants", {}, { preserveState: false });
+    }, []);
 
     const formatNumber = (num: number | null | undefined): string => {
         if (num === null || num === undefined) return "—";
@@ -330,22 +368,20 @@ export default function TenantCompanies({ companies, filters }: PageProps) {
 
                 {/* Search and Filter Bar */}
                 <CompaniesFilterBar
-                    searchValue={searchValue}
-                    onSearchChange={setSearchValue}
+                    searchValue={filters.search}
+                    onSearchChange={handleSearchChange}
                     onSearch={handleSearch}
-                    retailersOnly={retailersOnly}
-                    onRetailersOnlyChange={(value) => {
-                        setRetailersOnly(value);
-                        handleSearch();
-                    }}
+                    retailersOnly={filters.retailers_only || false}
+                    onRetailersOnlyChange={handleRetailersOnlyChange}
+                    minLocations={filters.min_locations || null}
+                    onMinLocationsChange={handleMinLocationsChange}
+                    minSfOccupied={filters.min_sf_occupied || null}
+                    maxSfOccupied={filters.max_sf_occupied || null}
+                    onSfOccupiedChange={handleSfOccupiedChange}
                     onFiltersClick={() => {
                         setShowAdvancedFilters((prev) => !prev);
                     }}
-                    onClearClick={() => {
-                        router.get("/contacts/tenants", {
-                            tab: "companies",
-                        });
-                    }}
+                    onClearClick={handleClearFilters}
                     onSortClick={() => {
                         // Handle sort click
                     }}

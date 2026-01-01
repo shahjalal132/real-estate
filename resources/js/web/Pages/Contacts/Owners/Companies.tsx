@@ -53,23 +53,72 @@ interface PageProps {
 
 export default function OwnerCompanies({ companies, filters }: PageProps) {
     const { url } = usePage();
-    const [searchValue, setSearchValue] = useState(filters.search || "");
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const activeTab = url.includes("/funds") ? "funds" : "companies";
 
+    const updateFilters = useCallback(
+        (newFilters: Record<string, any>) => {
+            router.get(
+                "/contacts/owners/companies",
+                {
+                    ...filters,
+                    ...newFilters,
+                },
+                {
+                    preserveState: true,
+                    preserveScroll: false,
+                    replace: false,
+                }
+            );
+        },
+        [filters]
+    );
+
+    const handleSearchChange = useCallback(
+        (value: string) => {
+            updateFilters({ search: value || undefined });
+        },
+        [updateFilters]
+    );
+
     const handleSearch = useCallback(() => {
-        router.get(
-            "/contacts/owners/companies",
-            {
-                search: searchValue || undefined,
-                ...filters,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-            }
-        );
-    }, [searchValue, filters]);
+        updateFilters({ search: filters.search || undefined });
+    }, [updateFilters, filters.search]);
+
+    const handleOwnerTypeChange = useCallback(
+        (value: string | null) => {
+            updateFilters({ owner_type: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handlePortfolioSizeChange = useCallback(
+        (min: number | null, max: number | null) => {
+            updateFilters({
+                min_portfolio_sf: min || undefined,
+                max_portfolio_sf: max || undefined,
+            });
+        },
+        [updateFilters]
+    );
+
+    const handlePropertiesOwnedChange = useCallback(
+        (value: number | null) => {
+            updateFilters({ min_properties: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleMainPropertyTypeChange = useCallback(
+        (value: string | null) => {
+            updateFilters({ main_property_type: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleClearFilters = useCallback(() => {
+        router.get("/contacts/owners/companies", {}, { preserveState: false });
+    }, []);
 
     const formatNumber = (num: number | null | undefined): string => {
         if (num === null || num === undefined) return "—";
@@ -234,76 +283,29 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
 
                 {/* Search and Filter Bar */}
                 <OwnerCompaniesFilterBar
-                    searchValue={searchValue}
-                    onSearchChange={setSearchValue}
+                    searchValue={filters.search}
+                    onSearchChange={handleSearchChange}
                     onSearch={handleSearch}
+                    ownerType={filters.owner_type || null}
+                    onOwnerTypeChange={handleOwnerTypeChange}
+                    minPortfolioSf={filters.min_portfolio_sf || null}
+                    maxPortfolioSf={filters.max_portfolio_sf || null}
+                    onPortfolioSizeChange={handlePortfolioSizeChange}
+                    minProperties={filters.min_properties || null}
+                    onPropertiesOwnedChange={handlePropertiesOwnedChange}
+                    mainPropertyType={filters.main_property_type || null}
+                    onMainPropertyTypeChange={handleMainPropertyTypeChange}
                     onFiltersClick={() => {
                         setShowAdvancedFilters(!showAdvancedFilters);
                     }}
+                    onClearClick={handleClearFilters}
                     onSaveClick={() => {
                         // Handle save click
                     }}
                     onExportClick={() => {
                         // Handle export click
                     }}
-                    onClearClick={() => {
-                        router.get("/contacts/owners/companies");
-                    }}
                     activeFiltersCount={activeFiltersCount}
-                    ownerType={filters.owner_type || ""}
-                    onOwnerTypeChange={(value) => {
-                        router.get("/contacts/owners/companies", {
-                            search: searchValue || undefined,
-                            owner_type: value || undefined,
-                            ...filters,
-                        });
-                    }}
-                    portfolioSize={
-                        filters.min_portfolio_sf
-                            ? filters.min_portfolio_sf >= 1000000
-                                ? "1m+"
-                                : filters.min_portfolio_sf >= 500000
-                                ? "500k-1m"
-                                : filters.min_portfolio_sf >= 100000
-                                ? "100k-500k"
-                                : "0-100k"
-                            : ""
-                    }
-                    onPortfolioSizeChange={(value) => {
-                        const portfolioMap: Record<string, number> = {
-                            "0-100k": 0,
-                            "100k-500k": 100000,
-                            "500k-1m": 500000,
-                            "1m+": 1000000,
-                        };
-                        router.get("/contacts/owners/companies", {
-                            search: searchValue || undefined,
-                            min_portfolio_sf: value
-                                ? portfolioMap[value]
-                                : undefined,
-                            ...filters,
-                        });
-                    }}
-                    propertiesOwned={
-                        filters.min_properties
-                            ? filters.min_properties.toString()
-                            : ""
-                    }
-                    onPropertiesOwnedChange={(value) => {
-                        router.get("/contacts/owners/companies", {
-                            search: searchValue || undefined,
-                            min_properties: value ? parseInt(value) : undefined,
-                            ...filters,
-                        });
-                    }}
-                    mainPropertyType={filters.main_property_type || ""}
-                    onMainPropertyTypeChange={(value) => {
-                        router.get("/contacts/owners/companies", {
-                            search: searchValue || undefined,
-                            main_property_type: value || undefined,
-                            ...filters,
-                        });
-                    }}
                 />
 
                 {/* Table Container with Sidebar */}

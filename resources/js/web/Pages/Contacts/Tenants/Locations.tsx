@@ -20,8 +20,11 @@ interface PageProps {
     locations: PaginatedData<TennentLocation>;
     filters: {
         search?: string;
+        address_search?: string;
         min_sf_occupied?: number;
         max_sf_occupied?: number;
+        space_use?: string;
+        occupancy?: string;
         industry?: string;
         city?: string;
         state?: string;
@@ -36,8 +39,6 @@ interface PageProps {
 
 export default function TenantLocations({ locations, filters }: PageProps) {
     const { url } = usePage();
-    const [addressSearch, setAddressSearch] = useState("");
-    const [tenantSearch, setTenantSearch] = useState(filters.search || "");
 
     // Get view mode from URL or default to "map"
     const getViewModeFromUrl = (): "map" | "list" | "gallery" => {
@@ -95,20 +96,69 @@ export default function TenantLocations({ locations, filters }: PageProps) {
         [viewMode]
     );
 
-    const handleSearch = useCallback(() => {
+    const updateFilters = useCallback(
+        (newFilters: Record<string, any>) => {
+            router.get(
+                "/contacts/tenants/locations",
+                preserveViewMode({
+                    ...filters,
+                    ...newFilters,
+                }),
+                {
+                    preserveState: true,
+                    preserveScroll: false,
+                    replace: false,
+                }
+            );
+        },
+        [filters, preserveViewMode]
+    );
+
+    const handleAddressSearchChange = useCallback(
+        (value: string) => {
+            updateFilters({ address_search: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleTenantSearchChange = useCallback(
+        (value: string) => {
+            updateFilters({ search: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleSpaceUseChange = useCallback(
+        (value: string | null) => {
+            updateFilters({ space_use: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleSfOccupiedChange = useCallback(
+        (min: number | null, max: number | null) => {
+            updateFilters({
+                min_sf_occupied: min || undefined,
+                max_sf_occupied: max || undefined,
+            });
+        },
+        [updateFilters]
+    );
+
+    const handleOccupancyChange = useCallback(
+        (value: string | null) => {
+            updateFilters({ occupancy: value || undefined });
+        },
+        [updateFilters]
+    );
+
+    const handleClearFilters = useCallback(() => {
         router.get(
             "/contacts/tenants/locations",
-            preserveViewMode({
-                search: tenantSearch || undefined,
-                address_search: addressSearch || undefined,
-                ...filters,
-            }),
-            {
-                preserveState: true,
-                preserveScroll: true,
-            }
+            { view_mode: viewMode },
+            { preserveState: false }
         );
-    }, [tenantSearch, addressSearch, filters, preserveViewMode]);
+    }, [viewMode]);
 
     const formatNumber = (num: number | null | undefined): string => {
         if (num === null || num === undefined) return "—";
@@ -548,24 +598,21 @@ export default function TenantLocations({ locations, filters }: PageProps) {
 
                 {/* Search and Filter Bar */}
                 <LocationsFilterBar
-                    addressSearch={addressSearch}
-                    tenantSearch={tenantSearch}
-                    onAddressSearchChange={(value) => {
-                        setAddressSearch(value);
-                        handleSearch();
-                    }}
-                    onTenantSearchChange={(value) => {
-                        setTenantSearch(value);
-                        handleSearch();
-                    }}
+                    addressSearch={filters.address_search}
+                    tenantSearch={filters.search}
+                    onAddressSearchChange={handleAddressSearchChange}
+                    onTenantSearchChange={handleTenantSearchChange}
+                    spaceUse={filters.space_use || null}
+                    onSpaceUseChange={handleSpaceUseChange}
+                    minSfOccupied={filters.min_sf_occupied || null}
+                    maxSfOccupied={filters.max_sf_occupied || null}
+                    onSfOccupiedChange={handleSfOccupiedChange}
+                    occupancy={filters.occupancy || null}
+                    onOccupancyChange={handleOccupancyChange}
                     onFiltersClick={() => {
                         setShowAdvancedFilters((prev) => !prev);
                     }}
-                    onClearClick={() => {
-                        router.get("/contacts/tenants/locations", {
-                            view_mode: viewMode,
-                        });
-                    }}
+                    onClearClick={handleClearFilters}
                     onSortClick={() => {
                         // Handle sort click
                     }}
@@ -587,14 +634,12 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                             "/contacts/tenants/locations",
                             {
                                 ...filters,
-                                search: tenantSearch || undefined,
-                                address_search: addressSearch || undefined,
                                 view_mode: mode,
                             },
                             {
                                 preserveState: true,
                                 preserveScroll: true,
-                                only: ["locations", "filters"], // Only reload these props, not the whole page
+                                only: ["locations", "filters"],
                             }
                         );
                     }}

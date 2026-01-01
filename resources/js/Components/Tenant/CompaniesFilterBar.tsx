@@ -5,7 +5,9 @@ import {
     Plus,
     Download,
     Clock,
+    X,
 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 interface CompaniesFilterBarProps {
     searchValue?: string;
@@ -21,11 +23,32 @@ interface CompaniesFilterBarProps {
     onAddedRemovedClick?: () => void;
     onClearClick?: () => void;
     activeFiltersCount?: number;
-    numberOfLocations?: string;
-    onNumberOfLocationsChange?: (value: string) => void;
-    sizeOccupied?: string;
-    onSizeOccupiedChange?: (value: string) => void;
+    minLocations?: number;
+    onMinLocationsChange?: (value: number | null) => void;
+    minSfOccupied?: number;
+    maxSfOccupied?: number;
+    onSfOccupiedChange?: (min: number | null, max: number | null) => void;
 }
+
+const LOCATION_OPTIONS = [
+    { label: "All Locations", value: null },
+    { label: "1+ Locations", value: 1 },
+    { label: "5+ Locations", value: 5 },
+    { label: "10+ Locations", value: 10 },
+    { label: "25+ Locations", value: 25 },
+    { label: "50+ Locations", value: 50 },
+    { label: "100+ Locations", value: 100 },
+];
+
+const SF_OCCUPIED_OPTIONS = [
+    { label: "All Sizes", value: null, min: null, max: null },
+    { label: "0 - 10K SF", value: "0-10k", min: 0, max: 10000 },
+    { label: "10K - 50K SF", value: "10k-50k", min: 10000, max: 50000 },
+    { label: "50K - 100K SF", value: "50k-100k", min: 50000, max: 100000 },
+    { label: "100K - 500K SF", value: "100k-500k", min: 100000, max: 500000 },
+    { label: "500K - 1M SF", value: "500k-1m", min: 500000, max: 1000000 },
+    { label: "1M+ SF", value: "1m+", min: 1000000, max: null },
+];
 
 export default function CompaniesFilterBar({
     searchValue = "",
@@ -41,77 +64,245 @@ export default function CompaniesFilterBar({
     onAddedRemovedClick,
     onClearClick,
     activeFiltersCount = 0,
-    numberOfLocations = "",
-    onNumberOfLocationsChange,
-    sizeOccupied = "",
-    onSizeOccupiedChange,
+    minLocations,
+    onMinLocationsChange,
+    minSfOccupied,
+    maxSfOccupied,
+    onSfOccupiedChange,
 }: CompaniesFilterBarProps) {
+    const [localSearchValue, setLocalSearchValue] = useState(searchValue);
+    const [showLocationsDropdown, setShowLocationsDropdown] = useState(false);
+    const [showSfDropdown, setShowSfDropdown] = useState(false);
+    const locationsRef = useRef<HTMLDivElement>(null);
+    const sfRef = useRef<HTMLDivElement>(null);
+
+    // Update local search when prop changes
+    useEffect(() => {
+        setLocalSearchValue(searchValue);
+    }, [searchValue]);
+
+    // Debounced search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (onSearchChange && localSearchValue !== searchValue) {
+                onSearchChange(localSearchValue);
+                onSearch?.();
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [localSearchValue, searchValue, onSearchChange, onSearch]);
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                locationsRef.current &&
+                !locationsRef.current.contains(event.target as Node)
+            ) {
+                setShowLocationsDropdown(false);
+            }
+            if (
+                sfRef.current &&
+                !sfRef.current.contains(event.target as Node)
+            ) {
+                setShowSfDropdown(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
+            onSearchChange?.(localSearchValue);
             onSearch?.();
         }
     };
+
+    const handleClearSearch = () => {
+        setLocalSearchValue("");
+        onSearchChange?.("");
+        onSearch?.();
+    };
+
+    const getLocationLabel = () => {
+        const option = LOCATION_OPTIONS.find(
+            (opt) => opt.value === minLocations
+        );
+        return option?.label || "Number of Locations";
+    };
+
+    const getSfLabel = () => {
+        const option = SF_OCCUPIED_OPTIONS.find(
+            (opt) => opt.min === minSfOccupied && opt.max === maxSfOccupied
+        );
+        return option?.label || "Size Occupied";
+    };
+
+    const hasActiveFilters =
+        activeFiltersCount > 0 ||
+        minLocations !== null ||
+        minSfOccupied !== null ||
+        maxSfOccupied !== null ||
+        retailersOnly ||
+        localSearchValue;
 
     return (
         <div className="border-b border-gray-200 bg-white">
             <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between gap-4 py-4">
                     {/* Left Group: Search and Quick Filters */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
                         {/* Search Input */}
-                        <div className="relative w-64">
-                            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                        <div className="relative w-64 shrink-0">
+                            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 pointer-events-none" />
                             <input
                                 type="text"
-                                value={searchValue}
+                                value={localSearchValue}
                                 onChange={(e) =>
-                                    onSearchChange?.(e.target.value)
+                                    setLocalSearchValue(e.target.value)
                                 }
                                 onKeyPress={handleKeyPress}
                                 placeholder="Tenant Name or Ticker"
-                                className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
+                            {localSearchValue && (
+                                <button
+                                    onClick={handleClearSearch}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                            )}
                         </div>
 
                         {/* Number of Locations Dropdown */}
-                        <button
-                            onClick={() => {
-                                // Handle dropdown click
-                            }}
-                            className="flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        >
-                            <span>{numberOfLocations || "5+ Locations"}</span>
-                            <ChevronDown className="h-4 w-4 text-gray-400" />
-                        </button>
+                        <div className="relative" ref={locationsRef}>
+                            <button
+                                onClick={() =>
+                                    setShowLocationsDropdown(
+                                        !showLocationsDropdown
+                                    )
+                                }
+                                className={`flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                                    minLocations !== null
+                                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                }`}
+                            >
+                                <span className="whitespace-nowrap">
+                                    {getLocationLabel()}
+                                </span>
+                                <ChevronDown
+                                    className={`h-4 w-4 transition-transform ${
+                                        showLocationsDropdown
+                                            ? "rotate-180"
+                                            : ""
+                                    }`}
+                                />
+                            </button>
+                            {showLocationsDropdown && (
+                                <div className="absolute left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
+                                    <div className="py-1">
+                                        {LOCATION_OPTIONS.map((option) => (
+                                            <button
+                                                key={option.value ?? "all"}
+                                                onClick={() => {
+                                                    onMinLocationsChange?.(
+                                                        option.value
+                                                    );
+                                                    setShowLocationsDropdown(
+                                                        false
+                                                    );
+                                                }}
+                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
+                                                    minLocations ===
+                                                    option.value
+                                                        ? "bg-blue-50 text-blue-700 font-medium"
+                                                        : "text-gray-700"
+                                                }`}
+                                            >
+                                                {option.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {/* Size Occupied Dropdown */}
-                        <button
-                            onClick={() => {
-                                // Handle dropdown click
-                            }}
-                            className="flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        >
-                            <span>{sizeOccupied || "Size Occupied"}</span>
-                            <ChevronDown className="h-4 w-4 text-gray-400" />
-                        </button>
+                        <div className="relative" ref={sfRef}>
+                            <button
+                                onClick={() =>
+                                    setShowSfDropdown(!showSfDropdown)
+                                }
+                                className={`flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                                    minSfOccupied !== null ||
+                                    maxSfOccupied !== null
+                                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                }`}
+                            >
+                                <span className="whitespace-nowrap">
+                                    {getSfLabel()}
+                                </span>
+                                <ChevronDown
+                                    className={`h-4 w-4 transition-transform ${
+                                        showSfDropdown ? "rotate-180" : ""
+                                    }`}
+                                />
+                            </button>
+                            {showSfDropdown && (
+                                <div className="absolute left-0 z-50 mt-1 w-52 rounded-md border border-gray-200 bg-white shadow-lg">
+                                    <div className="py-1">
+                                        {SF_OCCUPIED_OPTIONS.map((option) => (
+                                            <button
+                                                key={option.value ?? "all"}
+                                                onClick={() => {
+                                                    onSfOccupiedChange?.(
+                                                        option.min ?? null,
+                                                        option.max ?? null
+                                                    );
+                                                    setShowSfDropdown(false);
+                                                }}
+                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
+                                                    minSfOccupied ===
+                                                        option.min &&
+                                                    maxSfOccupied === option.max
+                                                        ? "bg-blue-50 text-blue-700 font-medium"
+                                                        : "text-gray-700"
+                                                }`}
+                                            >
+                                                {option.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {/* Retailers Only Toggle */}
-                        <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-700">
+                        <div className="flex items-center space-x-2 shrink-0">
+                            <span className="text-sm text-gray-700 whitespace-nowrap">
                                 Retailers Only
                             </span>
                             <button
                                 onClick={() =>
                                     onRetailersOnlyChange?.(!retailersOnly)
                                 }
-                                className={`relative h-6 w-11 rounded-full transition-colors ${
+                                className={`relative h-6 w-11 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                                     retailersOnly
                                         ? "bg-blue-600"
                                         : "bg-gray-300"
                                 }`}
+                                role="switch"
+                                aria-checked={retailersOnly}
                             >
                                 <span
-                                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+                                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform shadow-sm ${
                                         retailersOnly ? "translate-x-5" : ""
                                     }`}
                                 />
@@ -120,11 +311,11 @@ export default function CompaniesFilterBar({
                     </div>
 
                     {/* Right Group: Action Buttons */}
-                    <div className="flex items-center gap-2">
-                        {activeFiltersCount > 0 && (
+                    <div className="flex items-center gap-2 shrink-0">
+                        {hasActiveFilters && (
                             <button
                                 onClick={onClearClick}
-                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500"
                             >
                                 Clear
                             </button>
@@ -133,7 +324,7 @@ export default function CompaniesFilterBar({
                         {/* Filters Button with Badge */}
                         <button
                             onClick={onFiltersClick}
-                            className="relative flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="relative flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         >
                             <Filter className="h-4 w-4" />
                             <span>Filters</span>
@@ -149,7 +340,7 @@ export default function CompaniesFilterBar({
                         {/* Sort Button */}
                         <button
                             onClick={onSortClick}
-                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         >
                             <span>Sort</span>
                             <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -159,7 +350,7 @@ export default function CompaniesFilterBar({
                         <div className="relative">
                             <button
                                 onClick={onSaveClick}
-                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                             >
                                 <span>Save</span>
                                 <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -169,16 +360,18 @@ export default function CompaniesFilterBar({
                         {/* Add Tenant Companies Button */}
                         <button
                             onClick={onAddClick}
-                            className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                         >
                             <Plus className="h-4 w-4" />
-                            <span>Add Tenant Companies</span>
+                            <span className="whitespace-nowrap">
+                                Add Tenant Companies
+                            </span>
                         </button>
 
                         {/* Export Button */}
                         <button
                             onClick={onExportClick}
-                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         >
                             <Download className="h-4 w-4" />
                             <span>Export</span>
@@ -187,10 +380,12 @@ export default function CompaniesFilterBar({
                         {/* Added/Removed Button */}
                         <button
                             onClick={onAddedRemovedClick}
-                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         >
                             <Clock className="h-4 w-4" />
-                            <span>Added/Removed</span>
+                            <span className="whitespace-nowrap">
+                                Added/Removed
+                            </span>
                         </button>
                     </div>
                 </div>
