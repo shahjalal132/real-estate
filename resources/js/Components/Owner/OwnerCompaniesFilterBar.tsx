@@ -1,4 +1,13 @@
-import { Search, Filter, ChevronDown, Download, X } from "lucide-react";
+import {
+    Search,
+    Filter,
+    ChevronDown,
+    Download,
+    X,
+    Bookmark,
+    Trash2,
+    Plus,
+} from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 interface OwnerCompaniesFilterBarProps {
@@ -79,8 +88,29 @@ export default function OwnerCompaniesFilterBar({
     const [localSearchValue, setLocalSearchValue] = useState(searchValue);
     const [showPortfolioSizeMenu, setShowPortfolioSizeMenu] = useState(false);
     const [showPropertiesMenu, setShowPropertiesMenu] = useState(false);
+    const [showSaveDropdown, setShowSaveDropdown] = useState(false);
     const portfolioSizeRef = useRef<HTMLDivElement>(null);
     const propertiesRef = useRef<HTMLDivElement>(null);
+    const saveRef = useRef<HTMLDivElement>(null);
+
+    // Dummy saved searches data - will be replaced with actual data later
+    const [savedSearches] = useState([
+        {
+            id: 1,
+            name: "Large REITs (1M+ SF)",
+            createdAt: "2025-01-10",
+        },
+        {
+            id: 2,
+            name: "Private Owners with 25+ Properties",
+            createdAt: "2025-01-08",
+        },
+        {
+            id: 3,
+            name: "Office Focus Owners",
+            createdAt: "2025-01-05",
+        },
+    ]);
 
     // Update local search when prop changes
     useEffect(() => {
@@ -113,6 +143,12 @@ export default function OwnerCompaniesFilterBar({
                 !propertiesRef.current.contains(event.target as Node)
             ) {
                 setShowPropertiesMenu(false);
+            }
+            if (
+                saveRef.current &&
+                !saveRef.current.contains(event.target as Node)
+            ) {
+                setShowSaveDropdown(false);
             }
         };
 
@@ -382,14 +418,111 @@ export default function OwnerCompaniesFilterBar({
                         </button>
 
                         {/* Save Button with Dropdown */}
-                        <div className="relative">
+                        <div className="relative" ref={saveRef}>
                             <button
-                                onClick={onSaveClick}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowSaveDropdown(!showSaveDropdown);
+                                    onSaveClick?.();
+                                }}
                                 className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                             >
                                 <span>Save</span>
-                                <ChevronDown className="h-4 w-4 text-gray-400" />
+                                <ChevronDown
+                                    className={`h-4 w-4 text-gray-400 transition-transform ${
+                                        showSaveDropdown ? "rotate-180" : ""
+                                    }`}
+                                />
                             </button>
+                            {showSaveDropdown && (
+                                <div className="absolute right-0 z-50 mt-1 w-72 rounded-md border border-gray-200 bg-white shadow-lg max-h-[400px] overflow-y-auto">
+                                    <div className="py-1">
+                                        {/* Save New Search Option */}
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                // TODO: Implement save new search functionality
+                                                setShowSaveDropdown(false);
+                                            }}
+                                            className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                                        >
+                                            <Plus className="h-4 w-4" />
+                                            <span>Save New Search</span>
+                                        </button>
+
+                                        {/* Saved Searches List */}
+                                        {savedSearches.length > 0 && (
+                                            <>
+                                                <div className="my-1 border-t border-gray-200"></div>
+                                                <div className="px-4 py-2">
+                                                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                                        Saved Searches
+                                                    </p>
+                                                </div>
+                                                {savedSearches.map((search) => (
+                                                    <div
+                                                        key={search.id}
+                                                        className="group flex items-center justify-between px-4 py-2 hover:bg-gray-50"
+                                                    >
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                // TODO: Implement load saved search functionality
+                                                                setShowSaveDropdown(
+                                                                    false
+                                                                );
+                                                            }}
+                                                            className="flex flex-1 items-center gap-2 text-left text-sm text-gray-700 hover:text-blue-600 transition-colors"
+                                                        >
+                                                            <Bookmark className="h-4 w-4 text-gray-400 group-hover:text-blue-500 shrink-0" />
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="font-medium truncate">
+                                                                    {
+                                                                        search.name
+                                                                    }
+                                                                </div>
+                                                                <div className="text-xs text-gray-500">
+                                                                    {new Date(
+                                                                        search.createdAt
+                                                                    ).toLocaleDateString(
+                                                                        "en-US",
+                                                                        {
+                                                                            month: "short",
+                                                                            day: "numeric",
+                                                                            year: "numeric",
+                                                                        }
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                // TODO: Implement delete saved search functionality
+                                                            }}
+                                                            className="ml-2 rounded p-1 text-gray-400 opacity-0 hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 transition-all shrink-0"
+                                                            title="Delete saved search"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        )}
+
+                                        {savedSearches.length === 0 && (
+                                            <div className="px-4 py-8 text-center text-sm text-gray-500">
+                                                <Bookmark className="mx-auto mb-2 h-8 w-8 text-gray-300" />
+                                                <p>No saved searches yet</p>
+                                                <p className="mt-1 text-xs">
+                                                    Save your current filters
+                                                    for quick access
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Export Button */}
