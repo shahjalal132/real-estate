@@ -89,10 +89,10 @@ class TenantCompanyController extends Controller
 
             // Get related companies (same industry or parent company)
             $relatedCompanies = TennentCompany::where('id', '!=', $id)
-                ->where(function ($query) use ($company) {
-                    $query->where('industry', $company->industry)
-                        ->orWhere('parent_company', $company->tenant_name);
-                })
+                // ->where(function ($query) use ($company) {
+                //     $query->where('industry', $company->industry)
+                //         ->orWhere('parent_company', $company->tenant_name);
+                // })
                 ->limit(10)
                 ->get();
 

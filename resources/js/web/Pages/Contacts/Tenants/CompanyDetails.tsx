@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
 import {
@@ -9,7 +8,6 @@ import {
 import CompanyDetailsHeader from "../../../../Components/Tenant/CompanyDetailsHeader";
 import CompanyOverview from "../../../../Components/Tenant/CompanyOverview";
 import RelatedCompaniesTable from "../../../../Components/Tenant/RelatedCompaniesTable";
-import CompanyLocationsMap from "../../../../Components/Tenant/CompanyLocationsMap";
 import SummaryMetrics from "../../../../Components/Tenant/SummaryMetrics";
 
 interface PageProps {
@@ -23,10 +21,6 @@ export default function CompanyDetails({
     locations,
     relatedCompanies,
 }: PageProps) {
-    const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
-        null
-    );
-
     const tabs = [
         {
             id: "summary",
@@ -104,21 +98,12 @@ export default function CompanyDetails({
 
                 {/* Main Content - Summary View */}
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-                    {/* Summary Metrics */}
+                    {/* Summary Metrics with Integrated Map */}
                     <SummaryMetrics
                         company={company}
                         totalLocations={totalLocations}
+                        locations={locations.data}
                     />
-                    {/* Company Locations Map - Full Width */}
-                    <div className="w-full h-[600px] bg-white rounded-lg shadow overflow-hidden">
-                        <CompanyLocationsMap
-                            locations={locations.data.slice(0, 50)}
-                            selectedLocationId={selectedLocationId}
-                            onLocationClick={(location) => {
-                                setSelectedLocationId(location.id);
-                            }}
-                        />
-                    </div>
                     {/* Company Overview */}
                     <CompanyOverview
                         company={company}
