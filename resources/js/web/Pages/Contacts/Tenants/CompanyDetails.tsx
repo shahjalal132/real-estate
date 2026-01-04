@@ -9,6 +9,7 @@ import CompanyDetailsHeader from "../../../../Components/Tenant/CompanyDetailsHe
 import CompanyOverview from "../../../../Components/Tenant/CompanyOverview";
 import RelatedCompaniesTable from "../../../../Components/Tenant/RelatedCompaniesTable";
 import SummaryMetrics from "../../../../Components/Tenant/SummaryMetrics";
+import CompanyLocationsSlider from "../../../../Components/Tenant/CompanyLocationsSlider";
 
 interface PageProps {
     company: TennentCompany;
@@ -112,6 +113,11 @@ export default function CompanyDetails({
 
                     {/* Related Companies */}
                     <RelatedCompaniesTable companies={relatedCompanies} />
+                    {/* Company Locations Slider */}
+                    <CompanyLocationsSlider
+                        locations={locations.data.slice(0, 20)}
+                        totalCount={totalLocations}
+                    />
 
                     {/* Placeholder sections for future content */}
                     <div className="bg-white rounded-lg shadow p-8 text-center">

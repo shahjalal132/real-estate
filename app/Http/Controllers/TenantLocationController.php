@@ -107,4 +107,17 @@ class TenantLocationController extends Controller
             ],
         ]);
     }
+
+    public function show($id)
+    {
+        $location = TennentLocation::findOrFail($id);
+
+        // Get the company for this location
+        $company = \App\Models\TennentCompany::where('tenant_name', $location->tenant_name)->first();
+
+        return Inertia::render('Contacts/Tenants/LocationDetails', [
+            'location' => $location,
+            'company' => $company,
+        ]);
+    }
 }

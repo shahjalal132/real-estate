@@ -76,7 +76,7 @@ class TenantCompanyController extends Controller
         // If it's the summary tab, render the full details page
         if ($tab === 'summary') {
             // Get related locations for this company
-            $locationsQuery = \App\Models\TennentLocation::where('tenant_name', $company->tenant_name);
+            $locationsQuery = \App\Models\TennentLocation::latest();
 
             // Apply filters if any
             if ($request->has('view_mode')) {
@@ -85,7 +85,7 @@ class TenantCompanyController extends Controller
 
             // Get locations with pagination
             $perPage = $request->get('per_page', 20);
-            $locations = $locationsQuery->paginate($perPage);
+            $locations = $locationsQuery->paginate(20);
 
             // Get related companies (same industry or parent company)
             $relatedCompanies = TennentCompany::where('id', '!=', $id)
