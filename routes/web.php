@@ -96,3 +96,8 @@ Route::get('/insights', [\App\Http\Controllers\MiscController::class, 'insights'
 // News routes
 Route::get('/news', [\App\Http\Controllers\MiscController::class, 'news'])->name('news.index');
 Route::get('/news/{slug}', [\App\Http\Controllers\MiscController::class, 'newsShow'])->name('news.show');
+
+// Footer links routes
+Route::get('/quick-links/{slug}', [\App\Http\Controllers\MiscController::class, 'quickLink'])->name('quick-links.show');
+Route::get('/learn-more/{slug}', [\App\Http\Controllers\MiscController::class, 'learnMore'])->name('learn-more.show');
+Route::get('/policies/{slug}', [\App\Http\Controllers\MiscController::class, 'policy'])->name('policies.show');

@@ -91,19 +91,28 @@ const quickLinkGroups: FooterLinkGroup[] = [
     {
         title: "QUICK LINKS",
         links: [
-            { label: "Contact Us", href: "/contact" },
-            { label: "2025 Auction Calendar", href: "/auction-calendar" },
-            { label: "Terms of Use", href: "/terms" },
-            { label: "Insights Terms of Use", href: "/insights-terms" },
-            { label: "Privacy Terms", href: "/privacy" },
+            { label: "Contact Us", href: "/quick-links/contact-us" },
+            {
+                label: "2025 Auction Calendar",
+                href: "/quick-links/2025-auction-calendar",
+            },
+            { label: "Terms of Use", href: "/quick-links/terms-of-use" },
+            {
+                label: "Insights Terms of Use",
+                href: "/quick-links/insights-terms-of-use",
+            },
+            { label: "Privacy Terms", href: "/quick-links/privacy-terms" },
             {
                 label: "Sale Event Terms & Conditions",
-                href: "/sale-event-terms",
+                href: "/quick-links/sale-event-terms-and-conditions",
             },
-            { label: "Listing Terms & Conditions", href: "/listing-terms" },
+            {
+                label: "Listing Terms & Conditions",
+                href: "/quick-links/listing-terms-and-conditions",
+            },
             {
                 label: "RealINSIGHT Technology",
-                href: "/realinsight-technology",
+                href: "/quick-links/realinsight-technology",
             },
         ],
     },
@@ -111,20 +120,20 @@ const quickLinkGroups: FooterLinkGroup[] = [
         title: "LEARN MORE",
         links: [
             { label: "Insights", href: "/insights" },
-            { label: "Buyers", href: "/buyers" },
-            { label: "Brokers", href: "/brokers" },
-            { label: "Sell With Us", href: "/sell-with-us" },
+            { label: "Buyers", href: "/learn-more/buyers" },
+            { label: "Brokers", href: "/learn-more/brokers" },
+            { label: "Sell With Us", href: "/learn-more/sell-with-us" },
             { label: "News", href: "/news" },
-            { label: "About Us", href: "/about" },
-            { label: "FAQ", href: "/faq" },
+            { label: "About Us", href: "/learn-more/about-us" },
+            { label: "FAQ", href: "/learn-more/faq" },
         ],
     },
 ];
 
 const policyLinks = [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Use", href: "/terms" },
-    { label: "Accessibility", href: "/accessibility" },
+    { label: "Privacy Policy", href: "/policies/privacy-policy" },
+    { label: "Terms of Use", href: "/policies/terms-of-use" },
+    { label: "Accessibility", href: "/policies/accessibility" },
 ];
 
 export default function Footer({ className = "" }: { className?: string }) {

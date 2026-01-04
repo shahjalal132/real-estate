@@ -338,4 +338,38 @@ class MiscController extends Controller
             'slug' => $slug,
         ]);
     }
+
+    // Footer links routes
+    public function quickLink($slug)
+    {
+        $title = 'Coming soon: ' . str_replace('-', ' ', ucwords(str_replace('-', ' ', $slug)));
+        
+        return Inertia::render('FooterLink', [
+            'category' => 'quick-links',
+            'slug' => $slug,
+            'title' => $title,
+        ]);
+    }
+
+    public function learnMore($slug)
+    {
+        $title = 'Coming soon: ' . str_replace('-', ' ', ucwords(str_replace('-', ' ', $slug)));
+        
+        return Inertia::render('FooterLink', [
+            'category' => 'learn-more',
+            'slug' => $slug,
+            'title' => $title,
+        ]);
+    }
+
+    public function policy($slug)
+    {
+        $title = 'Coming soon: ' . str_replace('-', ' ', ucwords(str_replace('-', ' ', $slug)));
+        
+        return Inertia::render('FooterLink', [
+            'category' => 'policies',
+            'slug' => $slug,
+            'title' => $title,
+        ]);
+    }
 }
