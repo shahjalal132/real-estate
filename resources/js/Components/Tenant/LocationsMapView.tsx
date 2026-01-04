@@ -243,11 +243,7 @@ export default function LocationsMapView({
                         {locations.map((location) => {
                             const imageIndex = getImageIndex(location.id);
                             const imageCount = 5; // Placeholder
-                            const imageUrl = `https://via.placeholder.com/400x300?text=${encodeURIComponent(
-                                location.building_name ||
-                                    location.address ||
-                                    "Location"
-                            )}`;
+                            const imageUrl = "/assets/images/placeholder.png";
 
                             // Format floors display
                             const formatFloors = () => {

@@ -10,6 +10,11 @@ import CompanyOverview from "../../../../Components/Tenant/CompanyOverview";
 import RelatedCompaniesTable from "../../../../Components/Tenant/RelatedCompaniesTable";
 import SummaryMetrics from "../../../../Components/Tenant/SummaryMetrics";
 import CompanyLocationsSlider from "../../../../Components/Tenant/CompanyLocationsSlider";
+import CompanyStatsCharts from "../../../../Components/Tenant/CompanyStatsCharts";
+import TopTenantsBarCharts from "../../../../Components/Tenant/TopTenantsBarCharts";
+import CompanyContacts from "../../../../Components/Tenant/CompanyContacts";
+import CompanyNews from "../../../../Components/Tenant/CompanyNews";
+import CoStarContact from "../../../../Components/Tenant/CoStarContact";
 
 interface PageProps {
     company: TennentCompany;
@@ -118,13 +123,17 @@ export default function CompanyDetails({
                         locations={locations.data.slice(0, 20)}
                         totalCount={totalLocations}
                     />
+                    {/* Company Stats Charts */}
+                    <CompanyStatsCharts locations={locations.data} />
+                    {/* Top Tenants Bar Charts */}
+                    <TopTenantsBarCharts />
 
-                    {/* Placeholder sections for future content */}
-                    <div className="bg-white rounded-lg shadow p-8 text-center">
-                        <p className="text-gray-500">
-                            Additional company information sections coming soon
-                        </p>
-                    </div>
+                    {/* Company Contacts - Full Width */}
+                    <CompanyContacts />
+
+                    {/* News and CoStar Contact */}
+                    <CompanyNews />
+                    <CoStarContact />
                 </div>
             </div>
         </AppLayout>

@@ -199,11 +199,15 @@ export default function CompanyLocationsSlider({
                 </div>
 
                 {/* Hide scrollbar for webkit browsers */}
-                <style jsx>{`
+                <style
+                    dangerouslySetInnerHTML={{
+                        __html: `
                     .scrollbar-hide::-webkit-scrollbar {
                         display: none;
                     }
-                `}</style>
+                `,
+                    }}
+                />
             </div>
         </div>
     );
