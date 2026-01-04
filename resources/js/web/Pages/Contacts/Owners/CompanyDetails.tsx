@@ -1,6 +1,14 @@
 import { Head, Link } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
+import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
+import CompanyOverview from "@/Components/Owner/CompanyOverview";
+import RelatedCompaniesTable from "@/Components/Owner/RelatedCompaniesTable";
 import SummaryMetrics from "@/Components/Owner/SummaryMetrics";
+import CompanyStatsCharts from "@/Components/Tenant/CompanyStatsCharts";
+import TopTenantsBarCharts from "@/Components/Tenant/TopTenantsBarCharts";
+import CompanyContacts from "@/Components/Tenant/CompanyContacts";
+import CompanyNews from "@/Components/Tenant/CompanyNews";
+import CoStarContact from "@/Components/Tenant/CoStarContact";
 
 interface OwnerCompany {
     id: number;
@@ -10,6 +18,7 @@ interface OwnerCompany {
     hq_city?: string;
     hq_state?: string;
     hq_country?: string;
+    hq_phone?: string;
     properties?: number;
     portfolio_sf?: number;
     average_sf?: number;
@@ -31,7 +40,7 @@ interface OwnerCompany {
 interface PageProps {
     company: OwnerCompany;
     relatedCompanies: OwnerCompany[];
-    filters: {
+    filters?: {
         search?: string;
     };
 }
@@ -78,41 +87,8 @@ export default function CompanyDetails({
         },
     ];
 
-    const formatNumber = (num: number | null | undefined): string => {
-        if (num === null || num === undefined) return "—";
-        return num.toLocaleString();
-    };
-
-    const formatSF = (sf: string | number | null | undefined): string => {
-        if (sf === null || sf === undefined) return "—";
-        const num = typeof sf === "string" ? parseFloat(sf) : sf;
-        if (isNaN(num)) return "—";
-        if (num >= 1000000) {
-            return `${(num / 1000000).toFixed(1)}M`;
-        }
-        if (num >= 1000) {
-            return `${(num / 1000).toFixed(1)}K`;
-        }
-        return num.toLocaleString();
-    };
-
-    const formatCurrency = (
-        value: string | number | null | undefined
-    ): string => {
-        if (value === null || value === undefined) return "—";
-        const num = typeof value === "string" ? parseFloat(value) : value;
-        if (isNaN(num)) return "—";
-        if (num >= 1000000000) {
-            return `$${(num / 1000000000).toFixed(2)}B`;
-        }
-        if (num >= 1000000) {
-            return `$${(num / 1000000).toFixed(2)}M`;
-        }
-        if (num >= 1000) {
-            return `$${(num / 1000).toFixed(2)}K`;
-        }
-        return `$${num.toLocaleString()}`;
-    };
+    // Dummy locations data for stats charts (using tenant structure)
+    const dummyLocations: any[] = [];
 
     return (
         <AppLayout>
@@ -122,14 +98,7 @@ export default function CompanyDetails({
                 {/* Company Header */}
                 <div className="bg-white border-b border-gray-200">
                     <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            {company.company}
-                        </h1>
-                        {company.owner_type && (
-                            <p className="text-lg text-gray-600 mt-2">
-                                {company.owner_type}
-                            </p>
-                        )}
+                        <CompanyDetailsHeader company={company} />
 
                         {/* Tabs */}
                         <div className="border-b border-gray-200 mt-6">
@@ -156,203 +125,27 @@ export default function CompanyDetails({
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
                     {/* Summary Metrics */}
                     <SummaryMetrics company={company} />
-                    {/* Company Overview */}
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                            Company Overview
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Location
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {company.hq_city && company.hq_state
-                                        ? `${company.hq_city}, ${company.hq_state}`
-                                        : company.hq_city ||
-                                          company.hq_state ||
-                                          "—"}
-                                    {company.hq_country &&
-                                        `, ${company.hq_country}`}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Main Property Type
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {company.main_property_type || "—"}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Territory
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {company.territory || "—"}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Continental Focus
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {company.continental_focus || "—"}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Primary Country
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {company.primary_country || "—"}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Hierarchy
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {company.hierarchy || "—"}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Additional Details */}
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                            Portfolio Details
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Apartment Units
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatNumber(company.apt_units)}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Hotel Rooms
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatNumber(company.hotel_rooms)}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Land (Acres)
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatNumber(company.land_acre)}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    SF Delivered (24 Months)
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatSF(company.sf_delivered_24_months)}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    SF Under Construction
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatSF(company.sf_under_construction)}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Sale Listings Value
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatCurrency(
-                                        company.sale_listings_value
-                                    )}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Acquisitions (24 Months)
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatCurrency(
-                                        company.acquisitions_24_months
-                                    )}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Dispositions (24 Months)
-                                </h3>
-                                <p className="text-sm text-gray-900">
-                                    {formatCurrency(
-                                        company.dispositions_24_months
-                                    )}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    {/* Company Overview */}
+                    <CompanyOverview company={company} />
 
                     {/* Related Companies */}
-                    {relatedCompanies.length > 0 && (
-                        <div className="bg-white rounded-lg shadow p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                                Related Companies
-                            </h2>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700">
-                                                Company
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700">
-                                                Owner Type
-                                            </th>
-                                            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700">
-                                                Properties
-                                            </th>
-                                            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-700">
-                                                Portfolio SF
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
-                                        {relatedCompanies.map((related) => (
-                                            <tr key={related.id}>
-                                                <td className="px-4 py-4 text-sm">
-                                                    <Link
-                                                        href={`/contacts/owners/${related.id}`}
-                                                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                                                    >
-                                                        {related.company}
-                                                    </Link>
-                                                </td>
-                                                <td className="px-4 py-4 text-sm text-gray-500">
-                                                    {related.owner_type || "—"}
-                                                </td>
-                                                <td className="px-4 py-4 text-right text-sm text-gray-500">
-                                                    {formatNumber(
-                                                        related.properties
-                                                    )}
-                                                </td>
-                                                <td className="px-4 py-4 text-right text-sm text-gray-500">
-                                                    {formatSF(
-                                                        related.portfolio_sf
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
+                    <RelatedCompaniesTable companies={relatedCompanies} />
+
+                    {/* Company Stats Charts */}
+                    <CompanyStatsCharts locations={dummyLocations} />
+
+                    {/* Top Owners Bar Charts */}
+                    <TopTenantsBarCharts />
+
+                    {/* Company Contacts - Full Width */}
+                    <CompanyContacts />
+
+                    {/* News and CoStar Contact */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <CompanyNews />
+                        <CoStarContact />
+                    </div>
                 </div>
             </div>
         </AppLayout>
