@@ -1,16 +1,18 @@
 import { useState, useCallback, useEffect } from "react";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
-import { PaginatedData, TennentLocation } from "../../../../types";
-import LocationsFilterBar from "../../../../Components/Tenant/LocationsFilterBar";
+import { PaginatedData, TennentCompany, TennentLocation } from "../../../../types";
+import CompanyDetailsHeader from "../../../../Components/Tenant/CompanyDetailsHeader";
+import LocationsListView from "../../../../Components/Tenant/LocationsListView";
 import LocationsMapView from "../../../../Components/Tenant/LocationsMapView";
 import LocationsGalleryView from "../../../../Components/Tenant/LocationsGalleryView";
-import { ResizableColumn } from "../../../../Components/ResizableTable/ResizableTable";
-import LocationsListView from "../../../../Components/Tenant/LocationsListView";
+import LocationsFilterBar from "../../../../Components/Tenant/LocationsFilterBar";
 import LocationsAdvancedFiltersPanel from "../../../../Components/Tenant/LocationsAdvancedFiltersPanel";
-import { Info, Heart, MoreVertical, Minus, Globe } from "lucide-react";
+import { ResizableColumn } from "@/Components/ResizableTable/ResizableTable";
+import { Minus, Globe } from "lucide-react";
 
 interface PageProps {
+    company: TennentCompany;
     locations: PaginatedData<TennentLocation>;
     filters: {
         search?: string;
@@ -31,10 +33,15 @@ interface PageProps {
     };
 }
 
-export default function TenantLocations({ locations, filters }: PageProps) {
+export default function CompanyLocations({
+    company,
+    locations,
+    filters,
+    sort,
+}: PageProps) {
     const { url } = usePage();
-
-    // Get view mode from URL or default to "map"
+    
+    // Get view mode from URL or default to "list"
     const getViewModeFromUrl = (): "map" | "list" | "gallery" => {
         if (typeof window !== "undefined") {
             const params = new URLSearchParams(window.location.search);
@@ -43,7 +50,7 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                 return mode;
             }
         }
-        return "map";
+        return "list";
     };
 
     const [viewMode, setViewMode] = useState<"map" | "list" | "gallery">(
@@ -53,13 +60,11 @@ export default function TenantLocations({ locations, filters }: PageProps) {
         null
     );
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-    const activeTab = url.includes("/locations") ? "locations" : "companies";
 
-    // Update view mode from URL on mount and when URL changes (but only if it's different)
+    // Update view mode from URL on mount and when URL changes
     useEffect(() => {
         const mode = getViewModeFromUrl();
         setViewMode((currentMode) => {
-            // Only update if different to avoid unnecessary re-renders
             return mode !== currentMode ? mode : currentMode;
         });
     }, [url]);
@@ -93,19 +98,19 @@ export default function TenantLocations({ locations, filters }: PageProps) {
     const updateFilters = useCallback(
         (newFilters: Record<string, any>) => {
             router.get(
-                "/contacts/tenants/locations",
+                `/contacts/tenants/${company.id}/locations`,
                 preserveViewMode({
                     ...filters,
                     ...newFilters,
+                    page: 1,
                 }),
                 {
                     preserveState: true,
                     preserveScroll: false,
-                    replace: false,
                 }
             );
         },
-        [filters, preserveViewMode]
+        [filters, company.id, preserveViewMode]
     );
 
     const handleAddressSearchChange = useCallback(
@@ -147,29 +152,31 @@ export default function TenantLocations({ locations, filters }: PageProps) {
     );
 
     const handleClearFilters = useCallback(() => {
-        router.get(
-            "/contacts/tenants/locations",
-            { view_mode: viewMode },
-            { preserveState: false }
-        );
-    }, [viewMode]);
+        router.get(`/contacts/tenants/${company.id}/locations`, {
+            view_mode: viewMode,
+        });
+        setShowAdvancedFilters(false);
+    }, [company.id, viewMode]);
 
-    const formatNumber = (num: number | null | undefined): string => {
-        if (num === null || num === undefined) return "—";
+    const activeFiltersCount = Object.values(filters).filter(
+        (v) => v !== undefined && v !== ""
+    ).length;
+
+    // Formatting functions
+    const formatNumber = (
+        value: string | number | null | undefined
+    ): string => {
+        if (value === null || value === undefined) return "—";
+        const num = typeof value === "string" ? parseFloat(value) : value;
+        if (isNaN(num)) return "—";
         return num.toLocaleString();
     };
 
-    const formatSF = (sf: string | number | null | undefined): string => {
-        if (sf === null || sf === undefined) return "—";
-        const num = typeof sf === "string" ? parseFloat(sf) : sf;
+    const formatSF = (value: string | number | null | undefined): string => {
+        if (value === null || value === undefined) return "—";
+        const num = typeof value === "string" ? parseFloat(value) : value;
         if (isNaN(num)) return "—";
-        if (num >= 1000000) {
-            return `${(num / 1000000).toFixed(1)}M`;
-        }
-        if (num >= 1000) {
-            return `${(num / 1000).toFixed(1)}K`;
-        }
-        return num.toLocaleString();
+        return `${num.toLocaleString()} SF`;
     };
 
     const formatDate = (date: string | null | undefined): string => {
@@ -219,9 +226,43 @@ export default function TenantLocations({ locations, filters }: PageProps) {
         return url;
     };
 
-    const activeFiltersCount = Object.values(filters).filter(
-        (v) => v !== undefined && v !== ""
-    ).length;
+    const tabs = [
+        {
+            id: "summary",
+            label: "Summary",
+            href: `/contacts/tenants/${company.id}`,
+        },
+        {
+            id: "locations",
+            label: "Locations",
+            href: `/contacts/tenants/${company.id}/locations`,
+        },
+        {
+            id: "transactions",
+            label: "Transactions",
+            href: `/contacts/tenants/${company.id}/transactions`,
+        },
+        {
+            id: "lease_expirations",
+            label: "Lease Expirations",
+            href: `/contacts/tenants/${company.id}/lease-expirations`,
+        },
+        {
+            id: "contacts",
+            label: "Contacts",
+            href: `/contacts/tenants/${company.id}/contacts`,
+        },
+        {
+            id: "relationships",
+            label: "Relationships",
+            href: `/contacts/tenants/${company.id}/relationships`,
+        },
+        {
+            id: "news",
+            label: "News",
+            href: `/contacts/tenants/${company.id}/news`,
+        },
+    ];
 
     const columns: ResizableColumn[] = [
         {
@@ -253,18 +294,6 @@ export default function TenantLocations({ locations, filters }: PageProps) {
             label: "Tenant Name",
             align: "left",
             defaultWidth: 180,
-            render: (row) =>
-                row.company_id ? (
-                    <Link
-                        href={`/contacts/tenants/${row.company_id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {row.tenant_name}
-                    </Link>
-                ) : (
-                    row.tenant_name
-                ),
         },
         {
             key: "sf_occupied",
@@ -542,50 +571,31 @@ export default function TenantLocations({ locations, filters }: PageProps) {
 
     return (
         <AppLayout>
-            <Head title="Tenant Locations" />
-            <div className="min-h-screen bg-white">
-                {/* Header with Tabs */}
-                <div className="border-b border-gray-200 bg-white">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
-                        <div className="flex items-center justify-between py-4">
-                            <div className="flex items-center space-x-8">
-                                <Link
-                                    href="/contacts/tenants"
-                                    className={`border-b-2 pb-2 text-sm font-medium transition-colors ${
-                                        activeTab === "companies"
-                                            ? "border-red-600 text-gray-900"
-                                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                    }`}
-                                >
-                                    Tenant Companies
-                                </Link>
-                                <Link
-                                    href="/contacts/tenants/locations"
-                                    className={`border-b-2 pb-2 text-sm font-medium transition-colors ${
-                                        activeTab === "locations"
-                                            ? "border-red-600 text-gray-900"
-                                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                    }`}
-                                >
-                                    Tenant Locations
-                                </Link>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                <span className="text-sm text-gray-600">
-                                    {formatNumber(locations.total)} Tenant
-                                    Locations / {formatNumber(locations.total)}{" "}
-                                    Properties
-                                </span>
-                                <button className="text-gray-400 hover:text-gray-600">
-                                    <Info className="h-5 w-5" />
-                                </button>
-                                <button className="text-gray-400 hover:text-gray-600">
-                                    <Heart className="h-5 w-5" />
-                                </button>
-                                <button className="text-gray-400 hover:text-gray-600">
-                                    <MoreVertical className="h-5 w-5" />
-                                </button>
-                            </div>
+            <Head title={`${company.tenant_name} - Locations`} />
+
+            <div className="bg-gray-50 min-h-screen">
+                {/* Company Header */}
+                <div className="bg-white border-b border-gray-200">
+                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
+                        <CompanyDetailsHeader company={company} />
+
+                        {/* Tabs */}
+                        <div className="border-b border-gray-200 mt-6">
+                            <nav className="-mb-px flex space-x-8">
+                                {tabs.map((tab) => (
+                                    <Link
+                                        key={tab.id}
+                                        href={tab.href}
+                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
+                                            tab.id === "locations"
+                                                ? "border-red-500 text-red-600"
+                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                        }`}
+                                    >
+                                        {tab.label}
+                                    </Link>
+                                ))}
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -625,7 +635,7 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                         setViewMode(mode);
                         // Update URL with view mode
                         router.get(
-                            "/contacts/tenants/locations",
+                            `/contacts/tenants/${company.id}/locations`,
                             {
                                 ...filters,
                                 view_mode: mode,
@@ -652,7 +662,7 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                             showAdvancedFilters={showAdvancedFilters}
                             onCloseFilters={() => setShowAdvancedFilters(false)}
                             onClearFilters={() => {
-                                router.get("/contacts/tenants/locations", {
+                                router.get(`/contacts/tenants/${company.id}/locations`, {
                                     view_mode: viewMode,
                                 });
                                 setShowAdvancedFilters(false);
@@ -663,24 +673,20 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                 )}
 
                 {viewMode === "list" && (
-                    <LocationsListView
+                    <div className="bg-white">
+                        <LocationsListView
                         columns={columns}
                         data={locations.data}
                         pagination={locations}
                         showAdvancedFilters={showAdvancedFilters}
                         onCloseFilters={() => setShowAdvancedFilters(false)}
-                        onClearFilters={() => {
-                            router.get("/contacts/tenants/locations", {
-                                view_mode: viewMode,
-                            });
-                            setShowAdvancedFilters(false);
-                        }}
+                        onClearFilters={handleClearFilters}
                         onDoneFilters={() => {
                             setShowAdvancedFilters(false);
                         }}
                         activeFiltersCount={activeFiltersCount}
                         viewMode={viewMode}
-                        storageKey="tenant-locations-column-widths"
+                        storageKey={`company-${company.id}-locations-column-widths`}
                         renderCheckbox={() => (
                             <div className="flex items-center gap-2">
                                 <input
@@ -704,6 +710,7 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                         )}
                         filters={filters}
                     />
+                    </div>
                 )}
 
                 {viewMode === "gallery" && (
@@ -778,11 +785,10 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                                 value={locations.per_page}
                                                 onChange={(e) => {
                                                     router.get(
-                                                        "/contacts/tenants/locations",
+                                                        `/contacts/tenants/${company.id}/locations`,
                                                         preserveViewMode({
                                                             ...filters,
-                                                            per_page:
-                                                                e.target.value,
+                                                            per_page: e.target.value,
                                                             page: 1,
                                                         })
                                                     );
@@ -808,17 +814,14 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                             >
                                                 <button
                                                     onClick={() => {
-                                                        const url =
-                                                            addViewModeToUrl(
-                                                                locations.prev_page_url
-                                                            );
+                                                        const url = addViewModeToUrl(
+                                                            locations.prev_page_url
+                                                        );
                                                         if (url) {
                                                             router.get(url);
                                                         }
                                                     }}
-                                                    disabled={
-                                                        !locations.prev_page_url
-                                                    }
+                                                    disabled={!locations.prev_page_url}
                                                     className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
                                                 >
                                                     ‹
@@ -845,9 +848,7 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                                                             link.url
                                                                         );
                                                                     if (url) {
-                                                                        router.get(
-                                                                            url
-                                                                        );
+                                                                        router.get(url);
                                                                     }
                                                                 }}
                                                                 className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
@@ -862,17 +863,14 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                                     })}
                                                 <button
                                                     onClick={() => {
-                                                        const url =
-                                                            addViewModeToUrl(
-                                                                locations.next_page_url
-                                                            );
+                                                        const url = addViewModeToUrl(
+                                                            locations.next_page_url
+                                                        );
                                                         if (url) {
                                                             router.get(url);
                                                         }
                                                     }}
-                                                    disabled={
-                                                        !locations.next_page_url
-                                                    }
+                                                    disabled={!locations.next_page_url}
                                                     className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
                                                 >
                                                     ›
@@ -889,16 +887,11 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                             <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
                                 <LocationsAdvancedFiltersPanel
                                     isOpen={showAdvancedFilters}
-                                    onClose={() =>
-                                        setShowAdvancedFilters(false)
-                                    }
+                                    onClose={() => setShowAdvancedFilters(false)}
                                     onClear={() => {
-                                        router.get(
-                                            "/contacts/tenants/locations",
-                                            {
-                                                view_mode: viewMode,
-                                            }
-                                        );
+                                        router.get(`/contacts/tenants/${company.id}/locations`, {
+                                            view_mode: viewMode,
+                                        });
                                         setShowAdvancedFilters(false);
                                     }}
                                     onDone={() => {
@@ -914,3 +907,4 @@ export default function TenantLocations({ locations, filters }: PageProps) {
         </AppLayout>
     );
 }
+

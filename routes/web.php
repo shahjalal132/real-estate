@@ -38,6 +38,7 @@ Route::get('/optimize', function () {
 // Contacts routes
 Route::get('/contacts/tenants', [\App\Http\Controllers\TenantCompanyController::class, 'index'])->name('contacts.tenants');
 Route::get('/contacts/tenants/locations', [\App\Http\Controllers\TenantLocationController::class, 'index'])->name('contacts.tenants.locations');
+Route::get('/contacts/tenants/locations/{id}', [\App\Http\Controllers\TenantLocationController::class, 'show'])->name('contacts.tenants.locations.show');
 Route::get('/contacts/tenants/{id}/{tab?}', [\App\Http\Controllers\TenantCompanyController::class, 'show'])->name('contacts.tenants.show')->where('tab', 'summary|locations|transactions|lease-expirations|contacts|relationships|news');
 Route::get('/contacts/owners', function () {
     return redirect('/contacts/owners/companies');
