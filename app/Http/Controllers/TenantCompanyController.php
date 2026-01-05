@@ -17,9 +17,14 @@ class TenantCompanyController extends Controller
             $query->where('tenant_name', 'like', '%' . $request->search . '%');
         }
 
-        // Filter: 5+ Locations
-        if ($request->has('min_locations')) {
+        // Filter: Min Locations
+        if ($request->has('min_locations') && $request->min_locations !== null) {
             $query->where('locations', '>=', $request->min_locations);
+        }
+
+        // Filter: Max Locations
+        if ($request->has('max_locations') && $request->max_locations !== null) {
+            $query->where('locations', '<=', $request->max_locations);
         }
 
         // Filter: Size Occupied (SF Occupied)
@@ -49,19 +54,45 @@ class TenantCompanyController extends Controller
         $sortBy = $request->get('sort_by', 'tenant_name');
         $sortDir = $request->get('sort_dir', 'asc');
 
-        $allowedSorts = ['tenant_name', 'industry', 'locations', 'sf_occupied', 'employees', 'growth'];
+        $allowedSorts = [
+            'tenant_name',
+            'industry',
+            'territory',
+            'hq_market',
+            'locations',
+            'sf_occupied',
+            'highest_use_by_sf',
+            'employees',
+            'growth',
+            'revenue',
+            'credit_rating',
+            'established',
+            'parent_company',
+            'hq_city',
+            'hq_state',
+            'hq_postal_code',
+            'hq_country',
+            'naics',
+            'sic',
+        ];
+        
         if (in_array($sortBy, $allowedSorts)) {
-            $query->orderBy($sortBy, $sortDir);
+            // Handle special cases for numeric fields
+            if (in_array($sortBy, ['sf_occupied', 'highest_use_by_sf', 'employees', 'revenue'])) {
+                $query->orderByRaw("CAST({$sortBy} AS UNSIGNED) {$sortDir}");
+            } else {
+                $query->orderBy($sortBy, $sortDir);
+            }
         } else {
             $query->orderBy('tenant_name', 'asc');
         }
 
-        $perPage = $request->get('per_page', 20);
+        $perPage = $request->get('per_page', 15);
         $companies = $query->paginate($perPage);
 
         return Inertia::render('Contacts/Tenants/Companies', [
             'companies' => $companies,
-            'filters' => $request->only(['search', 'min_locations', 'min_sf_occupied', 'max_sf_occupied', 'retailers_only', 'industry', 'territory']),
+            'filters' => $request->only(['search', 'min_locations', 'max_locations', 'min_sf_occupied', 'max_sf_occupied', 'retailers_only', 'industry', 'territory']),
             'sort' => [
                 'by' => $sortBy,
                 'dir' => $sortDir,
