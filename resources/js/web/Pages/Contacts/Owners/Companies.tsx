@@ -39,6 +39,7 @@ interface PageProps {
     filters: {
         search?: string;
         min_properties?: number;
+        max_properties?: number;
         min_portfolio_sf?: number;
         max_portfolio_sf?: number;
         owner_type?: string;
@@ -103,8 +104,11 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
     );
 
     const handlePropertiesOwnedChange = useCallback(
-        (value: number | null) => {
-            updateFilters({ min_properties: value || undefined });
+        (min: number | null, max: number | null) => {
+            updateFilters({
+                min_properties: min || undefined,
+                max_properties: max || undefined,
+            });
         },
         [updateFilters]
     );
@@ -298,6 +302,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                     maxPortfolioSf={filters.max_portfolio_sf || null}
                     onPortfolioSizeChange={handlePortfolioSizeChange}
                     minProperties={filters.min_properties || null}
+                    maxProperties={filters.max_properties || null}
                     onPropertiesOwnedChange={handlePropertiesOwnedChange}
                     mainPropertyTypes={
                         Array.isArray(filters.main_property_type)

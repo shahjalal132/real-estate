@@ -18,9 +18,12 @@ class OwnerCompanyController extends Controller
             $query->where('company', 'like', '%' . $request->search . '%');
         }
 
-        // Filter: Properties
+        // Filter: Properties (min and max)
         if ($request->has('min_properties')) {
             $query->where('properties', '>=', $request->min_properties);
+        }
+        if ($request->has('max_properties')) {
+            $query->where('properties', '<=', $request->max_properties);
         }
 
         // Filter: Portfolio SF
@@ -67,7 +70,7 @@ class OwnerCompanyController extends Controller
 
         return Inertia::render('Contacts/Owners/Companies', [
             'companies' => $companies,
-            'filters' => $request->only(['search', 'min_properties', 'min_portfolio_sf', 'max_portfolio_sf', 'owner_type', 'territory', 'main_property_type']),
+            'filters' => $request->only(['search', 'min_properties', 'max_properties', 'min_portfolio_sf', 'max_portfolio_sf', 'owner_type', 'territory', 'main_property_type']),
             'sort' => [
                 'by' => $sortBy,
                 'dir' => $sortDir,

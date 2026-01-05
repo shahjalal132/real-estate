@@ -9,6 +9,8 @@ import {
     Plus,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import LocationMinMaxSelector from "../LocationMinMaxSelector";
+import PortfolioSizeSelector from "./PortfolioSizeSelector";
 
 interface OwnerCompaniesFilterBarProps {
     searchValue?: string;
@@ -26,28 +28,11 @@ interface OwnerCompaniesFilterBarProps {
     maxPortfolioSf?: number;
     onPortfolioSizeChange?: (min: number | null, max: number | null) => void;
     minProperties?: number;
-    onPropertiesOwnedChange?: (value: number | null) => void;
+    maxProperties?: number;
+    onPropertiesOwnedChange?: (min: number | null, max: number | null) => void;
     mainPropertyTypes?: string[];
     onMainPropertyTypeChange?: (values: string[]) => void;
 }
-
-const PORTFOLIO_SIZE_OPTIONS = [
-    { label: "All Sizes", value: null, min: null, max: null },
-    { label: "0 - 100K SF", value: "0-100k", min: 0, max: 100000 },
-    { label: "100K - 500K SF", value: "100k-500k", min: 100000, max: 500000 },
-    { label: "500K - 1M SF", value: "500k-1m", min: 500000, max: 1000000 },
-    { label: "1M+ SF", value: "1m+", min: 1000000, max: null },
-];
-
-const PROPERTIES_OPTIONS = [
-    { label: "All Properties", value: null },
-    { label: "1+ Properties", value: 1 },
-    { label: "5+ Properties", value: 5 },
-    { label: "10+ Properties", value: 10 },
-    { label: "25+ Properties", value: 25 },
-    { label: "50+ Properties", value: 50 },
-    { label: "100+ Properties", value: 100 },
-];
 
 const OWNER_TYPE_OPTIONS = [
     { label: "All Owner Types", value: null },
@@ -87,17 +72,14 @@ export default function OwnerCompaniesFilterBar({
     maxPortfolioSf,
     onPortfolioSizeChange,
     minProperties,
+    maxProperties,
     onPropertiesOwnedChange,
     mainPropertyTypes = [],
     onMainPropertyTypeChange,
 }: OwnerCompaniesFilterBarProps) {
     const [localSearchValue, setLocalSearchValue] = useState(searchValue);
-    const [showPortfolioSizeMenu, setShowPortfolioSizeMenu] = useState(false);
-    const [showPropertiesMenu, setShowPropertiesMenu] = useState(false);
     const [showPropertyTypeMenu, setShowPropertyTypeMenu] = useState(false);
     const [showSaveDropdown, setShowSaveDropdown] = useState(false);
-    const portfolioSizeRef = useRef<HTMLDivElement>(null);
-    const propertiesRef = useRef<HTMLDivElement>(null);
     const propertyTypeRef = useRef<HTMLDivElement>(null);
     const saveRef = useRef<HTMLDivElement>(null);
 
@@ -141,18 +123,6 @@ export default function OwnerCompaniesFilterBar({
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
-                portfolioSizeRef.current &&
-                !portfolioSizeRef.current.contains(event.target as Node)
-            ) {
-                setShowPortfolioSizeMenu(false);
-            }
-            if (
-                propertiesRef.current &&
-                !propertiesRef.current.contains(event.target as Node)
-            ) {
-                setShowPropertiesMenu(false);
-            }
-            if (
                 propertyTypeRef.current &&
                 !propertyTypeRef.current.contains(event.target as Node)
             ) {
@@ -182,20 +152,6 @@ export default function OwnerCompaniesFilterBar({
         setLocalSearchValue("");
         onSearchChange?.("");
         onSearch?.();
-    };
-
-    const getPortfolioSizeLabel = () => {
-        const option = PORTFOLIO_SIZE_OPTIONS.find(
-            (opt) => opt.min === minPortfolioSf && opt.max === maxPortfolioSf
-        );
-        return option?.label || "Portfolio SF";
-    };
-
-    const getPropertiesLabel = () => {
-        const option = PROPERTIES_OPTIONS.find(
-            (opt) => opt.value === minProperties
-        );
-        return option?.label || "Properties";
     };
 
     const getPropertyTypeLabel = () => {
@@ -235,6 +191,7 @@ export default function OwnerCompaniesFilterBar({
         minPortfolioSf !== null ||
         maxPortfolioSf !== null ||
         minProperties !== null ||
+        maxProperties !== null ||
         ownerType !== null ||
         mainPropertyTypes.length > 0 ||
         localSearchValue;
@@ -293,119 +250,22 @@ export default function OwnerCompaniesFilterBar({
                             <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                         </div>
 
-                        {/* Portfolio Size Button with Dropdown */}
-                        <div className="relative" ref={portfolioSizeRef}>
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setShowPortfolioSizeMenu(
-                                        !showPortfolioSizeMenu
-                                    )
-                                }
-                                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    minPortfolioSf !== null ||
-                                    maxPortfolioSf !== null
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="whitespace-nowrap">
-                                    {getPortfolioSizeLabel()}
-                                </span>
-                                <ChevronDown
-                                    className={`h-4 w-4 text-gray-400 transition-transform ${
-                                        showPortfolioSizeMenu
-                                            ? "rotate-180"
-                                            : ""
-                                    }`}
-                                />
-                            </button>
-                            {showPortfolioSizeMenu && (
-                                <div className="absolute left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                                    <div className="py-1">
-                                        {PORTFOLIO_SIZE_OPTIONS.map(
-                                            (option) => (
-                                                <button
-                                                    key={option.value ?? "all"}
-                                                    type="button"
-                                                    onClick={() => {
-                                                        onPortfolioSizeChange?.(
-                                                            option.min ?? null,
-                                                            option.max ?? null
-                                                        );
-                                                        setShowPortfolioSizeMenu(
-                                                            false
-                                                        );
-                                                    }}
-                                                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                        minPortfolioSf ===
-                                                            option.min &&
-                                                        maxPortfolioSf ===
-                                                            option.max
-                                                            ? "bg-blue-50 text-blue-700 font-medium"
-                                                            : "text-gray-700"
-                                                    }`}
-                                                >
-                                                    {option.label}
-                                                </button>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* Portfolio Size Selector */}
+                        <PortfolioSizeSelector
+                            minValue={minPortfolioSf ?? null}
+                            maxValue={maxPortfolioSf ?? null}
+                            onChange={onPortfolioSizeChange || (() => {})}
+                        />
 
-                        {/* Properties Owned Button with Dropdown */}
-                        <div className="relative" ref={propertiesRef}>
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setShowPropertiesMenu(!showPropertiesMenu)
-                                }
-                                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    minProperties !== null
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="whitespace-nowrap">
-                                    {getPropertiesLabel()}
-                                </span>
-                                <ChevronDown
-                                    className={`h-4 w-4 text-gray-400 transition-transform ${
-                                        showPropertiesMenu ? "rotate-180" : ""
-                                    }`}
-                                />
-                            </button>
-                            {showPropertiesMenu && (
-                                <div className="absolute left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                                    <div className="py-1">
-                                        {PROPERTIES_OPTIONS.map((option) => (
-                                            <button
-                                                key={option.value ?? "all"}
-                                                type="button"
-                                                onClick={() => {
-                                                    onPropertiesOwnedChange?.(
-                                                        option.value
-                                                    );
-                                                    setShowPropertiesMenu(
-                                                        false
-                                                    );
-                                                }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                    minProperties ===
-                                                    option.value
-                                                        ? "bg-blue-50 text-blue-700 font-medium"
-                                                        : "text-gray-700"
-                                                }`}
-                                            >
-                                                {option.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* Properties Owned Selector */}
+                        <LocationMinMaxSelector
+                            label="Properties"
+                            minValue={minProperties ?? null}
+                            maxValue={maxProperties ?? null}
+                            onChange={onPropertiesOwnedChange || (() => {})}
+                            minPlaceholder="Min"
+                            maxPlaceholder="Max"
+                        />
 
                         {/* Main Property Type Button with Dropdown */}
                         <div className="relative" ref={propertyTypeRef}>
