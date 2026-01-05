@@ -43,7 +43,7 @@ interface PageProps {
         max_portfolio_sf?: number;
         owner_type?: string;
         territory?: string;
-        main_property_type?: string;
+        main_property_type?: string | string[];
     };
     sort: {
         by: string;
@@ -110,8 +110,11 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
     );
 
     const handleMainPropertyTypeChange = useCallback(
-        (value: string | null) => {
-            updateFilters({ main_property_type: value || undefined });
+        (values: string[]) => {
+            updateFilters({
+                main_property_type:
+                    values.length > 0 ? values : undefined,
+            });
         },
         [updateFilters]
     );
@@ -156,9 +159,12 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
         return `$${num.toLocaleString()}`;
     };
 
-    const activeFiltersCount = Object.values(filters).filter(
-        (v) => v !== undefined && v !== ""
-    ).length;
+    const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
+        if (value === undefined || value === "") return false;
+        // Handle arrays - count as active if array has items
+        if (Array.isArray(value)) return value.length > 0;
+        return true;
+    }).length;
 
     const columns: ResizableColumn[] = [
         {
@@ -293,7 +299,13 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                     onPortfolioSizeChange={handlePortfolioSizeChange}
                     minProperties={filters.min_properties || null}
                     onPropertiesOwnedChange={handlePropertiesOwnedChange}
-                    mainPropertyType={filters.main_property_type || null}
+                    mainPropertyTypes={
+                        Array.isArray(filters.main_property_type)
+                            ? filters.main_property_type
+                            : filters.main_property_type
+                            ? [filters.main_property_type]
+                            : []
+                    }
                     onMainPropertyTypeChange={handleMainPropertyTypeChange}
                     onFiltersClick={() => {
                         setShowAdvancedFilters(!showAdvancedFilters);

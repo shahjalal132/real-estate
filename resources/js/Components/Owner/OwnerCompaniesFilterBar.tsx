@@ -27,8 +27,8 @@ interface OwnerCompaniesFilterBarProps {
     onPortfolioSizeChange?: (min: number | null, max: number | null) => void;
     minProperties?: number;
     onPropertiesOwnedChange?: (value: number | null) => void;
-    mainPropertyType?: string;
-    onMainPropertyTypeChange?: (value: string | null) => void;
+    mainPropertyTypes?: string[];
+    onMainPropertyTypeChange?: (values: string[]) => void;
 }
 
 const PORTFOLIO_SIZE_OPTIONS = [
@@ -58,12 +58,18 @@ const OWNER_TYPE_OPTIONS = [
 ];
 
 const PROPERTY_TYPE_OPTIONS = [
-    { label: "All Property Types", value: null },
-    { label: "Office", value: "Office" },
-    { label: "Retail", value: "Retail" },
-    { label: "Industrial", value: "Industrial" },
-    { label: "Multifamily", value: "Multifamily" },
-    { label: "Mixed Use", value: "Mixed Use" },
+    "Select All",
+    "Diversified",
+    "Office",
+    "Industrial",
+    "Retail",
+    "Flex",
+    "Multifamily",
+    "Student",
+    "Hospitality",
+    "Health Care",
+    "Specialty",
+    "Sports & Entertainment",
 ];
 
 export default function OwnerCompaniesFilterBar({
@@ -82,15 +88,17 @@ export default function OwnerCompaniesFilterBar({
     onPortfolioSizeChange,
     minProperties,
     onPropertiesOwnedChange,
-    mainPropertyType,
+    mainPropertyTypes = [],
     onMainPropertyTypeChange,
 }: OwnerCompaniesFilterBarProps) {
     const [localSearchValue, setLocalSearchValue] = useState(searchValue);
     const [showPortfolioSizeMenu, setShowPortfolioSizeMenu] = useState(false);
     const [showPropertiesMenu, setShowPropertiesMenu] = useState(false);
+    const [showPropertyTypeMenu, setShowPropertyTypeMenu] = useState(false);
     const [showSaveDropdown, setShowSaveDropdown] = useState(false);
     const portfolioSizeRef = useRef<HTMLDivElement>(null);
     const propertiesRef = useRef<HTMLDivElement>(null);
+    const propertyTypeRef = useRef<HTMLDivElement>(null);
     const saveRef = useRef<HTMLDivElement>(null);
 
     // Dummy saved searches data - will be replaced with actual data later
@@ -145,6 +153,12 @@ export default function OwnerCompaniesFilterBar({
                 setShowPropertiesMenu(false);
             }
             if (
+                propertyTypeRef.current &&
+                !propertyTypeRef.current.contains(event.target as Node)
+            ) {
+                setShowPropertyTypeMenu(false);
+            }
+            if (
                 saveRef.current &&
                 !saveRef.current.contains(event.target as Node)
             ) {
@@ -184,13 +198,45 @@ export default function OwnerCompaniesFilterBar({
         return option?.label || "Properties";
     };
 
+    const getPropertyTypeLabel = () => {
+        if (mainPropertyTypes.length === 0) {
+            return "Main Property Type";
+        }
+        if (mainPropertyTypes.length === 1) {
+            return mainPropertyTypes[0];
+        }
+        return `${mainPropertyTypes.length} Selected`;
+    };
+
+    const handlePropertyTypeToggle = (type: string) => {
+        if (type === "Select All") {
+            if (mainPropertyTypes.length === PROPERTY_TYPE_OPTIONS.length - 1) {
+                // All selected, deselect all
+                onMainPropertyTypeChange?.([]);
+            } else {
+                // Select all (except "Select All" itself)
+                onMainPropertyTypeChange?.(
+                    PROPERTY_TYPE_OPTIONS.filter((t) => t !== "Select All")
+                );
+            }
+        } else {
+            const newSelection = mainPropertyTypes.includes(type)
+                ? mainPropertyTypes.filter((t) => t !== type)
+                : [...mainPropertyTypes, type];
+            onMainPropertyTypeChange?.(newSelection);
+        }
+    };
+
+    const isAllPropertyTypesSelected =
+        mainPropertyTypes.length === PROPERTY_TYPE_OPTIONS.length - 1;
+
     const hasActiveFilters =
         activeFiltersCount > 0 ||
         minPortfolioSf !== null ||
         maxPortfolioSf !== null ||
         minProperties !== null ||
         ownerType !== null ||
-        mainPropertyType !== null ||
+        mainPropertyTypes.length > 0 ||
         localSearchValue;
 
     return (
@@ -209,7 +255,7 @@ export default function OwnerCompaniesFilterBar({
                                     setLocalSearchValue(e.target.value)
                                 }
                                 onKeyPress={handleKeyPress}
-                                placeholder="Owner Name or Ticker"
+                                placeholder="Fund or Owner Name"
                                 className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                             {localSearchValue && (
@@ -361,31 +407,70 @@ export default function OwnerCompaniesFilterBar({
                             )}
                         </div>
 
-                        {/* Main Property Type Dropdown */}
-                        <div className="relative shrink-0">
-                            <select
-                                value={mainPropertyType || ""}
-                                onChange={(e) =>
-                                    onMainPropertyTypeChange?.(
-                                        e.target.value || null
+                        {/* Main Property Type Button with Dropdown */}
+                        <div className="relative" ref={propertyTypeRef}>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setShowPropertyTypeMenu(
+                                        !showPropertyTypeMenu
                                     )
                                 }
-                                className={`appearance-none rounded-md border px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer transition-colors ${
-                                    mainPropertyType
+                                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                                    mainPropertyTypes.length > 0
                                         ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                 }`}
                             >
-                                {PROPERTY_TYPE_OPTIONS.map((option) => (
-                                    <option
-                                        key={option.value ?? "all"}
-                                        value={option.value ?? ""}
+                                <span className="whitespace-nowrap">
+                                    {getPropertyTypeLabel()}
+                                </span>
+                                <ChevronDown
+                                    className={`h-4 w-4 text-gray-400 transition-transform ${
+                                        showPropertyTypeMenu ? "rotate-180" : ""
+                                    }`}
+                                />
+                            </button>
+                            {showPropertyTypeMenu && (
+                                <div className="absolute left-0 z-50 mt-1 w-56 rounded-md border border-gray-200 bg-white shadow-lg">
+                                    <div
+                                        className="py-1 max-h-96 overflow-y-auto"
+                                        onClick={(e) => {
+                                            // Prevent dropdown from closing when clicking inside the menu
+                                            e.stopPropagation();
+                                        }}
                                     >
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                            <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                        {PROPERTY_TYPE_OPTIONS.map((type) => {
+                                            const isChecked =
+                                                type === "Select All"
+                                                    ? isAllPropertyTypesSelected
+                                                    : mainPropertyTypes.includes(
+                                                          type
+                                                      );
+                                            return (
+                                                <label
+                                                    key={type}
+                                                    className="flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isChecked}
+                                                        onChange={() => {
+                                                            handlePropertyTypeToggle(
+                                                                type
+                                                            );
+                                                        }}
+                                                        className="h-3.5 w-3.5 rounded border-gray-300 text-[#0066CC] focus:ring-[#0066CC] accent-[#0066CC] cursor-pointer"
+                                                    />
+                                                    <span className="text-gray-700">
+                                                        {type}
+                                                    </span>
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 

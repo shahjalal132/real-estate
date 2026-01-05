@@ -41,9 +41,14 @@ class OwnerCompanyController extends Controller
             $query->where('territory', $request->territory);
         }
 
-        // Main Property Type filter
+        // Main Property Type filter (supports single value or array)
         if ($request->has('main_property_type') && $request->main_property_type) {
-            $query->where('main_property_type', $request->main_property_type);
+            $propertyTypes = $request->main_property_type;
+            if (is_array($propertyTypes)) {
+                $query->whereIn('main_property_type', $propertyTypes);
+            } else {
+                $query->where('main_property_type', $propertyTypes);
+            }
         }
 
         // Sorting
