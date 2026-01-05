@@ -56,7 +56,7 @@ class TenantCompanyController extends Controller
             $query->orderBy('tenant_name', 'asc');
         }
 
-        $perPage = $request->get('per_page', 20);
+        $perPage = $request->get('per_page', 15);
         $companies = $query->paginate($perPage);
 
         return Inertia::render('Contacts/Tenants/Companies', [
