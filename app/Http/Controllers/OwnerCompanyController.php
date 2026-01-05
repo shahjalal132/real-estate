@@ -70,7 +70,7 @@ class OwnerCompanyController extends Controller
             $query->orderBy('company', 'asc');
         }
 
-        $perPage = $request->get('per_page', 20);
+        $perPage = $request->get('per_page', 15);
         $companies = $query->paginate($perPage);
 
         return Inertia::render('Contacts/Owners/Companies', [
@@ -89,9 +89,9 @@ class OwnerCompanyController extends Controller
 
         // Search by fund name or company
         if ($request->has('search') && $request->search) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('fund', 'like', '%' . $request->search . '%')
-                  ->orWhere('company', 'like', '%' . $request->search . '%');
+                    ->orWhere('company', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -204,4 +204,3 @@ class OwnerCompanyController extends Controller
         ]);
     }
 }
-
