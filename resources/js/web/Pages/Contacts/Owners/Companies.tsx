@@ -42,7 +42,7 @@ interface PageProps {
         max_properties?: number;
         min_portfolio_sf?: number;
         max_portfolio_sf?: number;
-        owner_type?: string;
+        owner_type?: string | string[];
         territory?: string;
         main_property_type?: string | string[];
     };
@@ -87,8 +87,10 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
     }, [updateFilters, filters.search]);
 
     const handleOwnerTypeChange = useCallback(
-        (value: string | null) => {
-            updateFilters({ owner_type: value || undefined });
+        (values: string[]) => {
+            updateFilters({
+                owner_type: values.length > 0 ? values : undefined,
+            });
         },
         [updateFilters]
     );
@@ -163,12 +165,17 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
         return `$${num.toLocaleString()}`;
     };
 
-    const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
-        if (value === undefined || value === "") return false;
-        // Handle arrays - count as active if array has items
-        if (Array.isArray(value)) return value.length > 0;
-        return true;
-    }).length;
+    const activeFiltersCount = Object.entries(filters).filter(
+        ([key, value]) => {
+            if (key === 'owner_type' && Array.isArray(value)) {
+                return value.length > 0;
+            }
+            if (key === 'main_property_type' && Array.isArray(value)) {
+                return value.length > 0;
+            }
+            return value !== undefined && value !== "" && value !== null;
+        }
+    ).length;
 
     const columns: ResizableColumn[] = [
         {
@@ -296,7 +303,13 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                     searchValue={filters.search}
                     onSearchChange={handleSearchChange}
                     onSearch={handleSearch}
-                    ownerType={filters.owner_type || null}
+                    ownerTypes={
+                        Array.isArray(filters.owner_type)
+                            ? filters.owner_type
+                            : filters.owner_type
+                            ? [filters.owner_type]
+                            : []
+                    }
                     onOwnerTypeChange={handleOwnerTypeChange}
                     minPortfolioSf={filters.min_portfolio_sf || null}
                     maxPortfolioSf={filters.max_portfolio_sf || null}

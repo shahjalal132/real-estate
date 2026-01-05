@@ -34,9 +34,14 @@ class OwnerCompanyController extends Controller
             $query->where('portfolio_sf', '<=', $request->max_portfolio_sf);
         }
 
-        // Owner Type filter
+        // Owner Type filter (supports single value or array)
         if ($request->has('owner_type') && $request->owner_type) {
-            $query->where('owner_type', $request->owner_type);
+            $ownerTypes = $request->owner_type;
+            if (is_array($ownerTypes)) {
+                $query->whereIn('owner_type', $ownerTypes);
+            } else {
+                $query->where('owner_type', $ownerTypes);
+            }
         }
 
         // Territory filter

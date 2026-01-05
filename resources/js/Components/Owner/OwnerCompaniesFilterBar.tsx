@@ -11,6 +11,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import LocationMinMaxSelector from "../LocationMinMaxSelector";
 import PortfolioSizeSelector from "./PortfolioSizeSelector";
+import OwnerTypeSelector from "./OwnerTypeSelector";
 
 interface OwnerCompaniesFilterBarProps {
     searchValue?: string;
@@ -22,8 +23,8 @@ interface OwnerCompaniesFilterBarProps {
     onClearClick?: () => void;
     activeFiltersCount?: number;
     // Filter values
-    ownerType?: string;
-    onOwnerTypeChange?: (value: string | null) => void;
+    ownerTypes?: string[];
+    onOwnerTypeChange?: (values: string[]) => void;
     minPortfolioSf?: number;
     maxPortfolioSf?: number;
     onPortfolioSizeChange?: (min: number | null, max: number | null) => void;
@@ -33,14 +34,6 @@ interface OwnerCompaniesFilterBarProps {
     mainPropertyTypes?: string[];
     onMainPropertyTypeChange?: (values: string[]) => void;
 }
-
-const OWNER_TYPE_OPTIONS = [
-    { label: "All Owner Types", value: null },
-    { label: "REIT", value: "REIT" },
-    { label: "Private", value: "Private" },
-    { label: "Public", value: "Public" },
-    { label: "Institutional", value: "Institutional" },
-];
 
 const PROPERTY_TYPE_OPTIONS = [
     "Select All",
@@ -66,7 +59,7 @@ export default function OwnerCompaniesFilterBar({
     onExportClick,
     onClearClick,
     activeFiltersCount = 0,
-    ownerType,
+    ownerTypes = [],
     onOwnerTypeChange,
     minPortfolioSf,
     maxPortfolioSf,
@@ -192,7 +185,7 @@ export default function OwnerCompaniesFilterBar({
         maxPortfolioSf !== null ||
         minProperties !== null ||
         maxProperties !== null ||
-        ownerType !== null ||
+        ownerTypes.length > 0 ||
         mainPropertyTypes.length > 0 ||
         localSearchValue;
 
@@ -226,29 +219,11 @@ export default function OwnerCompaniesFilterBar({
                         </div>
 
                         {/* Owner Type Dropdown */}
-                        <div className="relative shrink-0">
-                            <select
-                                value={ownerType || ""}
-                                onChange={(e) =>
-                                    onOwnerTypeChange?.(e.target.value || null)
-                                }
-                                className={`appearance-none rounded-md border px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer transition-colors ${
-                                    ownerType
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700"
-                                }`}
-                            >
-                                {OWNER_TYPE_OPTIONS.map((option) => (
-                                    <option
-                                        key={option.value ?? "all"}
-                                        value={option.value ?? ""}
-                                    >
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                            <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                        </div>
+                        {/* Owner Type Selector */}
+                        <OwnerTypeSelector
+                            selectedTypes={ownerTypes}
+                            onChange={onOwnerTypeChange || (() => {})}
+                        />
 
                         {/* Portfolio Size Selector */}
                         <PortfolioSizeSelector
