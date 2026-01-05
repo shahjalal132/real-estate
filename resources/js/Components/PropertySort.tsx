@@ -270,9 +270,19 @@ export default function PropertySort({
     const [sortOpen, setSortOpen] = useState(false);
     const [sortBy, setSortBy] = useState("recommended");
 
+    // Check URL parameters to determine if commercial for-lease (should use residential sort)
+    const urlParams = new URLSearchParams(
+        typeof window !== "undefined" ? window.location.search : ""
+    );
+    const urlType = urlParams.get("type");
+    const isCommercialForLease =
+        section === "commercial" && urlType === "for-lease";
+
     // Determine if this is commercial/auctions or residential
+    // Exception: commercial + for-lease should use residential sort options
     const isCommercialOrAuctions =
-        section === "commercial" || section === "auctions";
+        (section === "commercial" || section === "auctions") &&
+        !isCommercialForLease;
 
     // Sort options based on property type
     const residentialSortOptions = [

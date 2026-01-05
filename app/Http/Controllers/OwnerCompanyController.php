@@ -18,9 +18,12 @@ class OwnerCompanyController extends Controller
             $query->where('company', 'like', '%' . $request->search . '%');
         }
 
-        // Filter: Properties
+        // Filter: Properties (min and max)
         if ($request->has('min_properties')) {
             $query->where('properties', '>=', $request->min_properties);
+        }
+        if ($request->has('max_properties')) {
+            $query->where('properties', '<=', $request->max_properties);
         }
 
         // Filter: Portfolio SF
@@ -31,9 +34,14 @@ class OwnerCompanyController extends Controller
             $query->where('portfolio_sf', '<=', $request->max_portfolio_sf);
         }
 
-        // Owner Type filter
+        // Owner Type filter (supports single value or array)
         if ($request->has('owner_type') && $request->owner_type) {
-            $query->where('owner_type', $request->owner_type);
+            $ownerTypes = $request->owner_type;
+            if (is_array($ownerTypes)) {
+                $query->whereIn('owner_type', $ownerTypes);
+            } else {
+                $query->where('owner_type', $ownerTypes);
+            }
         }
 
         // Territory filter
@@ -41,9 +49,14 @@ class OwnerCompanyController extends Controller
             $query->where('territory', $request->territory);
         }
 
-        // Main Property Type filter
+        // Main Property Type filter (supports single value or array)
         if ($request->has('main_property_type') && $request->main_property_type) {
-            $query->where('main_property_type', $request->main_property_type);
+            $propertyTypes = $request->main_property_type;
+            if (is_array($propertyTypes)) {
+                $query->whereIn('main_property_type', $propertyTypes);
+            } else {
+                $query->where('main_property_type', $propertyTypes);
+            }
         }
 
         // Sorting
@@ -57,12 +70,12 @@ class OwnerCompanyController extends Controller
             $query->orderBy('company', 'asc');
         }
 
-        $perPage = $request->get('per_page', 20);
+        $perPage = $request->get('per_page', 15);
         $companies = $query->paginate($perPage);
 
         return Inertia::render('Contacts/Owners/Companies', [
             'companies' => $companies,
-            'filters' => $request->only(['search', 'min_properties', 'min_portfolio_sf', 'max_portfolio_sf', 'owner_type', 'territory', 'main_property_type']),
+            'filters' => $request->only(['search', 'min_properties', 'max_properties', 'min_portfolio_sf', 'max_portfolio_sf', 'owner_type', 'territory', 'main_property_type']),
             'sort' => [
                 'by' => $sortBy,
                 'dir' => $sortDir,
@@ -76,9 +89,9 @@ class OwnerCompanyController extends Controller
 
         // Search by fund name or company
         if ($request->has('search') && $request->search) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('fund', 'like', '%' . $request->search . '%')
-                  ->orWhere('company', 'like', '%' . $request->search . '%');
+                    ->orWhere('company', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -191,4 +204,3 @@ class OwnerCompanyController extends Controller
         ]);
     }
 }
-
