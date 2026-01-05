@@ -11,6 +11,8 @@ import {
     Check,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import LocationMinMaxSelector from "../LocationMinMaxSelector";
+import SizeOccupiedSelector from "./SizeOccupiedSelector";
 
 interface CompaniesFilterBarProps {
     searchValue?: string;
@@ -26,32 +28,13 @@ interface CompaniesFilterBarProps {
     onAddedRemovedClick?: () => void;
     onClearClick?: () => void;
     activeFiltersCount?: number;
-    minLocations?: number;
-    onMinLocationsChange?: (value: number | null) => void;
+    minLocations?: number | null;
+    maxLocations?: number | null;
+    onLocationsChange?: (min: number | null, max: number | null) => void;
     minSfOccupied?: number;
     maxSfOccupied?: number;
     onSfOccupiedChange?: (min: number | null, max: number | null) => void;
 }
-
-const LOCATION_OPTIONS = [
-    { label: "All Locations", value: null },
-    { label: "1+ Locations", value: 1 },
-    { label: "5+ Locations", value: 5 },
-    { label: "10+ Locations", value: 10 },
-    { label: "25+ Locations", value: 25 },
-    { label: "50+ Locations", value: 50 },
-    { label: "100+ Locations", value: 100 },
-];
-
-const SF_OCCUPIED_OPTIONS = [
-    { label: "All Sizes", value: null, min: null, max: null },
-    { label: "0 - 10K SF", value: "0-10k", min: 0, max: 10000 },
-    { label: "10K - 50K SF", value: "10k-50k", min: 10000, max: 50000 },
-    { label: "50K - 100K SF", value: "50k-100k", min: 50000, max: 100000 },
-    { label: "100K - 500K SF", value: "100k-500k", min: 100000, max: 500000 },
-    { label: "500K - 1M SF", value: "500k-1m", min: 500000, max: 1000000 },
-    { label: "1M+ SF", value: "1m+", min: 1000000, max: null },
-];
 
 export default function CompaniesFilterBar({
     searchValue = "",
@@ -68,18 +51,15 @@ export default function CompaniesFilterBar({
     onClearClick,
     activeFiltersCount = 0,
     minLocations,
-    onMinLocationsChange,
+    maxLocations,
+    onLocationsChange,
     minSfOccupied,
     maxSfOccupied,
     onSfOccupiedChange,
 }: CompaniesFilterBarProps) {
     const [localSearchValue, setLocalSearchValue] = useState(searchValue);
-    const [showLocationsDropdown, setShowLocationsDropdown] = useState(false);
-    const [showSfDropdown, setShowSfDropdown] = useState(false);
     const [showSortDropdown, setShowSortDropdown] = useState(false);
     const [showSaveDropdown, setShowSaveDropdown] = useState(false);
-    const locationsRef = useRef<HTMLDivElement>(null);
-    const sfRef = useRef<HTMLDivElement>(null);
     const sortRef = useRef<HTMLDivElement>(null);
     const saveRef = useRef<HTMLDivElement>(null);
 
@@ -126,18 +106,6 @@ export default function CompaniesFilterBar({
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
-                locationsRef.current &&
-                !locationsRef.current.contains(event.target as Node)
-            ) {
-                setShowLocationsDropdown(false);
-            }
-            if (
-                sfRef.current &&
-                !sfRef.current.contains(event.target as Node)
-            ) {
-                setShowSfDropdown(false);
-            }
-            if (
                 sortRef.current &&
                 !sortRef.current.contains(event.target as Node)
             ) {
@@ -169,23 +137,10 @@ export default function CompaniesFilterBar({
         onSearch?.();
     };
 
-    const getLocationLabel = () => {
-        const option = LOCATION_OPTIONS.find(
-            (opt) => opt.value === minLocations
-        );
-        return option?.label || "Number of Locations";
-    };
-
-    const getSfLabel = () => {
-        const option = SF_OCCUPIED_OPTIONS.find(
-            (opt) => opt.min === minSfOccupied && opt.max === maxSfOccupied
-        );
-        return option?.label || "Size Occupied";
-    };
-
     const hasActiveFilters =
         activeFiltersCount > 0 ||
         minLocations !== null ||
+        maxLocations !== null ||
         minSfOccupied !== null ||
         maxSfOccupied !== null ||
         retailersOnly ||
@@ -220,110 +175,26 @@ export default function CompaniesFilterBar({
                             )}
                         </div>
 
-                        {/* Number of Locations Dropdown */}
-                        <div className="relative" ref={locationsRef}>
-                            <button
-                                onClick={() =>
-                                    setShowLocationsDropdown(
-                                        !showLocationsDropdown
-                                    )
-                                }
-                                className={`flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    minLocations !== null
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="whitespace-nowrap">
-                                    {getLocationLabel()}
-                                </span>
-                                <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
-                                        showLocationsDropdown
-                                            ? "rotate-180"
-                                            : ""
-                                    }`}
-                                />
-                            </button>
-                            {showLocationsDropdown && (
-                                <div className="absolute left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                                    <div className="py-1">
-                                        {LOCATION_OPTIONS.map((option) => (
-                                            <button
-                                                key={option.value ?? "all"}
-                                                onClick={() => {
-                                                    onMinLocationsChange?.(
-                                                        option.value
-                                                    );
-                                                    setShowLocationsDropdown(
-                                                        false
-                                                    );
-                                                }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                    minLocations ===
-                                                    option.value
-                                                        ? "bg-blue-50 text-blue-700 font-medium"
-                                                        : "text-gray-700"
-                                                }`}
-                                            >
-                                                {option.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* Number of Locations Selector */}
+                        <LocationMinMaxSelector
+                            label="Locations"
+                            minValue={minLocations ?? null}
+                            maxValue={maxLocations ?? null}
+                            onChange={(min, max) => {
+                                onLocationsChange?.(min, max);
+                            }}
+                            minPlaceholder="Min Locations"
+                            maxPlaceholder="Max Locations"
+                        />
 
-                        {/* Size Occupied Dropdown */}
-                        <div className="relative" ref={sfRef}>
-                            <button
-                                onClick={() =>
-                                    setShowSfDropdown(!showSfDropdown)
-                                }
-                                className={`flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    minSfOccupied !== null ||
-                                    maxSfOccupied !== null
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="whitespace-nowrap">
-                                    {getSfLabel()}
-                                </span>
-                                <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
-                                        showSfDropdown ? "rotate-180" : ""
-                                    }`}
-                                />
-                            </button>
-                            {showSfDropdown && (
-                                <div className="absolute left-0 z-50 mt-1 w-52 rounded-md border border-gray-200 bg-white shadow-lg">
-                                    <div className="py-1">
-                                        {SF_OCCUPIED_OPTIONS.map((option) => (
-                                            <button
-                                                key={option.value ?? "all"}
-                                                onClick={() => {
-                                                    onSfOccupiedChange?.(
-                                                        option.min ?? null,
-                                                        option.max ?? null
-                                                    );
-                                                    setShowSfDropdown(false);
-                                                }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                    minSfOccupied ===
-                                                        option.min &&
-                                                    maxSfOccupied === option.max
-                                                        ? "bg-blue-50 text-blue-700 font-medium"
-                                                        : "text-gray-700"
-                                                }`}
-                                            >
-                                                {option.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* Size Occupied Selector */}
+                        <SizeOccupiedSelector
+                            minValue={minSfOccupied ?? null}
+                            maxValue={maxSfOccupied ?? null}
+                            onChange={(min, max) => {
+                                onSfOccupiedChange?.(min, max);
+                            }}
+                        />
 
                         {/* Retailers Only Toggle */}
                         <div className="flex items-center space-x-2 shrink-0">

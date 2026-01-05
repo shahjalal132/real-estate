@@ -17,9 +17,14 @@ class TenantCompanyController extends Controller
             $query->where('tenant_name', 'like', '%' . $request->search . '%');
         }
 
-        // Filter: 5+ Locations
-        if ($request->has('min_locations')) {
+        // Filter: Min Locations
+        if ($request->has('min_locations') && $request->min_locations !== null) {
             $query->where('locations', '>=', $request->min_locations);
+        }
+
+        // Filter: Max Locations
+        if ($request->has('max_locations') && $request->max_locations !== null) {
+            $query->where('locations', '<=', $request->max_locations);
         }
 
         // Filter: Size Occupied (SF Occupied)
@@ -61,7 +66,7 @@ class TenantCompanyController extends Controller
 
         return Inertia::render('Contacts/Tenants/Companies', [
             'companies' => $companies,
-            'filters' => $request->only(['search', 'min_locations', 'min_sf_occupied', 'max_sf_occupied', 'retailers_only', 'industry', 'territory']),
+            'filters' => $request->only(['search', 'min_locations', 'max_locations', 'min_sf_occupied', 'max_sf_occupied', 'retailers_only', 'industry', 'territory']),
             'sort' => [
                 'by' => $sortBy,
                 'dir' => $sortDir,

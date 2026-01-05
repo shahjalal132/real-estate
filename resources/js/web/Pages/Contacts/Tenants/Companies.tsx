@@ -14,6 +14,7 @@ interface PageProps {
     filters: {
         search?: string;
         min_locations?: number;
+        max_locations?: number;
         min_sf_occupied?: number;
         max_sf_occupied?: number;
         retailers_only?: boolean;
@@ -67,9 +68,12 @@ export default function TenantCompanies({ companies, filters }: PageProps) {
         [updateFilters]
     );
 
-    const handleMinLocationsChange = useCallback(
-        (value: number | null) => {
-            updateFilters({ min_locations: value || undefined });
+    const handleLocationsChange = useCallback(
+        (min: number | null, max: number | null) => {
+            updateFilters({
+                min_locations: min || undefined,
+                max_locations: max || undefined,
+            });
         },
         [updateFilters]
     );
@@ -374,9 +378,10 @@ export default function TenantCompanies({ companies, filters }: PageProps) {
                     retailersOnly={filters.retailers_only || false}
                     onRetailersOnlyChange={handleRetailersOnlyChange}
                     minLocations={filters.min_locations || null}
-                    onMinLocationsChange={handleMinLocationsChange}
-                    minSfOccupied={filters.min_sf_occupied || null}
-                    maxSfOccupied={filters.max_sf_occupied || null}
+                    maxLocations={filters.max_locations || null}
+                    onLocationsChange={handleLocationsChange}
+                    minSfOccupied={filters.min_sf_occupied ?? undefined}
+                    maxSfOccupied={filters.max_sf_occupied ?? undefined}
                     onSfOccupiedChange={handleSfOccupiedChange}
                     onFiltersClick={() => {
                         setShowAdvancedFilters((prev) => !prev);
