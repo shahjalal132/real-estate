@@ -42,6 +42,16 @@ const getSquareFeet = (property: Property): number => {
     );
 };
 
+// Helper function to get bedroom count
+const getBedroomCount = (property: Property): number => {
+    return (
+        getNumericValue(property, "Bedrooms") ||
+        getNumericValue(property, "Bedroom Count") ||
+        getNumericValue(property, "Bedroom") ||
+        0
+    );
+};
+
 // Sort function
 const sortProperties = (
     properties: Property[],
@@ -257,6 +267,20 @@ const sortProperties = (
                 return dateA - dateB;
             });
 
+        case "bedroom-count-high-to-low":
+            return sorted.sort((a, b) => {
+                const bedroomsA = getBedroomCount(a);
+                const bedroomsB = getBedroomCount(b);
+                return bedroomsB - bedroomsA;
+            });
+
+        case "bedroom-count-low-to-high":
+            return sorted.sort((a, b) => {
+                const bedroomsA = getBedroomCount(a);
+                const bedroomsB = getBedroomCount(b);
+                return bedroomsA - bedroomsB;
+            });
+
         default:
             return sorted;
     }
@@ -275,8 +299,13 @@ export default function PropertySort({
         typeof window !== "undefined" ? window.location.search : ""
     );
     const urlType = urlParams.get("type");
+    const urlCategory = urlParams.get("category");
     const isCommercialForLease =
         section === "commercial" && urlType === "for-lease";
+    const isCommercialForSale =
+        section === "commercial" && urlType === "for-sale";
+    const isResidentialForSale =
+        urlCategory === "residential" && urlType === "for-sale";
 
     // Determine if this is commercial/auctions or residential
     // Exception: commercial + for-lease should use residential sort options
@@ -318,8 +347,53 @@ export default function PropertySort({
         "Time (Ending Soonest)",
     ];
 
-    const sortOptions = isCommercialOrAuctions
-        ? commercialSortOptions
+    // Commercial sort options with bedroom count for for-sale
+    const commercialForSaleSortOptions = [
+        "Recommended",
+        "New Listings",
+        "Recently Updated",
+        "Sq Ft (High to Low)",
+        "Sq Ft (Low to High)",
+        "NOI (High to Low)",
+        "NOI (Low to High)",
+        "Units (High to Low)",
+        "Units (Low to High)",
+        "Price (High to Low)",
+        "Price (Low to High)",
+        "Cap Rate (High to Low)",
+        "Cap Rate (Low to High)",
+        "BSF (High to Low)",
+        "Time (Ending Soonest)",
+    ];
+
+    // Bedroom count only options for residential for-sale
+    const residentialForSaleSortOptions = [
+        "Recommended",
+        "New Listings",
+        "Recently Updated",
+        "Sq Ft (High to Low)",
+        "Sq Ft (Low to High)",
+        "NOI (High to Low)",
+        "NOI (Low to High)",
+        "Units (High to Low)",
+        "Units (Low to High)",
+        "Price (High to Low)",
+        "Price (Low to High)",
+        "Cap Rate (High to Low)",
+        "Cap Rate (Low to High)",
+        "BSF (High to Low)",
+        "BSF (Low to High)",
+        "Bedroom Count (High to Low)",
+        "Bedroom Count (Low to High)",
+        "Time (Ending Soonest)",
+    ];
+
+    const sortOptions = isResidentialForSale
+        ? residentialForSaleSortOptions
+        : isCommercialOrAuctions
+        ? isCommercialForSale
+            ? commercialForSaleSortOptions
+            : commercialSortOptions
         : residentialSortOptions;
 
     const getSortValue = (label: string) => {
