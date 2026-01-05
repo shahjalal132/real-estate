@@ -13,6 +13,8 @@ import { useState, useEffect, useRef } from "react";
 import LocationMinMaxSelector from "../LocationMinMaxSelector";
 import SizeOccupiedSelector from "./SizeOccupiedSelector";
 import TenantSortSelector from "./TenantSortSelector";
+import AddTenantCompaniesModal from "./AddTenantCompaniesModal";
+import ComingSoonModal from "./ComingSoonModal";
 
 interface CompaniesFilterBarProps {
     searchValue?: string;
@@ -65,6 +67,8 @@ export default function CompaniesFilterBar({
 }: CompaniesFilterBarProps) {
     const [localSearchValue, setLocalSearchValue] = useState(searchValue);
     const [showSaveDropdown, setShowSaveDropdown] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showExportModal, setShowExportModal] = useState(false);
     const saveRef = useRef<HTMLDivElement>(null);
 
     // Dummy saved searches data - will be replaced with actual data later
@@ -364,7 +368,10 @@ export default function CompaniesFilterBar({
 
                         {/* Add Tenant Companies Button */}
                         <button
-                            onClick={onAddClick}
+                            onClick={() => {
+                                setShowAddModal(true);
+                                onAddClick?.();
+                            }}
                             className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                         >
                             <Plus className="h-4 w-4" />
@@ -373,14 +380,31 @@ export default function CompaniesFilterBar({
                             </span>
                         </button>
 
+                        {/* Add Tenant Companies Modal */}
+                        <AddTenantCompaniesModal
+                            isOpen={showAddModal}
+                            onClose={() => setShowAddModal(false)}
+                        />
+
                         {/* Export Button */}
                         <button
-                            onClick={onExportClick}
+                            onClick={() => {
+                                setShowExportModal(true);
+                                onExportClick?.();
+                            }}
                             className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         >
                             <Download className="h-4 w-4" />
                             <span>Export</span>
                         </button>
+
+                        {/* Export Coming Soon Modal */}
+                        <ComingSoonModal
+                            isOpen={showExportModal}
+                            onClose={() => setShowExportModal(false)}
+                            title="Export"
+                            message="This feature is coming soon. We are working on it."
+                        />
 
                         {/* Added/Removed Button */}
                         <button
