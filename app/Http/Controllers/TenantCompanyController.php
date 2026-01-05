@@ -54,9 +54,35 @@ class TenantCompanyController extends Controller
         $sortBy = $request->get('sort_by', 'tenant_name');
         $sortDir = $request->get('sort_dir', 'asc');
 
-        $allowedSorts = ['tenant_name', 'industry', 'locations', 'sf_occupied', 'employees', 'growth'];
+        $allowedSorts = [
+            'tenant_name',
+            'industry',
+            'territory',
+            'hq_market',
+            'locations',
+            'sf_occupied',
+            'highest_use_by_sf',
+            'employees',
+            'growth',
+            'revenue',
+            'credit_rating',
+            'established',
+            'parent_company',
+            'hq_city',
+            'hq_state',
+            'hq_postal_code',
+            'hq_country',
+            'naics',
+            'sic',
+        ];
+        
         if (in_array($sortBy, $allowedSorts)) {
-            $query->orderBy($sortBy, $sortDir);
+            // Handle special cases for numeric fields
+            if (in_array($sortBy, ['sf_occupied', 'highest_use_by_sf', 'employees', 'revenue'])) {
+                $query->orderByRaw("CAST({$sortBy} AS UNSIGNED) {$sortDir}");
+            } else {
+                $query->orderBy($sortBy, $sortDir);
+            }
         } else {
             $query->orderBy('tenant_name', 'asc');
         }
