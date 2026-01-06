@@ -303,7 +303,8 @@ export default function PropertySort({
     const isCommercialForLease =
         section === "commercial" && urlType === "for-lease";
     const isCommercialForSale =
-        section === "commercial" && urlType === "for-sale";
+        (section === "commercial" && urlType === "for-sale") ||
+        (urlCategory === "all-commercial" && urlType === "for-sale");
     const isResidentialForSale =
         urlCategory === "residential" && urlType === "for-sale";
 
@@ -390,10 +391,10 @@ export default function PropertySort({
 
     const sortOptions = isResidentialForSale
         ? residentialForSaleSortOptions
+        : isCommercialForSale
+        ? commercialForSaleSortOptions
         : isCommercialOrAuctions
-        ? isCommercialForSale
-            ? commercialForSaleSortOptions
-            : commercialSortOptions
+        ? commercialSortOptions
         : residentialSortOptions;
 
     const getSortValue = (label: string) => {
