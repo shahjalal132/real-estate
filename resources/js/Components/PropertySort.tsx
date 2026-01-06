@@ -306,7 +306,8 @@ export default function PropertySort({
         (section === "commercial" && urlType === "for-sale") ||
         (urlCategory === "all-commercial" && urlType === "for-sale");
     const isResidentialForSale =
-        urlCategory === "residential" && urlType === "for-sale";
+        (urlCategory === "residential" && urlType === "for-sale") ||
+        (urlCategory === "all-residential" && urlType === "for-sale");
 
     // Determine if this is commercial/auctions or residential
     // Exception: commercial + for-lease should use residential sort options
