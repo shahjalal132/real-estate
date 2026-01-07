@@ -347,9 +347,9 @@ export default function TenantCompanies({
     return (
         <AppLayout>
             <Head title="Tenant Companies" />
-            <div className="min-h-screen bg-white">
+            <div className="flex flex-col h-screen bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
                 {/* Header with Tabs */}
-                <div className="border-b border-gray-200 bg-white">
+                <div className="border-b border-gray-200 bg-white shrink-0">
                     <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between py-4">
                             <div className="flex items-center space-x-8">
@@ -394,162 +394,95 @@ export default function TenantCompanies({
                 </div>
 
                 {/* Search and Filter Bar */}
-                <CompaniesFilterBar
-                    searchValue={filters.search}
-                    onSearchChange={handleSearchChange}
-                    onSearch={handleSearch}
-                    retailersOnly={filters.retailers_only || false}
-                    onRetailersOnlyChange={handleRetailersOnlyChange}
-                    minLocations={filters.min_locations || null}
-                    maxLocations={filters.max_locations || null}
-                    onLocationsChange={handleLocationsChange}
-                    minSfOccupied={filters.min_sf_occupied ?? undefined}
-                    maxSfOccupied={filters.max_sf_occupied ?? undefined}
-                    onSfOccupiedChange={handleSfOccupiedChange}
-                    onFiltersClick={() => {
-                        setShowAdvancedFilters((prev) => !prev);
-                    }}
-                    onClearClick={handleClearFilters}
-                    onSortClick={() => {
-                        // Handle sort click
-                    }}
-                    onSortChange={handleSortChange}
-                    sortBy={sort.by}
-                    sortDir={sort.dir as "asc" | "desc"}
-                    onSaveClick={() => {
-                        // Handle save click
-                    }}
-                    onAddClick={() => {
-                        // Handle add click
-                    }}
-                    onExportClick={() => {
-                        // Handle export click
-                    }}
-                    onAddedRemovedClick={() => {
-                        // Handle added/removed click
-                    }}
-                    activeFiltersCount={activeFiltersCount}
-                />
+                <div className="shrink-0">
+                    <CompaniesFilterBar
+                        searchValue={filters.search}
+                        onSearchChange={handleSearchChange}
+                        onSearch={handleSearch}
+                        retailersOnly={filters.retailers_only || false}
+                        onRetailersOnlyChange={handleRetailersOnlyChange}
+                        minLocations={filters.min_locations || null}
+                        maxLocations={filters.max_locations || null}
+                        onLocationsChange={handleLocationsChange}
+                        minSfOccupied={filters.min_sf_occupied ?? undefined}
+                        maxSfOccupied={filters.max_sf_occupied ?? undefined}
+                        onSfOccupiedChange={handleSfOccupiedChange}
+                        onFiltersClick={() => {
+                            setShowAdvancedFilters((prev) => !prev);
+                        }}
+                        onClearClick={handleClearFilters}
+                        onSortClick={() => {
+                            // Handle sort click
+                        }}
+                        onSortChange={handleSortChange}
+                        sortBy={sort.by}
+                        sortDir={sort.dir as "asc" | "desc"}
+                        onSaveClick={() => {
+                            // Handle save click
+                        }}
+                        onAddClick={() => {
+                            // Handle add click
+                        }}
+                        onExportClick={() => {
+                            // Handle export click
+                        }}
+                        onAddedRemovedClick={() => {
+                            // Handle added/removed click
+                        }}
+                        activeFiltersCount={activeFiltersCount}
+                    />
+                </div>
 
                 {/* Table Container with Sidebar */}
-                <div className="relative flex">
+                <div className="flex flex-1 min-h-0 overflow-hidden">
                     {/* Main Content */}
                     <div
-                        className={`transition-all duration-300 ${
+                        className={`flex flex-col transition-all duration-300 min-h-0 ${
                             showAdvancedFilters
-                                ? "w-[calc(100%-600px)]"
+                                ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
                                 : "w-full"
                         }`}
                     >
-                        <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                            <ResizableTable
-                                columns={columns}
-                                data={companies.data}
-                                storageKey="tenant-companies-column-widths"
-                                renderCheckbox={() => (
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
-                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                            onClick={(e) => e.stopPropagation()}
-                                        />
-                                    </div>
-                                )}
-                                renderActions={(row) => (
-                                    <button
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            console.log("Remove", row.id);
-                                        }}
-                                        title="Remove"
-                                    >
-                                        <Minus className="h-4 w-4" />
-                                    </button>
-                                )}
-                            />
-
-                            {/* Pagination */}
-                            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-                                <div className="flex flex-1 justify-between sm:hidden">
-                                    <button
-                                        onClick={() => {
-                                            if (companies.prev_page_url) {
-                                                router.get(
-                                                    companies.prev_page_url
-                                                );
-                                            }
-                                        }}
-                                        disabled={!companies.prev_page_url}
-                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            if (companies.next_page_url) {
-                                                router.get(
-                                                    companies.next_page_url
-                                                );
-                                            }
-                                        }}
-                                        disabled={!companies.next_page_url}
-                                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                    >
-                                        Next
-                                    </button>
-                                </div>
-                                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                    <div>
-                                        <p className="text-sm text-gray-700">
-                                            Showing{" "}
-                                            <span className="font-medium">
-                                                {companies.from}
-                                            </span>{" "}
-                                            to{" "}
-                                            <span className="font-medium">
-                                                {companies.to}
-                                            </span>{" "}
-                                            of{" "}
-                                            <span className="font-medium">
-                                                {companies.total}
-                                            </span>{" "}
-                                            results
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <select
-                                            value={companies.per_page}
-                                            onChange={(e) => {
-                                                router.get(
-                                                    "/contacts/tenants",
-                                                    {
-                                                        ...filters,
-                                                        per_page:
-                                                            e.target.value,
-                                                        page: 1,
-                                                    }
-                                                );
+                        <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
+                            {/* Table - Takes available space */}
+                            <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
+                                <ResizableTable
+                                    columns={columns}
+                                    data={companies.data}
+                                    storageKey="tenant-companies-column-widths"
+                                    className="h-full"
+                                    renderCheckbox={() => (
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            />
+                                        </div>
+                                    )}
+                                    renderActions={(row) => (
+                                        <button
+                                            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                console.log("Remove", row.id);
                                             }}
-                                            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            title="Remove"
                                         >
-                                            <option value={10}>
-                                                Show 10 per page
-                                            </option>
-                                            <option value={20}>
-                                                Show 20 per page
-                                            </option>
-                                            <option value={50}>
-                                                Show 50 per page
-                                            </option>
-                                            <option value={100}>
-                                                Show 100 per page
-                                            </option>
-                                        </select>
-                                        <nav
-                                            className="flex items-center gap-1"
-                                            aria-label="Pagination"
-                                        >
+                                            <Minus className="h-4 w-4" />
+                                        </button>
+                                    )}
+                                />
+                            </div>
+
+                            {/* Pagination - Fixed at bottom, always visible */}
+                            <div className="shrink-0 border-t border-gray-200 bg-white">
+                                <div className="mx-auto max-w-[1920px] w-full px-4 sm:px-6 lg:px-8">
+                                    <div className="flex items-center justify-between bg-white py-2">
+                                        {/* Mobile Pagination */}
+                                        <div className="flex flex-1 justify-between sm:hidden">
                                             <button
                                                 onClick={() => {
                                                     if (
@@ -563,41 +496,10 @@ export default function TenantCompanies({
                                                 disabled={
                                                     !companies.prev_page_url
                                                 }
-                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                                             >
-                                                ‹
+                                                Previous
                                             </button>
-                                            {companies.links
-                                                .slice(1, -1)
-                                                .map((link, index) => {
-                                                    if (link.url === null) {
-                                                        return (
-                                                            <span
-                                                                key={index}
-                                                                className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
-                                                            >
-                                                                {link.label}
-                                                            </span>
-                                                        );
-                                                    }
-                                                    return (
-                                                        <button
-                                                            key={index}
-                                                            onClick={() =>
-                                                                router.get(
-                                                                    link.url!
-                                                                )
-                                                            }
-                                                            className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
-                                                                link.active
-                                                                    ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
-                                                                    : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                                                            }`}
-                                                        >
-                                                            {link.label}
-                                                        </button>
-                                                    );
-                                                })}
                                             <button
                                                 onClick={() => {
                                                     if (
@@ -611,20 +513,149 @@ export default function TenantCompanies({
                                                 disabled={
                                                     !companies.next_page_url
                                                 }
-                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                                             >
-                                                ›
+                                                Next
                                             </button>
-                                        </nav>
+                                        </div>
+
+                                        {/* Desktop Pagination */}
+                                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                                            <div>
+                                                <p className="text-sm text-gray-700">
+                                                    Showing{" "}
+                                                    <span className="font-medium">
+                                                        {companies.from}
+                                                    </span>{" "}
+                                                    to{" "}
+                                                    <span className="font-medium">
+                                                        {companies.to}
+                                                    </span>{" "}
+                                                    of{" "}
+                                                    <span className="font-medium">
+                                                        {companies.total}
+                                                    </span>{" "}
+                                                    results
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <select
+                                                    value={companies.per_page}
+                                                    onChange={(e) => {
+                                                        router.get(
+                                                            "/contacts/tenants",
+                                                            {
+                                                                ...filters,
+                                                                per_page:
+                                                                    e.target
+                                                                        .value,
+                                                                page: 1,
+                                                            }
+                                                        );
+                                                    }}
+                                                    className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                >
+                                                    <option value={10}>
+                                                        Show 10 per page
+                                                    </option>
+                                                    <option value={20}>
+                                                        Show 20 per page
+                                                    </option>
+                                                    <option value={50}>
+                                                        Show 50 per page
+                                                    </option>
+                                                    <option value={100}>
+                                                        Show 100 per page
+                                                    </option>
+                                                </select>
+                                                <nav
+                                                    className="flex items-center gap-1"
+                                                    aria-label="Pagination"
+                                                >
+                                                    <button
+                                                        onClick={() => {
+                                                            if (
+                                                                companies.prev_page_url
+                                                            ) {
+                                                                router.get(
+                                                                    companies.prev_page_url
+                                                                );
+                                                            }
+                                                        }}
+                                                        disabled={
+                                                            !companies.prev_page_url
+                                                        }
+                                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                    >
+                                                        ‹
+                                                    </button>
+                                                    {companies.links
+                                                        .slice(1, -1)
+                                                        .map((link, index) => {
+                                                            if (
+                                                                link.url ===
+                                                                null
+                                                            ) {
+                                                                return (
+                                                                    <span
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                                                    >
+                                                                        {
+                                                                            link.label
+                                                                        }
+                                                                    </span>
+                                                                );
+                                                            }
+                                                            return (
+                                                                <button
+                                                                    key={index}
+                                                                    onClick={() =>
+                                                                        router.get(
+                                                                            link.url!
+                                                                        )
+                                                                    }
+                                                                    className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
+                                                                        link.active
+                                                                            ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
+                                                                            : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                                                                    }`}
+                                                                >
+                                                                    {link.label}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    <button
+                                                        onClick={() => {
+                                                            if (
+                                                                companies.next_page_url
+                                                            ) {
+                                                                router.get(
+                                                                    companies.next_page_url
+                                                                );
+                                                            }
+                                                        }}
+                                                        disabled={
+                                                            !companies.next_page_url
+                                                        }
+                                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                    >
+                                                        ›
+                                                    </button>
+                                                </nav>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Advanced Filters Sidebar */}
+                    {/* Advanced Filters Sidebar - Desktop */}
                     {showAdvancedFilters && (
-                        <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                        <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
                             <AdvancedFiltersPanel
                                 isOpen={showAdvancedFilters}
                                 onClose={() => setShowAdvancedFilters(false)}
@@ -639,6 +670,36 @@ export default function TenantCompanies({
                                 }}
                                 activeFiltersCount={activeFiltersCount}
                             />
+                        </div>
+                    )}
+
+                    {/* Advanced Filters Overlay - Mobile */}
+                    {showAdvancedFilters && (
+                        <div className="md:hidden fixed inset-0 z-50 flex">
+                            {/* Backdrop */}
+                            <div
+                                className="absolute inset-0 bg-black bg-opacity-50"
+                                onClick={() => setShowAdvancedFilters(false)}
+                            />
+                            {/* Panel */}
+                            <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                                <AdvancedFiltersPanel
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() =>
+                                        setShowAdvancedFilters(false)
+                                    }
+                                    onClear={() => {
+                                        router.get("/contacts/tenants", {
+                                            tab: "companies",
+                                        });
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
                         </div>
                     )}
                 </div>

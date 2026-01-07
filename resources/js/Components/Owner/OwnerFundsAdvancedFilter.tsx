@@ -42,34 +42,39 @@ export default function OwnerFundsAdvancedFilter({
     if (!isOpen) return null;
 
     return (
-        <div className="h-[calc(100vh-170px)] w-full bg-white flex flex-col overflow-hidden">
+        <div className="h-full w-full bg-white flex flex-col overflow-hidden">
             <AdvancedFilterHeader
                 topTab={topTab}
                 onTopTabChange={setTopTab}
                 onClose={onClose}
             />
 
-            {topTab === "search" && (
-                <SearchContent
-                    activeTab={activeTab}
-                    onTabChange={setActiveTab}
-                    filterState={filterState}
-                    onFilterStateChange={handleFilterStateChange}
-                />
-            )}
+            <div className="flex-1 min-h-0 overflow-hidden">
+                {topTab === "search" && (
+                    <SearchContent
+                        activeTab={activeTab}
+                        onTabChange={setActiveTab}
+                        filterState={filterState}
+                        onFilterStateChange={handleFilterStateChange}
+                    />
+                )}
 
-            {topTab === "location" && (
-                <LocationContent
-                    activeTab={activeLocationTab}
-                    onTabChange={setActiveLocationTab}
-                    filterState={filterState.location}
-                    onFilterStateChange={(updates) =>
-                        handleFilterStateChange({
-                            location: { ...filterState.location, ...updates },
-                        })
-                    }
-                />
-            )}
+                {topTab === "location" && (
+                    <LocationContent
+                        activeTab={activeLocationTab}
+                        onTabChange={setActiveLocationTab}
+                        filterState={filterState.location}
+                        onFilterStateChange={(updates) =>
+                            handleFilterStateChange({
+                                location: {
+                                    ...filterState.location,
+                                    ...updates,
+                                },
+                            })
+                        }
+                    />
+                )}
+            </div>
 
             <AdvancedFilterFooter onClear={onClear} onDone={onDone} />
         </div>

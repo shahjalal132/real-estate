@@ -53,7 +53,7 @@ export default function LocationContent({
     };
 
     return (
-        <>
+        <div className="flex flex-col h-full overflow-hidden">
             {/* Location Tabs */}
             <div className="border-b border-gray-200 bg-white px-4 shrink-0">
                 <div className="flex items-center gap-1">
@@ -79,7 +79,7 @@ export default function LocationContent({
             {/* Vertically Scrollable Content */}
             <div
                 ref={locationScrollContainerRef}
-                className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50"
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-gray-50"
                 style={{ scrollSnapType: "y mandatory" }}
             >
                 <div className="flex flex-col gap-4 p-4">
@@ -159,7 +159,7 @@ export default function LocationContent({
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
