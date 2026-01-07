@@ -118,8 +118,7 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
     const handleMainPropertyTypeChange = useCallback(
         (values: string[]) => {
             updateFilters({
-                main_property_type:
-                    values.length > 0 ? values : undefined,
+                main_property_type: values.length > 0 ? values : undefined,
             });
         },
         [updateFilters]
@@ -167,10 +166,10 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
 
     const activeFiltersCount = Object.entries(filters).filter(
         ([key, value]) => {
-            if (key === 'owner_type' && Array.isArray(value)) {
+            if (key === "owner_type" && Array.isArray(value)) {
                 return value.length > 0;
             }
-            if (key === 'main_property_type' && Array.isArray(value)) {
+            if (key === "main_property_type" && Array.isArray(value)) {
                 return value.length > 0;
             }
             return value !== undefined && value !== "" && value !== null;
@@ -261,9 +260,9 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
     return (
         <AppLayout>
             <Head title="Owner Companies" />
-            <div className="min-h-screen bg-white">
+            <div className="flex flex-col h-screen bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
                 {/* Header with Tabs */}
-                <div className="border-b border-gray-200 bg-white">
+                <div className="border-b border-gray-200 bg-white shrink-0">
                     <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between py-4">
                             <div className="flex items-center space-x-8">
@@ -299,146 +298,79 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                 </div>
 
                 {/* Search and Filter Bar */}
-                <OwnerCompaniesFilterBar
-                    searchValue={filters.search}
-                    onSearchChange={handleSearchChange}
-                    onSearch={handleSearch}
-                    ownerTypes={
-                        Array.isArray(filters.owner_type)
-                            ? filters.owner_type
-                            : filters.owner_type
-                            ? [filters.owner_type]
-                            : []
-                    }
-                    onOwnerTypeChange={handleOwnerTypeChange}
-                    minPortfolioSf={filters.min_portfolio_sf || null}
-                    maxPortfolioSf={filters.max_portfolio_sf || null}
-                    onPortfolioSizeChange={handlePortfolioSizeChange}
-                    minProperties={filters.min_properties || null}
-                    maxProperties={filters.max_properties || null}
-                    onPropertiesOwnedChange={handlePropertiesOwnedChange}
-                    mainPropertyTypes={
-                        Array.isArray(filters.main_property_type)
-                            ? filters.main_property_type
-                            : filters.main_property_type
-                            ? [filters.main_property_type]
-                            : []
-                    }
-                    onMainPropertyTypeChange={handleMainPropertyTypeChange}
-                    onFiltersClick={() => {
-                        setShowAdvancedFilters(!showAdvancedFilters);
-                    }}
-                    onClearClick={handleClearFilters}
-                    onSaveClick={() => {
-                        // Handle save click
-                    }}
-                    onExportClick={() => {
-                        // Handle export click
-                    }}
-                    activeFiltersCount={activeFiltersCount}
-                />
+                <div className="shrink-0">
+                    <OwnerCompaniesFilterBar
+                        searchValue={filters.search}
+                        onSearchChange={handleSearchChange}
+                        onSearch={handleSearch}
+                        ownerTypes={
+                            Array.isArray(filters.owner_type)
+                                ? filters.owner_type
+                                : filters.owner_type
+                                ? [filters.owner_type]
+                                : []
+                        }
+                        onOwnerTypeChange={handleOwnerTypeChange}
+                        minPortfolioSf={filters.min_portfolio_sf || undefined}
+                        maxPortfolioSf={filters.max_portfolio_sf || undefined}
+                        onPortfolioSizeChange={handlePortfolioSizeChange}
+                        minProperties={filters.min_properties || undefined}
+                        maxProperties={filters.max_properties || undefined}
+                        onPropertiesOwnedChange={handlePropertiesOwnedChange}
+                        mainPropertyTypes={
+                            Array.isArray(filters.main_property_type)
+                                ? filters.main_property_type
+                                : filters.main_property_type
+                                ? [filters.main_property_type]
+                                : []
+                        }
+                        onMainPropertyTypeChange={handleMainPropertyTypeChange}
+                        onFiltersClick={() => {
+                            setShowAdvancedFilters(!showAdvancedFilters);
+                        }}
+                        onClearClick={handleClearFilters}
+                        onSaveClick={() => {
+                            // Handle save click
+                        }}
+                        onExportClick={() => {
+                            // Handle export click
+                        }}
+                        activeFiltersCount={activeFiltersCount}
+                    />
+                </div>
 
                 {/* Table Container with Sidebar */}
-                <div className="relative flex min-h-[calc(100vh-200px)]">
+                <div className="flex flex-1 min-h-0 overflow-hidden">
                     {/* Main Content */}
                     <div
-                        className={`transition-all duration-300 ${
+                        className={`flex flex-col transition-all duration-300 min-h-0 ${
                             showAdvancedFilters
-                                ? "w-[calc(100%-600px)]"
+                                ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
                                 : "w-full"
                         }`}
                     >
-                        <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                            <ResizableTable
-                                columns={columns}
-                                data={companies.data}
-                                storageKey="owner-companies-column-widths"
-                                onRowClick={(row) => {
-                                    router.visit(`/contacts/owners/${row.id}`);
-                                }}
-                            />
+                        <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
+                            {/* Table - Takes available space */}
+                            <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
+                                <ResizableTable
+                                    columns={columns}
+                                    data={companies.data}
+                                    storageKey="owner-companies-column-widths"
+                                    className="h-full"
+                                    onRowClick={(row) => {
+                                        router.visit(
+                                            `/contacts/owners/${row.id}`
+                                        );
+                                    }}
+                                />
+                            </div>
 
-                            {/* Pagination */}
-                            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-                                <div className="flex flex-1 justify-between sm:hidden">
-                                    <button
-                                        onClick={() => {
-                                            if (companies.prev_page_url) {
-                                                router.get(
-                                                    companies.prev_page_url
-                                                );
-                                            }
-                                        }}
-                                        disabled={!companies.prev_page_url}
-                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            if (companies.next_page_url) {
-                                                router.get(
-                                                    companies.next_page_url
-                                                );
-                                            }
-                                        }}
-                                        disabled={!companies.next_page_url}
-                                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                    >
-                                        Next
-                                    </button>
-                                </div>
-                                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                    <div>
-                                        <p className="text-sm text-gray-700">
-                                            Showing{" "}
-                                            <span className="font-medium">
-                                                {companies.from}
-                                            </span>{" "}
-                                            to{" "}
-                                            <span className="font-medium">
-                                                {companies.to}
-                                            </span>{" "}
-                                            of{" "}
-                                            <span className="font-medium">
-                                                {companies.total}
-                                            </span>{" "}
-                                            results
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <select
-                                            value={companies.per_page}
-                                            onChange={(e) => {
-                                                router.get(
-                                                    "/contacts/owners/companies",
-                                                    {
-                                                        ...filters,
-                                                        per_page:
-                                                            e.target.value,
-                                                        page: 1,
-                                                    }
-                                                );
-                                            }}
-                                            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                        >
-                                            <option value={10}>
-                                                Show 10 per page
-                                            </option>
-                                            <option value={20}>
-                                                Show 20 per page
-                                            </option>
-                                            <option value={50}>
-                                                Show 50 per page
-                                            </option>
-                                            <option value={100}>
-                                                Show 100 per page
-                                            </option>
-                                        </select>
-                                        <nav
-                                            className="flex items-center gap-1"
-                                            aria-label="Pagination"
-                                        >
+                            {/* Pagination - Fixed at bottom, always visible */}
+                            <div className="shrink-0 border-t border-gray-200 bg-white">
+                                <div className="mx-auto max-w-[1920px] w-full px-4 sm:px-6 lg:px-8">
+                                    <div className="flex items-center justify-between bg-white py-2">
+                                        {/* Mobile Pagination */}
+                                        <div className="flex flex-1 justify-between sm:hidden">
                                             <button
                                                 onClick={() => {
                                                     if (
@@ -452,41 +384,10 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                                                 disabled={
                                                     !companies.prev_page_url
                                                 }
-                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                                             >
-                                                ‹
+                                                Previous
                                             </button>
-                                            {companies.links
-                                                .slice(1, -1)
-                                                .map((link, index) => {
-                                                    if (link.url === null) {
-                                                        return (
-                                                            <span
-                                                                key={index}
-                                                                className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
-                                                            >
-                                                                {link.label}
-                                                            </span>
-                                                        );
-                                                    }
-                                                    return (
-                                                        <button
-                                                            key={index}
-                                                            onClick={() =>
-                                                                router.get(
-                                                                    link.url!
-                                                                )
-                                                            }
-                                                            className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
-                                                                link.active
-                                                                    ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
-                                                                    : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                                                            }`}
-                                                        >
-                                                            {link.label}
-                                                        </button>
-                                                    );
-                                                })}
                                             <button
                                                 onClick={() => {
                                                     if (
@@ -500,20 +401,149 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                                                 disabled={
                                                     !companies.next_page_url
                                                 }
-                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                                             >
-                                                ›
+                                                Next
                                             </button>
-                                        </nav>
+                                        </div>
+
+                                        {/* Desktop Pagination */}
+                                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                                            <div>
+                                                <p className="text-sm text-gray-700">
+                                                    Showing{" "}
+                                                    <span className="font-medium">
+                                                        {companies.from}
+                                                    </span>{" "}
+                                                    to{" "}
+                                                    <span className="font-medium">
+                                                        {companies.to}
+                                                    </span>{" "}
+                                                    of{" "}
+                                                    <span className="font-medium">
+                                                        {companies.total}
+                                                    </span>{" "}
+                                                    results
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <select
+                                                    value={companies.per_page}
+                                                    onChange={(e) => {
+                                                        router.get(
+                                                            "/contacts/owners/companies",
+                                                            {
+                                                                ...filters,
+                                                                per_page:
+                                                                    e.target
+                                                                        .value,
+                                                                page: 1,
+                                                            }
+                                                        );
+                                                    }}
+                                                    className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                >
+                                                    <option value={10}>
+                                                        Show 10 per page
+                                                    </option>
+                                                    <option value={20}>
+                                                        Show 20 per page
+                                                    </option>
+                                                    <option value={50}>
+                                                        Show 50 per page
+                                                    </option>
+                                                    <option value={100}>
+                                                        Show 100 per page
+                                                    </option>
+                                                </select>
+                                                <nav
+                                                    className="flex items-center gap-1"
+                                                    aria-label="Pagination"
+                                                >
+                                                    <button
+                                                        onClick={() => {
+                                                            if (
+                                                                companies.prev_page_url
+                                                            ) {
+                                                                router.get(
+                                                                    companies.prev_page_url
+                                                                );
+                                                            }
+                                                        }}
+                                                        disabled={
+                                                            !companies.prev_page_url
+                                                        }
+                                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                    >
+                                                        ‹
+                                                    </button>
+                                                    {companies.links
+                                                        .slice(1, -1)
+                                                        .map((link, index) => {
+                                                            if (
+                                                                link.url ===
+                                                                null
+                                                            ) {
+                                                                return (
+                                                                    <span
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                                                    >
+                                                                        {
+                                                                            link.label
+                                                                        }
+                                                                    </span>
+                                                                );
+                                                            }
+                                                            return (
+                                                                <button
+                                                                    key={index}
+                                                                    onClick={() =>
+                                                                        router.get(
+                                                                            link.url!
+                                                                        )
+                                                                    }
+                                                                    className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
+                                                                        link.active
+                                                                            ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
+                                                                            : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                                                                    }`}
+                                                                >
+                                                                    {link.label}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    <button
+                                                        onClick={() => {
+                                                            if (
+                                                                companies.next_page_url
+                                                            ) {
+                                                                router.get(
+                                                                    companies.next_page_url
+                                                                );
+                                                            }
+                                                        }}
+                                                        disabled={
+                                                            !companies.next_page_url
+                                                        }
+                                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                    >
+                                                        ›
+                                                    </button>
+                                                </nav>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Advanced Filters Sidebar */}
+                    {/* Advanced Filters Sidebar - Desktop */}
                     {showAdvancedFilters && (
-                        <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                        <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
                             <AdvancedFiltersPanel
                                 isOpen={showAdvancedFilters}
                                 onClose={() => setShowAdvancedFilters(false)}
@@ -526,6 +556,36 @@ export default function OwnerCompanies({ companies, filters }: PageProps) {
                                 }}
                                 activeFiltersCount={activeFiltersCount}
                             />
+                        </div>
+                    )}
+
+                    {/* Advanced Filters Overlay - Mobile */}
+                    {showAdvancedFilters && (
+                        <div className="md:hidden fixed inset-0 z-50 flex">
+                            {/* Backdrop */}
+                            <div
+                                className="absolute inset-0 bg-black bg-opacity-50"
+                                onClick={() => setShowAdvancedFilters(false)}
+                            />
+                            {/* Panel */}
+                            <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                                <AdvancedFiltersPanel
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() =>
+                                        setShowAdvancedFilters(false)
+                                    }
+                                    onClear={() => {
+                                        router.get(
+                                            "/contacts/owners/companies"
+                                        );
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
                         </div>
                     )}
                 </div>

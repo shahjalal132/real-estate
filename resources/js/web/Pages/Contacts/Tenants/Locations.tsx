@@ -543,9 +543,9 @@ export default function TenantLocations({ locations, filters }: PageProps) {
     return (
         <AppLayout>
             <Head title="Tenant Locations" />
-            <div className="min-h-screen bg-white">
+            <div className="flex flex-col h-screen bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
                 {/* Header with Tabs */}
-                <div className="border-b border-gray-200 bg-white">
+                <div className="border-b border-gray-200 bg-white shrink-0">
                     <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between py-4">
                             <div className="flex items-center space-x-8">
@@ -591,302 +591,83 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                 </div>
 
                 {/* Search and Filter Bar */}
-                <LocationsFilterBar
-                    addressSearch={filters.address_search}
-                    tenantSearch={filters.search}
-                    onAddressSearchChange={handleAddressSearchChange}
-                    onTenantSearchChange={handleTenantSearchChange}
-                    spaceUse={filters.space_use || ""}
-                    onSpaceUseChange={handleSpaceUseChange}
-                    minSfOccupied={filters.min_sf_occupied || 0}
-                    maxSfOccupied={filters.max_sf_occupied || 0}
-                    onSfOccupiedChange={handleSfOccupiedChange}
-                    occupancy={filters.occupancy || ""}
-                    onOccupancyChange={handleOccupancyChange}
-                    onFiltersClick={() => {
-                        setShowAdvancedFilters((prev) => !prev);
-                    }}
-                    onClearClick={handleClearFilters}
-                    onSortClick={() => {
-                        // Handle sort click
-                    }}
-                    onSaveClick={() => {
-                        // Handle save click
-                    }}
-                    onReportsClick={() => {
-                        // Handle reports click
-                    }}
-                    onMoreClick={() => {
-                        // Handle more click
-                    }}
-                    viewMode={viewMode}
-                    onViewModeChange={(mode) => {
-                        // Update state immediately for instant UI feedback
-                        setViewMode(mode);
-                        // Update URL with view mode
-                        router.get(
-                            "/contacts/tenants/locations",
-                            {
-                                ...filters,
-                                view_mode: mode,
-                            },
-                            {
-                                preserveState: true,
-                                preserveScroll: true,
-                                only: ["locations", "filters"],
-                            }
-                        );
-                    }}
-                    activeFiltersCount={activeFiltersCount}
-                />
+                <div className="shrink-0">
+                    <LocationsFilterBar
+                        addressSearch={filters.address_search}
+                        tenantSearch={filters.search}
+                        onAddressSearchChange={handleAddressSearchChange}
+                        onTenantSearchChange={handleTenantSearchChange}
+                        spaceUse={filters.space_use || ""}
+                        onSpaceUseChange={handleSpaceUseChange}
+                        minSfOccupied={filters.min_sf_occupied || 0}
+                        maxSfOccupied={filters.max_sf_occupied || 0}
+                        onSfOccupiedChange={handleSfOccupiedChange}
+                        occupancy={filters.occupancy || ""}
+                        onOccupancyChange={handleOccupancyChange}
+                        onFiltersClick={() => {
+                            setShowAdvancedFilters((prev) => !prev);
+                        }}
+                        onClearClick={handleClearFilters}
+                        onSortClick={() => {
+                            // Handle sort click
+                        }}
+                        onSaveClick={() => {
+                            // Handle save click
+                        }}
+                        onReportsClick={() => {
+                            // Handle reports click
+                        }}
+                        onMoreClick={() => {
+                            // Handle more click
+                        }}
+                        viewMode={viewMode}
+                        onViewModeChange={(mode) => {
+                            // Update state immediately for instant UI feedback
+                            setViewMode(mode);
+                            // Update URL with view mode
+                            router.get(
+                                "/contacts/tenants/locations",
+                                {
+                                    ...filters,
+                                    view_mode: mode,
+                                },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    only: ["locations", "filters"],
+                                }
+                            );
+                        }}
+                        activeFiltersCount={activeFiltersCount}
+                    />
+                </div>
 
                 {/* Content based on view mode */}
                 {viewMode === "map" && (
-                    <div className="h-[calc(100vh-200px)]">
-                        <LocationsMapView
-                            locations={locations.data}
-                            selectedLocationId={selectedLocationId}
-                            onLocationClick={(location) => {
-                                setSelectedLocationId(location.id);
-                            }}
-                            showAdvancedFilters={showAdvancedFilters}
-                            onCloseFilters={() => setShowAdvancedFilters(false)}
-                            onClearFilters={() => {
-                                router.get("/contacts/tenants/locations", {
-                                    view_mode: viewMode,
-                                });
-                                setShowAdvancedFilters(false);
-                            }}
-                            activeFiltersCount={activeFiltersCount}
-                        />
-                    </div>
-                )}
-
-                {viewMode === "list" && (
-                    <LocationsListView
-                        columns={columns}
-                        data={locations.data}
-                        pagination={locations}
-                        showAdvancedFilters={showAdvancedFilters}
-                        onCloseFilters={() => setShowAdvancedFilters(false)}
-                        onClearFilters={() => {
-                            router.get("/contacts/tenants/locations", {
-                                view_mode: viewMode,
-                            });
-                            setShowAdvancedFilters(false);
-                        }}
-                        onDoneFilters={() => {
-                            setShowAdvancedFilters(false);
-                        }}
-                        activeFiltersCount={activeFiltersCount}
-                        viewMode={viewMode}
-                        storageKey="tenant-locations-column-widths"
-                        renderCheckbox={() => (
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                    onClick={(e) => e.stopPropagation()}
-                                />
-                            </div>
-                        )}
-                        renderActions={(row) => (
-                            <button
-                                className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    console.log("Remove", row.id);
-                                }}
-                                title="Remove"
-                            >
-                                <Minus className="h-4 w-4" />
-                            </button>
-                        )}
-                        filters={filters}
-                    />
-                )}
-
-                {viewMode === "gallery" && (
-                    <div className="relative flex">
+                    <div className="flex flex-1 min-h-0 overflow-hidden">
                         {/* Main Content */}
                         <div
-                            className={`transition-all duration-300 ${
+                            className={`flex flex-col transition-all duration-300 min-h-0 ${
                                 showAdvancedFilters
-                                    ? "w-[calc(100%-600px)]"
+                                    ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
                                     : "w-full"
                             }`}
                         >
-                            <div className="mx-auto max-w-[1920px]">
-                                <LocationsGalleryView
+                            <div className="flex-1 min-h-0 overflow-hidden">
+                                <LocationsMapView
                                     locations={locations.data}
+                                    selectedLocationId={selectedLocationId}
                                     onLocationClick={(location) => {
                                         setSelectedLocationId(location.id);
                                     }}
+                                    showAdvancedFilters={showAdvancedFilters}
                                 />
-                                {/* Pagination for Gallery */}
-                                <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-                                    <div className="flex flex-1 justify-between sm:hidden">
-                                        <button
-                                            onClick={() => {
-                                                const url = addViewModeToUrl(
-                                                    locations.prev_page_url
-                                                );
-                                                if (url) {
-                                                    router.get(url);
-                                                }
-                                            }}
-                                            disabled={!locations.prev_page_url}
-                                            className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                        >
-                                            Previous
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                const url = addViewModeToUrl(
-                                                    locations.next_page_url
-                                                );
-                                                if (url) {
-                                                    router.get(url);
-                                                }
-                                            }}
-                                            disabled={!locations.next_page_url}
-                                            className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                        >
-                                            Next
-                                        </button>
-                                    </div>
-                                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                        <div>
-                                            <p className="text-sm text-gray-700">
-                                                Showing{" "}
-                                                <span className="font-medium">
-                                                    {locations.from}
-                                                </span>{" "}
-                                                to{" "}
-                                                <span className="font-medium">
-                                                    {locations.to}
-                                                </span>{" "}
-                                                of{" "}
-                                                <span className="font-medium">
-                                                    {locations.total}
-                                                </span>{" "}
-                                                results
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <select
-                                                value={locations.per_page}
-                                                onChange={(e) => {
-                                                    router.get(
-                                                        "/contacts/tenants/locations",
-                                                        preserveViewMode({
-                                                            ...filters,
-                                                            per_page:
-                                                                e.target.value,
-                                                            page: 1,
-                                                        })
-                                                    );
-                                                }}
-                                                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                            >
-                                                <option value={10}>
-                                                    Show 10 per page
-                                                </option>
-                                                <option value={20}>
-                                                    Show 20 per page
-                                                </option>
-                                                <option value={50}>
-                                                    Show 50 per page
-                                                </option>
-                                                <option value={100}>
-                                                    Show 100 per page
-                                                </option>
-                                            </select>
-                                            <nav
-                                                className="flex items-center gap-1"
-                                                aria-label="Pagination"
-                                            >
-                                                <button
-                                                    onClick={() => {
-                                                        const url =
-                                                            addViewModeToUrl(
-                                                                locations.prev_page_url
-                                                            );
-                                                        if (url) {
-                                                            router.get(url);
-                                                        }
-                                                    }}
-                                                    disabled={
-                                                        !locations.prev_page_url
-                                                    }
-                                                    className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                                                >
-                                                    ‹
-                                                </button>
-                                                {locations.links
-                                                    .slice(1, -1)
-                                                    .map((link, index) => {
-                                                        if (link.url === null) {
-                                                            return (
-                                                                <span
-                                                                    key={index}
-                                                                    className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
-                                                                >
-                                                                    {link.label}
-                                                                </span>
-                                                            );
-                                                        }
-                                                        return (
-                                                            <button
-                                                                key={index}
-                                                                onClick={() => {
-                                                                    const url =
-                                                                        addViewModeToUrl(
-                                                                            link.url
-                                                                        );
-                                                                    if (url) {
-                                                                        router.get(
-                                                                            url
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
-                                                                    link.active
-                                                                        ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
-                                                                        : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                                                                }`}
-                                                            >
-                                                                {link.label}
-                                                            </button>
-                                                        );
-                                                    })}
-                                                <button
-                                                    onClick={() => {
-                                                        const url =
-                                                            addViewModeToUrl(
-                                                                locations.next_page_url
-                                                            );
-                                                        if (url) {
-                                                            router.get(url);
-                                                        }
-                                                    }}
-                                                    disabled={
-                                                        !locations.next_page_url
-                                                    }
-                                                    className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                                                >
-                                                    ›
-                                                </button>
-                                            </nav>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
-                        {/* Advanced Filters Sidebar */}
+                        {/* Advanced Filters Sidebar - Desktop */}
                         {showAdvancedFilters && (
-                            <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                            <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
                                 <LocationsAdvancedFiltersPanel
                                     isOpen={showAdvancedFilters}
                                     onClose={() =>
@@ -906,6 +687,372 @@ export default function TenantLocations({ locations, filters }: PageProps) {
                                     }}
                                     activeFiltersCount={activeFiltersCount}
                                 />
+                            </div>
+                        )}
+
+                        {/* Advanced Filters Overlay - Mobile */}
+                        {showAdvancedFilters && (
+                            <div className="md:hidden fixed inset-0 z-50 flex">
+                                {/* Backdrop */}
+                                <div
+                                    className="absolute inset-0 bg-black bg-opacity-50"
+                                    onClick={() =>
+                                        setShowAdvancedFilters(false)
+                                    }
+                                />
+                                {/* Panel */}
+                                <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                                    <LocationsAdvancedFiltersPanel
+                                        isOpen={showAdvancedFilters}
+                                        onClose={() =>
+                                            setShowAdvancedFilters(false)
+                                        }
+                                        onClear={() => {
+                                            router.get(
+                                                "/contacts/tenants/locations",
+                                                {
+                                                    view_mode: viewMode,
+                                                }
+                                            );
+                                            setShowAdvancedFilters(false);
+                                        }}
+                                        onDone={() => {
+                                            setShowAdvancedFilters(false);
+                                        }}
+                                        activeFiltersCount={activeFiltersCount}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {viewMode === "list" && (
+                    <div className="flex flex-1 min-h-0 overflow-hidden">
+                        <LocationsListView
+                            columns={columns}
+                            data={locations.data}
+                            pagination={locations}
+                            showAdvancedFilters={showAdvancedFilters}
+                            onCloseFilters={() => setShowAdvancedFilters(false)}
+                            onClearFilters={() => {
+                                router.get("/contacts/tenants/locations", {
+                                    view_mode: viewMode,
+                                });
+                                setShowAdvancedFilters(false);
+                            }}
+                            onDoneFilters={() => {
+                                setShowAdvancedFilters(false);
+                            }}
+                            activeFiltersCount={activeFiltersCount}
+                            viewMode={viewMode}
+                            storageKey="tenant-locations-column-widths"
+                            renderCheckbox={() => (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                </div>
+                            )}
+                            renderActions={(row) => (
+                                <button
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("Remove", row.id);
+                                    }}
+                                    title="Remove"
+                                >
+                                    <Minus className="h-4 w-4" />
+                                </button>
+                            )}
+                            filters={filters}
+                        />
+                    </div>
+                )}
+
+                {viewMode === "gallery" && (
+                    <div className="flex flex-1 min-h-0 overflow-hidden">
+                        {/* Main Content */}
+                        <div
+                            className={`flex flex-col transition-all duration-300 min-h-0 ${
+                                showAdvancedFilters
+                                    ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
+                                    : "w-full"
+                            }`}
+                        >
+                            <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
+                                {/* Gallery View - Takes available space */}
+                                <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
+                                    <LocationsGalleryView
+                                        locations={locations.data}
+                                        onLocationClick={(location) => {
+                                            setSelectedLocationId(location.id);
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Pagination - Fixed at bottom, always visible */}
+                                <div className="shrink-0 border-t border-gray-200 bg-white">
+                                    <div className="mx-auto max-w-[1920px] w-full px-4 sm:px-6 lg:px-8">
+                                        <div className="flex items-center justify-between bg-white py-2">
+                                            {/* Mobile Pagination */}
+                                            <div className="flex flex-1 justify-between sm:hidden">
+                                                <button
+                                                    onClick={() => {
+                                                        const url =
+                                                            addViewModeToUrl(
+                                                                locations.prev_page_url
+                                                            );
+                                                        if (url) {
+                                                            router.get(url);
+                                                        }
+                                                    }}
+                                                    disabled={
+                                                        !locations.prev_page_url
+                                                    }
+                                                    className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                                >
+                                                    Previous
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        const url =
+                                                            addViewModeToUrl(
+                                                                locations.next_page_url
+                                                            );
+                                                        if (url) {
+                                                            router.get(url);
+                                                        }
+                                                    }}
+                                                    disabled={
+                                                        !locations.next_page_url
+                                                    }
+                                                    className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                                >
+                                                    Next
+                                                </button>
+                                            </div>
+
+                                            {/* Desktop Pagination */}
+                                            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                                                <div>
+                                                    <p className="text-sm text-gray-700">
+                                                        Showing{" "}
+                                                        <span className="font-medium">
+                                                            {locations.from}
+                                                        </span>{" "}
+                                                        to{" "}
+                                                        <span className="font-medium">
+                                                            {locations.to}
+                                                        </span>{" "}
+                                                        of{" "}
+                                                        <span className="font-medium">
+                                                            {locations.total}
+                                                        </span>{" "}
+                                                        results
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <select
+                                                        value={
+                                                            locations.per_page
+                                                        }
+                                                        onChange={(e) => {
+                                                            router.get(
+                                                                "/contacts/tenants/locations",
+                                                                preserveViewMode(
+                                                                    {
+                                                                        ...filters,
+                                                                        per_page:
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                        page: 1,
+                                                                    }
+                                                                )
+                                                            );
+                                                        }}
+                                                        className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                    >
+                                                        <option value={10}>
+                                                            Show 10 per page
+                                                        </option>
+                                                        <option value={20}>
+                                                            Show 20 per page
+                                                        </option>
+                                                        <option value={50}>
+                                                            Show 50 per page
+                                                        </option>
+                                                        <option value={100}>
+                                                            Show 100 per page
+                                                        </option>
+                                                    </select>
+                                                    <nav
+                                                        className="flex items-center gap-1"
+                                                        aria-label="Pagination"
+                                                    >
+                                                        <button
+                                                            onClick={() => {
+                                                                const url =
+                                                                    addViewModeToUrl(
+                                                                        locations.prev_page_url
+                                                                    );
+                                                                if (url) {
+                                                                    router.get(
+                                                                        url
+                                                                    );
+                                                                }
+                                                            }}
+                                                            disabled={
+                                                                !locations.prev_page_url
+                                                            }
+                                                            className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                        >
+                                                            ‹
+                                                        </button>
+                                                        {locations.links
+                                                            .slice(1, -1)
+                                                            .map(
+                                                                (
+                                                                    link,
+                                                                    index
+                                                                ) => {
+                                                                    if (
+                                                                        link.url ===
+                                                                        null
+                                                                    ) {
+                                                                        return (
+                                                                            <span
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                                className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                                                            >
+                                                                                {
+                                                                                    link.label
+                                                                                }
+                                                                            </span>
+                                                                        );
+                                                                    }
+                                                                    return (
+                                                                        <button
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            onClick={() => {
+                                                                                const url =
+                                                                                    addViewModeToUrl(
+                                                                                        link.url
+                                                                                    );
+                                                                                if (
+                                                                                    url
+                                                                                ) {
+                                                                                    router.get(
+                                                                                        url
+                                                                                    );
+                                                                                }
+                                                                            }}
+                                                                            className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
+                                                                                link.active
+                                                                                    ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
+                                                                                    : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                                                                            }`}
+                                                                        >
+                                                                            {
+                                                                                link.label
+                                                                            }
+                                                                        </button>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        <button
+                                                            onClick={() => {
+                                                                const url =
+                                                                    addViewModeToUrl(
+                                                                        locations.next_page_url
+                                                                    );
+                                                                if (url) {
+                                                                    router.get(
+                                                                        url
+                                                                    );
+                                                                }
+                                                            }}
+                                                            disabled={
+                                                                !locations.next_page_url
+                                                            }
+                                                            className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                        >
+                                                            ›
+                                                        </button>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Advanced Filters Sidebar - Desktop */}
+                        {showAdvancedFilters && (
+                            <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
+                                <LocationsAdvancedFiltersPanel
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() =>
+                                        setShowAdvancedFilters(false)
+                                    }
+                                    onClear={() => {
+                                        router.get(
+                                            "/contacts/tenants/locations",
+                                            {
+                                                view_mode: viewMode,
+                                            }
+                                        );
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
+                        )}
+
+                        {/* Advanced Filters Overlay - Mobile */}
+                        {showAdvancedFilters && (
+                            <div className="md:hidden fixed inset-0 z-50 flex">
+                                {/* Backdrop */}
+                                <div
+                                    className="absolute inset-0 bg-black bg-opacity-50"
+                                    onClick={() =>
+                                        setShowAdvancedFilters(false)
+                                    }
+                                />
+                                {/* Panel */}
+                                <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                                    <LocationsAdvancedFiltersPanel
+                                        isOpen={showAdvancedFilters}
+                                        onClose={() =>
+                                            setShowAdvancedFilters(false)
+                                        }
+                                        onClear={() => {
+                                            router.get(
+                                                "/contacts/tenants/locations",
+                                                {
+                                                    view_mode: viewMode,
+                                                }
+                                            );
+                                            setShowAdvancedFilters(false);
+                                        }}
+                                        onDone={() => {
+                                            setShowAdvancedFilters(false);
+                                        }}
+                                        activeFiltersCount={activeFiltersCount}
+                                    />
+                                </div>
                             </div>
                         )}
                     </div>

@@ -48,57 +48,66 @@ export default function LocationsListView<T extends { id: number | string }>({
     };
 
     return (
-        <div className="relative flex">
+        <div className="flex flex-1 min-h-0 overflow-hidden">
             {/* Main Content */}
             <div
-                className={`transition-all duration-300 ${
+                className={`flex flex-col transition-all duration-300 min-h-0 ${
                     showAdvancedFilters
-                        ? "w-[calc(100%-600px)]"
+                        ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
                         : "w-full"
                 }`}
             >
-                <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                    <ResizableTable
-                        columns={columns}
-                        data={data}
-                        storageKey={storageKey}
-                        renderCheckbox={renderCheckbox}
-                        renderActions={renderActions}
-                    />
+                <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
+                    {/* Table - Takes available space */}
+                    <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
+                        <ResizableTable
+                            columns={columns}
+                            data={data}
+                            storageKey={storageKey}
+                            className="h-full"
+                            renderCheckbox={renderCheckbox}
+                            renderActions={renderActions}
+                        />
+                    </div>
 
-                    {/* Pagination */}
-                    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-                        <div className="flex flex-1 justify-between sm:hidden">
-                            <button
-                                onClick={() => {
-                                    const url = addViewModeToUrl(
-                                        pagination.prev_page_url
-                                    );
-                                    if (url) {
-                                        router.get(url);
-                                    }
-                                }}
-                                disabled={!pagination.prev_page_url}
-                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                            >
-                                Previous
-                            </button>
-                            <button
-                                onClick={() => {
-                                    const url = addViewModeToUrl(
-                                        pagination.next_page_url
-                                    );
-                                    if (url) {
-                                        router.get(url);
-                                    }
-                                }}
-                                disabled={!pagination.next_page_url}
-                                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                            >
-                                Next
-                            </button>
-                        </div>
-                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    {/* Pagination - Fixed at bottom, always visible */}
+                    <div className="shrink-0 border-t border-gray-200 bg-white">
+                        <div className="mx-auto max-w-[1920px] w-full px-4 sm:px-6 lg:px-8">
+                            <div className="flex items-center justify-between bg-white py-2">
+                                {/* Mobile Pagination */}
+                                <div className="flex flex-1 justify-between sm:hidden">
+                                    <button
+                                        onClick={() => {
+                                            const url = addViewModeToUrl(
+                                                pagination.prev_page_url
+                                            );
+                                            if (url) {
+                                                router.get(url);
+                                            }
+                                        }}
+                                        disabled={!pagination.prev_page_url}
+                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            const url = addViewModeToUrl(
+                                                pagination.next_page_url
+                                            );
+                                            if (url) {
+                                                router.get(url);
+                                            }
+                                        }}
+                                        disabled={!pagination.next_page_url}
+                                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+
+                                {/* Desktop Pagination */}
+                                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                             <div>
                                 <p className="text-sm text-gray-700">
                                     Showing{" "}
@@ -212,16 +221,18 @@ export default function LocationsListView<T extends { id: number | string }>({
                                     >
                                         ›
                                     </button>
-                                </nav>
+                                        </nav>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Advanced Filters Sidebar */}
+            {/* Advanced Filters Sidebar - Desktop */}
             {showAdvancedFilters && (
-                <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
                     <LocationsAdvancedFiltersPanel
                         isOpen={showAdvancedFilters}
                         onClose={onCloseFilters}
@@ -229,6 +240,27 @@ export default function LocationsListView<T extends { id: number | string }>({
                         onDone={onDoneFilters}
                         activeFiltersCount={activeFiltersCount}
                     />
+                </div>
+            )}
+
+            {/* Advanced Filters Overlay - Mobile */}
+            {showAdvancedFilters && (
+                <div className="md:hidden fixed inset-0 z-50 flex">
+                    {/* Backdrop */}
+                    <div
+                        className="absolute inset-0 bg-black bg-opacity-50"
+                        onClick={onCloseFilters}
+                    />
+                    {/* Panel */}
+                    <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                        <LocationsAdvancedFiltersPanel
+                            isOpen={showAdvancedFilters}
+                            onClose={onCloseFilters}
+                            onClear={onClearFilters}
+                            onDone={onDoneFilters}
+                            activeFiltersCount={activeFiltersCount}
+                        />
+                    </div>
                 </div>
             )}
         </div>

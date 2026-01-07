@@ -7,6 +7,7 @@ import ResizableTable, {
     ResizableColumn,
 } from "@/Components/ResizableTable/ResizableTable";
 import OwnerFundsAdvancedFilter from "@/Components/Owner/OwnerFundsAdvancedFilter";
+import Pagination from "@/Components/Pagination";
 
 interface OwnerFund {
     id: number;
@@ -235,9 +236,9 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
     return (
         <AppLayout>
             <Head title="Owner Funds" />
-            <div className="min-h-screen bg-white">
+            <div className="flex flex-col h-screen bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
                 {/* Header with Tabs */}
-                <div className="border-b border-gray-200 bg-white">
+                <div className="border-b border-gray-200 bg-white shrink-0">
                     <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between py-4">
                             <div className="flex items-center space-x-8">
@@ -272,316 +273,194 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                 </div>
 
                 {/* Search and Filter Bar */}
-                <OwnerFundsFilter
-                    searchValue={searchValue}
-                    onSearchChange={setSearchValue}
-                    onSearch={handleSearch}
-                    onFiltersClick={() => {
-                        setShowAdvancedFilters((prev) => !prev);
-                    }}
-                    onSaveClick={() => {
-                        // Handle save click
-                    }}
-                    onExportClick={() => {
-                        // Handle export click
-                    }}
-                    onClearClick={() => {
-                        router.get("/contacts/owners/funds", {});
-                    }}
-                    activeFiltersCount={activeFiltersCount}
-                    status={
-                        Array.isArray(filters.status)
-                            ? filters.status
-                            : filters.status
-                            ? [filters.status]
-                            : []
-                    }
-                    onStatusChange={(values) => {
-                        const newFilters = { ...filters };
-                        if (values.length > 0) {
-                            newFilters.status = values;
-                        } else {
-                            delete newFilters.status;
+                <div className="shrink-0">
+                    <OwnerFundsFilter
+                        searchValue={searchValue}
+                        onSearchChange={setSearchValue}
+                        onSearch={handleSearch}
+                        onFiltersClick={() => {
+                            setShowAdvancedFilters((prev) => !prev);
+                        }}
+                        onSaveClick={() => {
+                            // Handle save click
+                        }}
+                        onExportClick={() => {
+                            // Handle export click
+                        }}
+                        onClearClick={() => {
+                            router.get("/contacts/owners/funds", {});
+                        }}
+                        activeFiltersCount={activeFiltersCount}
+                        status={
+                            Array.isArray(filters.status)
+                                ? filters.status
+                                : filters.status
+                                ? [filters.status]
+                                : []
                         }
-                        router.get(
-                            "/contacts/owners/funds",
-                            {
-                                search: searchValue || undefined,
-                                ...newFilters,
-                            },
-                            {
-                                preserveState: true,
-                                preserveScroll: true,
+                        onStatusChange={(values) => {
+                            const newFilters = { ...filters };
+                            if (values.length > 0) {
+                                newFilters.status = values;
+                            } else {
+                                delete newFilters.status;
                             }
-                        );
-                    }}
-                    propertyFocus={
-                        Array.isArray(filters.property_focus)
-                            ? filters.property_focus
-                            : filters.property_focus
-                            ? [filters.property_focus]
-                            : []
-                    }
-                    onPropertyFocusChange={(values) => {
-                        const newFilters = { ...filters };
-                        if (values.length > 0) {
-                            newFilters.property_focus = values;
-                        } else {
-                            delete newFilters.property_focus;
+                            router.get(
+                                "/contacts/owners/funds",
+                                {
+                                    search: searchValue || undefined,
+                                    ...newFilters,
+                                },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                }
+                            );
+                        }}
+                        propertyFocus={
+                            Array.isArray(filters.property_focus)
+                                ? filters.property_focus
+                                : filters.property_focus
+                                ? [filters.property_focus]
+                                : []
                         }
-                        router.get(
-                            "/contacts/owners/funds",
-                            {
-                                search: searchValue || undefined,
-                                ...newFilters,
-                            },
-                            {
-                                preserveState: true,
-                                preserveScroll: true,
+                        onPropertyFocusChange={(values) => {
+                            const newFilters = { ...filters };
+                            if (values.length > 0) {
+                                newFilters.property_focus = values;
+                            } else {
+                                delete newFilters.property_focus;
                             }
-                        );
-                    }}
-                    minDryPowder={filters.min_dry_powder || null}
-                    maxDryPowder={filters.max_dry_powder || null}
-                    onDryPowderChange={(min, max) => {
-                        const newFilters = { ...filters };
-                        if (min !== null && min !== undefined) {
-                            newFilters.min_dry_powder = min;
-                        } else {
-                            delete newFilters.min_dry_powder;
-                        }
-                        if (max !== null && max !== undefined) {
-                            newFilters.max_dry_powder = max;
-                        } else {
-                            delete newFilters.max_dry_powder;
-                        }
-                        router.get(
-                            "/contacts/owners/funds",
-                            {
-                                search: searchValue || undefined,
-                                ...newFilters,
-                            },
-                            {
-                                preserveState: true,
-                                preserveScroll: true,
+                            router.get(
+                                "/contacts/owners/funds",
+                                {
+                                    search: searchValue || undefined,
+                                    ...newFilters,
+                                },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                }
+                            );
+                        }}
+                        minDryPowder={filters.min_dry_powder || null}
+                        maxDryPowder={filters.max_dry_powder || null}
+                        onDryPowderChange={(min, max) => {
+                            const newFilters = { ...filters };
+                            if (min !== null && min !== undefined) {
+                                newFilters.min_dry_powder = min;
+                            } else {
+                                delete newFilters.min_dry_powder;
                             }
-                        );
-                    }}
-                    countryFocus={
-                        Array.isArray(filters.country_focus)
-                            ? filters.country_focus
-                            : filters.country_focus
-                            ? [filters.country_focus]
-                            : []
-                    }
-                    onCountryFocusChange={(values) => {
-                        const newFilters = { ...filters };
-                        if (values.length > 0) {
-                            newFilters.country_focus = values;
-                        } else {
-                            delete newFilters.country_focus;
-                        }
-                        router.get(
-                            "/contacts/owners/funds",
-                            {
-                                search: searchValue || undefined,
-                                ...newFilters,
-                            },
-                            {
-                                preserveState: true,
-                                preserveScroll: true,
+                            if (max !== null && max !== undefined) {
+                                newFilters.max_dry_powder = max;
+                            } else {
+                                delete newFilters.max_dry_powder;
                             }
-                        );
-                    }}
-                    strategy={
-                        Array.isArray(filters.strategy)
-                            ? filters.strategy
-                            : filters.strategy
-                            ? [filters.strategy]
-                            : []
-                    }
-                    onStrategyChange={(values) => {
-                        const newFilters = { ...filters };
-                        if (values.length > 0) {
-                            newFilters.strategy = values;
-                        } else {
-                            delete newFilters.strategy;
+                            router.get(
+                                "/contacts/owners/funds",
+                                {
+                                    search: searchValue || undefined,
+                                    ...newFilters,
+                                },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                }
+                            );
+                        }}
+                        countryFocus={
+                            Array.isArray(filters.country_focus)
+                                ? filters.country_focus
+                                : filters.country_focus
+                                ? [filters.country_focus]
+                                : []
                         }
-                        router.get(
-                            "/contacts/owners/funds",
-                            {
-                                search: searchValue || undefined,
-                                ...newFilters,
-                            },
-                            {
-                                preserveState: true,
-                                preserveScroll: true,
+                        onCountryFocusChange={(values) => {
+                            const newFilters = { ...filters };
+                            if (values.length > 0) {
+                                newFilters.country_focus = values;
+                            } else {
+                                delete newFilters.country_focus;
                             }
-                        );
-                    }}
-                />
+                            router.get(
+                                "/contacts/owners/funds",
+                                {
+                                    search: searchValue || undefined,
+                                    ...newFilters,
+                                },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                }
+                            );
+                        }}
+                        strategy={
+                            Array.isArray(filters.strategy)
+                                ? filters.strategy
+                                : filters.strategy
+                                ? [filters.strategy]
+                                : []
+                        }
+                        onStrategyChange={(values) => {
+                            const newFilters = { ...filters };
+                            if (values.length > 0) {
+                                newFilters.strategy = values;
+                            } else {
+                                delete newFilters.strategy;
+                            }
+                            router.get(
+                                "/contacts/owners/funds",
+                                {
+                                    search: searchValue || undefined,
+                                    ...newFilters,
+                                },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                }
+                            );
+                        }}
+                    />
+                </div>
 
                 {/* Table Container with Sidebar */}
-                <div className="relative flex">
+                <div className="flex flex-1 min-h-0 overflow-hidden">
                     {/* Main Content */}
                     <div
-                        className={`transition-all duration-300 ${
+                        className={`flex flex-col transition-all duration-300 min-h-0 ${
                             showAdvancedFilters
-                                ? "w-[calc(100%-600px)]"
+                                ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
                                 : "w-full"
                         }`}
                     >
-                        <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-4">
-                            <ResizableTable
-                                columns={columns}
-                                data={funds.data}
-                                storageKey="owner-funds-column-widths"
-                            />
+                        <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
+                            {/* Table - Takes available space */}
+                            <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
+                                <ResizableTable
+                                    columns={columns}
+                                    data={funds.data}
+                                    storageKey="owner-funds-column-widths"
+                                    className="h-full"
+                                />
+                            </div>
 
-                            {/* Pagination */}
-                            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-                                <div className="flex flex-1 justify-between sm:hidden">
-                                    <button
-                                        onClick={() => {
-                                            if (funds.prev_page_url) {
-                                                router.get(funds.prev_page_url);
-                                            }
-                                        }}
-                                        disabled={!funds.prev_page_url}
-                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            if (funds.next_page_url) {
-                                                router.get(funds.next_page_url);
-                                            }
-                                        }}
-                                        disabled={!funds.next_page_url}
-                                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                    >
-                                        Next
-                                    </button>
-                                </div>
-                                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                    <div>
-                                        <p className="text-sm text-gray-700">
-                                            Showing{" "}
-                                            <span className="font-medium">
-                                                {funds.from}
-                                            </span>{" "}
-                                            to{" "}
-                                            <span className="font-medium">
-                                                {funds.to}
-                                            </span>{" "}
-                                            of{" "}
-                                            <span className="font-medium">
-                                                {funds.total}
-                                            </span>{" "}
-                                            results
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <select
-                                            value={funds.per_page}
-                                            onChange={(e) => {
-                                                router.get(
-                                                    "/contacts/owners/funds",
-                                                    {
-                                                        ...filters,
-                                                        per_page:
-                                                            e.target.value,
-                                                        page: 1,
-                                                    }
-                                                );
-                                            }}
-                                            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                        >
-                                            <option value={10}>
-                                                Show 10 per page
-                                            </option>
-                                            <option value={20}>
-                                                Show 20 per page
-                                            </option>
-                                            <option value={50}>
-                                                Show 50 per page
-                                            </option>
-                                            <option value={100}>
-                                                Show 100 per page
-                                            </option>
-                                        </select>
-                                        <nav
-                                            className="flex items-center gap-1"
-                                            aria-label="Pagination"
-                                        >
-                                            <button
-                                                onClick={() => {
-                                                    if (funds.prev_page_url) {
-                                                        router.get(
-                                                            funds.prev_page_url
-                                                        );
-                                                    }
-                                                }}
-                                                disabled={!funds.prev_page_url}
-                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                                            >
-                                                ‹
-                                            </button>
-                                            {funds.links
-                                                .slice(1, -1)
-                                                .map((link, index) => {
-                                                    if (link.url === null) {
-                                                        return (
-                                                            <span
-                                                                key={index}
-                                                                className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
-                                                            >
-                                                                {link.label}
-                                                            </span>
-                                                        );
-                                                    }
-                                                    return (
-                                                        <button
-                                                            key={index}
-                                                            onClick={() =>
-                                                                router.get(
-                                                                    link.url!
-                                                                )
-                                                            }
-                                                            className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
-                                                                link.active
-                                                                    ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
-                                                                    : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                                                            }`}
-                                                        >
-                                                            {link.label}
-                                                        </button>
-                                                    );
-                                                })}
-                                            <button
-                                                onClick={() => {
-                                                    if (funds.next_page_url) {
-                                                        router.get(
-                                                            funds.next_page_url
-                                                        );
-                                                    }
-                                                }}
-                                                disabled={!funds.next_page_url}
-                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                                            >
-                                                ›
-                                            </button>
-                                        </nav>
-                                    </div>
+                            {/* Pagination - Fixed at bottom, always visible */}
+                            <div className="shrink-0 border-t border-gray-200 bg-white">
+                                <div className="mx-auto max-w-[1920px] w-full px-4 sm:px-6 lg:px-8">
+                                    <Pagination
+                                        data={funds}
+                                        filters={filters}
+                                        baseUrl="/contacts/owners/funds"
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Advanced Filters Sidebar */}
+                    {/* Advanced Filters Sidebar - Desktop */}
                     {showAdvancedFilters && (
-                        <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
+                        <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
                             <OwnerFundsAdvancedFilter
                                 isOpen={showAdvancedFilters}
                                 onClose={() => setShowAdvancedFilters(false)}
@@ -594,6 +473,34 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                                 }}
                                 activeFiltersCount={activeFiltersCount}
                             />
+                        </div>
+                    )}
+
+                    {/* Advanced Filters Overlay - Mobile */}
+                    {showAdvancedFilters && (
+                        <div className="md:hidden fixed inset-0 z-50 flex">
+                            {/* Backdrop */}
+                            <div
+                                className="absolute inset-0 bg-black bg-opacity-50"
+                                onClick={() => setShowAdvancedFilters(false)}
+                            />
+                            {/* Panel */}
+                            <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                                <OwnerFundsAdvancedFilter
+                                    isOpen={showAdvancedFilters}
+                                    onClose={() =>
+                                        setShowAdvancedFilters(false)
+                                    }
+                                    onClear={() => {
+                                        router.get("/contacts/owners/funds");
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    onDone={() => {
+                                        setShowAdvancedFilters(false);
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            </div>
                         </div>
                     )}
                 </div>

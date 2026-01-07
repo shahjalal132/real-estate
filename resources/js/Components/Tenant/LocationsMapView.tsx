@@ -9,7 +9,6 @@ import {
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
-import LocationsAdvancedFiltersPanel from "./LocationsAdvancedFiltersPanel";
 
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -27,9 +26,6 @@ interface LocationsMapViewProps {
     selectedLocationId?: number | null;
     onLocationClick?: (location: TennentLocation) => void;
     showAdvancedFilters?: boolean;
-    onCloseFilters?: () => void;
-    onClearFilters?: () => void;
-    activeFiltersCount?: number;
 }
 
 // Helper to get coordinates from address (placeholder - would use geocoding in production)
@@ -108,9 +104,6 @@ export default function LocationsMapView({
     selectedLocationId,
     onLocationClick,
     showAdvancedFilters = false,
-    onCloseFilters,
-    onClearFilters,
-    activeFiltersCount = 0,
 }: LocationsMapViewProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState<
         Record<number, number>
@@ -176,7 +169,7 @@ export default function LocationsMapView({
     };
 
     return (
-        <div className="flex h-[calc(100vh-200px)]">
+        <div className="flex h-full">
             {/* Map Section - Left */}
             <div className="flex-1 relative">
                 <MapContainer
@@ -226,18 +219,8 @@ export default function LocationsMapView({
                 <MapControls />
             </div>
 
-            {/* Property List Section or Advanced Filters - Right */}
-            {showAdvancedFilters ? (
-                <div className="w-[600px] bg-white border-l border-gray-200 overflow-hidden flex flex-col">
-                    <LocationsAdvancedFiltersPanel
-                        isOpen={showAdvancedFilters}
-                        onClose={onCloseFilters || (() => {})}
-                        onClear={onClearFilters || (() => {})}
-                        onDone={onCloseFilters || (() => {})}
-                        activeFiltersCount={activeFiltersCount || 0}
-                    />
-                </div>
-            ) : (
+            {/* Property List Section - Right (only when filters are not shown) */}
+            {!showAdvancedFilters && (
                 <div className="w-96 bg-white border-l border-gray-200 overflow-y-auto">
                     <div className="divide-y divide-gray-200">
                         {locations.map((location) => {
