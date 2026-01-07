@@ -1,0 +1,360 @@
+import {
+    Search,
+    Filter,
+    ChevronDown,
+    Download,
+    X,
+    Bookmark,
+    Trash2,
+    Plus,
+} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import StatusSelector from "./StatusSelector";
+import PropertyFocusSelector from "./PropertyFocusSelector";
+import StrategySelector from "./StrategySelector";
+import CountryFocusSelector from "./CountryFocusSelector";
+import LocationMinMaxSelector from "../LocationMinMaxSelector";
+
+interface OwnerFundsFilterProps {
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
+    onSearch?: () => void;
+    onFiltersClick?: () => void;
+    onSaveClick?: () => void;
+    onExportClick?: () => void;
+    onClearClick?: () => void;
+    activeFiltersCount?: number;
+    // Filter values
+    status?: string[];
+    onStatusChange?: (values: string[]) => void;
+    propertyFocus?: string[];
+    onPropertyFocusChange?: (values: string[]) => void;
+    minDryPowder?: number | null;
+    maxDryPowder?: number | null;
+    onDryPowderChange?: (min: number | null, max: number | null) => void;
+    countryFocus?: string[];
+    onCountryFocusChange?: (values: string[]) => void;
+    strategy?: string[];
+    onStrategyChange?: (values: string[]) => void;
+}
+
+export default function OwnerFundsFilter({
+    searchValue = "",
+    onSearchChange,
+    onSearch,
+    onFiltersClick,
+    onSaveClick,
+    onExportClick,
+    onClearClick,
+    activeFiltersCount = 0,
+    status = [],
+    onStatusChange,
+    propertyFocus = [],
+    onPropertyFocusChange,
+    minDryPowder = null,
+    maxDryPowder = null,
+    onDryPowderChange,
+    countryFocus = [],
+    onCountryFocusChange,
+    strategy = [],
+    onStrategyChange,
+}: OwnerFundsFilterProps) {
+    const [localSearchValue, setLocalSearchValue] = useState(searchValue);
+    const [showSaveDropdown, setShowSaveDropdown] = useState(false);
+    const saveRef = useRef<HTMLDivElement>(null);
+
+    // Dummy saved searches data - will be replaced with actual data later
+    const [savedSearches] = useState([
+        {
+            id: 1,
+            name: "Active Funds - Office Focus",
+            createdAt: "2025-01-10",
+        },
+        {
+            id: 2,
+            name: "Large Funds ($500M+ Dry Powder)",
+            createdAt: "2025-01-08",
+        },
+        {
+            id: 3,
+            name: "Value Add Strategy Funds",
+            createdAt: "2025-01-05",
+        },
+    ]);
+
+    // Update local search when prop changes
+    useEffect(() => {
+        setLocalSearchValue(searchValue);
+    }, [searchValue]);
+
+    // Debounced search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (onSearchChange && localSearchValue !== searchValue) {
+                onSearchChange(localSearchValue);
+                onSearch?.();
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [localSearchValue, searchValue, onSearchChange, onSearch]);
+
+    // Close save dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                saveRef.current &&
+                !saveRef.current.contains(event.target as Node)
+            ) {
+                setShowSaveDropdown(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            onSearchChange?.(localSearchValue);
+            onSearch?.();
+        }
+    };
+
+    const handleClearSearch = () => {
+        setLocalSearchValue("");
+        onSearchChange?.("");
+        onSearch?.();
+    };
+
+    const hasActiveFilters =
+        activeFiltersCount > 0 ||
+        (status && status.length > 0) ||
+        (propertyFocus && propertyFocus.length > 0) ||
+        minDryPowder !== null ||
+        maxDryPowder !== null ||
+        (countryFocus && countryFocus.length > 0) ||
+        (strategy && strategy.length > 0) ||
+        localSearchValue;
+
+    return (
+        <div className="border-b border-gray-200 bg-white">
+            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between gap-4 py-4">
+                    {/* Left Side - Filters */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                        {/* Fund or Owner Name Search */}
+                        <div className="relative min-w-[200px] shrink-0">
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            <input
+                                type="text"
+                                value={localSearchValue}
+                                onChange={(e) =>
+                                    setLocalSearchValue(e.target.value)
+                                }
+                                onKeyPress={handleKeyPress}
+                                placeholder="Fund or Owner Name"
+                                className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                            {localSearchValue && (
+                                <button
+                                    onClick={handleClearSearch}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Status Selector */}
+                        <StatusSelector
+                            selectedStatuses={status || []}
+                            onChange={(values) => onStatusChange?.(values)}
+                        />
+
+                        {/* Property Focus Selector */}
+                        <PropertyFocusSelector
+                            selectedTypes={propertyFocus || []}
+                            onChange={(values) =>
+                                onPropertyFocusChange?.(values)
+                            }
+                        />
+
+                        {/* Dry Powder Min/Max Selector */}
+                        <LocationMinMaxSelector
+                            label="Dry Powder"
+                            minValue={minDryPowder}
+                            maxValue={maxDryPowder}
+                            onChange={(min, max) =>
+                                onDryPowderChange?.(min, max)
+                            }
+                            minPlaceholder="Min $"
+                            maxPlaceholder="Max $"
+                        />
+
+                        {/* Country Focus Selector */}
+                        <CountryFocusSelector
+                            selectedCountries={countryFocus || []}
+                            onChange={(values) =>
+                                onCountryFocusChange?.(values)
+                            }
+                        />
+
+                        {/* Strategy Selector */}
+                        <StrategySelector
+                            selectedStrategies={strategy || []}
+                            onChange={(values) => onStrategyChange?.(values)}
+                        />
+                    </div>
+
+                    {/* Right Side - Action Buttons */}
+                    <div className="flex items-center gap-2 shrink-0">
+                        {/* Clear Button */}
+                        {hasActiveFilters && (
+                            <button
+                                onClick={onClearClick}
+                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            >
+                                Clear
+                            </button>
+                        )}
+
+                        {/* Filters Button with Badge */}
+                        <button
+                            onClick={onFiltersClick}
+                            className="relative flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                        >
+                            <Filter className="h-4 w-4" />
+                            <span>Filters</span>
+                            {activeFiltersCount > 0 && (
+                                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-medium text-white">
+                                    {activeFiltersCount
+                                        .toString()
+                                        .padStart(2, "0")}
+                                </span>
+                            )}
+                        </button>
+
+                        {/* Save Button with Dropdown */}
+                        <div className="relative" ref={saveRef}>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowSaveDropdown(!showSaveDropdown);
+                                    onSaveClick?.();
+                                }}
+                                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                            >
+                                <span>Save</span>
+                                <ChevronDown
+                                    className={`h-4 w-4 text-gray-400 transition-transform ${
+                                        showSaveDropdown ? "rotate-180" : ""
+                                    }`}
+                                />
+                            </button>
+                            {showSaveDropdown && (
+                                <div className="absolute right-0 z-50 mt-1 w-72 rounded-md border border-gray-200 bg-white shadow-lg max-h-[400px] overflow-y-auto">
+                                    <div className="py-1">
+                                        {/* Save New Search Option */}
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                // TODO: Implement save new search functionality
+                                                setShowSaveDropdown(false);
+                                            }}
+                                            className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                                        >
+                                            <Plus className="h-4 w-4" />
+                                            <span>Save New Search</span>
+                                        </button>
+
+                                        {/* Saved Searches List */}
+                                        {savedSearches.length > 0 && (
+                                            <>
+                                                <div className="my-1 border-t border-gray-200"></div>
+                                                <div className="px-4 py-2">
+                                                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                                        Saved Searches
+                                                    </p>
+                                                </div>
+                                                {savedSearches.map((search) => (
+                                                    <div
+                                                        key={search.id}
+                                                        className="group flex items-center justify-between px-4 py-2 hover:bg-gray-50"
+                                                    >
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                // TODO: Implement load saved search functionality
+                                                                setShowSaveDropdown(
+                                                                    false
+                                                                );
+                                                            }}
+                                                            className="flex flex-1 items-center gap-2 text-left text-sm text-gray-700 hover:text-blue-600 transition-colors"
+                                                        >
+                                                            <Bookmark className="h-4 w-4 text-gray-400 group-hover:text-blue-500 shrink-0" />
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="font-medium truncate">
+                                                                    {
+                                                                        search.name
+                                                                    }
+                                                                </div>
+                                                                <div className="text-xs text-gray-500">
+                                                                    {new Date(
+                                                                        search.createdAt
+                                                                    ).toLocaleDateString(
+                                                                        "en-US",
+                                                                        {
+                                                                            month: "short",
+                                                                            day: "numeric",
+                                                                            year: "numeric",
+                                                                        }
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                // TODO: Implement delete saved search functionality
+                                                            }}
+                                                            className="ml-2 rounded p-1 text-gray-400 opacity-0 hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 transition-all shrink-0"
+                                                            title="Delete saved search"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        )}
+
+                                        {savedSearches.length === 0 && (
+                                            <div className="px-4 py-8 text-center text-sm text-gray-500">
+                                                <Bookmark className="mx-auto mb-2 h-8 w-8 text-gray-300" />
+                                                <p>No saved searches yet</p>
+                                                <p className="mt-1 text-xs">
+                                                    Save your current filters
+                                                    for quick access
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Export Button */}
+                        <button
+                            onClick={onExportClick}
+                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                        >
+                            <Download className="h-4 w-4" />
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
