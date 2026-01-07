@@ -6,7 +6,7 @@ import OwnerFundsFilter from "@/Components/Owner/OwnerFundsFilter";
 import ResizableTable, {
     ResizableColumn,
 } from "@/Components/ResizableTable/ResizableTable";
-import AdvancedFiltersPanel from "@/Components/Owner/AdvancedFiltersPanel";
+import OwnerFundsAdvancedFilter from "@/Components/Owner/OwnerFundsAdvancedFilter";
 
 interface OwnerFund {
     id: number;
@@ -582,7 +582,7 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                     {/* Advanced Filters Sidebar */}
                     {showAdvancedFilters && (
                         <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
-                            <AdvancedFiltersPanel
+                            <OwnerFundsAdvancedFilter
                                 isOpen={showAdvancedFilters}
                                 onClose={() => setShowAdvancedFilters(false)}
                                 onClear={() => {
