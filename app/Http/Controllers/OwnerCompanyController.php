@@ -113,19 +113,38 @@ class OwnerCompanyController extends Controller
             $query->where('company', 'like', '%' . $request->company . '%');
         }
 
-        // Status filter
+        // Status filter (supports single value or array)
         if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
+            $statuses = $request->status;
+            if (is_array($statuses)) {
+                $query->whereIn('status', $statuses);
+            } else {
+                $query->where('status', $statuses);
+            }
         }
 
-        // Property Focus filter
+        // Property Focus filter (supports single value or array)
         if ($request->has('property_focus') && $request->property_focus) {
-            $query->where('property_focus', $request->property_focus);
+            $propertyFocuses = $request->property_focus;
+            if (is_array($propertyFocuses)) {
+                $query->whereIn('property_focus', $propertyFocuses);
+            } else {
+                $query->where('property_focus', $propertyFocuses);
+            }
         }
 
-        // Country Focus filter
+        // Country Focus filter (supports single value or array)
         if ($request->has('country_focus') && $request->country_focus) {
-            $query->where('country_focus', 'like', '%' . $request->country_focus . '%');
+            $countryFocuses = $request->country_focus;
+            if (is_array($countryFocuses)) {
+                $query->where(function ($q) use ($countryFocuses) {
+                    foreach ($countryFocuses as $country) {
+                        $q->orWhere('country_focus', 'like', '%' . $country . '%');
+                    }
+                });
+            } else {
+                $query->where('country_focus', 'like', '%' . $countryFocuses . '%');
+            }
         }
 
         // Region Focus filter
@@ -133,9 +152,22 @@ class OwnerCompanyController extends Controller
             $query->where('region_focus', 'like', '%' . $request->region_focus . '%');
         }
 
-        // Strategy filter
+        // Strategy filter (supports single value or array)
         if ($request->has('strategy') && $request->strategy) {
-            $query->where('strategy', 'like', '%' . $request->strategy . '%');
+            $strategies = $request->strategy;
+            if (is_array($strategies)) {
+                $query->whereIn('strategy', $strategies);
+            } else {
+                $query->where('strategy', 'like', '%' . $strategies . '%');
+            }
+        }
+
+        // Dry Powder filter (min and max)
+        if ($request->has('min_dry_powder')) {
+            $query->where('dry_powder', '>=', $request->min_dry_powder);
+        }
+        if ($request->has('max_dry_powder')) {
+            $query->where('dry_powder', '<=', $request->max_dry_powder);
         }
 
         // Sorting
@@ -154,7 +186,7 @@ class OwnerCompanyController extends Controller
 
         return Inertia::render('Contacts/Owners/Funds', [
             'funds' => $funds,
-            'filters' => $request->only(['search', 'min_properties', 'min_portfolio_sf', 'max_portfolio_sf', 'company', 'status', 'property_focus', 'country_focus', 'region_focus', 'strategy']),
+            'filters' => $request->only(['search', 'min_properties', 'min_portfolio_sf', 'max_portfolio_sf', 'company', 'status', 'property_focus', 'country_focus', 'region_focus', 'strategy', 'min_dry_powder', 'max_dry_powder']),
             'sort' => [
                 'by' => $sortBy,
                 'dir' => $sortDir,

@@ -2,11 +2,11 @@ import { useState, useCallback } from "react";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
 import { PaginatedData } from "@/types";
-import OwnerCompaniesFilterBar from "@/Components/Owner/OwnerCompaniesFilterBar";
+import OwnerFundsFilter from "@/Components/Owner/OwnerFundsFilter";
 import ResizableTable, {
     ResizableColumn,
 } from "@/Components/ResizableTable/ResizableTable";
-import AdvancedFiltersPanel from "@/Components/Owner/AdvancedFiltersPanel";
+import OwnerFundsAdvancedFilter from "@/Components/Owner/OwnerFundsAdvancedFilter";
 
 interface OwnerFund {
     id: number;
@@ -42,11 +42,13 @@ interface PageProps {
         min_portfolio_sf?: number;
         max_portfolio_sf?: number;
         company?: string;
-        status?: string;
-        property_focus?: string;
-        country_focus?: string;
+        status?: string | string[];
+        property_focus?: string | string[];
+        country_focus?: string | string[];
         region_focus?: string;
-        strategy?: string;
+        strategy?: string | string[];
+        min_dry_powder?: number;
+        max_dry_powder?: number;
     };
     sort: {
         by: string;
@@ -270,7 +272,7 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                 </div>
 
                 {/* Search and Filter Bar */}
-                <OwnerCompaniesFilterBar
+                <OwnerFundsFilter
                     searchValue={searchValue}
                     onSearchChange={setSearchValue}
                     onSearch={handleSearch}
@@ -287,59 +289,135 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                         router.get("/contacts/owners/funds", {});
                     }}
                     activeFiltersCount={activeFiltersCount}
-                    ownerType={filters.status || ""}
-                    onOwnerTypeChange={(value) => {
-                        router.get("/contacts/owners/funds", {
-                            search: searchValue || undefined,
-                            status: value || undefined,
-                            ...filters,
-                        });
-                    }}
-                    portfolioSize={
-                        filters.min_portfolio_sf
-                            ? filters.min_portfolio_sf >= 1000000
-                                ? "1m+"
-                                : filters.min_portfolio_sf >= 500000
-                                ? "500k-1m"
-                                : filters.min_portfolio_sf >= 100000
-                                ? "100k-500k"
-                                : "0-100k"
-                            : ""
+                    status={
+                        Array.isArray(filters.status)
+                            ? filters.status
+                            : filters.status
+                            ? [filters.status]
+                            : []
                     }
-                    onPortfolioSizeChange={(value) => {
-                        const portfolioMap: Record<string, number> = {
-                            "0-100k": 0,
-                            "100k-500k": 100000,
-                            "500k-1m": 500000,
-                            "1m+": 1000000,
-                        };
-                        router.get("/contacts/owners/funds", {
-                            search: searchValue || undefined,
-                            min_portfolio_sf: value
-                                ? portfolioMap[value]
-                                : undefined,
-                            ...filters,
-                        });
+                    onStatusChange={(values) => {
+                        const newFilters = { ...filters };
+                        if (values.length > 0) {
+                            newFilters.status = values;
+                        } else {
+                            delete newFilters.status;
+                        }
+                        router.get(
+                            "/contacts/owners/funds",
+                            {
+                                search: searchValue || undefined,
+                                ...newFilters,
+                            },
+                            {
+                                preserveState: true,
+                                preserveScroll: true,
+                            }
+                        );
                     }}
-                    propertiesOwned={
-                        filters.min_properties
-                            ? filters.min_properties.toString()
-                            : ""
+                    propertyFocus={
+                        Array.isArray(filters.property_focus)
+                            ? filters.property_focus
+                            : filters.property_focus
+                            ? [filters.property_focus]
+                            : []
                     }
-                    onPropertiesOwnedChange={(value) => {
-                        router.get("/contacts/owners/funds", {
-                            search: searchValue || undefined,
-                            min_properties: value ? parseInt(value) : undefined,
-                            ...filters,
-                        });
+                    onPropertyFocusChange={(values) => {
+                        const newFilters = { ...filters };
+                        if (values.length > 0) {
+                            newFilters.property_focus = values;
+                        } else {
+                            delete newFilters.property_focus;
+                        }
+                        router.get(
+                            "/contacts/owners/funds",
+                            {
+                                search: searchValue || undefined,
+                                ...newFilters,
+                            },
+                            {
+                                preserveState: true,
+                                preserveScroll: true,
+                            }
+                        );
                     }}
-                    mainPropertyType={filters.property_focus || ""}
-                    onMainPropertyTypeChange={(value) => {
-                        router.get("/contacts/owners/funds", {
-                            search: searchValue || undefined,
-                            property_focus: value || undefined,
-                            ...filters,
-                        });
+                    minDryPowder={filters.min_dry_powder || null}
+                    maxDryPowder={filters.max_dry_powder || null}
+                    onDryPowderChange={(min, max) => {
+                        const newFilters = { ...filters };
+                        if (min !== null && min !== undefined) {
+                            newFilters.min_dry_powder = min;
+                        } else {
+                            delete newFilters.min_dry_powder;
+                        }
+                        if (max !== null && max !== undefined) {
+                            newFilters.max_dry_powder = max;
+                        } else {
+                            delete newFilters.max_dry_powder;
+                        }
+                        router.get(
+                            "/contacts/owners/funds",
+                            {
+                                search: searchValue || undefined,
+                                ...newFilters,
+                            },
+                            {
+                                preserveState: true,
+                                preserveScroll: true,
+                            }
+                        );
+                    }}
+                    countryFocus={
+                        Array.isArray(filters.country_focus)
+                            ? filters.country_focus
+                            : filters.country_focus
+                            ? [filters.country_focus]
+                            : []
+                    }
+                    onCountryFocusChange={(values) => {
+                        const newFilters = { ...filters };
+                        if (values.length > 0) {
+                            newFilters.country_focus = values;
+                        } else {
+                            delete newFilters.country_focus;
+                        }
+                        router.get(
+                            "/contacts/owners/funds",
+                            {
+                                search: searchValue || undefined,
+                                ...newFilters,
+                            },
+                            {
+                                preserveState: true,
+                                preserveScroll: true,
+                            }
+                        );
+                    }}
+                    strategy={
+                        Array.isArray(filters.strategy)
+                            ? filters.strategy
+                            : filters.strategy
+                            ? [filters.strategy]
+                            : []
+                    }
+                    onStrategyChange={(values) => {
+                        const newFilters = { ...filters };
+                        if (values.length > 0) {
+                            newFilters.strategy = values;
+                        } else {
+                            delete newFilters.strategy;
+                        }
+                        router.get(
+                            "/contacts/owners/funds",
+                            {
+                                search: searchValue || undefined,
+                                ...newFilters,
+                            },
+                            {
+                                preserveState: true,
+                                preserveScroll: true,
+                            }
+                        );
                     }}
                 />
 
@@ -504,7 +582,7 @@ export default function OwnerFunds({ funds, filters }: PageProps) {
                     {/* Advanced Filters Sidebar */}
                     {showAdvancedFilters && (
                         <div className="w-[600px] border-l border-gray-200 bg-white shrink-0 flex flex-col">
-                            <AdvancedFiltersPanel
+                            <OwnerFundsAdvancedFilter
                                 isOpen={showAdvancedFilters}
                                 onClose={() => setShowAdvancedFilters(false)}
                                 onClear={() => {
