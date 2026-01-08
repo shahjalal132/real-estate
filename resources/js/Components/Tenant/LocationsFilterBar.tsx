@@ -1,17 +1,20 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
     Search,
     Filter,
-    ChevronDown,
     Map,
     List,
     Grid3x3,
     X,
     Bookmark,
     Trash2,
-    Check,
     Plus,
+    ChevronDown,
 } from "lucide-react";
+import SizeOccupiedSelector from "./SizeOccupiedSelector";
+import SpaceUseSelector from "./SpaceUseSelector";
+import TenantSortSelector from "./TenantSortSelector";
+import OccupancySelector from "./OccupancySelector";
 
 interface LocationsFilterBarProps {
     addressSearch?: string;
@@ -27,46 +30,18 @@ interface LocationsFilterBarProps {
     viewMode?: "map" | "list" | "gallery";
     onViewModeChange?: (mode: "map" | "list" | "gallery") => void;
     activeFiltersCount?: number;
-    spaceUse?: string;
-    onSpaceUseChange?: (value: string | null) => void;
-    minSfOccupied?: number;
-    maxSfOccupied?: number;
+    spaceUse?: string[];
+    onSpaceUseChange?: (value: string[]) => void;
+    minSfOccupied?: number | null;
+    maxSfOccupied?: number | null;
     onSfOccupiedChange?: (min: number | null, max: number | null) => void;
-    occupancy?: string;
-    onOccupancyChange?: (value: string | null) => void;
+    occupancy?: string[];
+    onOccupancyChange?: (value: string[]) => void;
+    sortBy?: string;
+    sortDir?: "asc" | "desc";
+    onSortChange?: (sortBy: string, sortDir: "asc" | "desc") => void;
+    locationCount?: number;
 }
-
-const SPACE_USE_OPTIONS = [
-    { label: "All Space Uses", value: null },
-    { label: "Retail", value: "Retail" },
-    { label: "Office", value: "Office" },
-    { label: "Industrial", value: "Industrial" },
-    { label: "Warehouse", value: "Warehouse" },
-    { label: "Mixed Use", value: "Mixed Use" },
-    { label: "Restaurant", value: "Restaurant" },
-    { label: "Medical", value: "Medical" },
-    { label: "Auto", value: "Auto" },
-    { label: "Other", value: "Other" },
-];
-
-const SF_OCCUPIED_OPTIONS = [
-    { label: "All Sizes", value: null, min: null, max: null },
-    { label: "0 - 1K SF", value: "0-1k", min: 0, max: 1000 },
-    { label: "1K - 5K SF", value: "1k-5k", min: 1000, max: 5000 },
-    { label: "5K - 10K SF", value: "5k-10k", min: 5000, max: 10000 },
-    { label: "10K - 25K SF", value: "10k-25k", min: 10000, max: 25000 },
-    { label: "25K - 50K SF", value: "25k-50k", min: 25000, max: 50000 },
-    { label: "50K - 100K SF", value: "50k-100k", min: 50000, max: 100000 },
-    { label: "100K+ SF", value: "100k+", min: 100000, max: null },
-];
-
-const OCCUPANCY_OPTIONS = [
-    { label: "All Occupancies", value: null },
-    { label: "0-25%", value: "0-25" },
-    { label: "26-50%", value: "26-50" },
-    { label: "51-75%", value: "51-75" },
-    { label: "76-100%", value: "76-100" },
-];
 
 export default function LocationsFilterBar({
     addressSearch = "",
@@ -82,26 +57,21 @@ export default function LocationsFilterBar({
     viewMode = "map",
     onViewModeChange,
     activeFiltersCount = 0,
-    spaceUse,
+    spaceUse = [],
     onSpaceUseChange,
     minSfOccupied,
     maxSfOccupied,
     onSfOccupiedChange,
     occupancy,
     onOccupancyChange,
+    sortBy,
+    sortDir,
+    onSortChange,
+    locationCount = 0,
 }: LocationsFilterBarProps) {
     const [localAddressSearch, setLocalAddressSearch] = useState(addressSearch);
     const [localTenantSearch, setLocalTenantSearch] = useState(tenantSearch);
-    const [showSpaceUseDropdown, setShowSpaceUseDropdown] = useState(false);
-    const [showSfDropdown, setShowSfDropdown] = useState(false);
-    const [showOccupancyDropdown, setShowOccupancyDropdown] = useState(false);
-    const [showSortDropdown, setShowSortDropdown] = useState(false);
     const [showSaveDropdown, setShowSaveDropdown] = useState(false);
-    const spaceUseRef = useRef<HTMLDivElement>(null);
-    const sfRef = useRef<HTMLDivElement>(null);
-    const occupancyRef = useRef<HTMLDivElement>(null);
-    const sortRef = useRef<HTMLDivElement>(null);
-    const saveRef = useRef<HTMLDivElement>(null);
 
     // Dummy saved searches data - will be replaced with actual data later
     const [savedSearches] = useState([
@@ -121,9 +91,6 @@ export default function LocationsFilterBar({
             createdAt: "2025-01-05",
         },
     ]);
-
-    // Sort options
-    const [selectedSort, setSelectedSort] = useState<string | null>(null);
 
     // Update local search when props change
     useEffect(() => {
@@ -156,36 +123,21 @@ export default function LocationsFilterBar({
         return () => clearTimeout(timer);
     }, [localTenantSearch, tenantSearch, onTenantSearchChange]);
 
-    // Close dropdowns when clicking outside
+    // Close save dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node;
+            const saveButton = document.querySelector(
+                '[data-save-dropdown-button]'
+            );
+            const saveDropdown = document.querySelector(
+                '[data-save-dropdown]'
+            );
             if (
-                spaceUseRef.current &&
-                !spaceUseRef.current.contains(event.target as Node)
-            ) {
-                setShowSpaceUseDropdown(false);
-            }
-            if (
-                sfRef.current &&
-                !sfRef.current.contains(event.target as Node)
-            ) {
-                setShowSfDropdown(false);
-            }
-            if (
-                occupancyRef.current &&
-                !occupancyRef.current.contains(event.target as Node)
-            ) {
-                setShowOccupancyDropdown(false);
-            }
-            if (
-                sortRef.current &&
-                !sortRef.current.contains(event.target as Node)
-            ) {
-                setShowSortDropdown(false);
-            }
-            if (
-                saveRef.current &&
-                !saveRef.current.contains(event.target as Node)
+                saveButton &&
+                saveDropdown &&
+                !saveButton.contains(target) &&
+                !saveDropdown.contains(target)
             ) {
                 setShowSaveDropdown(false);
             }
@@ -220,29 +172,12 @@ export default function LocationsFilterBar({
         onTenantSearchChange?.("");
     };
 
-    const getSpaceUseLabel = () => {
-        const option = SPACE_USE_OPTIONS.find((opt) => opt.value === spaceUse);
-        return option?.label || "Space Use";
-    };
-
-    const getSfLabel = () => {
-        const option = SF_OCCUPIED_OPTIONS.find(
-            (opt) => opt.min === minSfOccupied && opt.max === maxSfOccupied
-        );
-        return option?.label || "Size Occupied";
-    };
-
-    const getOccupancyLabel = () => {
-        const option = OCCUPANCY_OPTIONS.find((opt) => opt.value === occupancy);
-        return option?.label || "Occupancy";
-    };
-
     const hasActiveFilters =
         activeFiltersCount > 0 ||
-        minSfOccupied !== null ||
-        maxSfOccupied !== null ||
-        spaceUse !== null ||
-        occupancy !== null ||
+        (minSfOccupied !== null && minSfOccupied !== undefined) ||
+        (maxSfOccupied !== null && maxSfOccupied !== undefined) ||
+        (spaceUse && spaceUse.length > 0) ||
+        (occupancy && occupancy.length > 0) ||
         localAddressSearch ||
         localTenantSearch;
 
@@ -298,164 +233,44 @@ export default function LocationsFilterBar({
                             )}
                         </div>
 
-                        {/* Space Use Dropdown */}
-                        <div className="relative shrink-0" ref={spaceUseRef}>
-                            <button
-                                onClick={() =>
-                                    setShowSpaceUseDropdown(
-                                        !showSpaceUseDropdown
-                                    )
-                                }
-                                className={`flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    spaceUse !== null && spaceUse !== ""
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="whitespace-nowrap">
-                                    {getSpaceUseLabel()}
-                                </span>
-                                <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
-                                        showSpaceUseDropdown ? "rotate-180" : ""
-                                    }`}
-                                />
-                            </button>
-                            {showSpaceUseDropdown && (
-                                <div className="absolute left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg max-h-60 overflow-y-auto">
-                                    <div className="py-1">
-                                        {SPACE_USE_OPTIONS.map((option) => (
-                                            <button
-                                                key={option.value ?? "all"}
-                                                onClick={() => {
-                                                    onSpaceUseChange?.(
-                                                        option.value
-                                                    );
-                                                    setShowSpaceUseDropdown(
-                                                        false
-                                                    );
-                                                }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                    spaceUse === option.value
-                                                        ? "bg-blue-50 text-blue-700 font-medium"
-                                                        : "text-gray-700"
-                                                }`}
-                                            >
-                                                {option.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* Space Use Selector */}
+                        <SpaceUseSelector
+                            spaceUse={spaceUse}
+                            onSpaceUseChange={(value) =>
+                                onSpaceUseChange?.(value)
+                            }
+                        />
 
-                        {/* Size Occupied Dropdown */}
-                        <div className="relative shrink-0" ref={sfRef}>
-                            <button
-                                onClick={() =>
-                                    setShowSfDropdown(!showSfDropdown)
-                                }
-                                className={`flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    minSfOccupied !== null ||
-                                    maxSfOccupied !== null
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="whitespace-nowrap">
-                                    {getSfLabel()}
-                                </span>
-                                <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
-                                        showSfDropdown ? "rotate-180" : ""
-                                    }`}
-                                />
-                            </button>
-                            {showSfDropdown && (
-                                <div className="absolute left-0 z-50 mt-1 w-52 rounded-md border border-gray-200 bg-white shadow-lg max-h-60 overflow-y-auto">
-                                    <div className="py-1">
-                                        {SF_OCCUPIED_OPTIONS.map((option) => (
-                                            <button
-                                                key={option.value ?? "all"}
-                                                onClick={() => {
-                                                    onSfOccupiedChange?.(
-                                                        option.min ?? null,
-                                                        option.max ?? null
-                                                    );
-                                                    setShowSfDropdown(false);
-                                                }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                    minSfOccupied ===
-                                                        option.min &&
-                                                    maxSfOccupied === option.max
-                                                        ? "bg-blue-50 text-blue-700 font-medium"
-                                                        : "text-gray-700"
-                                                }`}
-                                            >
-                                                {option.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* Size Occupied Selector */}
+                        <SizeOccupiedSelector
+                            minValue={minSfOccupied ?? null}
+                            maxValue={maxSfOccupied ?? null}
+                            onChange={(min, max) => {
+                                onSfOccupiedChange?.(min, max);
+                            }}
+                            label="Size Occupied"
+                        />
 
-                        {/* Occupancy Dropdown */}
-                        <div className="relative shrink-0" ref={occupancyRef}>
-                            <button
-                                onClick={() =>
-                                    setShowOccupancyDropdown(
-                                        !showOccupancyDropdown
-                                    )
+                        {/* Occupancy Selector */}
+                        {occupancy !== undefined && onOccupancyChange && (
+                            <OccupancySelector
+                                occupancy={occupancy}
+                                onOccupancyChange={(value) =>
+                                    onOccupancyChange(value)
                                 }
-                                className={`flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    occupancy !== null && occupancy !== ""
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="whitespace-nowrap">
-                                    {getOccupancyLabel()}
-                                </span>
-                                <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
-                                        showOccupancyDropdown
-                                            ? "rotate-180"
-                                            : ""
-                                    }`}
-                                />
-                            </button>
-                            {showOccupancyDropdown && (
-                                <div className="absolute left-0 z-50 mt-1 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
-                                    <div className="py-1">
-                                        {OCCUPANCY_OPTIONS.map((option) => (
-                                            <button
-                                                key={option.value ?? "all"}
-                                                onClick={() => {
-                                                    onOccupancyChange?.(
-                                                        option.value
-                                                    );
-                                                    setShowOccupancyDropdown(
-                                                        false
-                                                    );
-                                                }}
-                                                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                    occupancy === option.value
-                                                        ? "bg-blue-50 text-blue-700 font-medium"
-                                                        : "text-gray-700"
-                                                }`}
-                                            >
-                                                {option.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                            />
+                        )}
                     </div>
 
                     {/* Right Group: Action Buttons and View Mode */}
                     <div className="flex flex-wrap lg:flex-nowrap items-center gap-2 shrink-0">
+                        {/* Location Count */}
+                        {locationCount > 0 && (
+                            <div className="text-sm font-medium text-gray-700 whitespace-nowrap hidden sm:block">
+                                {locationCount.toLocaleString()} Locations
+                            </div>
+                        )}
+
                         {hasActiveFilters && (
                             <button
                                 onClick={onClearClick}
@@ -481,199 +296,41 @@ export default function LocationsFilterBar({
                             )}
                         </button>
 
-                        {/* Sort Button with Dropdown */}
-                        <div className="relative" ref={sortRef}>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowSortDropdown(!showSortDropdown);
-                                    setShowSaveDropdown(false);
+                        {/* Sort Selector */}
+                        {sortBy !== undefined && onSortChange && (
+                            <TenantSortSelector
+                                sortBy={sortBy}
+                                sortDir={sortDir}
+                                onSortChange={(by, dir) => {
+                                    onSortChange(by, dir);
                                     onSortClick?.();
                                 }}
-                                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                                    selectedSort !== null
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                <span className="hidden sm:inline">Sort</span>
-                                <ChevronDown
-                                    className={`h-4 w-4 text-gray-400 transition-transform ${
-                                        showSortDropdown ? "rotate-180" : ""
-                                    }`}
-                                />
-                            </button>
-                            {showSortDropdown && (
-                                <div className="absolute right-0 sm:left-0 z-50 mt-1 w-56 rounded-md border border-gray-200 bg-white shadow-lg">
-                                    <div className="py-1">
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort("address-asc");
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort === "address-asc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>Address (A-Z)</span>
-                                            {selectedSort === "address-asc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort("address-desc");
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort === "address-desc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>Address (Z-A)</span>
-                                            {selectedSort ===
-                                                "address-desc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        <div className="my-1 border-t border-gray-200"></div>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort("tenant-asc");
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort === "tenant-asc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>Tenant Name (A-Z)</span>
-                                            {selectedSort === "tenant-asc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort("tenant-desc");
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort === "tenant-desc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>Tenant Name (Z-A)</span>
-                                            {selectedSort === "tenant-desc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        <div className="my-1 border-t border-gray-200"></div>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort("sf-desc");
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort === "sf-desc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>
-                                                SF Occupied (High to Low)
-                                            </span>
-                                            {selectedSort === "sf-desc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort("sf-asc");
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort === "sf-asc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>
-                                                SF Occupied (Low to High)
-                                            </span>
-                                            {selectedSort === "sf-asc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        <div className="my-1 border-t border-gray-200"></div>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort(
-                                                    "occupancy-desc"
-                                                );
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort ===
-                                                "occupancy-desc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>Occupancy (High to Low)</span>
-                                            {selectedSort ===
-                                                "occupancy-desc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedSort(
-                                                    "occupancy-asc"
-                                                );
-                                                setShowSortDropdown(false);
-                                            }}
-                                            className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-100 ${
-                                                selectedSort === "occupancy-asc"
-                                                    ? "bg-blue-50 text-blue-700 font-medium"
-                                                    : "text-gray-700"
-                                            }`}
-                                        >
-                                            <span>Occupancy (Low to High)</span>
-                                            {selectedSort ===
-                                                "occupancy-asc" && (
-                                                <Check className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                            />
+                        )}
 
                         {/* Save Button with Dropdown */}
-                        <div className="relative" ref={saveRef}>
+                        <div className="relative">
                             <button
+                                data-save-dropdown-button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setShowSaveDropdown(!showSaveDropdown);
-                                    setShowSortDropdown(false);
                                     onSaveClick?.();
                                 }}
                                 className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                             >
                                 <span className="hidden sm:inline">Save</span>
-                                <ChevronDown
+                                <Plus
                                     className={`h-4 w-4 text-gray-400 transition-transform ${
-                                        showSaveDropdown ? "rotate-180" : ""
+                                        showSaveDropdown ? "rotate-45" : ""
                                     }`}
                                 />
                             </button>
                             {showSaveDropdown && (
-                                <div className="absolute right-0 z-50 mt-1 w-[calc(100vw-2rem)] sm:w-72 max-w-[20rem] rounded-md border border-gray-200 bg-white shadow-lg max-h-[400px] overflow-y-auto">
+                                <div
+                                    data-save-dropdown
+                                    className="absolute right-0 z-50 mt-1 w-[calc(100vw-2rem)] sm:w-72 max-w-[20rem] rounded-md border border-gray-200 bg-white shadow-lg max-h-[400px] overflow-y-auto"
+                                >
                                     <div className="py-1">
                                         {/* Save New Search Option */}
                                         <button

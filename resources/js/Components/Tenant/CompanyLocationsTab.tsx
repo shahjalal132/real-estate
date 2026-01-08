@@ -17,11 +17,20 @@ interface CompanyLocationsTabProps {
     onLocationClick: (location: TennentLocation) => void;
     onAddressSearchChange: (value: string) => void;
     onTenantSearchChange: (value: string) => void;
+    onSpaceUseChange?: (value: string[]) => void;
+    onSfOccupiedChange?: (min: number | null, max: number | null) => void;
+    onOccupancyChange?: (value: string[]) => void;
+    onSortChange?: (sortBy: string, sortDir: "asc" | "desc") => void;
+    onFiltersClick?: () => void;
+    onClearClick?: () => void;
     addViewModeToUrl: (url: string | null) => string | null;
+    sortBy?: string;
+    sortDir?: "asc" | "desc";
+    activeFiltersCount?: number;
 }
 
 export default function CompanyLocationsTab({
-    companyId,
+    companyId: _companyId,
     locations,
     viewMode,
     selectedLocationId,
@@ -32,8 +41,33 @@ export default function CompanyLocationsTab({
     onLocationClick,
     onAddressSearchChange,
     onTenantSearchChange,
+    onSpaceUseChange,
+    onSfOccupiedChange,
+    onOccupancyChange,
+    onSortChange,
+    onFiltersClick,
+    onClearClick,
     addViewModeToUrl,
+    sortBy,
+    sortDir,
+    activeFiltersCount = 0,
 }: CompanyLocationsTabProps) {
+    // Extract filter values from filters object
+    const spaceUse = Array.isArray(filters.space_use)
+        ? filters.space_use
+        : filters.space_use
+        ? [filters.space_use]
+        : [];
+    const minSfOccupied =
+        filters.min_sf_occupied !== undefined ? filters.min_sf_occupied : null;
+    const maxSfOccupied =
+        filters.max_sf_occupied !== undefined ? filters.max_sf_occupied : null;
+    const occupancy = Array.isArray(filters.occupancy)
+        ? filters.occupancy
+        : filters.occupancy
+        ? [filters.occupancy]
+        : [];
+
     return (
         <>
             <LocationsFilterBar
@@ -41,14 +75,25 @@ export default function CompanyLocationsTab({
                 tenantSearch={tenantSearch}
                 onAddressSearchChange={onAddressSearchChange}
                 onTenantSearchChange={onTenantSearchChange}
-                onFiltersClick={() => {}}
-                onSortClick={() => {}}
+                spaceUse={spaceUse}
+                onSpaceUseChange={onSpaceUseChange}
+                minSfOccupied={minSfOccupied}
+                maxSfOccupied={maxSfOccupied}
+                onSfOccupiedChange={onSfOccupiedChange}
+                occupancy={occupancy}
+                onOccupancyChange={onOccupancyChange}
+                sortBy={sortBy}
+                sortDir={sortDir}
+                onSortChange={onSortChange}
+                onFiltersClick={onFiltersClick || (() => {})}
+                onClearClick={onClearClick || (() => {})}
                 onSaveClick={() => {}}
                 onReportsClick={() => {}}
                 onMoreClick={() => {}}
                 viewMode={viewMode}
                 onViewModeChange={onViewModeChange}
-                activeFiltersCount={0}
+                activeFiltersCount={activeFiltersCount}
+                locationCount={locations.total}
             />
 
             {viewMode === "map" && (
@@ -117,7 +162,9 @@ export default function CompanyLocationsTab({
                     <div className="flex flex-1 justify-between sm:hidden">
                         <button
                             onClick={() => {
-                                const url = addViewModeToUrl(locations.prev_page_url);
+                                const url = addViewModeToUrl(
+                                    locations.prev_page_url
+                                );
                                 if (url) {
                                     router.get(url);
                                 }
@@ -129,7 +176,9 @@ export default function CompanyLocationsTab({
                         </button>
                         <button
                             onClick={() => {
-                                const url = addViewModeToUrl(locations.next_page_url);
+                                const url = addViewModeToUrl(
+                                    locations.next_page_url
+                                );
                                 if (url) {
                                     router.get(url);
                                 }
@@ -143,15 +192,27 @@ export default function CompanyLocationsTab({
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm text-gray-700">
-                                Showing <span className="font-medium">{locations.from}</span> to{" "}
-                                <span className="font-medium">{locations.to}</span> of{" "}
-                                <span className="font-medium">{locations.total}</span> results
+                                Showing{" "}
+                                <span className="font-medium">
+                                    {locations.from}
+                                </span>{" "}
+                                to{" "}
+                                <span className="font-medium">
+                                    {locations.to}
+                                </span>{" "}
+                                of{" "}
+                                <span className="font-medium">
+                                    {locations.total}
+                                </span>{" "}
+                                results
                             </p>
                         </div>
                         <nav className="flex items-center gap-2">
                             <button
                                 onClick={() => {
-                                    const url = addViewModeToUrl(locations.prev_page_url);
+                                    const url = addViewModeToUrl(
+                                        locations.prev_page_url
+                                    );
                                     if (url) {
                                         router.get(url);
                                     }
@@ -163,7 +224,9 @@ export default function CompanyLocationsTab({
                             </button>
                             <button
                                 onClick={() => {
-                                    const url = addViewModeToUrl(locations.next_page_url);
+                                    const url = addViewModeToUrl(
+                                        locations.next_page_url
+                                    );
                                     if (url) {
                                         router.get(url);
                                     }
@@ -180,4 +243,3 @@ export default function CompanyLocationsTab({
         </>
     );
 }
-
