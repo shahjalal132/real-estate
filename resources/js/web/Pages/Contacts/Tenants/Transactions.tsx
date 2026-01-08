@@ -9,7 +9,7 @@ import ResizableTable, {
 import StarRating from "../../../../Components/Tenant/StarRating";
 import TransactionsFilterBar from "../../../../Components/Tenant/TransactionsFilterBar";
 
-interface Transaction {
+interface LeaseTransaction {
     id: string;
     address: string;
     city: string;
@@ -33,6 +33,21 @@ interface Transaction {
     submarket: string;
 }
 
+interface SaleTransaction {
+    id: string;
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    saleType: string;
+    trueBuyer: string;
+    trueSeller: string;
+    saleDate: string;
+    propertyType: string;
+    sfSold: string;
+    salePrice: string;
+}
+
 interface PageProps {
     company: TennentCompany;
 }
@@ -49,6 +64,9 @@ export default function Transactions({ company }: PageProps) {
     const [signedWithinLast, setSignedWithinLast] = useState("");
     const [signDateStart, setSignDateStart] = useState("");
     const [signDateEnd, setSignDateEnd] = useState("");
+    const [propertyType, setPropertyType] = useState<string[]>([]);
+    const [minSizeSold, setMinSizeSold] = useState<number | null>(null);
+    const [maxSizeSold, setMaxSizeSold] = useState<number | null>(null);
     const [sortBy, setSortBy] = useState<string>("signDate");
     const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
@@ -90,8 +108,8 @@ export default function Transactions({ company }: PageProps) {
         },
     ];
 
-    // Static transaction data based on the provided HTML
-    const transactions: Transaction[] = [
+    // Static lease transaction data
+    const leaseTransactions: LeaseTransaction[] = [
         {
             id: "1",
             address: "35 Lakewood Blvd",
@@ -554,12 +572,105 @@ export default function Transactions({ company }: PageProps) {
         },
     ];
 
-    const columns: ResizableColumn[] = [
+    // Static sale transaction data based on screenshot
+    const saleTransactions: SaleTransaction[] = [
+        {
+            id: "s1",
+            address: "7733 N Litchfield Rd",
+            city: "Glendale",
+            state: "AZ",
+            country: "United States",
+            saleType: "Owner User",
+            trueBuyer: "Walmart Inc.",
+            trueSeller: "Lincoln Property Company",
+            saleDate: "Nov 2025",
+            propertyType: "Industrial",
+            sfSold: "1,278,653",
+            salePrice: "$152,161",
+        },
+        {
+            id: "s2",
+            address: "650-654 Main Ave",
+            city: "Norwalk",
+            state: "CT",
+            country: "United States",
+            saleType: "Investment",
+            trueBuyer: "Walmart Inc.",
+            trueSeller: "Murray & Gaunt Partners",
+            saleDate: "Oct 2025",
+            propertyType: "Retail",
+            sfSold: "161,709",
+            salePrice: "$43,077",
+        },
+        {
+            id: "s3",
+            address: "9334 Dayton Pike",
+            city: "Soddy Daisy",
+            state: "TN",
+            country: "United States",
+            saleType: "Investment",
+            trueBuyer: "Walmart Inc.",
+            trueSeller: "Walmart Inc.",
+            saleDate: "Jul 2025",
+            propertyType: "Retail",
+            sfSold: "168,537",
+            salePrice: "$12,500",
+        },
+        {
+            id: "s4",
+            address: "175 S Maag Ave",
+            city: "Oakdale",
+            state: "CA",
+            country: "United States",
+            saleType: "Owner User",
+            trueBuyer: "Walmart Inc.",
+            trueSeller: "David Baldauf",
+            saleDate: "Jul 2025",
+            propertyType: "Retail",
+            sfSold: "91,699",
+            salePrice: "$7,500",
+        },
+        {
+            id: "s5",
+            address: "10635 Dorchester Rd",
+            city: "Summerville",
+            state: "SC",
+            country: "United States",
+            saleType: "Owner User",
+            trueBuyer: "Walmart Inc.",
+            trueSeller: "Global Net Lease",
+            saleDate: "Jun 2025",
+            propertyType: "Retail",
+            sfSold: "37,762",
+            salePrice: "$3,221",
+        },
+        {
+            id: "s6",
+            address: "2761 Jensen Ave",
+            city: "Sanger",
+            state: "CA",
+            country: "United States",
+            saleType: "Owner User",
+            trueBuyer: "Walmart Inc.",
+            trueSeller: "Bank Of Utah",
+            saleDate: "May 2025",
+            propertyType: "Retail",
+            sfSold: "169,986",
+            salePrice: "$9,903",
+        },
+    ];
+
+    // Get current transactions based on type
+    const currentTransactions =
+        transactionType === "lease" ? leaseTransactions : saleTransactions;
+
+    // Lease columns
+    const leaseColumns: ResizableColumn[] = [
         {
             key: "address",
             label: "Address",
             defaultWidth: 260,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.address}>
                     {row.address}
                 </span>
@@ -569,7 +680,7 @@ export default function Transactions({ company }: PageProps) {
             key: "city",
             label: "City",
             defaultWidth: 150,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.city}>
                     {row.city}
                 </span>
@@ -579,7 +690,7 @@ export default function Transactions({ company }: PageProps) {
             key: "state",
             label: "State",
             defaultWidth: 110,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.state}>
                     {row.state}
                 </span>
@@ -589,7 +700,7 @@ export default function Transactions({ company }: PageProps) {
             key: "country",
             label: "Country",
             defaultWidth: 150,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.country}>
                     {row.country}
                 </span>
@@ -599,7 +710,7 @@ export default function Transactions({ company }: PageProps) {
             key: "tenantName",
             label: "Tenant Name",
             defaultWidth: 180,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.tenantName}>
                     {row.tenantName}
                 </span>
@@ -609,7 +720,7 @@ export default function Transactions({ company }: PageProps) {
             key: "signDate",
             label: "Sign Date",
             defaultWidth: 140,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <div className="flex items-center gap-1">
                     <span className="block truncate" title={row.signDate}>
                         {row.signDate}
@@ -629,7 +740,7 @@ export default function Transactions({ company }: PageProps) {
             label: "SF Leased",
             align: "right",
             defaultWidth: 150,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.sfLeased}>
                     {row.sfLeased}
                 </span>
@@ -639,7 +750,7 @@ export default function Transactions({ company }: PageProps) {
             key: "floor",
             label: "Floor",
             defaultWidth: 100,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.floor}>
                     {row.floor}
                 </span>
@@ -649,7 +760,7 @@ export default function Transactions({ company }: PageProps) {
             key: "spaceUse",
             label: "Space Use",
             defaultWidth: 145,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.spaceUse}>
                     {row.spaceUse}
                 </span>
@@ -659,7 +770,7 @@ export default function Transactions({ company }: PageProps) {
             key: "leaseType",
             label: "Lease Type",
             defaultWidth: 150,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.leaseType}>
                     {row.leaseType}
                 </span>
@@ -669,7 +780,7 @@ export default function Transactions({ company }: PageProps) {
             key: "commencement",
             label: "Commencement",
             defaultWidth: 185,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.commencement}>
                     {row.commencement}
                 </span>
@@ -679,7 +790,7 @@ export default function Transactions({ company }: PageProps) {
             key: "expiration",
             label: "Expiration",
             defaultWidth: 150,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.expiration}>
                     {row.expiration || "—"}
                 </span>
@@ -689,7 +800,7 @@ export default function Transactions({ company }: PageProps) {
             key: "term",
             label: "Term",
             defaultWidth: 100,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.term}>
                     {row.term || "—"}
                 </span>
@@ -699,7 +810,7 @@ export default function Transactions({ company }: PageProps) {
             key: "dealType",
             label: "Deal Type",
             defaultWidth: 145,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.dealType}>
                     {row.dealType}
                 </span>
@@ -710,7 +821,7 @@ export default function Transactions({ company }: PageProps) {
             label: "Rent",
             align: "right",
             defaultWidth: 125,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.rent}>
                     {row.rent || "—"}
                 </span>
@@ -720,7 +831,7 @@ export default function Transactions({ company }: PageProps) {
             key: "tenantRepCompany",
             label: "Tenant Rep Company",
             defaultWidth: 300,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.tenantRepCompany}>
                     {row.tenantRepCompany || "—"}
                 </span>
@@ -730,7 +841,7 @@ export default function Transactions({ company }: PageProps) {
             key: "landlordCompany",
             label: "Landlord Company",
             defaultWidth: 300,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.landlordCompany}>
                     {row.landlordCompany || "—"}
                 </span>
@@ -740,7 +851,7 @@ export default function Transactions({ company }: PageProps) {
             key: "starRating",
             label: "Star Rating",
             defaultWidth: 150,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <StarRating rating={row.starRating} />
             ),
         },
@@ -748,7 +859,7 @@ export default function Transactions({ company }: PageProps) {
             key: "market",
             label: "Market",
             defaultWidth: 150,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.market}>
                     {row.market || "—"}
                 </span>
@@ -758,13 +869,133 @@ export default function Transactions({ company }: PageProps) {
             key: "submarket",
             label: "Submarket",
             defaultWidth: 250,
-            render: (row: Transaction) => (
+            render: (row: LeaseTransaction) => (
                 <span className="block truncate" title={row.submarket}>
                     {row.submarket || "—"}
                 </span>
             ),
         },
     ];
+
+    // Sale columns
+    const saleColumns: ResizableColumn[] = [
+        {
+            key: "address",
+            label: "Address",
+            defaultWidth: 260,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.address}>
+                    {row.address}
+                </span>
+            ),
+        },
+        {
+            key: "city",
+            label: "City",
+            defaultWidth: 150,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.city}>
+                    {row.city}
+                </span>
+            ),
+        },
+        {
+            key: "state",
+            label: "State",
+            defaultWidth: 110,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.state}>
+                    {row.state}
+                </span>
+            ),
+        },
+        {
+            key: "country",
+            label: "Country",
+            defaultWidth: 150,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.country}>
+                    {row.country}
+                </span>
+            ),
+        },
+        {
+            key: "saleType",
+            label: "Sale Type",
+            defaultWidth: 150,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.saleType}>
+                    {row.saleType}
+                </span>
+            ),
+        },
+        {
+            key: "trueBuyer",
+            label: "True Buyer",
+            defaultWidth: 200,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.trueBuyer}>
+                    {row.trueBuyer}
+                </span>
+            ),
+        },
+        {
+            key: "trueSeller",
+            label: "True Seller",
+            defaultWidth: 250,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.trueSeller}>
+                    {row.trueSeller}
+                </span>
+            ),
+        },
+        {
+            key: "saleDate",
+            label: "Sale Date",
+            defaultWidth: 140,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.saleDate}>
+                    {row.saleDate}
+                </span>
+            ),
+        },
+        {
+            key: "propertyType",
+            label: "Property Type",
+            defaultWidth: 150,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.propertyType}>
+                    {row.propertyType}
+                </span>
+            ),
+        },
+        {
+            key: "sfSold",
+            label: "SF Sold",
+            align: "right",
+            defaultWidth: 150,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.sfSold}>
+                    {row.sfSold}
+                </span>
+            ),
+        },
+        {
+            key: "salePrice",
+            label: "Sale Price",
+            align: "right",
+            defaultWidth: 150,
+            render: (row: SaleTransaction) => (
+                <span className="block truncate" title={row.salePrice}>
+                    {row.salePrice}
+                </span>
+            ),
+        },
+    ];
+
+    // Get current columns based on type
+    const currentColumns =
+        transactionType === "lease" ? leaseColumns : saleColumns;
 
     return (
         <AppLayout>
@@ -816,7 +1047,15 @@ export default function Transactions({ company }: PageProps) {
                             onSignDateStartChange={setSignDateStart}
                             signDateEnd={signDateEnd}
                             onSignDateEndChange={setSignDateEnd}
-                            transactionCount={transactions.length}
+                            propertyType={propertyType}
+                            onPropertyTypeChange={setPropertyType}
+                            minSizeSold={minSizeSold}
+                            maxSizeSold={maxSizeSold}
+                            onSizeSoldChange={(min, max) => {
+                                setMinSizeSold(min);
+                                setMaxSizeSold(max);
+                            }}
+                            transactionCount={currentTransactions.length}
                             sortBy={sortBy}
                             sortDir={sortDir}
                             onSortChange={(by, dir) => {
@@ -829,10 +1068,10 @@ export default function Transactions({ company }: PageProps) {
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
                             <div className="h-[calc(100vh-400px)] min-h-[600px]">
                                 <ResizableTable
-                                    columns={columns}
-                                    data={transactions}
-                                    storageKey="tenant-transactions-table"
-                                    rowKey={(row) => row.id}
+                                    columns={currentColumns}
+                                    data={currentTransactions as any}
+                                    storageKey={`tenant-transactions-table-${transactionType}`}
+                                    rowKey={(row: any) => row.id}
                                 />
                             </div>
                         </div>
