@@ -58,7 +58,7 @@ export default function LocationContentComponent() {
     };
 
     return (
-        <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
+        <div className="flex flex-col h-full overflow-hidden bg-gray-50">
             {/* Location Tabs */}
             <div className="border-b border-gray-200 bg-white px-4 shrink-0">
                 <div className="flex items-center gap-1">

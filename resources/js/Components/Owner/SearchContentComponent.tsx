@@ -31,7 +31,7 @@ export default function SearchContentComponent({
     scrollContainerRef,
 }: SearchContentComponentProps) {
     return (
-        <>
+        <div className="flex flex-col h-full overflow-hidden">
             {/* Main Content Tabs - Act as section references */}
             <div className="border-b border-gray-200 bg-white px-4 shrink-0">
                 <div className="flex items-center gap-1">
@@ -95,7 +95,7 @@ export default function SearchContentComponent({
             {/* Vertically Scrollable Content */}
             <div
                 ref={scrollContainerRef}
-                className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50"
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-gray-50"
                 style={{ scrollSnapType: "y mandatory" }}
             >
                 <div className="flex flex-col gap-4 p-4">
@@ -742,6 +742,6 @@ export default function SearchContentComponent({
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
