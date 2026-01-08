@@ -156,6 +156,13 @@ class TenantCompanyController extends Controller
             ]);
         }
 
+        // Handle relationships tab
+        if ($tab === 'relationships') {
+            return Inertia::render('Contacts/Tenants/Relationships', [
+                'company' => $company,
+            ]);
+        }
+
         // Handle locations tab
         if ($tab === 'locations') {
             $query = \App\Models\TennentLocation::latest();
