@@ -258,30 +258,39 @@ export default function ResizableTable<T extends Record<string, any>>({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 bg-white">
-                            {data.map((row) => (
+                            {data.map((row, rowIndex) => (
                                 <tr
                                     key={rowKey(row)}
-                                    className={`group hover:bg-gray-50 transition-colors ${
+                                    className={`group transition-colors ${
+                                        rowIndex % 2 === 0
+                                            ? "bg-white"
+                                            : "bg-gray-50"
+                                    } hover:!bg-blue-50 ${
                                         onRowClick ? "cursor-pointer" : ""
                                     }`}
                                     onClick={() => onRowClick?.(row)}
                                 >
                                     {renderCheckbox && (
                                         <td
-                                            className="px-4 py-4 bg-white sticky left-0 border-r border-gray-200"
+                                            className="px-4 py-4 sticky left-0 border-r border-gray-200"
                                             style={{
                                                 boxShadow:
                                                     "2px 0 4px -2px rgba(0, 0, 0, 0.1)",
                                                 zIndex: 20,
-                                                backgroundColor: "white",
+                                                backgroundColor:
+                                                    rowIndex % 2 === 0
+                                                        ? "white"
+                                                        : "#f9fafb",
                                             }}
                                             onMouseEnter={(e) => {
                                                 e.currentTarget.style.backgroundColor =
-                                                    "#f9fafb";
+                                                    "#dbeafe";
                                             }}
                                             onMouseLeave={(e) => {
                                                 e.currentTarget.style.backgroundColor =
-                                                    "white";
+                                                    rowIndex % 2 === 0
+                                                        ? "white"
+                                                        : "#f9fafb";
                                             }}
                                         >
                                             {renderCheckbox(row)}
@@ -317,7 +326,9 @@ export default function ResizableTable<T extends Record<string, any>>({
                                                         left: `${leftOffset}px`,
                                                         zIndex: 10,
                                                         backgroundColor:
-                                                            "white",
+                                                            rowIndex % 2 === 0
+                                                                ? "white"
+                                                                : "#f9fafb",
                                                         boxShadow:
                                                             "2px 0 4px -2px rgba(0, 0, 0, 0.1)",
                                                     }),
@@ -326,7 +337,7 @@ export default function ResizableTable<T extends Record<string, any>>({
                                                     isFirstColumn
                                                         ? (e) => {
                                                               e.currentTarget.style.backgroundColor =
-                                                                  "#f9fafb";
+                                                                  "#dbeafe";
                                                           }
                                                         : undefined
                                                 }
@@ -334,7 +345,9 @@ export default function ResizableTable<T extends Record<string, any>>({
                                                     isFirstColumn
                                                         ? (e) => {
                                                               e.currentTarget.style.backgroundColor =
-                                                                  "white";
+                                                                  rowIndex % 2 === 0
+                                                                      ? "white"
+                                                                      : "#f9fafb";
                                                           }
                                                         : undefined
                                                 }
