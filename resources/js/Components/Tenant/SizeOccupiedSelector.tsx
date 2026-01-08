@@ -5,6 +5,7 @@ interface SizeOccupiedSelectorProps {
     minValue: number | null;
     maxValue: number | null;
     onChange: (min: number | null, max: number | null) => void;
+    label?: string;
 }
 
 const SIZE_OCCUPIED_MIN_OPTIONS = [
@@ -35,6 +36,7 @@ export default function SizeOccupiedSelector({
     minValue,
     maxValue,
     onChange,
+    label = "Size Occupied",
 }: SizeOccupiedSelectorProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [localMin, setLocalMin] = useState<string>(
@@ -90,7 +92,7 @@ export default function SizeOccupiedSelector({
             }
             return `${formatNumber(minValue)}+ SF`;
         }
-        return "Size Occupied";
+        return label;
     };
 
     const handleInputChange = (min: string, max: string) => {

@@ -142,6 +142,13 @@ class TenantCompanyController extends Controller
             ]);
         }
 
+        // Handle lease expirations tab
+        if ($tab === 'lease-expirations') {
+            return Inertia::render('Contacts/Tenants/LeaseExpirations', [
+                'company' => $company,
+            ]);
+        }
+
         // Handle locations tab
         if ($tab === 'locations') {
             $query = \App\Models\TennentLocation::latest();
