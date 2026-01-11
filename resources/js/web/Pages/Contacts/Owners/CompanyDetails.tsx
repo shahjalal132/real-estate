@@ -1,14 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
 import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
-import CompanyOverview from "@/Components/Owner/CompanyOverview";
-import RelatedCompaniesTable from "@/Components/Owner/RelatedCompaniesTable";
-import SummaryMetrics from "@/Components/Owner/SummaryMetrics";
-import CompanyStatsCharts from "@/Components/Tenant/CompanyStatsCharts";
-import TopTenantsBarCharts from "@/Components/Tenant/TopTenantsBarCharts";
-import CompanyContacts from "@/Components/Tenant/CompanyContacts";
-import CompanyNews from "@/Components/Tenant/CompanyNews";
-import CoStarContact from "@/Components/Tenant/CoStarContact";
+import SummaryOverview from "@/Components/Owner/SummaryOverview";
 
 interface OwnerCompany {
     id: number;
@@ -45,10 +38,7 @@ interface PageProps {
     };
 }
 
-export default function CompanyDetails({
-    company,
-    relatedCompanies,
-}: PageProps) {
+export default function CompanyDetails({ company }: PageProps) {
     const tabs = [
         {
             id: "summary",
@@ -87,9 +77,6 @@ export default function CompanyDetails({
         },
     ];
 
-    // Dummy locations data for stats charts (using tenant structure)
-    const dummyLocations: any[] = [];
-
     return (
         <AppLayout>
             <Head title={`${company.company} - Owner Company Details`} />
@@ -97,7 +84,7 @@ export default function CompanyDetails({
             <div className="bg-gray-50 min-h-screen">
                 {/* Company Header */}
                 <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 pt-4">
                         <CompanyDetailsHeader company={company} />
 
                         {/* Tabs */}
@@ -123,29 +110,9 @@ export default function CompanyDetails({
 
                 {/* Main Content - Summary View */}
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-                    {/* Summary Metrics */}
-                    <SummaryMetrics company={company} />
+                    <SummaryOverview company={company} />
+                    
 
-                    {/* Company Overview */}
-                    <CompanyOverview company={company} />
-
-                    {/* Related Companies */}
-                    <RelatedCompaniesTable companies={relatedCompanies} />
-
-                    {/* Company Stats Charts */}
-                    <CompanyStatsCharts locations={dummyLocations} />
-
-                    {/* Top Owners Bar Charts */}
-                    <TopTenantsBarCharts />
-
-                    {/* Company Contacts - Full Width */}
-                    <CompanyContacts />
-
-                    {/* News and CoStar Contact */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <CompanyNews />
-                        <CoStarContact />
-                    </div>
                 </div>
             </div>
         </AppLayout>
