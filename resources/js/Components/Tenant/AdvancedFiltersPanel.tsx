@@ -35,7 +35,7 @@ export default function AdvancedFiltersPanel({
             </div>
 
             {/* Content Area - Scrollable */}
-            <div className="flex-1 min-h-0 overflow-hidden">
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth">
                 {/* Search Content Component */}
                 <TenantSearchContentComponent />
             </div>

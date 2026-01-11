@@ -31,10 +31,45 @@ export default function TenantSearchContentComponent() {
         };
 
         const targetRef = refs[section];
-        if (targetRef.current && scrollContainerRef.current) {
-            targetRef.current.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
+        const container = scrollContainerRef.current;
+
+        if (targetRef.current && container) {
+            // Use requestAnimationFrame to ensure DOM is ready
+            requestAnimationFrame(() => {
+                if (!targetRef.current || !container) return;
+
+                const target = targetRef.current;
+
+                // Verify container is scrollable
+                if (container.scrollHeight <= container.clientHeight) {
+                    // Container is not scrollable, nothing to do
+                    return;
+                }
+
+                const containerRect = container.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
+
+                // Calculate the scroll position
+                // The target's position relative to the container's visible area
+                const relativePosition = targetRect.top - containerRect.top;
+
+                // Add the current scroll position to get the absolute scroll position
+                const absoluteScrollPosition =
+                    container.scrollTop + relativePosition;
+
+                // Ensure we don't scroll beyond bounds
+                const maxScroll =
+                    container.scrollHeight - container.clientHeight;
+                const scrollPosition = Math.max(
+                    0,
+                    Math.min(absoluteScrollPosition, maxScroll)
+                );
+
+                // Scroll to the target position
+                container.scrollTo({
+                    top: scrollPosition,
+                    behavior: "smooth",
+                });
             });
         }
     };
@@ -125,10 +160,15 @@ export default function TenantSearchContentComponent() {
     return (
         <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
             {/* Main Content Tabs - Act as section references */}
-            <div className="border-b border-gray-200 bg-white px-4 shrink-0">
+            <div className="sticky top-0 z-10 border-b border-gray-200 bg-white px-4 shrink-0">
                 <div className="flex items-center gap-1">
                     <button
-                        onClick={() => scrollToSection("tenant")}
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            scrollToSection("tenant");
+                        }}
                         className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out ${
                             activeSection === "tenant"
                                 ? "border-blue-600 text-blue-600"
@@ -141,7 +181,12 @@ export default function TenantSearchContentComponent() {
                         )}
                     </button>
                     <button
-                        onClick={() => scrollToSection("occupancy")}
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            scrollToSection("occupancy");
+                        }}
                         className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out ${
                             activeSection === "occupancy"
                                 ? "border-blue-600 text-blue-600"
@@ -154,7 +199,12 @@ export default function TenantSearchContentComponent() {
                         )}
                     </button>
                     <button
-                        onClick={() => scrollToSection("contacts")}
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            scrollToSection("contacts");
+                        }}
                         className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out ${
                             activeSection === "contacts"
                                 ? "border-blue-600 text-blue-600"
