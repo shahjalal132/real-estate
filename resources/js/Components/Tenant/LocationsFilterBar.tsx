@@ -128,11 +128,9 @@ export default function LocationsFilterBar({
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node;
             const saveButton = document.querySelector(
-                '[data-save-dropdown-button]'
+                "[data-save-dropdown-button]"
             );
-            const saveDropdown = document.querySelector(
-                '[data-save-dropdown]'
-            );
+            const saveDropdown = document.querySelector("[data-save-dropdown]");
             if (
                 saveButton &&
                 saveDropdown &&
