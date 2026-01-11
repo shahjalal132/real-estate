@@ -254,6 +254,20 @@ class OwnerCompanyController extends Controller
             ]);
         }
 
+        // Handle relationships tab
+        if ($tab === 'relationships') {
+            return Inertia::render('Contacts/Owners/Relationships', [
+                'company' => $company,
+            ]);
+        }
+
+        // Handle contacts tab
+        if ($tab === 'contacts') {
+            return Inertia::render('Contacts/Owners/Contacts', [
+                'company' => $company,
+            ]);
+        }
+
         // Handle tenants tab
         if ($tab === 'tenants') {
             // Check if showing locations sub-tab
