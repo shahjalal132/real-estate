@@ -1,95 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown, Star } from "lucide-react";
+import PropertyFocusSelector from "./PropertyFocusSelector";
+import PortfolioSizeSelector from "./PortfolioSizeSelector";
 
 interface OwnerListingsFilterBarProps {
     searchValue: string;
     onSearchChange: (value: string) => void;
-    spaceUse: string;
-    onSpaceUseChange: (value: string) => void;
-    availableSpace: string;
-    onAvailableSpaceChange: (value: string) => void;
+    spaceUse: string[];
+    onSpaceUseChange: (value: string[]) => void;
+    minAvailableSpace?: number;
+    maxAvailableSpace?: number;
+    onAvailableSpaceChange?: (min: number | null, max: number | null) => void;
     rating: number | null;
     onRatingChange: (rating: number | null) => void;
     sortBy: string;
     onSortChange: (value: string) => void;
     listingsCount: number;
-}
-
-// Simple dropdown component
-function SimpleDropdown({
-    label,
-    value,
-    options,
-    onChange,
-}: {
-    label: string;
-    value: string;
-    options: { value: string; label: string }[];
-    onChange: (value: string) => void;
-}) {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false);
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-            return () =>
-                document.removeEventListener("mousedown", handleClickOutside);
-        }
-    }, [isOpen]);
-
-    const selectedOption = options.find((opt) => opt.value === value);
-    const displayLabel = selectedOption ? selectedOption.label : label;
-
-    return (
-        <div className="relative" ref={dropdownRef}>
-            <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px] justify-between"
-            >
-                <span className="truncate">{displayLabel}</span>
-                <ChevronDown
-                    className={`h-4 w-4 text-gray-400 shrink-0 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                    }`}
-                />
-            </button>
-
-            {isOpen && (
-                <div className="absolute left-0 z-50 mt-1 w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-h-60 overflow-y-auto">
-                    <div className="py-1">
-                        {options.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                onClick={() => {
-                                    onChange(option.value);
-                                    setIsOpen(false);
-                                }}
-                                className={`block w-full px-4 py-2 text-left text-sm ${
-                                    value === option.value
-                                        ? "bg-blue-50 text-blue-700"
-                                        : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                            >
-                                {option.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
 }
 
 // Sort dropdown
@@ -133,7 +59,10 @@ function SortDropdown({
     }, [isOpen]);
 
     const selectedOption = sortOptions.find((opt) => opt.value === value);
-    const displayLabel = selectedOption ? selectedOption.label : "Sort ↓";
+    const displayLabel =
+        selectedOption && selectedOption.value !== ""
+            ? selectedOption.label
+            : "Sort";
 
     return (
         <div className="relative" ref={dropdownRef}>
@@ -215,105 +144,13 @@ function StarRating({
     );
 }
 
-// Available Space button
-function AvailableSpaceButton({
-    value,
-    onChange,
-}: {
-    value: string;
-    onChange: (value: string) => void;
-}) {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    const options = [
-        { value: "", label: "Available Space" },
-        { value: "0-5000", label: "0 - 5,000 SF" },
-        { value: "5000-10000", label: "5,000 - 10,000 SF" },
-        { value: "10000-25000", label: "10,000 - 25,000 SF" },
-        { value: "25000-50000", label: "25,000 - 50,000 SF" },
-        { value: "50000-100000", label: "50,000 - 100,000 SF" },
-        { value: "100000+", label: "100,000+ SF" },
-    ];
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false);
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-            return () =>
-                document.removeEventListener("mousedown", handleClickOutside);
-        }
-    }, [isOpen]);
-
-    const selectedOption = options.find((opt) => opt.value === value);
-    const displayLabel = selectedOption ? selectedOption.label : "Available Space";
-
-    return (
-        <div className="relative" ref={dropdownRef}>
-            <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-                <span>{displayLabel}</span>
-                <ChevronDown
-                    className={`h-4 w-4 text-gray-400 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                    }`}
-                />
-            </button>
-
-            {isOpen && (
-                <div className="absolute left-0 z-50 mt-1 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
-                        {options.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                onClick={() => {
-                                    onChange(option.value);
-                                    setIsOpen(false);
-                                }}
-                                className={`block w-full px-4 py-2 text-left text-sm ${
-                                    value === option.value
-                                        ? "bg-blue-50 text-blue-700"
-                                        : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                            >
-                                {option.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
-
-const SPACE_USE_OPTIONS = [
-    { value: "", label: "Space Use" },
-    { value: "Industrial", label: "Industrial" },
-    { value: "Office", label: "Office" },
-    { value: "Retail", label: "Retail" },
-    { value: "Multifamily", label: "Multifamily" },
-    { value: "Hospitality", label: "Hospitality" },
-    { value: "Flex", label: "Flex" },
-];
-
 export default function OwnerListingsFilterBar({
     searchValue,
     onSearchChange,
     spaceUse,
     onSpaceUseChange,
-    availableSpace,
+    minAvailableSpace,
+    maxAvailableSpace,
     onAvailableSpaceChange,
     rating,
     onRatingChange,
@@ -326,29 +163,28 @@ export default function OwnerListingsFilterBar({
             <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-wrap items-center gap-3 py-4">
                     {/* Search Input */}
-                    <div className="relative flex-1 min-w-[200px]">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <div className="relative w-64">
                         <input
                             type="text"
                             placeholder="Address or Location"
                             value={searchValue}
                             onChange={(e) => onSearchChange(e.target.value)}
-                            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
+                        <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
 
-                    {/* Space Use Dropdown */}
-                    <SimpleDropdown
-                        label="Space Use"
-                        value={spaceUse}
-                        options={SPACE_USE_OPTIONS}
+                    {/* Space Use Selector */}
+                    <PropertyFocusSelector
+                        selectedTypes={spaceUse}
                         onChange={onSpaceUseChange}
                     />
 
-                    {/* Available Space Button */}
-                    <AvailableSpaceButton
-                        value={availableSpace}
-                        onChange={onAvailableSpaceChange}
+                    {/* Available Space Selector */}
+                    <PortfolioSizeSelector
+                        minValue={minAvailableSpace ?? null}
+                        maxValue={maxAvailableSpace ?? null}
+                        onChange={onAvailableSpaceChange || (() => {})}
                     />
 
                     {/* Star Rating */}
@@ -359,11 +195,13 @@ export default function OwnerListingsFilterBar({
                         {listingsCount.toLocaleString()} Listings
                     </div>
 
-                    {/* Sort Dropdown */}
-                    <SortDropdown value={sortBy} onChange={onSortChange} />
+                    {/* Right-aligned actions */}
+                    <div className="flex items-center gap-3 ml-auto">
+                        {/* Sort Dropdown */}
+                        <SortDropdown value={sortBy} onChange={onSortChange} />
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
-
