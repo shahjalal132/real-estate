@@ -161,7 +161,10 @@ export default function OwnerPropertiesMapView({
 
     const formatPrice = (price: string | number | null | undefined): string => {
         if (!price) return "";
-        const num = typeof price === "string" ? parseFloat(price.replace(/[$,]/g, "")) : price;
+        const num =
+            typeof price === "string"
+                ? parseFloat(price.replace(/[$,]/g, ""))
+                : price;
         if (isNaN(num)) return "";
         if (num >= 1000000) {
             return `$${(num / 1000000).toFixed(1)}M`;
@@ -199,7 +202,9 @@ export default function OwnerPropertiesMapView({
                                 : Number(property.location!.longitude);
 
                         const icon = L.divIcon({
-                            className: `custom-marker ${isSelected ? "selected" : ""}`,
+                            className: `custom-marker ${
+                                isSelected ? "selected" : ""
+                            }`,
                             html: `<div style="
                                 width: 20px;
                                 height: 20px;
@@ -234,13 +239,21 @@ export default function OwnerPropertiesMapView({
                 <div className="divide-y divide-gray-200">
                     {properties.length > 0 ? (
                         properties.map((property) => {
-                            const isSelected = property.id === selectedPropertyId;
-                            const summaryDetails = property.details?.summary_details || {};
-                            const sqft = property.details?.net_rentable_sqft || summaryDetails.SquareFootage || summaryDetails["Square Footage"];
+                            const isSelected =
+                                property.id === selectedPropertyId;
+                            const summaryDetails =
+                                property.details?.summary_details || {};
+                            const sqft =
+                                property.details?.net_rentable_sqft ||
+                                summaryDetails.SquareFootage ||
+                                summaryDetails["Square Footage"];
                             const occupancy = summaryDetails.Occupancy;
-                            const askingPrice = property.formatted_price || property.asking_price;
-                            const propertyType = property.types?.[0] || "Property";
-                            
+                            const askingPrice =
+                                property.formatted_price ||
+                                property.asking_price;
+                            const propertyType =
+                                property.types?.[0] || "Property";
+
                             const fullAddress = property.location
                                 ? [
                                       property.location.address,
@@ -258,7 +271,10 @@ export default function OwnerPropertiesMapView({
                                 detailsParts.push(`${formatSF(sqft)} SF`);
                             }
                             if (occupancy !== null && occupancy !== undefined) {
-                                const occNum = typeof occupancy === "number" ? occupancy : parseFloat(occupancy.toString());
+                                const occNum =
+                                    typeof occupancy === "number"
+                                        ? occupancy
+                                        : parseFloat(occupancy.toString());
                                 if (!isNaN(occNum)) {
                                     detailsParts.push(`${occNum}% Occupancy`);
                                 }
@@ -266,7 +282,7 @@ export default function OwnerPropertiesMapView({
                             if (askingPrice) {
                                 detailsParts.push(formatPrice(askingPrice));
                             }
-                            
+
                             return (
                                 <div
                                     key={property.id}
@@ -282,7 +298,10 @@ export default function OwnerPropertiesMapView({
                                     {/* Image Section - Left */}
                                     <div className="relative w-32 h-32 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                                         <img
-                                            src={property.thumbnail_url || "/assets/images/placeholder.png"}
+                                            src={
+                                                property.thumbnail_url ||
+                                                "/assets/images/placeholder.png"
+                                            }
                                             alt={property.name || "Property"}
                                             className="w-full h-full object-cover"
                                         />
@@ -340,4 +359,3 @@ export default function OwnerPropertiesMapView({
         </div>
     );
 }
-

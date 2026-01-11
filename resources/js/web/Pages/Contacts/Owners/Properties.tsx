@@ -164,7 +164,7 @@ export default function Properties({ company, properties }: PageProps) {
                 />
 
                 {/* Content - Fixed height, no scroll */}
-                <div className="mx-auto max-w-[1920px] h-[calc(100vh-220px)] overflow-hidden">
+                <div className="mx-auto max-w-[1920px] h-[calc(100vh-8vh)] overflow-hidden">
                     {viewMode === "map" ? (
                         <OwnerPropertiesMapView
                             properties={filteredProperties}
