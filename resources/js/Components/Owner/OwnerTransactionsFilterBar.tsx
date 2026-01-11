@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import { Search, ChevronDown, Star, Download } from "lucide-react";
+import { Search, ChevronDown, Star, Download, Calendar } from "lucide-react";
+import PropertyFocusSelector from "./PropertyFocusSelector";
+import PortfolioSizeSelector from "./PortfolioSizeSelector";
 
 interface OwnerTransactionsFilterBarProps {
     searchValue: string;
     onSearchChange: (value: string) => void;
-    spaceUse: string;
-    onSpaceUseChange: (value: string) => void;
-    leaseSize: string;
-    onLeaseSizeChange: (value: string) => void;
+    spaceUse: string[];
+    onSpaceUseChange: (value: string[]) => void;
+    minLeaseSize?: number;
+    maxLeaseSize?: number;
+    onLeaseSizeChange?: (min: number | null, max: number | null) => void;
     signDate: string;
     onSignDateChange: (value: string) => void;
     rating: number | null;
@@ -15,83 +18,6 @@ interface OwnerTransactionsFilterBarProps {
     sortBy: string;
     onSortChange: (value: string) => void;
     transactionsCount: number;
-}
-
-// Simple dropdown component
-function SimpleDropdown({
-    label,
-    value,
-    options,
-    onChange,
-}: {
-    label: string;
-    value: string;
-    options: { value: string; label: string }[];
-    onChange: (value: string) => void;
-}) {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false);
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-            return () =>
-                document.removeEventListener("mousedown", handleClickOutside);
-        }
-    }, [isOpen]);
-
-    const selectedOption = options.find((opt) => opt.value === value);
-    const displayLabel = selectedOption ? selectedOption.label : label;
-
-    return (
-        <div className="relative" ref={dropdownRef}>
-            <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px] justify-between"
-            >
-                <span className="truncate">{displayLabel}</span>
-                <ChevronDown
-                    className={`h-4 w-4 text-gray-400 shrink-0 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                    }`}
-                />
-            </button>
-
-            {isOpen && (
-                <div className="absolute left-0 z-50 mt-1 w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-h-60 overflow-y-auto">
-                    <div className="py-1">
-                        {options.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                onClick={() => {
-                                    onChange(option.value);
-                                    setIsOpen(false);
-                                }}
-                                className={`block w-full px-4 py-2 text-left text-sm ${
-                                    value === option.value
-                                        ? "bg-blue-50 text-blue-700"
-                                        : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                            >
-                                {option.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
 }
 
 // Sort dropdown
@@ -131,7 +57,10 @@ function SortDropdown({
     }, [isOpen]);
 
     const selectedOption = sortOptions.find((opt) => opt.value === value);
-    const displayLabel = selectedOption ? selectedOption.label : "Sort ↓";
+    const displayLabel =
+        selectedOption && selectedOption.value !== ""
+            ? selectedOption.label
+            : "Sort";
 
     return (
         <div className="relative" ref={dropdownRef}>
@@ -213,30 +142,13 @@ function StarRating({
     );
 }
 
-const SPACE_USE_OPTIONS = [
-    { value: "", label: "Space Use" },
-    { value: "Industrial", label: "Industrial" },
-    { value: "Office", label: "Office" },
-    { value: "Retail", label: "Retail" },
-    { value: "Flex", label: "Flex" },
-];
-
-const LEASE_SIZE_OPTIONS = [
-    { value: "", label: "Lease Size" },
-    { value: "0-5000", label: "0 - 5,000 SF" },
-    { value: "5000-10000", label: "5,000 - 10,000 SF" },
-    { value: "10000-25000", label: "10,000 - 25,000 SF" },
-    { value: "25000-50000", label: "25,000 - 50,000 SF" },
-    { value: "50000-100000", label: "50,000 - 100,000 SF" },
-    { value: "100000+", label: "100,000+ SF" },
-];
-
 export default function OwnerTransactionsFilterBar({
     searchValue,
     onSearchChange,
     spaceUse,
     onSpaceUseChange,
-    leaseSize,
+    minLeaseSize,
+    maxLeaseSize,
     onLeaseSizeChange,
     signDate,
     onSignDateChange,
@@ -251,42 +163,72 @@ export default function OwnerTransactionsFilterBar({
             <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-wrap items-center gap-3 py-4">
                     {/* Search Input */}
-                    <div className="relative flex-1 min-w-[200px]">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <div className="relative w-64">
                         <input
                             type="text"
                             placeholder="Address or Location"
                             value={searchValue}
                             onChange={(e) => onSearchChange(e.target.value)}
-                            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
+                        <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
 
-                    {/* Space Use Dropdown */}
-                    <SimpleDropdown
-                        label="Space Use"
-                        value={spaceUse}
-                        options={SPACE_USE_OPTIONS}
+                    {/* Space Use Selector */}
+                    <PropertyFocusSelector
+                        selectedTypes={spaceUse}
                         onChange={onSpaceUseChange}
                     />
 
-                    {/* Lease Size Dropdown */}
-                    <SimpleDropdown
-                        label="Lease Size"
-                        value={leaseSize}
-                        options={LEASE_SIZE_OPTIONS}
-                        onChange={onLeaseSizeChange}
+                    {/* Lease Size Selector */}
+                    <PortfolioSizeSelector
+                        minValue={minLeaseSize ?? null}
+                        maxValue={maxLeaseSize ?? null}
+                        onChange={onLeaseSizeChange || (() => {})}
                     />
 
                     {/* Sign Date Input */}
                     <div className="relative">
                         <input
                             type="text"
-                            placeholder="Sign Date"
-                            value={signDate}
-                            onChange={(e) => onSignDateChange(e.target.value)}
-                            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[150px]"
+                            placeholder="After 1/10/2024"
+                            value={signDate ? `After ${signDate}` : ""}
+                            onChange={(e) => {
+                                const inputValue = e.target.value;
+                                // Extract date from "After [date]" format
+                                if (inputValue.startsWith("After ")) {
+                                    const datePart = inputValue
+                                        .replace("After ", "")
+                                        .trim();
+                                    onSignDateChange(datePart);
+                                } else if (inputValue === "") {
+                                    onSignDateChange("");
+                                } else {
+                                    // If user just types a date without "After ", add it
+                                    onSignDateChange(inputValue);
+                                }
+                            }}
+                            onFocus={(e) => {
+                                // When focused, show just the date part for easier editing
+                                if (
+                                    signDate &&
+                                    e.target.value.startsWith("After ")
+                                ) {
+                                    e.target.value = signDate;
+                                }
+                            }}
+                            onBlur={(e) => {
+                                // When blurred, ensure format is "After [date]"
+                                if (
+                                    signDate &&
+                                    !e.target.value.startsWith("After ")
+                                ) {
+                                    e.target.value = `After ${signDate}`;
+                                }
+                            }}
+                            className="rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[150px]"
                         />
+                        <Calendar className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
 
                     {/* Star Rating */}
@@ -297,20 +239,22 @@ export default function OwnerTransactionsFilterBar({
                         {transactionsCount.toLocaleString()} Transactions
                     </div>
 
-                    {/* Sort Dropdown */}
-                    <SortDropdown value={sortBy} onChange={onSortChange} />
+                    {/* Right-aligned actions */}
+                    <div className="flex items-center gap-3 ml-auto">
+                        {/* Sort Dropdown */}
+                        <SortDropdown value={sortBy} onChange={onSortChange} />
 
-                    {/* Export Button */}
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                        <Download className="h-4 w-4" />
-                        <span>Export</span>
-                    </button>
+                        {/* Export Button */}
+                        <button
+                            type="button"
+                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        >
+                            <Download className="h-4 w-4" />
+                            <span>Export</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
-
