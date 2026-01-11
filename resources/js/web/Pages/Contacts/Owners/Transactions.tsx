@@ -1,0 +1,734 @@
+import { useState, useMemo } from "react";
+import { Head, Link } from "@inertiajs/react";
+import AppLayout from "@/web/Layouts/AppLayout";
+import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
+import OwnerTransactionsFilterBar from "@/Components/Owner/OwnerTransactionsFilterBar";
+import OwnerTransactionsTable, {
+    Transaction,
+} from "@/Components/Owner/OwnerTransactionsTable";
+
+interface OwnerCompany {
+    id: number;
+    company: string;
+}
+
+interface PageProps {
+    company: OwnerCompany;
+}
+
+// Static transaction data (for now)
+const STATIC_TRANSACTIONS: Transaction[] = [
+    {
+        id: 1,
+        address: "3 Bolton Ave",
+        city: "Accrington",
+        state: "LAN",
+        country: "United Kingdom",
+        spaceUse: "Industrial",
+        sfLeased: 75344,
+        floor: "GRND,1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/9/2026",
+        commencement: "2/8/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "M7 Real Estate | Blackstone Inc.",
+        leasingCompany: "B8RE",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "Lancashire",
+        submarket: "Hyndburn",
+        postalCode: "BB5 6NJ",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 2,
+        address: "615 Westport Pky",
+        city: "Grapevine",
+        state: "TX",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 66052,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/9/2026",
+        commencement: "2/8/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Link Logistics Real Estate",
+        leasingCompany: "CBRE | Link Logistics Real Estate",
+        tenantRepCompany: null,
+        buildingName: "Building 200",
+        market: "Dallas-Fort Worth, TX",
+        submarket: "W DFW Air/Grapevine",
+        postalCode: "76051",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 3,
+        address: "53 Brasenose Rd",
+        city: "Liverpool",
+        state: "MSY",
+        country: "United Kingdom",
+        spaceUse: "Industrial",
+        sfLeased: 3009,
+        floor: "GRND",
+        costarRating: 2,
+        leaseType: "Direct",
+        signDate: "1/9/2026",
+        commencement: "2/8/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Indurent",
+        leasingCompany: "LM6 | Indurent Management Ltd | B8RE",
+        tenantRepCompany: null,
+        buildingName: "Building B",
+        market: "Liverpool",
+        submarket: "Liverpool Core",
+        postalCode: "L20 8HL",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 4,
+        address: "53 Brasenose Rd",
+        city: "Liverpool",
+        state: "MSY",
+        country: "United Kingdom",
+        spaceUse: "Industrial",
+        sfLeased: 2675,
+        floor: "GRND",
+        costarRating: 2,
+        leaseType: "Direct",
+        signDate: "1/9/2026",
+        commencement: "2/8/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Indurent",
+        leasingCompany: "LM6 | Indurent Management Ltd | B8RE",
+        tenantRepCompany: null,
+        buildingName: "Building B",
+        market: "Liverpool",
+        submarket: "Liverpool Core",
+        postalCode: "L20 8HL",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 5,
+        address: "1060 Douglas Hills Rd",
+        city: "Lithia Springs",
+        state: "GA",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 489416,
+        floor: "1",
+        costarRating: 4,
+        leaseType: "Direct",
+        signDate: "1/8/2026",
+        commencement: "2/7/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: "Cleveland Electric",
+        landlordCompany: "Link Logistics Real Estate",
+        leasingCompany: "Strategic Real Estate Partners",
+        tenantRepCompany: null,
+        buildingName: "Building 100",
+        market: "Atlanta, GA",
+        submarket: "I-20 W/Douglasville",
+        postalCode: "30122",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 6,
+        address: "1801 Hawthorne Ln",
+        city: "West Chicago",
+        state: "IL",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 145663,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/8/2026",
+        commencement: "1/9/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Link Logistics Real Estate",
+        leasingCompany: "Cushman & Wakefield",
+        tenantRepCompany: null,
+        buildingName: "Blackhawk Center",
+        market: "Chicago, IL",
+        submarket: "Central Kane / DuPage",
+        postalCode: "60185",
+        rentPerSF: null,
+        services: "TBD",
+    },
+    {
+        id: 7,
+        address: "1155 S Huron St",
+        city: "Denver",
+        state: "CO",
+        country: "United States",
+        spaceUse: "Flex",
+        sfLeased: 1500,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/8/2026",
+        commencement: "2/7/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany:
+            "Blackstone Real Estate Income Trust, Inc. | Andover Properties, LLC",
+        leasingCompany: "Andover Properties, LLC",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "Denver, CO",
+        submarket: "Southwest Denver",
+        postalCode: "80223",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 8,
+        address: "834 Striker Ave",
+        city: "Sacramento",
+        state: "CA",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 11016,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/7/2026",
+        commencement: "2/6/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Link Logistics Real Estate",
+        leasingCompany: "Cushman & Wakefield",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "Sacramento, CA",
+        submarket: "Natomas/Northgate",
+        postalCode: "95834",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 9,
+        address: "7281 Garden Grove Blvd",
+        city: "Garden Grove",
+        state: "CA",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 5000,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/7/2026",
+        commencement: "1/15/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "GIC Real Estate | Link Logistics Real Estate",
+        leasingCompany: "Link Logistics Real Estate",
+        tenantRepCompany: null,
+        buildingName: "Bldg 9",
+        market: "Orange County, CA",
+        submarket: "Garden Grove",
+        postalCode: "92841",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 10,
+        address: "7281 Garden Grove Blvd",
+        city: "Garden Grove",
+        state: "CA",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 4000,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/7/2026",
+        commencement: "2/1/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "GIC Real Estate | Link Logistics Real Estate",
+        leasingCompany: "Link Logistics Real Estate",
+        tenantRepCompany: null,
+        buildingName: "Bldg 9",
+        market: "Orange County, CA",
+        submarket: "Garden Grove",
+        postalCode: "92841",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 11,
+        address: "1208 US Highway 1",
+        city: "North Palm Beach",
+        state: "FL",
+        country: "United States",
+        spaceUse: "Office",
+        sfLeased: 2150,
+        floor: "1",
+        costarRating: 2,
+        leaseType: "Direct",
+        signDate: "1/7/2026",
+        commencement: "2/6/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Safe Harbor Marinas",
+        leasingCompany: "Cove Plaza",
+        tenantRepCompany: null,
+        buildingName: "Bldg 2",
+        market: "Palm Beach, FL",
+        submarket: "North Palm Beach",
+        postalCode: "33408",
+        rentPerSF: null,
+        services: "FS",
+    },
+    {
+        id: 12,
+        address: "7215 Garden Grove Blvd",
+        city: "Garden Grove",
+        state: "CA",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 2000,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/7/2026",
+        commencement: "2/1/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Link Logistics Real Estate",
+        leasingCompany: "Link Logistics Real Estate",
+        tenantRepCompany: null,
+        buildingName: "Bldg 1",
+        market: "Orange County, CA",
+        submarket: "Garden Grove",
+        postalCode: "92841",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 13,
+        address: "938 S Andreasen Dr",
+        city: "Escondido",
+        state: "CA",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 1820,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/7/2026",
+        commencement: "2/6/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Blackstone Inc. | Stockbridge Capital Group, LLC",
+        leasingCompany: "JLL",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "San Diego, CA",
+        submarket: "Escondido",
+        postalCode: "92029",
+        rentPerSF: null,
+        services: "NNN",
+    },
+    {
+        id: 14,
+        address: "934 S Andreasen Dr",
+        city: "Escondido",
+        state: "CA",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 1349,
+        floor: "1",
+        costarRating: 2,
+        leaseType: "Direct",
+        signDate: "1/7/2026",
+        commencement: "2/6/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Blackstone Inc. | Stockbridge Capital Group, LLC",
+        leasingCompany: "JLL",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "San Diego, CA",
+        submarket: "Escondido",
+        postalCode: "92029",
+        rentPerSF: null,
+        services: "NNN",
+    },
+    {
+        id: 15,
+        address: "1493-1517 Rue Antonio-Barbeau",
+        city: "Montréal",
+        state: "QC",
+        country: "Canada",
+        spaceUse: "Industrial",
+        sfLeased: 20122,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/6/2026",
+        commencement: "4/6/2026",
+        expiration: "4/5/2033",
+        term: "7 Years ",
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Pure Industrial",
+        leasingCompany: "Pure Industrial | Trimont",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "Montréal",
+        submarket: "Centre-de-l'Île Nord",
+        postalCode: "H4N 2R5",
+        rentPerSF: null,
+        services: "NNN",
+    },
+    {
+        id: 16,
+        address: "Aston Rd",
+        city: "Bromsgrove",
+        state: "WOR",
+        country: "United Kingdom",
+        spaceUse: "Industrial",
+        sfLeased: 9216,
+        floor: "GRND",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/6/2026",
+        commencement: "2/5/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Indurent",
+        leasingCompany: "GJS Dillon Ltd | Indurent",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "Herefordshire & Worcestershire",
+        submarket: "Bromsgrove",
+        postalCode: "B60 3ET",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 17,
+        address: "4451-4479 Aut Laval Ouest (A-440)",
+        city: "Laval",
+        state: "QC",
+        country: "Canada",
+        spaceUse: "Office",
+        sfLeased: 5942,
+        floor: "2",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/6/2026",
+        commencement: "3/7/2026",
+        expiration: "3/6/2030",
+        term: "4 Years ",
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Pure Industrial",
+        leasingCompany: "Pure Industrial | Proulx, Vadnais et Associés Inc.",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "Montréal",
+        submarket: "Laval",
+        postalCode: "H7P 6E2",
+        rentPerSF: null,
+        services: "MG",
+    },
+    {
+        id: 18,
+        address: "601 N Martingale Rd",
+        city: "Schaumburg",
+        state: "IL",
+        country: "United States",
+        spaceUse: "Retail",
+        sfLeased: 1800,
+        floor: "1",
+        costarRating: 4,
+        leaseType: "Direct",
+        signDate: "1/6/2026",
+        commencement: "2/5/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: "Fluffy Fluffy",
+        landlordCompany: "Perform Properties",
+        leasingCompany: "Mid-America Real Estate Corp.",
+        tenantRepCompany: null,
+        buildingName: "The Streets Of Woodfield- Bldg 1",
+        market: "Chicago, IL",
+        submarket: "Schaumburg Area",
+        postalCode: "60173",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 19,
+        address: "4535 12th Ave NE",
+        city: "Seattle",
+        state: "WA",
+        country: "United States",
+        spaceUse: "Retail",
+        sfLeased: 1710,
+        floor: "1",
+        costarRating: 3,
+        leaseType: "Direct",
+        signDate: "1/6/2026",
+        commencement: "2/5/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Blackstone Real Estate Income Trust, Inc.",
+        leasingCompany: "Ewing & Clark,  Inc.",
+        tenantRepCompany: null,
+        buildingName: "TWELVE at U District",
+        market: "Seattle, WA",
+        submarket: "University District",
+        postalCode: "98105",
+        rentPerSF: null,
+        services: null,
+    },
+    {
+        id: 20,
+        address: "1405 Worldwide Blvd",
+        city: "Hebron",
+        state: "KY",
+        country: "United States",
+        spaceUse: "Industrial",
+        sfLeased: 525000,
+        floor: "1",
+        costarRating: 4,
+        leaseType: "Direct",
+        signDate: "1/5/2026",
+        commencement: "2/4/2026",
+        expiration: null,
+        term: null,
+        dealType: "New",
+        tenant: null,
+        landlordCompany: "Link Logistics Real Estate",
+        leasingCompany: "Cushman & Wakefield",
+        tenantRepCompany: null,
+        buildingName: null,
+        market: "Cincinnati, OH",
+        submarket: "Airport",
+        postalCode: "41048",
+        rentPerSF: null,
+        services: null,
+    },
+];
+
+export default function Transactions({ company }: PageProps) {
+    const [subTab, setSubTab] = useState<"lease" | "sale">("lease");
+    const [searchValue, setSearchValue] = useState("");
+    const [spaceUse, setSpaceUse] = useState<string>("");
+    const [leaseSize, setLeaseSize] = useState<string>("");
+    const [signDate, setSignDate] = useState<string>("");
+    const [rating, setRating] = useState<number | null>(null);
+    const [sortBy, setSortBy] = useState<string>("");
+
+    const tabs = [
+        {
+            id: "summary",
+            label: "Summary",
+            href: `/contacts/owners/${company.id}`,
+        },
+        {
+            id: "properties",
+            label: "Properties",
+            href: `/contacts/owners/${company.id}/properties`,
+        },
+        {
+            id: "transactions",
+            label: "Transactions",
+            href: `/contacts/owners/${company.id}/transactions`,
+        },
+        {
+            id: "listings",
+            label: "Listings",
+            href: `/contacts/owners/${company.id}/listings`,
+        },
+        {
+            id: "funds",
+            label: "Funds",
+            href: `/contacts/owners/${company.id}/funds`,
+        },
+        {
+            id: "tenants",
+            label: "Tenants",
+            href: `/contacts/owners/${company.id}/tenants`,
+        },
+        {
+            id: "relationships",
+            label: "Relationships",
+            href: `/contacts/owners/${company.id}/relationships`,
+        },
+        {
+            id: "contacts",
+            label: "Contacts",
+            href: `/contacts/owners/${company.id}/contacts`,
+        },
+        {
+            id: "news",
+            label: "News",
+            href: `/contacts/owners/${company.id}/news`,
+        },
+    ];
+
+    // Filter transactions (for now, just return all as filtering will be implemented later)
+    const filteredTransactions = useMemo(() => {
+        let filtered = [...STATIC_TRANSACTIONS];
+
+        // Search filter
+        if (searchValue) {
+            const searchLower = searchValue.toLowerCase();
+            filtered = filtered.filter((transaction) => {
+                const address = transaction.address || "";
+                const city = transaction.city || "";
+                const state = transaction.state || "";
+                const country = transaction.country || "";
+                return (
+                    address.toLowerCase().includes(searchLower) ||
+                    city.toLowerCase().includes(searchLower) ||
+                    state.toLowerCase().includes(searchLower) ||
+                    country.toLowerCase().includes(searchLower)
+                );
+            });
+        }
+
+        return filtered;
+    }, [searchValue]);
+
+    return (
+        <AppLayout>
+            <Head title={`${company.company} - Transactions`} />
+
+            <div className="flex flex-col h-screen bg-gray-50">
+                {/* Company Header */}
+                <div className="bg-white border-b border-gray-200 shrink-0">
+                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 pt-4">
+                        <CompanyDetailsHeader company={company} />
+
+                        {/* Tabs */}
+                        <div className="border-b border-gray-200 mt-6">
+                            <nav className="-mb-px flex space-x-8">
+                                {tabs.map((tab) => (
+                                    <Link
+                                        key={tab.id}
+                                        href={tab.href}
+                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
+                                            tab.id === "transactions"
+                                                ? "border-red-500 text-red-600"
+                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                        }`}
+                                    >
+                                        {tab.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Sub-tabs (Lease/Sale) */}
+                <div className="bg-white border-b border-gray-200 shrink-0">
+                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
+                        <div className="flex space-x-8">
+                            <button
+                                type="button"
+                                onClick={() => setSubTab("lease")}
+                                className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
+                                    subTab === "lease"
+                                        ? "border-blue-500 text-blue-600"
+                                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                }`}
+                            >
+                                Lease
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setSubTab("sale")}
+                                className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
+                                    subTab === "sale"
+                                        ? "border-blue-500 text-blue-600"
+                                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                }`}
+                            >
+                                Sale
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Filter Bar */}
+                <OwnerTransactionsFilterBar
+                    searchValue={searchValue}
+                    onSearchChange={setSearchValue}
+                    spaceUse={spaceUse}
+                    onSpaceUseChange={setSpaceUse}
+                    leaseSize={leaseSize}
+                    onLeaseSizeChange={setLeaseSize}
+                    signDate={signDate}
+                    onSignDateChange={setSignDate}
+                    rating={rating}
+                    onRatingChange={setRating}
+                    sortBy={sortBy}
+                    onSortChange={setSortBy}
+                    transactionsCount={filteredTransactions.length}
+                />
+
+                {/* Main Content Area */}
+                <div className="flex-1 overflow-hidden">
+                    <div className="h-full mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
+                        <OwnerTransactionsTable
+                            transactions={filteredTransactions}
+                        />
+                    </div>
+                </div>
+            </div>
+        </AppLayout>
+    );
+}

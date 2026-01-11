@@ -56,19 +56,29 @@ export default function CompanyDetails({ company }: PageProps) {
             href: `/contacts/owners/${company.id}/transactions`,
         },
         {
-            id: "acquisitions",
-            label: "Acquisitions",
-            href: `/contacts/owners/${company.id}/acquisitions`,
+            id: "listings",
+            label: "Listings",
+            href: `/contacts/owners/${company.id}/listings`,
         },
         {
-            id: "contacts",
-            label: "Contacts",
-            href: `/contacts/owners/${company.id}/contacts`,
+            id: "funds",
+            label: "Funds",
+            href: `/contacts/owners/${company.id}/funds`,
+        },
+        {
+            id: "tenants",
+            label: "Tenants",
+            href: `/contacts/owners/${company.id}/tenants`,
         },
         {
             id: "relationships",
             label: "Relationships",
             href: `/contacts/owners/${company.id}/relationships`,
+        },
+        {
+            id: "contacts",
+            label: "Contacts",
+            href: `/contacts/owners/${company.id}/contacts`,
         },
         {
             id: "news",
@@ -111,8 +121,6 @@ export default function CompanyDetails({ company }: PageProps) {
                 {/* Main Content - Summary View */}
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
                     <SummaryOverview company={company} />
-                    
-
                 </div>
             </div>
         </AppLayout>
