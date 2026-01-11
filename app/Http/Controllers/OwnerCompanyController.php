@@ -268,6 +268,13 @@ class OwnerCompanyController extends Controller
             ]);
         }
 
+        // Handle news tab
+        if ($tab === 'news') {
+            return Inertia::render('Contacts/Owners/News', [
+                'company' => $company,
+            ]);
+        }
+
         // Handle tenants tab
         if ($tab === 'tenants') {
             // Check if showing locations sub-tab
