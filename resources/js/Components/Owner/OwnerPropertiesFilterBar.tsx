@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown, Map, List, Star, Download } from "lucide-react";
-import PropertyTypeFilter from "../Filters/PropertyTypeFilter";
+import PropertyTypeDropdown from "./PropertyTypeDropdown";
 import PortfolioSizeSelector from "./PortfolioSizeSelector";
 import LocationMinMaxSelector from "../LocationMinMaxSelector";
 
@@ -452,89 +452,6 @@ function StarRating({
     );
 }
 
-// Property Type Dropdown wrapper
-function PropertyTypeDropdown({
-    selectedTypes,
-    onChange,
-}: {
-    selectedTypes: string[];
-    onChange: (types: string[]) => void;
-}) {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false);
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-            return () =>
-                document.removeEventListener("mousedown", handleClickOutside);
-        }
-    }, [isOpen]);
-
-    const getDisplayLabel = () => {
-        const filteredTypes = selectedTypes.filter((t) => t !== "All");
-        if (filteredTypes.length === 0) {
-            return "Property Type";
-        }
-        if (filteredTypes.length === 1) {
-            // Extract main type (before " - " if it's a subtype)
-            const type = filteredTypes[0];
-            return type.includes(" - ") ? type.split(" - ")[0] : type;
-        }
-        return `${filteredTypes.length} Selected`;
-    };
-
-    return (
-        <div className="relative" ref={dropdownRef}>
-            <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                    selectedTypes.length > 0 && !selectedTypes.includes("All")
-                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-            >
-                <span className="whitespace-nowrap">{getDisplayLabel()}</span>
-                <ChevronDown
-                    className={`h-4 w-4 text-gray-400 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                    }`}
-                />
-            </button>
-            {isOpen && (
-                <>
-                    <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setIsOpen(false)}
-                    />
-                    <div
-                        className="absolute left-0 z-50 mt-1 w-80 rounded-md border border-gray-200 bg-white shadow-lg max-h-[500px] overflow-y-auto"
-                        onClick={(e) => e.stopPropagation()}
-                        onMouseDown={(e) => e.stopPropagation()}
-                    >
-                        <div className="p-4">
-                            <PropertyTypeFilter
-                                selectedTypes={selectedTypes}
-                                onChange={onChange}
-                            />
-                        </div>
-                    </div>
-                </>
-            )}
-        </div>
-    );
-}
-
 const SECONDARY_TYPE_OPTIONS = [
     { value: "", label: "Secondary Ty..." },
     { value: "Bank", label: "Bank" },
@@ -590,113 +507,119 @@ export default function OwnerPropertiesFilterBar({
 }: OwnerPropertiesFilterBarProps) {
     return (
         <div className="bg-white border-b border-gray-200">
-            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-wrap items-center gap-3 py-4">
-                    {/* Search Input */}
-                    <div className="relative flex-1 min-w-[200px]">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                        <input
-                            type="text"
-                            placeholder="Address or Location"
-                            value={searchValue}
-                            onChange={(e) => onSearchChange(e.target.value)}
-                            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-2">
+                <div className="flex flex-wrap items-center gap-4 py-4">
+                    {/* First Group */}
+                    <div className="flex flex-wrap items-center gap-3 border-r border-gray-200">
+                        {/* Search Input */}
+                        <div className="relative w-[240px] shrink-0">
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            <input
+                                type="text"
+                                placeholder="Address or Location"
+                                value={searchValue}
+                                onChange={(e) => onSearchChange(e.target.value)}
+                                className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                        </div>
+
+                        {/* Property Type Dropdown */}
+                        <PropertyTypeDropdown
+                            selectedTypes={propertyType}
+                            onChange={onPropertyTypeChange}
+                        />
+
+                        {/* Secondary Type Multiselect */}
+                        <MultiSelectDropdown
+                            label="Secondary Type"
+                            selectedValues={secondaryType}
+                            options={SECONDARY_TYPE_OPTIONS}
+                            onChange={onSecondaryTypeChange}
+                        />
+
+                        {/* Property Size Selector */}
+                        <PortfolioSizeSelector
+                            minValue={minPropertySize ?? null}
+                            maxValue={maxPropertySize ?? null}
+                            onChange={onPropertySizeChange || (() => {})}
+                        />
+
+                        {/* % Leased Selector */}
+                        <LocationMinMaxSelector
+                            label="% Leased"
+                            minValue={minPercentLeased ?? null}
+                            maxValue={maxPercentLeased ?? null}
+                            onChange={onPercentLeasedChange || (() => {})}
+                            minPlaceholder="Min %"
+                            maxPlaceholder="Max %"
                         />
                     </div>
 
-                    {/* Property Type Dropdown */}
-                    <PropertyTypeDropdown
-                        selectedTypes={propertyType}
-                        onChange={onPropertyTypeChange}
-                    />
+                    {/* Second Group */}
+                    <div className="flex flex-wrap items-center gap-3">
+                        {/* Location Type Multiselect */}
+                        <MultiSelectDropdown
+                            label="Location Type"
+                            selectedValues={locationType}
+                            options={LOCATION_TYPE_OPTIONS}
+                            onChange={onLocationTypeChange}
+                        />
 
-                    {/* Secondary Type Multiselect */}
-                    <MultiSelectDropdown
-                        label="Secondary Type"
-                        selectedValues={secondaryType}
-                        options={SECONDARY_TYPE_OPTIONS}
-                        onChange={onSecondaryTypeChange}
-                    />
+                        {/* Existing +5 Multiselect */}
+                        <MultiSelectDropdown
+                            label="Existing +5"
+                            selectedValues={existingPlus}
+                            options={EXISTING_PLUS_OPTIONS}
+                            onChange={onExistingPlusChange}
+                        />
 
-                    {/* Property Size Selector */}
-                    <PortfolioSizeSelector
-                        minValue={minPropertySize ?? null}
-                        maxValue={maxPropertySize ?? null}
-                        onChange={onPropertySizeChange || (() => {})}
-                    />
+                        {/* Star Rating */}
+                        <StarRating rating={rating} onChange={onRatingChange} />
 
-                    {/* % Leased Selector */}
-                    <LocationMinMaxSelector
-                        label="% Leased"
-                        minValue={minPercentLeased ?? null}
-                        maxValue={maxPercentLeased ?? null}
-                        onChange={onPercentLeasedChange || (() => {})}
-                        minPlaceholder="Min %"
-                        maxPlaceholder="Max %"
-                    />
+                        {/* Properties Count */}
+                        <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                            {propertiesCount.toLocaleString()} Properties
+                        </div>
 
-                    {/* Location Type Multiselect */}
-                    <MultiSelectDropdown
-                        label="Location Type"
-                        selectedValues={locationType}
-                        options={LOCATION_TYPE_OPTIONS}
-                        onChange={onLocationTypeChange}
-                    />
+                        {/* Sort Dropdown */}
+                        <SortDropdown value={sortBy} onChange={onSortChange} />
 
-                    {/* Existing +5 Multiselect */}
-                    <MultiSelectDropdown
-                        label="Existing +5"
-                        selectedValues={existingPlus}
-                        options={EXISTING_PLUS_OPTIONS}
-                        onChange={onExistingPlusChange}
-                    />
-
-                    {/* Star Rating */}
-                    <StarRating rating={rating} onChange={onRatingChange} />
-
-                    {/* Properties Count */}
-                    <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                        {propertiesCount.toLocaleString()} Properties
-                    </div>
-
-                    {/* Sort Dropdown */}
-                    <SortDropdown value={sortBy} onChange={onSortChange} />
-
-                    {/* Export Button */}
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                        <Download className="h-4 w-4" />
-                        <span>Export</span>
-                    </button>
-
-                    {/* View Mode Toggle */}
-                    <div className="flex items-center gap-1 border-l border-gray-200 pl-3">
+                        {/* Export Button */}
                         <button
                             type="button"
-                            onClick={() => onViewModeChange("map")}
-                            className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                viewMode === "map"
-                                    ? "bg-blue-50 text-blue-600"
-                                    : "text-gray-500 hover:bg-gray-50"
-                            }`}
+                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         >
-                            <Map className="h-4 w-4" />
-                            <span>MAP</span>
+                            <Download className="h-4 w-4" />
+                            <span>Export</span>
                         </button>
-                        <button
-                            type="button"
-                            onClick={() => onViewModeChange("list")}
-                            className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                viewMode === "list"
-                                    ? "bg-blue-50 text-blue-600"
-                                    : "text-gray-500 hover:bg-gray-50"
-                            }`}
-                        >
-                            <List className="h-4 w-4" />
-                            <span>LIST</span>
-                        </button>
+
+                        {/* View Mode Toggle */}
+                        <div className="flex items-center gap-1 border-l border-gray-200 pl-3">
+                            <button
+                                type="button"
+                                onClick={() => onViewModeChange("map")}
+                                className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    viewMode === "map"
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "text-gray-500 hover:bg-gray-50"
+                                }`}
+                            >
+                                <Map className="h-4 w-4" />
+                                <span>MAP</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => onViewModeChange("list")}
+                                className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    viewMode === "list"
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "text-gray-500 hover:bg-gray-50"
+                                }`}
+                            >
+                                <List className="h-4 w-4" />
+                                <span>LIST</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
