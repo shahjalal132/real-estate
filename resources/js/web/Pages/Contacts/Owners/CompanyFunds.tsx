@@ -3,11 +3,10 @@ import { Head, router } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
 import CompanyDetailsLayout from "@/Layouts/CompanyDetailsLayout";
 import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
-import OwnerFundsFilter from "@/Components/Owner/OwnerFundsFilter";
+import CompanyFundsFilterBar from "@/Components/Owner/CompanyFundsFilterBar";
 import ResizableTable, {
     ResizableColumn,
 } from "@/Components/ResizableTable/ResizableTable";
-import OwnerFundsAdvancedFilter from "@/Components/Owner/OwnerFundsAdvancedFilter";
 
 interface OwnerCompany {
     id: number;
@@ -103,13 +102,14 @@ export default function CompanyFunds({
     nextCompanyId,
 }: PageProps) {
     const [searchValue, setSearchValue] = useState("");
-    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const [status, setStatus] = useState<string[]>([]);
     const [propertyFocus, setPropertyFocus] = useState<string[]>([]);
     const [countryFocus, setCountryFocus] = useState<string[]>([]);
     const [strategy, setStrategy] = useState<string[]>([]);
     const [minDryPowder, setMinDryPowder] = useState<number | null>(null);
     const [maxDryPowder, setMaxDryPowder] = useState<number | null>(null);
+    const [sortBy, setSortBy] = useState<string>("fund");
+    const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
     const tabs = [
         {
@@ -159,7 +159,7 @@ export default function CompanyFunds({
         },
     ];
 
-    // Filter funds (for now, just return all as filtering will be implemented later)
+    // Filter and sort funds
     const filteredFunds = useMemo(() => {
         let filtered = [...STATIC_FUNDS];
 
@@ -189,8 +189,101 @@ export default function CompanyFunds({
             );
         }
 
+        // Country Focus filter
+        if (countryFocus.length > 0) {
+            filtered = filtered.filter((fund) =>
+                fund.country_focus &&
+                countryFocus.some((cf) =>
+                    fund.country_focus?.includes(cf)
+                )
+            );
+        }
+
+        // Strategy filter
+        if (strategy.length > 0) {
+            filtered = filtered.filter((fund) =>
+                fund.strategy && strategy.includes(fund.strategy)
+            );
+        }
+
+        // Dry Powder filter
+        if (minDryPowder !== null) {
+            filtered = filtered.filter(
+                (fund) => (fund.dry_powder || 0) >= minDryPowder
+            );
+        }
+        if (maxDryPowder !== null) {
+            filtered = filtered.filter(
+                (fund) => (fund.dry_powder || 0) <= maxDryPowder
+            );
+        }
+
+        // Sort
+        filtered.sort((a, b) => {
+            let aValue: any;
+            let bValue: any;
+
+            switch (sortBy) {
+                case "fund":
+                    aValue = a.fund || "";
+                    bValue = b.fund || "";
+                    break;
+                case "fund_size":
+                    aValue = a.fund_size || 0;
+                    bValue = b.fund_size || 0;
+                    break;
+                case "status":
+                    aValue = a.status || "";
+                    bValue = b.status || "";
+                    break;
+                case "dry_powder":
+                    aValue = a.dry_powder || 0;
+                    bValue = b.dry_powder || 0;
+                    break;
+                case "aum":
+                    aValue = a.aum || 0;
+                    bValue = b.aum || 0;
+                    break;
+                case "vintage":
+                    aValue = a.vintage || "";
+                    bValue = b.vintage || "";
+                    break;
+                case "properties":
+                    aValue = a.properties || 0;
+                    bValue = b.properties || 0;
+                    break;
+                case "portfolio_size_sf":
+                    aValue = a.portfolio_size_sf || 0;
+                    bValue = b.portfolio_size_sf || 0;
+                    break;
+                default:
+                    aValue = a.fund || "";
+                    bValue = b.fund || "";
+            }
+
+            if (typeof aValue === "string" && typeof bValue === "string") {
+                return sortDir === "asc"
+                    ? aValue.localeCompare(bValue)
+                    : bValue.localeCompare(aValue);
+            } else {
+                return sortDir === "asc"
+                    ? (aValue as number) - (bValue as number)
+                    : (bValue as number) - (aValue as number);
+            }
+        });
+
         return filtered;
-    }, [searchValue, status, propertyFocus]);
+    }, [
+        searchValue,
+        status,
+        propertyFocus,
+        countryFocus,
+        strategy,
+        minDryPowder,
+        maxDryPowder,
+        sortBy,
+        sortDir,
+    ]);
 
     const formatNumber = (num: number | null | undefined): string => {
         if (num === null || num === undefined) return "—";
@@ -222,13 +315,6 @@ export default function CompanyFunds({
         return `$${value.toLocaleString()}`;
     };
 
-    const activeFiltersCount =
-        status.length +
-        propertyFocus.length +
-        countryFocus.length +
-        strategy.length +
-        (minDryPowder !== null ? 1 : 0) +
-        (maxDryPowder !== null ? 1 : 0);
 
     const columns: ResizableColumn[] = [
         {
@@ -428,25 +514,15 @@ export default function CompanyFunds({
                 basePath="/contacts/owners"
                 headerComponent={<CompanyDetailsHeader company={company} />}
             >
-                {/* Content Area - Same structure as Funds.tsx */}
+                {/* Content Area */}
                 <div className="flex flex-col h-full bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
                     {/* Search and Filter Bar */}
                     <div className="shrink-0">
-                        <OwnerFundsFilter
+                        <CompanyFundsFilterBar
                             searchValue={searchValue}
                             onSearchChange={setSearchValue}
                             onSearch={handleSearch}
-                            onFiltersClick={() => {
-                                setShowAdvancedFilters((prev) => !prev);
-                            }}
-                            onSaveClick={() => {
-                                // Handle save click
-                            }}
-                            onExportClick={() => {
-                                // Handle export click
-                            }}
-                            onClearClick={handleClearFilters}
-                            activeFiltersCount={activeFiltersCount}
+                            fundsCount={filteredFunds.length}
                             status={status}
                             onStatusChange={setStatus}
                             propertyFocus={propertyFocus}
@@ -461,19 +537,19 @@ export default function CompanyFunds({
                             onCountryFocusChange={setCountryFocus}
                             strategy={strategy}
                             onStrategyChange={setStrategy}
+                            sortBy={sortBy}
+                            sortDir={sortDir}
+                            onSortChange={(by, dir) => {
+                                setSortBy(by);
+                                setSortDir(dir);
+                            }}
                         />
                     </div>
 
-                    {/* Table Container with Sidebar */}
+                    {/* Table Container */}
                     <div className="flex flex-1 min-h-0 overflow-hidden">
                         {/* Main Content */}
-                        <div
-                            className={`flex flex-col transition-all duration-300 min-h-0 ${
-                                showAdvancedFilters
-                                    ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
-                                    : "w-full"
-                            }`}
-                        >
+                        <div className="flex flex-col w-full min-h-0">
                             <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
                                 {/* Table - Takes available space */}
                                 <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
@@ -487,52 +563,6 @@ export default function CompanyFunds({
                                 </div>
                             </div>
                         </div>
-
-                        {/* Advanced Filters Sidebar - Desktop */}
-                        {showAdvancedFilters && (
-                            <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
-                                <OwnerFundsAdvancedFilter
-                                    isOpen={showAdvancedFilters}
-                                    onClose={() => setShowAdvancedFilters(false)}
-                                    onClear={() => {
-                                        handleClearFilters();
-                                        setShowAdvancedFilters(false);
-                                    }}
-                                    onDone={() => {
-                                        setShowAdvancedFilters(false);
-                                    }}
-                                    activeFiltersCount={activeFiltersCount}
-                                />
-                            </div>
-                        )}
-
-                        {/* Advanced Filters Overlay - Mobile */}
-                        {showAdvancedFilters && (
-                            <div className="md:hidden fixed inset-0 z-50 flex">
-                                {/* Backdrop */}
-                                <div
-                                    className="absolute inset-0 bg-black bg-opacity-50"
-                                    onClick={() => setShowAdvancedFilters(false)}
-                                />
-                                {/* Panel */}
-                                <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
-                                    <OwnerFundsAdvancedFilter
-                                        isOpen={showAdvancedFilters}
-                                        onClose={() =>
-                                            setShowAdvancedFilters(false)
-                                        }
-                                        onClear={() => {
-                                            handleClearFilters();
-                                            setShowAdvancedFilters(false);
-                                        }}
-                                        onDone={() => {
-                                            setShowAdvancedFilters(false);
-                                        }}
-                                        activeFiltersCount={activeFiltersCount}
-                                    />
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </CompanyDetailsLayout>
