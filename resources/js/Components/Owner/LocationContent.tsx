@@ -1,7 +1,5 @@
-import { useRef } from "react";
 import LocationFilters from "./Filters/LocationFilters";
 import { LocationTabType, LocationFilterState } from "./types/filterState";
-import { useScrollTracking, scrollToSection } from "./hooks/useScrollTracking";
 
 interface LocationContentProps {
     activeTab: LocationTabType;
@@ -22,36 +20,6 @@ export default function LocationContent({
     filterState,
     onFilterStateChange,
 }: LocationContentProps) {
-    const cityRef = useRef<HTMLDivElement>(null);
-    const marketRef = useRef<HTMLDivElement>(null);
-    const countryRef = useRef<HTMLDivElement>(null);
-    const locationScrollContainerRef = useRef<HTMLDivElement>(null);
-
-    const sections = [
-        { ref: cityRef, name: "city" as const },
-        { ref: marketRef, name: "market" as const },
-        { ref: countryRef, name: "country" as const },
-    ];
-
-    const refs = {
-        city: cityRef,
-        market: marketRef,
-        country: countryRef,
-    };
-
-    useScrollTracking(
-        sections,
-        locationScrollContainerRef,
-        activeTab,
-        onTabChange,
-        true
-    );
-
-    const handleScrollToSection = (section: LocationTabType) => {
-        onTabChange(section);
-        scrollToSection(section, refs, locationScrollContainerRef);
-    };
-
     return (
         <div className="flex flex-col h-full overflow-hidden">
             {/* Location Tabs */}
@@ -60,7 +28,7 @@ export default function LocationContent({
                     {locationTabs.map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => handleScrollToSection(tab.id)}
+                            onClick={() => onTabChange(tab.id)}
                             className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out ${
                                 activeTab === tab.id
                                     ? "border-blue-600 text-blue-600"
@@ -76,72 +44,13 @@ export default function LocationContent({
                 </div>
             </div>
 
-            {/* Vertically Scrollable Content */}
-            <div
-                ref={locationScrollContainerRef}
-                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-gray-50"
-                style={{ scrollSnapType: "y mandatory" }}
-            >
-                <div className="flex flex-col gap-4 p-4">
-                    {/* City Section */}
-                    <div
-                        ref={cityRef}
-                        className="w-full shrink-0 bg-white rounded-lg border border-gray-200 shadow-sm"
-                        style={{ scrollSnapAlign: "start" }}
-                    >
+            {/* Tab Content */}
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-gray-50">
+                <div className="p-4">
+                    <div className="w-full bg-white rounded-lg border border-gray-200 shadow-sm">
                         <div className="p-6 space-y-4">
                             <LocationFilters
-                                activeTab="city"
-                                cities={filterState.cities}
-                                markets={filterState.markets}
-                                countries={filterState.countries}
-                                onCitiesChange={(value) => {
-                                    onFilterStateChange({ cities: value });
-                                }}
-                                onMarketsChange={(value) => {
-                                    onFilterStateChange({ markets: value });
-                                }}
-                                onCountriesChange={(value) => {
-                                    onFilterStateChange({ countries: value });
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Market Section */}
-                    <div
-                        ref={marketRef}
-                        className="w-full shrink-0 bg-white rounded-lg border border-gray-200 shadow-sm"
-                        style={{ scrollSnapAlign: "start" }}
-                    >
-                        <div className="p-6 space-y-4">
-                            <LocationFilters
-                                activeTab="market"
-                                cities={filterState.cities}
-                                markets={filterState.markets}
-                                countries={filterState.countries}
-                                onCitiesChange={(value) => {
-                                    onFilterStateChange({ cities: value });
-                                }}
-                                onMarketsChange={(value) => {
-                                    onFilterStateChange({ markets: value });
-                                }}
-                                onCountriesChange={(value) => {
-                                    onFilterStateChange({ countries: value });
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Country Section */}
-                    <div
-                        ref={countryRef}
-                        className="w-full shrink-0 bg-white rounded-lg border border-gray-200 shadow-sm"
-                        style={{ scrollSnapAlign: "start" }}
-                    >
-                        <div className="p-6 space-y-4">
-                            <LocationFilters
-                                activeTab="country"
+                                activeTab={activeTab}
                                 cities={filterState.cities}
                                 markets={filterState.markets}
                                 countries={filterState.countries}
@@ -162,4 +71,3 @@ export default function LocationContent({
         </div>
     );
 }
-
