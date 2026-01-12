@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, X, Search, ChevronRight, ChevronsRight, ChevronLeft, ChevronsLeft } from "lucide-react";
+import {
+    ChevronDown,
+    X,
+    Search,
+    ChevronRight,
+    ChevronsRight,
+    ChevronLeft,
+    ChevronsLeft,
+} from "lucide-react";
 
 interface CountryFocusSelectorProps {
     selectedCountries: string[];
@@ -8,39 +16,212 @@ interface CountryFocusSelectorProps {
 
 // Sample countries list - you can replace this with actual data
 const ALL_COUNTRIES = [
-    "Afghanistan", "Albania", "Algeria", "American Samoa", "Andorra", "Angola",
-    "Anguilla", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Ascension",
-    "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh",
-    "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan",
-    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria",
-    "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde",
-    "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Colombia",
-    "Comoros", "Congo", "Cook Islands", "Costa Rica", "Croatia", "Cuba", "Cyprus",
-    "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic",
-    "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia",
-    "Ethiopia", "Fiji", "Finland", "France", "French Polynesia", "Gabon", "Gambia",
-    "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guam", "Guatemala",
-    "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong",
-    "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel",
-    "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati",
-    "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho",
-    "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau",
-    "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands",
-    "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia",
-    "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal",
-    "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea",
-    "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama",
-    "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
-    "Puerto Rico", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis",
-    "Saint Lucia", "Saint Vincent", "Samoa", "San Marino", "Sao Tome and Principe",
-    "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore",
-    "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
-    "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland",
-    "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo",
-    "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu",
-    "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States",
-    "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam",
-    "Yemen", "Zambia", "Zimbabwe"
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "American Samoa",
+    "Andorra",
+    "Angola",
+    "Anguilla",
+    "Antigua and Barbuda",
+    "Argentina",
+    "Armenia",
+    "Aruba",
+    "Ascension",
+    "Australia",
+    "Austria",
+    "Azerbaijan",
+    "Bahamas",
+    "Bahrain",
+    "Bangladesh",
+    "Barbados",
+    "Belarus",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bermuda",
+    "Bhutan",
+    "Bolivia",
+    "Bosnia and Herzegovina",
+    "Botswana",
+    "Brazil",
+    "Brunei",
+    "Bulgaria",
+    "Burkina Faso",
+    "Burundi",
+    "Cambodia",
+    "Cameroon",
+    "Canada",
+    "Cape Verde",
+    "Cayman Islands",
+    "Central African Republic",
+    "Chad",
+    "Chile",
+    "China",
+    "Colombia",
+    "Comoros",
+    "Congo",
+    "Cook Islands",
+    "Costa Rica",
+    "Croatia",
+    "Cuba",
+    "Cyprus",
+    "Czech Republic",
+    "Denmark",
+    "Djibouti",
+    "Dominica",
+    "Dominican Republic",
+    "Ecuador",
+    "Egypt",
+    "El Salvador",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Estonia",
+    "Ethiopia",
+    "Fiji",
+    "Finland",
+    "France",
+    "French Polynesia",
+    "Gabon",
+    "Gambia",
+    "Georgia",
+    "Germany",
+    "Ghana",
+    "Greece",
+    "Grenada",
+    "Guam",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Honduras",
+    "Hong Kong",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran",
+    "Iraq",
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Jamaica",
+    "Japan",
+    "Jordan",
+    "Kazakhstan",
+    "Kenya",
+    "Kiribati",
+    "Kosovo",
+    "Kuwait",
+    "Kyrgyzstan",
+    "Laos",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Liechtenstein",
+    "Lithuania",
+    "Luxembourg",
+    "Macau",
+    "Madagascar",
+    "Malawi",
+    "Malaysia",
+    "Maldives",
+    "Mali",
+    "Malta",
+    "Marshall Islands",
+    "Mauritania",
+    "Mauritius",
+    "Mexico",
+    "Micronesia",
+    "Moldova",
+    "Monaco",
+    "Mongolia",
+    "Montenegro",
+    "Morocco",
+    "Mozambique",
+    "Myanmar",
+    "Namibia",
+    "Nauru",
+    "Nepal",
+    "Netherlands",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "North Korea",
+    "North Macedonia",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palau",
+    "Palestine",
+    "Panama",
+    "Papua New Guinea",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Poland",
+    "Portugal",
+    "Puerto Rico",
+    "Qatar",
+    "Romania",
+    "Russia",
+    "Rwanda",
+    "Saint Kitts and Nevis",
+    "Saint Lucia",
+    "Saint Vincent",
+    "Samoa",
+    "San Marino",
+    "Sao Tome and Principe",
+    "Saudi Arabia",
+    "Senegal",
+    "Serbia",
+    "Seychelles",
+    "Sierra Leone",
+    "Singapore",
+    "Slovakia",
+    "Slovenia",
+    "Solomon Islands",
+    "Somalia",
+    "South Africa",
+    "South Korea",
+    "South Sudan",
+    "Spain",
+    "Sri Lanka",
+    "Sudan",
+    "Suriname",
+    "Sweden",
+    "Switzerland",
+    "Syria",
+    "Taiwan",
+    "Tajikistan",
+    "Tanzania",
+    "Thailand",
+    "Timor-Leste",
+    "Togo",
+    "Tonga",
+    "Trinidad and Tobago",
+    "Tunisia",
+    "Turkey",
+    "Turkmenistan",
+    "Tuvalu",
+    "Uganda",
+    "Ukraine",
+    "United Arab Emirates",
+    "United Kingdom",
+    "United States",
+    "Uruguay",
+    "Uzbekistan",
+    "Vanuatu",
+    "Vatican City",
+    "Venezuela",
+    "Vietnam",
+    "Yemen",
+    "Zambia",
+    "Zimbabwe",
 ];
 
 const CONTINENTS = [
@@ -51,7 +232,7 @@ const CONTINENTS = [
     "North America",
     "South America",
     "Oceania",
-    "Antarctica"
+    "Antarctica",
 ];
 
 const SUBCONTINENTS = [
@@ -77,7 +258,7 @@ const SUBCONTINENTS = [
     "Australia and New Zealand",
     "Melanesia",
     "Micronesia",
-    "Polynesia"
+    "Polynesia",
 ];
 
 export default function CountryFocusSelector({
@@ -86,20 +267,29 @@ export default function CountryFocusSelector({
 }: CountryFocusSelectorProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [availableCountries, setAvailableCountries] = useState<string[]>(ALL_COUNTRIES);
+    const [availableCountries, setAvailableCountries] =
+        useState<string[]>(ALL_COUNTRIES);
     const [selected, setSelected] = useState<string[]>(selectedCountries);
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedContinent, setSelectedContinent] = useState("All Continents");
-    const [selectedSubcontinent, setSelectedSubcontinent] = useState("All Subcontinents");
-    const [highlightedAvailable, setHighlightedAvailable] = useState<string[]>([]);
-    const [highlightedSelected, setHighlightedSelected] = useState<string[]>([]);
+    const [selectedContinent, setSelectedContinent] =
+        useState("All Continents");
+    const [selectedSubcontinent, setSelectedSubcontinent] =
+        useState("All Subcontinents");
+    const [highlightedAvailable, setHighlightedAvailable] = useState<string[]>(
+        []
+    );
+    const [highlightedSelected, setHighlightedSelected] = useState<string[]>(
+        []
+    );
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
     const selectorRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
 
     // Initialize available countries (exclude selected ones)
     useEffect(() => {
-        setAvailableCountries(ALL_COUNTRIES.filter(c => !selected.includes(c)));
+        setAvailableCountries(
+            ALL_COUNTRIES.filter((c) => !selected.includes(c))
+        );
     }, [selected]);
 
     // Sync selected with prop changes
@@ -138,16 +328,19 @@ export default function CountryFocusSelector({
         return `${selected.length} Selected`;
     };
 
-    const filteredAvailable = availableCountries.filter(country =>
+    const filteredAvailable = availableCountries.filter((country) =>
         country.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const handleMoveRight = () => {
-        const toMove = highlightedAvailable.length > 0 
-            ? highlightedAvailable 
-            : filteredAvailable;
+        const toMove =
+            highlightedAvailable.length > 0
+                ? highlightedAvailable
+                : filteredAvailable;
         const newSelected = [...selected, ...toMove];
-        const newAvailable = availableCountries.filter(c => !toMove.includes(c));
+        const newAvailable = availableCountries.filter(
+            (c) => !toMove.includes(c)
+        );
         setSelected(newSelected);
         setAvailableCountries(newAvailable);
         setHighlightedAvailable([]);
@@ -163,8 +356,9 @@ export default function CountryFocusSelector({
     };
 
     const handleMoveLeft = () => {
-        const toMove = highlightedSelected.length > 0 ? highlightedSelected : selected;
-        const newSelected = selected.filter(c => !toMove.includes(c));
+        const toMove =
+            highlightedSelected.length > 0 ? highlightedSelected : selected;
+        const newSelected = selected.filter((c) => !toMove.includes(c));
         const newAvailable = [...availableCountries, ...toMove];
         setSelected(newSelected);
         setAvailableCountries(newAvailable);
@@ -181,14 +375,14 @@ export default function CountryFocusSelector({
 
     const handleDoubleClickAvailable = (country: string) => {
         const newSelected = [...selected, country];
-        const newAvailable = availableCountries.filter(c => c !== country);
+        const newAvailable = availableCountries.filter((c) => c !== country);
         setSelected(newSelected);
         setAvailableCountries(newAvailable);
         onChange(newSelected);
     };
 
     const handleDoubleClickSelected = (country: string) => {
-        const newSelected = selected.filter(c => c !== country);
+        const newSelected = selected.filter((c) => c !== country);
         const newAvailable = [...availableCountries, country];
         setSelected(newSelected);
         setAvailableCountries(newAvailable);
@@ -217,7 +411,8 @@ export default function CountryFocusSelector({
                     setIsModalOpen(true);
                     // Calculate position for modal
                     if (selectorRef.current) {
-                        const rect = selectorRef.current.getBoundingClientRect();
+                        const rect =
+                            selectorRef.current.getBoundingClientRect();
                         setModalPosition({
                             top: rect.bottom + 4,
                             left: rect.left,
@@ -251,7 +446,7 @@ export default function CountryFocusSelector({
                     <div
                         ref={modalRef}
                         className="fixed z-50 w-[700px] max-h-[600px] rounded-lg border border-gray-200 bg-white shadow-xl overflow-hidden flex flex-col"
-                        style={{ 
+                        style={{
                             padding: "20px",
                             top: `${modalPosition.top}px`,
                             left: `${modalPosition.left}px`,
@@ -273,7 +468,7 @@ export default function CountryFocusSelector({
                         </div>
 
                         {/* Continent and Subcontinent Filters */}
-                        <div className="mb-3 grid grid-cols-2 gap-3">
+                        <div className="mb-3 flex flex-col gap-3">
                             <div>
                                 <label className="mb-1 block text-sm font-medium text-gray-700">
                                     Continent Area
@@ -281,16 +476,20 @@ export default function CountryFocusSelector({
                                 <div className="relative">
                                     <select
                                         value={selectedContinent}
-                                        onChange={(e) => setSelectedContinent(e.target.value)}
+                                        onChange={(e) =>
+                                            setSelectedContinent(e.target.value)
+                                        }
                                         className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     >
-                                        {CONTINENTS.map(continent => (
-                                            <option key={continent} value={continent}>
+                                        {CONTINENTS.map((continent) => (
+                                            <option
+                                                key={continent}
+                                                value={continent}
+                                            >
                                                 {continent}
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                                 </div>
                             </div>
                             <div>
@@ -300,16 +499,22 @@ export default function CountryFocusSelector({
                                 <div className="relative">
                                     <select
                                         value={selectedSubcontinent}
-                                        onChange={(e) => setSelectedSubcontinent(e.target.value)}
+                                        onChange={(e) =>
+                                            setSelectedSubcontinent(
+                                                e.target.value
+                                            )
+                                        }
                                         className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     >
-                                        {SUBCONTINENTS.map(subcontinent => (
-                                            <option key={subcontinent} value={subcontinent}>
+                                        {SUBCONTINENTS.map((subcontinent) => (
+                                            <option
+                                                key={subcontinent}
+                                                value={subcontinent}
+                                            >
                                                 {subcontinent}
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
                                 </div>
                             </div>
                         </div>
@@ -330,7 +535,11 @@ export default function CountryFocusSelector({
                                                 type="text"
                                                 placeholder="Search"
                                                 value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                onChange={(e) =>
+                                                    setSearchQuery(
+                                                        e.target.value
+                                                    )
+                                                }
                                                 className="w-full rounded border border-gray-300 bg-white pl-8 pr-2 py-1.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             />
                                         </div>
@@ -345,16 +554,33 @@ export default function CountryFocusSelector({
                                             filteredAvailable.map((country) => (
                                                 <div
                                                     key={country}
-                                                    onDoubleClick={() => handleDoubleClickAvailable(country)}
+                                                    onDoubleClick={() =>
+                                                        handleDoubleClickAvailable(
+                                                            country
+                                                        )
+                                                    }
                                                     onClick={() => {
                                                         setHighlightedAvailable(
-                                                            highlightedAvailable.includes(country)
-                                                                ? highlightedAvailable.filter(c => c !== country)
-                                                                : [...highlightedAvailable, country]
+                                                            highlightedAvailable.includes(
+                                                                country
+                                                            )
+                                                                ? highlightedAvailable.filter(
+                                                                      (c) =>
+                                                                          c !==
+                                                                          country
+                                                                  )
+                                                                : [
+                                                                      ...highlightedAvailable,
+                                                                      country,
+                                                                  ]
                                                         );
                                                     }}
                                                     className={`cursor-pointer px-4 py-1.5 text-sm hover:bg-gray-100 transition-colors ${
-                                                        highlightedAvailable.includes(country) ? "bg-blue-100" : ""
+                                                        highlightedAvailable.includes(
+                                                            country
+                                                        )
+                                                            ? "bg-blue-100"
+                                                            : ""
                                                     }`}
                                                 >
                                                     {country}
@@ -377,7 +603,10 @@ export default function CountryFocusSelector({
                                 </button>
                                 <button
                                     onClick={handleMoveRight}
-                                    disabled={highlightedAvailable.length === 0 && filteredAvailable.length === 0}
+                                    disabled={
+                                        highlightedAvailable.length === 0 &&
+                                        filteredAvailable.length === 0
+                                    }
                                     className="rounded border border-gray-300 bg-white p-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                     title="Move selected right"
                                 >
@@ -385,7 +614,10 @@ export default function CountryFocusSelector({
                                 </button>
                                 <button
                                     onClick={handleMoveLeft}
-                                    disabled={highlightedSelected.length === 0 && selected.length === 0}
+                                    disabled={
+                                        highlightedSelected.length === 0 &&
+                                        selected.length === 0
+                                    }
                                     className="rounded border border-gray-300 bg-white p-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                     title="Move selected left"
                                 >
@@ -411,25 +643,52 @@ export default function CountryFocusSelector({
                                         {selected.length === 0 ? (
                                             <div className="p-4 text-center text-sm text-gray-500">
                                                 <div className="space-y-1">
-                                                    <p>Select Countries from the list on the left by double clicking.</p>
+                                                    <p>
+                                                        Select Countries from
+                                                        the list on the left by
+                                                        double clicking.
+                                                    </p>
                                                     <p>Or</p>
-                                                    <p>Single click to highlight and use the arrow buttons to add to the list of Selected Countries.</p>
+                                                    <p>
+                                                        Single click to
+                                                        highlight and use the
+                                                        arrow buttons to add to
+                                                        the list of Selected
+                                                        Countries.
+                                                    </p>
                                                 </div>
                                             </div>
                                         ) : (
                                             selected.map((country) => (
                                                 <div
                                                     key={country}
-                                                    onDoubleClick={() => handleDoubleClickSelected(country)}
+                                                    onDoubleClick={() =>
+                                                        handleDoubleClickSelected(
+                                                            country
+                                                        )
+                                                    }
                                                     onClick={() => {
                                                         setHighlightedSelected(
-                                                            highlightedSelected.includes(country)
-                                                                ? highlightedSelected.filter(c => c !== country)
-                                                                : [...highlightedSelected, country]
+                                                            highlightedSelected.includes(
+                                                                country
+                                                            )
+                                                                ? highlightedSelected.filter(
+                                                                      (c) =>
+                                                                          c !==
+                                                                          country
+                                                                  )
+                                                                : [
+                                                                      ...highlightedSelected,
+                                                                      country,
+                                                                  ]
                                                         );
                                                     }}
                                                     className={`cursor-pointer px-4 py-1.5 text-sm hover:bg-gray-100 transition-colors ${
-                                                        highlightedSelected.includes(country) ? "bg-blue-100" : ""
+                                                        highlightedSelected.includes(
+                                                            country
+                                                        )
+                                                            ? "bg-blue-100"
+                                                            : ""
                                                     }`}
                                                 >
                                                     {country}
@@ -462,4 +721,3 @@ export default function CountryFocusSelector({
         </div>
     );
 }
-

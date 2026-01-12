@@ -205,7 +205,7 @@ export default function OwnerCompaniesFilterBar({
                                     setLocalSearchValue(e.target.value)
                                 }
                                 onKeyPress={handleKeyPress}
-                                placeholder="Fund or Owner Name"
+                                placeholder="Owner Name or Ticker"
                                 className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                             {localSearchValue && (
@@ -240,6 +240,7 @@ export default function OwnerCompaniesFilterBar({
                             onChange={onPropertiesOwnedChange || (() => {})}
                             minPlaceholder="Min"
                             maxPlaceholder="Max"
+                            defaultMinValue={5}
                         />
 
                         {/* Main Property Type Button with Dropdown */}
