@@ -1,5 +1,7 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
+import CompanyDetailsHeader from "../../../../Components/Owner/CompanyDetailsHeader";
 import ComingSoon from "../../../../Components/ComingSoon";
 import { LucideIcon, Building2, Receipt, TrendingUp, Users, Network, Newspaper } from "lucide-react";
 
@@ -15,6 +17,10 @@ interface PageProps {
     company: OwnerCompany;
     tab: string;
     tabLabel: string;
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
 const tabIcons: Record<string, LucideIcon> = {
@@ -35,7 +41,15 @@ const tabDescriptions: Record<string, string> = {
     news: "Stay updated with the latest news and updates about this owner company.",
 };
 
-export default function CompanyTab({ company, tab, tabLabel }: PageProps) {
+export default function CompanyTab({
+    company,
+    tab,
+    tabLabel,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const tabs = [
         {
             id: "summary",
@@ -84,54 +98,34 @@ export default function CompanyTab({ company, tab, tabLabel }: PageProps) {
         },
     ];
 
-    const activeTab = tabs.find((t) => t.id === tab) || tabs[0];
-    const Icon = tabIcons[tab] || Building2;
+    // Normalize tab name for icon lookup (handle both formats)
+    const normalizedTab = tab.replace(/-/g, "_");
+    const Icon = tabIcons[tab] || tabIcons[normalizedTab] || Building2;
+    const description =
+        tabDescriptions[tab] ||
+        tabDescriptions[normalizedTab] ||
+        "This feature is coming soon.";
 
     return (
         <AppLayout>
             <Head title={`${tabLabel} - ${company.company}`} />
-
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            {company.company}
-                        </h1>
-                        {company.owner_type && (
-                            <p className="text-lg text-gray-600 mt-2">
-                                {company.owner_type}
-                            </p>
-                        )}
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((t) => (
-                                    <Link
-                                        key={t.id}
-                                        href={t.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            t.id === activeTab.id
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {t.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
+            <CompanyDetailsLayout
+                title={`${tabLabel} - ${company.company}`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
                 {/* Coming Soon Content */}
                 <ComingSoon
                     title={tabLabel}
-                    description={tabDescriptions[tab] || "This feature is coming soon."}
+                    description={description}
                     icon={Icon}
                 />
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

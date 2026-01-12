@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { usePage } from "@inertiajs/react";
-import CompanyDetailsNav from "../Components/Tenant/CompanyDetailsNav";
+import TenantCompanyDetailsNav from "../Components/Tenant/CompanyDetailsNav";
+import OwnerCompanyDetailsNav from "../Components/Owner/CompanyDetailsNav";
 import CompanyTabs, { Tab } from "../Components/Tenant/CompanyTabs";
 
 interface CompanyDetailsLayoutProps {
@@ -101,10 +102,16 @@ export default function CompanyDetailsLayout({
         : null;
     const nextUrl = nextCompanyId ? `${basePath}/${nextCompanyId}` : null;
 
+    // Determine which nav component to use based on basePath
+    const isOwner = basePath.includes("/owners");
+    const NavComponent = isOwner
+        ? OwnerCompanyDetailsNav
+        : TenantCompanyDetailsNav;
+
     return (
         <div className={`bg-gray-50 min-h-screen ${className}`}>
             {/* Top Navigation Bar */}
-            <CompanyDetailsNav
+            <NavComponent
                 currentIndex={currentIndex}
                 totalCount={totalCount}
                 previousUrl={previousUrl}

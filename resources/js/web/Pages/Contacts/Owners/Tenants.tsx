@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
 import {
     PaginatedData,
     TennentCompany,
@@ -47,6 +48,10 @@ interface PageProps {
         by: string;
         dir: string;
     };
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
 export default function Tenants({
@@ -55,6 +60,10 @@ export default function Tenants({
     locations,
     filters,
     sort,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
 }: PageProps) {
     const { url } = usePage();
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -639,122 +648,64 @@ export default function Tenants({
     return (
         <AppLayout>
             <Head title={`${company.company} - Tenants`} />
-            <div className="flex flex-col h-screen bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
-                {/* Header with Tabs */}
-                <div className="border-b border-gray-200 bg-white shrink-0">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 pt-4">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
-                                            tab.id === "tenants"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-
-                        {/* Sub-tabs for Companies and Locations */}
-                        <div className="border-b border-gray-200 mt-2">
-                            <nav className="-mb-px flex space-x-8">
-                                <Link
-                                    href={`/contacts/owners/${company.id}/tenants`}
-                                    className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
-                                        activeSubTab === "companies"
-                                            ? "border-red-500 text-red-600"
-                                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                    }`}
-                                >
-                                    Companies
-                                </Link>
-                                <Link
-                                    href={`/contacts/owners/${company.id}/tenants?tab=locations`}
-                                    className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
-                                        activeSubTab === "locations"
-                                            ? "border-red-500 text-red-600"
-                                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                    }`}
-                                >
-                                    Locations
-                                </Link>
-                            </nav>
-                        </div>
+            <CompanyDetailsLayout
+                title={`${company.company} - Tenants`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
+                <div className="flex flex-col h-screen bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
+                    {/* Sub-tabs for Companies and Locations */}
+                    <div className="border-b border-gray-200 mt-2">
+                        <nav className="-mb-px flex space-x-8">
+                            <Link
+                                href={`/contacts/owners/${company.id}/tenants`}
+                                className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
+                                    activeSubTab === "companies"
+                                        ? "border-red-500 text-red-600"
+                                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                }`}
+                            >
+                                Companies
+                            </Link>
+                            <Link
+                                href={`/contacts/owners/${company.id}/tenants?tab=locations`}
+                                className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
+                                    activeSubTab === "locations"
+                                        ? "border-red-500 text-red-600"
+                                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                }`}
+                            >
+                                Locations
+                            </Link>
+                        </nav>
                     </div>
-                </div>
 
-                {/* Search and Filter Bar */}
-                <div className="shrink-0">
-                    {activeSubTab === "companies" ? (
-                        <CompaniesFilterBar
-                            searchValue={filters.search}
-                            onSearchChange={handleSearchChange}
-                            onSearch={handleSearch}
-                            retailersOnly={filters.retailers_only || false}
-                            onRetailersOnlyChange={handleRetailersOnlyChange}
-                            minLocations={filters.min_locations || null}
-                            maxLocations={filters.max_locations || null}
-                            onLocationsChange={handleLocationsChange}
-                            minSfOccupied={filters.min_sf_occupied ?? undefined}
-                            maxSfOccupied={filters.max_sf_occupied ?? undefined}
-                            onSfOccupiedChange={handleSfOccupiedChange}
-                            onFiltersClick={() => {
-                                setShowAdvancedFilters((prev) => !prev);
-                            }}
-                            onClearClick={handleClearFilters}
-                            onSortClick={() => {
-                                // Handle sort click
-                            }}
-                            onSortChange={handleSortChange}
-                            sortBy={sort.by}
-                            sortDir={sort.dir as "asc" | "desc"}
-                            onSaveClick={() => {
-                                // Handle save click
-                            }}
-                            onAddClick={() => {
-                                // Handle add click
-                            }}
-                            onExportClick={() => {
-                                // Handle export click
-                            }}
-                            onAddedRemovedClick={() => {
-                                // Handle added/removed click
-                            }}
-                            activeFiltersCount={activeFiltersCount}
-                        />
-                    ) : (
-                        locations && (
-                            <LocationsFilterBar
-                                addressSearch={filters.address_search}
-                                tenantSearch={filters.search}
-                                onAddressSearchChange={
-                                    handleAddressSearchChange
+                    {/* Search and Filter Bar */}
+                    <div className="shrink-0">
+                        {activeSubTab === "companies" ? (
+                            <CompaniesFilterBar
+                                searchValue={filters.search}
+                                onSearchChange={handleSearchChange}
+                                onSearch={handleSearch}
+                                retailersOnly={filters.retailers_only || false}
+                                onRetailersOnlyChange={
+                                    handleRetailersOnlyChange
                                 }
-                                onTenantSearchChange={handleTenantSearchChange}
-                                spaceUse={
-                                    filters.space_use ? [filters.space_use] : []
+                                minLocations={filters.min_locations || null}
+                                maxLocations={filters.max_locations || null}
+                                onLocationsChange={handleLocationsChange}
+                                minSfOccupied={
+                                    filters.min_sf_occupied ?? undefined
                                 }
-                                onSpaceUseChange={(value) =>
-                                    handleSpaceUseChange(value[0] || null)
+                                maxSfOccupied={
+                                    filters.max_sf_occupied ?? undefined
                                 }
-                                minSfOccupied={filters.min_sf_occupied || 0}
-                                maxSfOccupied={filters.max_sf_occupied || 0}
                                 onSfOccupiedChange={handleSfOccupiedChange}
-                                occupancy={
-                                    filters.occupancy ? [filters.occupancy] : []
-                                }
-                                onOccupancyChange={(value) =>
-                                    handleOccupancyChange(value[0] || null)
-                                }
                                 onFiltersClick={() => {
                                     setShowAdvancedFilters((prev) => !prev);
                                 }}
@@ -762,351 +713,403 @@ export default function Tenants({
                                 onSortClick={() => {
                                     // Handle sort click
                                 }}
+                                onSortChange={handleSortChange}
+                                sortBy={sort.by}
+                                sortDir={sort.dir as "asc" | "desc"}
                                 onSaveClick={() => {
                                     // Handle save click
                                 }}
-                                onReportsClick={() => {
-                                    // Handle reports click
+                                onAddClick={() => {
+                                    // Handle add click
                                 }}
-                                onMoreClick={() => {
-                                    // Handle more click
+                                onExportClick={() => {
+                                    // Handle export click
                                 }}
-                                viewMode="list"
-                                onViewModeChange={() => {
-                                    // View mode is fixed to list
+                                onAddedRemovedClick={() => {
+                                    // Handle added/removed click
                                 }}
                                 activeFiltersCount={activeFiltersCount}
                             />
-                        )
-                    )}
-                </div>
+                        ) : (
+                            locations && (
+                                <LocationsFilterBar
+                                    addressSearch={filters.address_search}
+                                    tenantSearch={filters.search}
+                                    onAddressSearchChange={
+                                        handleAddressSearchChange
+                                    }
+                                    onTenantSearchChange={
+                                        handleTenantSearchChange
+                                    }
+                                    spaceUse={
+                                        filters.space_use
+                                            ? [filters.space_use]
+                                            : []
+                                    }
+                                    onSpaceUseChange={(value) =>
+                                        handleSpaceUseChange(value[0] || null)
+                                    }
+                                    minSfOccupied={filters.min_sf_occupied || 0}
+                                    maxSfOccupied={filters.max_sf_occupied || 0}
+                                    onSfOccupiedChange={handleSfOccupiedChange}
+                                    occupancy={
+                                        filters.occupancy
+                                            ? [filters.occupancy]
+                                            : []
+                                    }
+                                    onOccupancyChange={(value) =>
+                                        handleOccupancyChange(value[0] || null)
+                                    }
+                                    onFiltersClick={() => {
+                                        setShowAdvancedFilters((prev) => !prev);
+                                    }}
+                                    onClearClick={handleClearFilters}
+                                    onSortClick={() => {
+                                        // Handle sort click
+                                    }}
+                                    onSaveClick={() => {
+                                        // Handle save click
+                                    }}
+                                    onReportsClick={() => {
+                                        // Handle reports click
+                                    }}
+                                    onMoreClick={() => {
+                                        // Handle more click
+                                    }}
+                                    viewMode="list"
+                                    onViewModeChange={() => {
+                                        // View mode is fixed to list
+                                    }}
+                                    activeFiltersCount={activeFiltersCount}
+                                />
+                            )
+                        )}
+                    </div>
 
-                {/* Table Container with Sidebar */}
-                <div className="flex flex-1 min-h-0 overflow-hidden">
-                    {/* Main Content */}
-                    <div
-                        className={`flex flex-col transition-all duration-300 min-h-0 ${
-                            showAdvancedFilters
-                                ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
-                                : "w-full"
-                        }`}
-                    >
-                        <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
-                            {/* Content based on active sub-tab */}
-                            {activeSubTab === "companies" && companies ? (
-                                <>
-                                    {/* Table - Takes available space */}
-                                    <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
-                                        <ResizableTable
-                                            columns={columns}
-                                            data={companies.data}
-                                            storageKey="owner-tenants-column-widths"
-                                            className="h-full"
-                                            renderCheckbox={() => (
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                        onClick={(e) =>
-                                                            e.stopPropagation()
-                                                        }
-                                                    />
-                                                </div>
-                                            )}
-                                            renderActions={(row) => (
-                                                <button
-                                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        console.log(
-                                                            "Remove",
-                                                            row.id
-                                                        );
-                                                    }}
-                                                    title="Remove"
-                                                >
-                                                    <Minus className="h-4 w-4" />
-                                                </button>
-                                            )}
-                                        />
-                                    </div>
-
-                                    {/* Pagination - Fixed at bottom, always visible */}
-                                    <div className="shrink-0 border-t border-gray-200 bg-white">
-                                        <div className="mx-auto max-w-[1920px] w-full px-4 sm:px-6 lg:px-8">
-                                            <div className="flex items-center justify-between bg-white py-2">
-                                                {/* Mobile Pagination */}
-                                                <div className="flex flex-1 justify-between sm:hidden">
-                                                    <button
-                                                        onClick={() => {
-                                                            if (
-                                                                companies.prev_page_url
-                                                            ) {
-                                                                router.get(
-                                                                    companies.prev_page_url
-                                                                );
-                                                            }
-                                                        }}
-                                                        disabled={
-                                                            !companies.prev_page_url
-                                                        }
-                                                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                                    >
-                                                        Previous
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            if (
-                                                                companies.next_page_url
-                                                            ) {
-                                                                router.get(
-                                                                    companies.next_page_url
-                                                                );
-                                                            }
-                                                        }}
-                                                        disabled={
-                                                            !companies.next_page_url
-                                                        }
-                                                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                                                    >
-                                                        Next
-                                                    </button>
-                                                </div>
-
-                                                {/* Desktop Pagination */}
-                                                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                                    <div>
-                                                        <p className="text-sm text-gray-700">
-                                                            Showing{" "}
-                                                            <span className="font-medium">
-                                                                {companies.from}
-                                                            </span>{" "}
-                                                            to{" "}
-                                                            <span className="font-medium">
-                                                                {companies.to}
-                                                            </span>{" "}
-                                                            of{" "}
-                                                            <span className="font-medium">
-                                                                {
-                                                                    companies.total
-                                                                }
-                                                            </span>{" "}
-                                                            results
-                                                        </p>
-                                                    </div>
+                    {/* Table Container with Sidebar */}
+                    <div className="flex flex-1 min-h-0 overflow-hidden">
+                        {/* Main Content */}
+                        <div
+                            className={`flex flex-col transition-all duration-300 min-h-0 ${
+                                showAdvancedFilters
+                                    ? "w-full md:w-[calc(100%-600px)] lg:w-[calc(100%-600px)] xl:w-[calc(100%-600px)]"
+                                    : "w-full"
+                            }`}
+                        >
+                            <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
+                                {/* Content based on active sub-tab */}
+                                {activeSubTab === "companies" && companies ? (
+                                    <>
+                                        {/* Table - Takes available space */}
+                                        <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
+                                            <ResizableTable
+                                                columns={columns}
+                                                data={companies.data}
+                                                storageKey="owner-tenants-column-widths"
+                                                className="h-full"
+                                                renderCheckbox={() => (
                                                     <div className="flex items-center gap-2">
-                                                        <select
-                                                            value={
-                                                                companies.per_page
+                                                        <input
+                                                            type="checkbox"
+                                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                            onClick={(e) =>
+                                                                e.stopPropagation()
                                                             }
-                                                            onChange={(e) => {
-                                                                router.get(
-                                                                    `/contacts/owners/${company.id}/tenants`,
-                                                                    {
-                                                                        ...filters,
-                                                                        per_page:
-                                                                            e
-                                                                                .target
-                                                                                .value,
-                                                                        page: 1,
-                                                                    }
-                                                                );
-                                                            }}
-                                                            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                        >
-                                                            <option value={10}>
-                                                                Show 10 per page
-                                                            </option>
-                                                            <option value={20}>
-                                                                Show 20 per page
-                                                            </option>
-                                                            <option value={50}>
-                                                                Show 50 per page
-                                                            </option>
-                                                            <option value={100}>
-                                                                Show 100 per
-                                                                page
-                                                            </option>
-                                                        </select>
-                                                        <nav
-                                                            className="flex items-center gap-1"
-                                                            aria-label="Pagination"
-                                                        >
-                                                            <button
-                                                                onClick={() => {
-                                                                    if (
+                                                        />
+                                                    </div>
+                                                )}
+                                                renderActions={(row) => (
+                                                    <button
+                                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            console.log(
+                                                                "Remove",
+                                                                row.id
+                                                            );
+                                                        }}
+                                                        title="Remove"
+                                                    >
+                                                        <Minus className="h-4 w-4" />
+                                                    </button>
+                                                )}
+                                            />
+                                        </div>
+
+                                        {/* Pagination - Fixed at bottom, always visible */}
+                                        <div className="shrink-0 border-t border-gray-200 bg-white">
+                                            <div className="mx-auto max-w-[1920px] w-full px-4 sm:px-6 lg:px-8">
+                                                <div className="flex items-center justify-between bg-white py-2">
+                                                    {/* Mobile Pagination */}
+                                                    <div className="flex flex-1 justify-between sm:hidden">
+                                                        <button
+                                                            onClick={() => {
+                                                                if (
+                                                                    companies.prev_page_url
+                                                                ) {
+                                                                    router.get(
                                                                         companies.prev_page_url
-                                                                    ) {
-                                                                        router.get(
-                                                                            companies.prev_page_url
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                disabled={
-                                                                    !companies.prev_page_url
+                                                                    );
                                                                 }
-                                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                            }}
+                                                            disabled={
+                                                                !companies.prev_page_url
+                                                            }
+                                                            className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                                        >
+                                                            Previous
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (
+                                                                    companies.next_page_url
+                                                                ) {
+                                                                    router.get(
+                                                                        companies.next_page_url
+                                                                    );
+                                                                }
+                                                            }}
+                                                            disabled={
+                                                                !companies.next_page_url
+                                                            }
+                                                            className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                                        >
+                                                            Next
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Desktop Pagination */}
+                                                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                                                        <div>
+                                                            <p className="text-sm text-gray-700">
+                                                                Showing{" "}
+                                                                <span className="font-medium">
+                                                                    {
+                                                                        companies.from
+                                                                    }
+                                                                </span>{" "}
+                                                                to{" "}
+                                                                <span className="font-medium">
+                                                                    {
+                                                                        companies.to
+                                                                    }
+                                                                </span>{" "}
+                                                                of{" "}
+                                                                <span className="font-medium">
+                                                                    {
+                                                                        companies.total
+                                                                    }
+                                                                </span>{" "}
+                                                                results
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <select
+                                                                value={
+                                                                    companies.per_page
+                                                                }
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    router.get(
+                                                                        `/contacts/owners/${company.id}/tenants`,
+                                                                        {
+                                                                            ...filters,
+                                                                            per_page:
+                                                                                e
+                                                                                    .target
+                                                                                    .value,
+                                                                            page: 1,
+                                                                        }
+                                                                    );
+                                                                }}
+                                                                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                                             >
-                                                                ‹
-                                                            </button>
-                                                            {companies.links
-                                                                .slice(1, -1)
-                                                                .map(
-                                                                    (
-                                                                        link,
-                                                                        index
-                                                                    ) => {
+                                                                <option
+                                                                    value={10}
+                                                                >
+                                                                    Show 10 per
+                                                                    page
+                                                                </option>
+                                                                <option
+                                                                    value={20}
+                                                                >
+                                                                    Show 20 per
+                                                                    page
+                                                                </option>
+                                                                <option
+                                                                    value={50}
+                                                                >
+                                                                    Show 50 per
+                                                                    page
+                                                                </option>
+                                                                <option
+                                                                    value={100}
+                                                                >
+                                                                    Show 100 per
+                                                                    page
+                                                                </option>
+                                                            </select>
+                                                            <nav
+                                                                className="flex items-center gap-1"
+                                                                aria-label="Pagination"
+                                                            >
+                                                                <button
+                                                                    onClick={() => {
                                                                         if (
-                                                                            link.url ===
-                                                                            null
+                                                                            companies.prev_page_url
                                                                         ) {
+                                                                            router.get(
+                                                                                companies.prev_page_url
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                    disabled={
+                                                                        !companies.prev_page_url
+                                                                    }
+                                                                    className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                                >
+                                                                    ‹
+                                                                </button>
+                                                                {companies.links
+                                                                    .slice(
+                                                                        1,
+                                                                        -1
+                                                                    )
+                                                                    .map(
+                                                                        (
+                                                                            link,
+                                                                            index
+                                                                        ) => {
+                                                                            if (
+                                                                                link.url ===
+                                                                                null
+                                                                            ) {
+                                                                                return (
+                                                                                    <span
+                                                                                        key={
+                                                                                            index
+                                                                                        }
+                                                                                        className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                                                                    >
+                                                                                        {
+                                                                                            link.label
+                                                                                        }
+                                                                                    </span>
+                                                                                );
+                                                                            }
                                                                             return (
-                                                                                <span
+                                                                                <button
                                                                                     key={
                                                                                         index
                                                                                     }
-                                                                                    className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                                                                    onClick={() =>
+                                                                                        router.get(
+                                                                                            link.url!
+                                                                                        )
+                                                                                    }
+                                                                                    className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
+                                                                                        link.active
+                                                                                            ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
+                                                                                            : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                                                                                    }`}
                                                                                 >
                                                                                     {
                                                                                         link.label
                                                                                     }
-                                                                                </span>
+                                                                                </button>
                                                                             );
                                                                         }
-                                                                        return (
-                                                                            <button
-                                                                                key={
-                                                                                    index
-                                                                                }
-                                                                                onClick={() =>
-                                                                                    router.get(
-                                                                                        link.url!
-                                                                                    )
-                                                                                }
-                                                                                className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
-                                                                                    link.active
-                                                                                        ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
-                                                                                        : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                                                                                }`}
-                                                                            >
-                                                                                {
-                                                                                    link.label
-                                                                                }
-                                                                            </button>
-                                                                        );
-                                                                    }
-                                                                )}
-                                                            <button
-                                                                onClick={() => {
-                                                                    if (
-                                                                        companies.next_page_url
-                                                                    ) {
-                                                                        router.get(
+                                                                    )}
+                                                                <button
+                                                                    onClick={() => {
+                                                                        if (
                                                                             companies.next_page_url
-                                                                        );
+                                                                        ) {
+                                                                            router.get(
+                                                                                companies.next_page_url
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                    disabled={
+                                                                        !companies.next_page_url
                                                                     }
-                                                                }}
-                                                                disabled={
-                                                                    !companies.next_page_url
-                                                                }
-                                                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                                                            >
-                                                                ›
-                                                            </button>
-                                                        </nav>
+                                                                    className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                                                                >
+                                                                    ›
+                                                                </button>
+                                                            </nav>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </>
-                            ) : (
-                                locations && (
-                                    <div className="bg-white">
-                                        <LocationsListView
-                                            columns={locationColumns}
-                                            data={locations.data}
-                                            pagination={locations}
-                                            showAdvancedFilters={
-                                                showAdvancedFilters
-                                            }
-                                            onCloseFilters={() =>
-                                                setShowAdvancedFilters(false)
-                                            }
-                                            onClearFilters={handleClearFilters}
-                                            onDoneFilters={() => {
-                                                setShowAdvancedFilters(false);
-                                            }}
-                                            activeFiltersCount={
-                                                activeFiltersCount
-                                            }
-                                            viewMode="list"
-                                            storageKey={`owner-${company.id}-locations-column-widths`}
-                                            renderCheckbox={() => (
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                        onClick={(e) =>
-                                                            e.stopPropagation()
-                                                        }
-                                                    />
-                                                </div>
-                                            )}
-                                            renderActions={(row) => (
-                                                <button
-                                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        console.log(
-                                                            "Remove",
-                                                            row.id
-                                                        );
-                                                    }}
-                                                    title="Remove"
-                                                >
-                                                    <Minus className="h-4 w-4" />
-                                                </button>
-                                            )}
-                                            filters={filters}
-                                        />
-                                    </div>
-                                )
-                            )}
+                                    </>
+                                ) : (
+                                    locations && (
+                                        <div className="bg-white">
+                                            <LocationsListView
+                                                columns={locationColumns}
+                                                data={locations.data}
+                                                pagination={locations}
+                                                showAdvancedFilters={
+                                                    showAdvancedFilters
+                                                }
+                                                onCloseFilters={() =>
+                                                    setShowAdvancedFilters(
+                                                        false
+                                                    )
+                                                }
+                                                onClearFilters={
+                                                    handleClearFilters
+                                                }
+                                                onDoneFilters={() => {
+                                                    setShowAdvancedFilters(
+                                                        false
+                                                    );
+                                                }}
+                                                activeFiltersCount={
+                                                    activeFiltersCount
+                                                }
+                                                viewMode="list"
+                                                storageKey={`owner-${company.id}-locations-column-widths`}
+                                                renderCheckbox={() => (
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                            onClick={(e) =>
+                                                                e.stopPropagation()
+                                                            }
+                                                        />
+                                                    </div>
+                                                )}
+                                                renderActions={(row) => (
+                                                    <button
+                                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            console.log(
+                                                                "Remove",
+                                                                row.id
+                                                            );
+                                                        }}
+                                                        title="Remove"
+                                                    >
+                                                        <Minus className="h-4 w-4" />
+                                                    </button>
+                                                )}
+                                                filters={filters}
+                                            />
+                                        </div>
+                                    )
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Advanced Filters Sidebar - Desktop */}
-                    {showAdvancedFilters && (
-                        <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
-                            <AdvancedFiltersPanel
-                                isOpen={showAdvancedFilters}
-                                onClose={() => setShowAdvancedFilters(false)}
-                                onClear={() => {
-                                    router.get(
-                                        `/contacts/owners/${company.id}/tenants`,
-                                        {}
-                                    );
-                                    setShowAdvancedFilters(false);
-                                }}
-                                onDone={() => {
-                                    setShowAdvancedFilters(false);
-                                }}
-                                activeFiltersCount={activeFiltersCount}
-                            />
-                        </div>
-                    )}
-
-                    {/* Advanced Filters Overlay - Mobile */}
-                    {showAdvancedFilters && (
-                        <div className="md:hidden fixed inset-0 z-50 flex">
-                            {/* Backdrop */}
-                            <div
-                                className="absolute inset-0 bg-black bg-opacity-50"
-                                onClick={() => setShowAdvancedFilters(false)}
-                            />
-                            {/* Panel */}
-                            <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                        {/* Advanced Filters Sidebar - Desktop */}
+                        {showAdvancedFilters && (
+                            <div className="hidden md:flex w-[600px] border-l border-gray-200 bg-white shrink-0 flex-col">
                                 <AdvancedFiltersPanel
                                     isOpen={showAdvancedFilters}
                                     onClose={() =>
@@ -1125,10 +1128,43 @@ export default function Tenants({
                                     activeFiltersCount={activeFiltersCount}
                                 />
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {/* Advanced Filters Overlay - Mobile */}
+                        {showAdvancedFilters && (
+                            <div className="md:hidden fixed inset-0 z-50 flex">
+                                {/* Backdrop */}
+                                <div
+                                    className="absolute inset-0 bg-black bg-opacity-50"
+                                    onClick={() =>
+                                        setShowAdvancedFilters(false)
+                                    }
+                                />
+                                {/* Panel */}
+                                <div className="relative w-full max-w-sm ml-auto bg-white h-full flex flex-col shadow-xl">
+                                    <AdvancedFiltersPanel
+                                        isOpen={showAdvancedFilters}
+                                        onClose={() =>
+                                            setShowAdvancedFilters(false)
+                                        }
+                                        onClear={() => {
+                                            router.get(
+                                                `/contacts/owners/${company.id}/tenants`,
+                                                {}
+                                            );
+                                            setShowAdvancedFilters(false);
+                                        }}
+                                        onDone={() => {
+                                            setShowAdvancedFilters(false);
+                                        }}
+                                        activeFiltersCount={activeFiltersCount}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

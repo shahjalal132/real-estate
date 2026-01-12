@@ -37,9 +37,19 @@ interface PageProps {
     filters?: {
         search?: string;
     };
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
-export default function CompanyDetails({ company }: PageProps) {
+export default function CompanyDetails({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const tabs = [
         {
             id: "summary",
@@ -94,6 +104,10 @@ export default function CompanyDetails({ company }: PageProps) {
             <CompanyDetailsLayout
                 title={`${company.company} - Owner Company Details`}
                 tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
                 basePath="/contacts/owners"
                 headerComponent={<CompanyDetailsHeader company={company} />}
             >

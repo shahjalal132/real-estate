@@ -22,7 +22,7 @@ export default function CompanyDetailsHeader({
         .join(", ");
 
     return (
-        <div className="bg-white rounded-lg border border-gray-200 px-4">
+        <div className="bg-white  px-4 py-2">
             <div className="flex items-center justify-between">
                 {/* Left Side - Company Info */}
                 <div className="flex flex-col gap-0.5">
@@ -56,4 +56,3 @@ export default function CompanyDetailsHeader({
         </div>
     );
 }
-

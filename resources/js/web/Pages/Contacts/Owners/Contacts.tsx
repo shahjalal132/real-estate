@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
 import CompanyDetailsHeader from "../../../../Components/Owner/CompanyDetailsHeader";
 import ResizableTable, {
     ResizableColumn,
@@ -30,9 +31,19 @@ interface Contact {
 
 interface PageProps {
     company: OwnerCompany;
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
-export default function Contacts({ company }: PageProps) {
+export default function Contacts({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const [contactName, setContactName] = useState("");
     const [companyName, setCompanyName] = useState("");
     const [addressSearch, setAddressSearch] = useState("");
@@ -355,7 +366,10 @@ export default function Contacts({ company }: PageProps) {
                                 </g>
                                 <defs>
                                     <clipPath id="a">
-                                        <path fill="#FCFDFD" d="M0 0h160v160H0z" />
+                                        <path
+                                            fill="#FCFDFD"
+                                            d="M0 0h160v160H0z"
+                                        />
                                     </clipPath>
                                 </defs>
                             </svg>
@@ -503,68 +517,49 @@ export default function Contacts({ company }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.company} - Contacts`} />
+            <CompanyDetailsLayout
+                title={`${company.company} - Contacts`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
+                {/* Filter Bar */}
+                <ContactsFilterBar
+                    contactName={contactName}
+                    onContactNameChange={setContactName}
+                    companyName={companyName}
+                    onCompanyNameChange={setCompanyName}
+                    addressSearch={addressSearch}
+                    onAddressSearchChange={setAddressSearch}
+                    title={title}
+                    onTitleChange={setTitle}
+                    role={role}
+                    onRoleChange={setRole}
+                    contactCount={contacts.length}
+                    sortBy={sortBy}
+                    sortDir={sortDir}
+                    onSortChange={(by, dir) => {
+                        setSortBy(by);
+                        setSortDir(dir);
+                    }}
+                />
 
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-2">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "contacts"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-
-                        {/* Filter Bar */}
-                        <ContactsFilterBar
-                            contactName={contactName}
-                            onContactNameChange={setContactName}
-                            companyName={companyName}
-                            onCompanyNameChange={setCompanyName}
-                            addressSearch={addressSearch}
-                            onAddressSearchChange={setAddressSearch}
-                            title={title}
-                            onTitleChange={setTitle}
-                            role={role}
-                            onRoleChange={setRole}
-                            contactCount={contacts.length}
-                            sortBy={sortBy}
-                            sortDir={sortDir}
-                            onSortChange={(by, dir) => {
-                                setSortBy(by);
-                                setSortDir(dir);
-                            }}
+                {/* Table */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
+                    <div className="h-[calc(100vh-400px)] min-h-[600px]">
+                        <ResizableTable
+                            columns={columns}
+                            data={contacts}
+                            storageKey="owner-contacts-table"
+                            rowKey={(row) => row.id}
                         />
-
-                        {/* Table */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
-                            <div className="h-[calc(100vh-400px)] min-h-[600px]">
-                                <ResizableTable
-                                    columns={columns}
-                                    data={contacts}
-                                    storageKey="owner-contacts-table"
-                                    rowKey={(row) => row.id}
-                                />
-                            </div>
-                        </div>
                     </div>
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }
-

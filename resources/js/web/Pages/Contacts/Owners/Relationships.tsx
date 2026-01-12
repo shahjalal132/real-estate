@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
 import CompanyDetailsHeader from "../../../../Components/Owner/CompanyDetailsHeader";
 import ResizableTable, {
     ResizableColumn,
@@ -28,9 +29,19 @@ interface TenantRepresentative {
 
 interface PageProps {
     company: OwnerCompany;
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
-export default function Relationships({ company }: PageProps) {
+export default function Relationships({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const [relationshipType, setRelationshipType] = useState<
         "tenant-representatives" | "landlords"
     >("tenant-representatives");
@@ -470,141 +481,118 @@ export default function Relationships({ company }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.company} - Relationships`} />
-
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-2">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Main Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "relationships"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
+            <CompanyDetailsLayout
+                title={`${company.company} - Relationships`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
+                {/* Secondary Navigation and Filters */}
+                <div className="border-b border-gray-200">
+                    {/* Row 1: Relationship Type Tabs and Companies/Contacts Toggle */}
+                    <div className="flex items-center justify-between pt-4 pb-3">
+                        {/* Relationship Type Tabs */}
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() =>
+                                    setRelationshipType(
+                                        "tenant-representatives"
+                                    )
+                                }
+                                className={`border-b-2 px-1 py-2 text-sm font-medium transition-colors ${
+                                    relationshipType ===
+                                    "tenant-representatives"
+                                        ? "border-red-500 text-red-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                }`}
+                            >
+                                Tenant Representatives
+                            </button>
+                            <button
+                                onClick={() => setRelationshipType("landlords")}
+                                className={`border-b-2 px-1 py-2 text-sm font-medium transition-colors ${
+                                    relationshipType === "landlords"
+                                        ? "border-red-500 text-red-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                }`}
+                            >
+                                Landlords
+                            </button>
                         </div>
 
-                        {/* Secondary Navigation and Filters */}
-                        <div className="border-b border-gray-200">
-                            {/* Row 1: Relationship Type Tabs and Companies/Contacts Toggle */}
-                            <div className="flex items-center justify-between pt-4 pb-3">
-                                {/* Relationship Type Tabs */}
-                                <div className="flex items-center gap-4">
-                                    <button
-                                        onClick={() =>
-                                            setRelationshipType(
-                                                "tenant-representatives"
-                                            )
-                                        }
-                                        className={`border-b-2 px-1 py-2 text-sm font-medium transition-colors ${
-                                            relationshipType ===
-                                            "tenant-representatives"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                                        }`}
-                                    >
-                                        Tenant Representatives
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            setRelationshipType("landlords")
-                                        }
-                                        className={`border-b-2 px-1 py-2 text-sm font-medium transition-colors ${
-                                            relationshipType === "landlords"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                                        }`}
-                                    >
-                                        Landlords
-                                    </button>
-                                </div>
+                        {/* Companies/Contacts Toggle */}
+                        <div className="flex items-center border border-gray-300 rounded-md overflow-hidden shrink-0">
+                            <button
+                                type="button"
+                                onClick={() => setViewType("companies")}
+                                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                                    viewType === "companies"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-white text-gray-700 hover:bg-gray-50"
+                                }`}
+                            >
+                                Companies
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setViewType("contacts")}
+                                className={`px-4 py-2 text-sm font-medium transition-colors border-l border-gray-300 ${
+                                    viewType === "contacts"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-white text-gray-700 hover:bg-gray-50"
+                                }`}
+                            >
+                                Contacts
+                            </button>
+                        </div>
+                    </div>
 
-                                {/* Companies/Contacts Toggle */}
-                                <div className="flex items-center border border-gray-300 rounded-md overflow-hidden shrink-0">
-                                    <button
-                                        type="button"
-                                        onClick={() => setViewType("companies")}
-                                        className={`px-4 py-2 text-sm font-medium transition-colors ${
-                                            viewType === "companies"
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-white text-gray-700 hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        Companies
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setViewType("contacts")}
-                                        className={`px-4 py-2 text-sm font-medium transition-colors border-l border-gray-300 ${
-                                            viewType === "contacts"
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-white text-gray-700 hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        Contacts
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Row 2: Company Name Input and Sort */}
-                            <div className="flex items-center justify-between pb-4">
-                                {/* Company Name Input */}
-                                <div className="relative shrink-0">
-                                    <input
-                                        type="text"
-                                        value={companyName}
-                                        onChange={(e) =>
-                                            setCompanyName(e.target.value)
-                                        }
-                                        placeholder="Company Name"
-                                        className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[160px]"
-                                    />
-                                </div>
-
-                                {/* Sort Selector */}
-                                <div className="flex items-center gap-4 shrink-0">
-                                    <TenantSortSelector
-                                        sortBy={sortBy}
-                                        sortDir={sortDir}
-                                        onSortChange={(
-                                            by: string,
-                                            dir: "asc" | "desc"
-                                        ) => {
-                                            setSortBy(by);
-                                            setSortDir(dir);
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                    {/* Row 2: Company Name Input and Sort */}
+                    <div className="flex items-center justify-between pb-4">
+                        {/* Company Name Input */}
+                        <div className="relative shrink-0">
+                            <input
+                                type="text"
+                                value={companyName}
+                                onChange={(e) => setCompanyName(e.target.value)}
+                                placeholder="Company Name"
+                                className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[160px]"
+                            />
                         </div>
 
-                        {/* Table */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
-                            <div className="h-[calc(100vh-400px)] min-h-[600px]">
-                                <ResizableTable
-                                    columns={columns}
-                                    data={tenantRepresentatives}
-                                    storageKey="owner-relationships-table"
-                                    rowKey={(row) => row.id}
-                                />
-                            </div>
+                        {/* Sort Selector */}
+                        <div className="flex items-center gap-4 shrink-0">
+                            <TenantSortSelector
+                                sortBy={sortBy}
+                                sortDir={sortDir}
+                                onSortChange={(
+                                    by: string,
+                                    dir: "asc" | "desc"
+                                ) => {
+                                    setSortBy(by);
+                                    setSortDir(dir);
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
-            </div>
+
+                {/* Table */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
+                    <div className="h-[calc(100vh-400px)] min-h-[600px]">
+                        <ResizableTable
+                            columns={columns}
+                            data={tenantRepresentatives}
+                            storageKey="owner-relationships-table"
+                            rowKey={(row) => row.id}
+                        />
+                    </div>
+                </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }
-
