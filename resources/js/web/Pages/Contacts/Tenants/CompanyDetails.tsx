@@ -1,5 +1,6 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
 import {
     PaginatedData,
     TennentCompany,
@@ -20,12 +21,20 @@ interface PageProps {
     company: TennentCompany;
     locations: PaginatedData<TennentLocation>;
     relatedCompanies: TennentCompany[];
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
 export default function CompanyDetails({
     company,
     locations,
     relatedCompanies,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
 }: PageProps) {
     const tabs = [
         {
@@ -71,39 +80,17 @@ export default function CompanyDetails({
     return (
         <AppLayout>
             <Head title={`${company.tenant_name} - Tenant Company Details`} />
-
-            <div className="bg-gray-50 min-h-screen">
-                {/* Top Navigation Bar */}
-                {/* <CompanyDetailsNav /> */}
-
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "summary"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Content - Summary View */}
-                <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+            <CompanyDetailsLayout
+                title={`${company.tenant_name} - Tenant Company Details`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/tenants"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
+                <div className="space-y-8">
                     {/* Summary Metrics with Integrated Map */}
                     <SummaryMetrics
                         company={company}
@@ -135,7 +122,7 @@ export default function CompanyDetails({
                     <CompanyNews />
                     <CoStarContact />
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

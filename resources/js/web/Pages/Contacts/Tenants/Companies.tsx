@@ -445,7 +445,7 @@ export default function TenantCompanies({
                     >
                         <div className="flex flex-col flex-1 min-h-0 mx-auto max-w-[1920px] w-full">
                             {/* Table - Takes available space */}
-                            <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
+                            <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8">
                                 <ResizableTable
                                     columns={columns}
                                     data={companies.data}

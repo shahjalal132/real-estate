@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
-import { Head, Link, router, usePage } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
 import { PaginatedData, TennentCompany, TennentLocation } from "../../../../types";
 import CompanyDetailsHeader from "../../../../Components/Tenant/CompanyDetailsHeader";
 import LocationsListView from "../../../../Components/Tenant/LocationsListView";
@@ -31,6 +32,10 @@ interface PageProps {
         by: string;
         dir: string;
     };
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
 export default function CompanyLocations({
@@ -38,6 +43,10 @@ export default function CompanyLocations({
     locations,
     filters,
     sort,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
 }: PageProps) {
     const { url } = usePage();
     
@@ -572,34 +581,16 @@ export default function CompanyLocations({
     return (
         <AppLayout>
             <Head title={`${company.tenant_name} - Locations`} />
-
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "locations"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
+            <CompanyDetailsLayout
+                title={`${company.tenant_name} - Locations`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/tenants"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
                 {/* Search and Filter Bar */}
                 <LocationsFilterBar
                     addressSearch={filters.address_search}
@@ -903,7 +894,7 @@ export default function CompanyLocations({
                         )}
                     </div>
                 )}
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }
