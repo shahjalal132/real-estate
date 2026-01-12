@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
 import { TennentCompany } from "../../../../types";
 import CompanyDetailsHeader from "../../../../Components/Tenant/CompanyDetailsHeader";
 import ResizableTable, {
@@ -23,9 +24,19 @@ interface TenantRepresentative {
 
 interface PageProps {
     company: TennentCompany;
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
-export default function Relationships({ company }: PageProps) {
+export default function Relationships({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const [relationshipType, setRelationshipType] = useState<
         "tenant-representatives" | "landlords"
     >("tenant-representatives");
@@ -455,34 +466,18 @@ export default function Relationships({ company }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.tenant_name} - Relationships`} />
-
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-2">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Main Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "relationships"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-
-                        {/* Secondary Navigation and Filters */}
-                        <div className="border-b border-gray-200">
+            <CompanyDetailsLayout
+                title={`${company.tenant_name} - Relationships`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/tenants"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
+                {/* Secondary Navigation and Filters */}
+                <div className="border-b border-gray-200">
                             {/* Row 1: Relationship Type Tabs and Companies/Contacts Toggle */}
                             <div className="flex items-center justify-between pt-4 pb-3">
                                 {/* Relationship Type Tabs */}
@@ -573,22 +568,20 @@ export default function Relationships({ company }: PageProps) {
                                     />
                                 </div>
                             </div>
-                        </div>
+                </div>
 
-                        {/* Table */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
-                            <div className="h-[calc(100vh-400px)] min-h-[600px]">
-                                <ResizableTable
-                                    columns={columns}
-                                    data={tenantRepresentatives}
-                                    storageKey="tenant-relationships-table"
-                                    rowKey={(row) => row.id}
-                                />
-                            </div>
-                        </div>
+                {/* Table */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
+                    <div className="h-[calc(100vh-400px)] min-h-[600px]">
+                        <ResizableTable
+                            columns={columns}
+                            data={tenantRepresentatives}
+                            storageKey="tenant-relationships-table"
+                            rowKey={(row) => row.id}
+                        />
                     </div>
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

@@ -111,11 +111,11 @@ export default function CompanyLeadership() {
                     {leadershipData.map((member, index) => (
                         <figure
                             key={index}
-                            className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center"
+                            className="bg-gray-50 border border-gray-300 rounded-lg p-4 hover:shadow-md transition-all duration-200 flex gap-4"
                         >
-                            {/* Avatar */}
-                            <div className="mb-4">
-                                <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ring-2 ring-gray-100">
+                            {/* Avatar - Left Side */}
+                            <div className="shrink-0">
+                                <div className="w-20 h-20 rounded overflow-hidden bg-gray-200 flex items-center justify-center">
                                     {member.imageUrl ? (
                                         <img
                                             src={member.imageUrl}
@@ -124,32 +124,33 @@ export default function CompanyLeadership() {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <User className="w-12 h-12 text-gray-400" />
+                                        <User className="w-10 h-10 text-gray-400" />
                                     )}
                                 </div>
                             </div>
 
-                            {/* Name */}
-                            <figcaption className="w-full">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                            {/* Content - Right Side */}
+                            <figcaption className="flex-1 min-w-0">
+                                {/* Name */}
+                                <h3 className="text-base font-bold text-gray-900 mb-1.5">
                                     {member.name}
                                 </h3>
 
                                 {/* Job Title and Company */}
-                                <div className="mb-4 space-y-1">
-                                    <p className="text-sm font-medium text-gray-700">
+                                <div className="mb-3 space-y-0.5">
+                                    <p className="text-sm text-gray-700 leading-tight">
                                         {member.jobTitle}
                                     </p>
-                                    <p className="text-sm text-gray-600">
+                                    <p className="text-sm text-gray-700 leading-tight">
                                         {member.company}
                                     </p>
                                 </div>
 
                                 {/* Contact Info */}
-                                <div className="space-y-2.5">
+                                <div className="space-y-2">
                                     {/* Phone */}
-                                    <div className="flex items-center justify-center gap-2 text-sm text-gray-700">
-                                        <Phone className="w-4 h-4 text-gray-500 shrink-0" />
+                                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                                        <Phone className="w-4 h-4 text-gray-700 shrink-0" />
                                         <a
                                             href={`tel:${member.phone.replace(
                                                 /\D/g,
@@ -162,11 +163,11 @@ export default function CompanyLeadership() {
                                     </div>
 
                                     {/* Email */}
-                                    <div className="flex items-center justify-center gap-2">
-                                        <Mail className="w-4 h-4 text-gray-500 shrink-0" />
+                                    <div className="flex items-center gap-2">
+                                        <Mail className="w-4 h-4 text-gray-700 shrink-0" />
                                         <a
                                             href={`mailto:${member.email}`}
-                                            className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate max-w-full"
+                                            className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
                                             title={member.email}
                                         >
                                             {member.email}
@@ -174,16 +175,19 @@ export default function CompanyLeadership() {
                                     </div>
 
                                     {/* Social Links */}
-                                    <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-100">
+                                    <div className="flex items-center gap-2 mt-3">
+                                        <div className="w-6 h-6 border border-gray-300 rounded bg-white flex items-center justify-center">
+                                            <User className="w-3.5 h-3.5 text-gray-600" />
+                                        </div>
                                         {member.linkedinUrl && (
                                             <a
                                                 href={member.linkedinUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                className="w-6 h-6 border border-gray-300 rounded bg-white flex items-center justify-center text-gray-600 hover:text-blue-600 hover:border-blue-300 transition-colors"
                                                 aria-label={`${member.name} LinkedIn`}
                                             >
-                                                <Linkedin className="w-5 h-5" />
+                                                <Linkedin className="w-3.5 h-3.5" />
                                             </a>
                                         )}
                                     </div>

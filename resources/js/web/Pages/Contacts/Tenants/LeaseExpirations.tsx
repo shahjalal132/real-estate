@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import AppLayout from "../../../Layouts/AppLayout";
+import CompanyDetailsLayout from "../../../../Layouts/CompanyDetailsLayout";
 import { TennentCompany } from "../../../../types";
 import CompanyDetailsHeader from "../../../../Components/Tenant/CompanyDetailsHeader";
 import ResizableTable, {
@@ -34,15 +35,26 @@ interface LeaseExpiration {
 
 interface PageProps {
     company: TennentCompany;
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
-export default function LeaseExpirations({ company }: PageProps) {
+export default function LeaseExpirations({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const [addressSearch, setAddressSearch] = useState("");
     const [minSizeLeased, setMinSizeLeased] = useState<number | null>(null);
     const [maxSizeLeased, setMaxSizeLeased] = useState<number | null>(null);
     const [spaceUse, setSpaceUse] = useState<string[]>([]);
     const [expiresWithinLast, setExpiresWithinLast] = useState<string>("");
-    const [expiresAfterStartDate, setExpiresAfterStartDate] = useState<string>("2026-01-08");
+    const [expiresAfterStartDate, setExpiresAfterStartDate] =
+        useState<string>("2026-01-08");
     const [expiresAfterEndDate, setExpiresAfterEndDate] = useState<string>("");
     const [tenantName, setTenantName] = useState("");
     const [sortBy, setSortBy] = useState<string>("expiration");
@@ -740,7 +752,10 @@ export default function LeaseExpirations({ company }: PageProps) {
             label: "Tenant Representative",
             defaultWidth: 250,
             render: (row: LeaseExpiration) => (
-                <span className="block truncate" title={row.tenantRepresentative}>
+                <span
+                    className="block truncate"
+                    title={row.tenantRepresentative}
+                >
                     {row.tenantRepresentative || "—"}
                 </span>
             ),
@@ -750,76 +765,57 @@ export default function LeaseExpirations({ company }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.tenant_name} - Lease Expirations`} />
+            <CompanyDetailsLayout
+                title={`${company.tenant_name} - Lease Expirations`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/tenants"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
+                {/* Filter Bar */}
+                <LeaseExpirationsFilterBar
+                    addressSearch={addressSearch}
+                    onAddressSearchChange={setAddressSearch}
+                    minSizeLeased={minSizeLeased}
+                    maxSizeLeased={maxSizeLeased}
+                    onSizeLeasedChange={(min, max) => {
+                        setMinSizeLeased(min);
+                        setMaxSizeLeased(max);
+                    }}
+                    spaceUse={spaceUse}
+                    onSpaceUseChange={setSpaceUse}
+                    expiresWithinLast={expiresWithinLast}
+                    onExpiresWithinLastChange={setExpiresWithinLast}
+                    expiresAfterStartDate={expiresAfterStartDate}
+                    onExpiresAfterStartDateChange={setExpiresAfterStartDate}
+                    expiresAfterEndDate={expiresAfterEndDate}
+                    onExpiresAfterEndDateChange={setExpiresAfterEndDate}
+                    tenantName={tenantName}
+                    onTenantNameChange={setTenantName}
+                    expirationCount={leaseExpirations.length}
+                    sortBy={sortBy}
+                    sortDir={sortDir}
+                    onSortChange={(by, dir) => {
+                        setSortBy(by);
+                        setSortDir(dir);
+                    }}
+                />
 
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-2">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "lease_expirations"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-
-                        {/* Filter Bar */}
-                        <LeaseExpirationsFilterBar
-                            addressSearch={addressSearch}
-                            onAddressSearchChange={setAddressSearch}
-                            minSizeLeased={minSizeLeased}
-                            maxSizeLeased={maxSizeLeased}
-                            onSizeLeasedChange={(min, max) => {
-                                setMinSizeLeased(min);
-                                setMaxSizeLeased(max);
-                            }}
-                            spaceUse={spaceUse}
-                            onSpaceUseChange={setSpaceUse}
-                            expiresWithinLast={expiresWithinLast}
-                            onExpiresWithinLastChange={setExpiresWithinLast}
-                            expiresAfterStartDate={expiresAfterStartDate}
-                            onExpiresAfterStartDateChange={setExpiresAfterStartDate}
-                            expiresAfterEndDate={expiresAfterEndDate}
-                            onExpiresAfterEndDateChange={setExpiresAfterEndDate}
-                            tenantName={tenantName}
-                            onTenantNameChange={setTenantName}
-                            expirationCount={leaseExpirations.length}
-                            sortBy={sortBy}
-                            sortDir={sortDir}
-                            onSortChange={(by, dir) => {
-                                setSortBy(by);
-                                setSortDir(dir);
-                            }}
+                {/* Table */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
+                    <div className="h-[calc(100vh-400px)] min-h-[600px]">
+                        <ResizableTable
+                            columns={columns}
+                            data={leaseExpirations}
+                            storageKey="tenant-lease-expirations-table"
+                            rowKey={(row) => row.id}
                         />
-
-                        {/* Table */}
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
-                            <div className="h-[calc(100vh-400px)] min-h-[600px]">
-                                <ResizableTable
-                                    columns={columns}
-                                    data={leaseExpirations}
-                                    storageKey="tenant-lease-expirations-table"
-                                    rowKey={(row) => row.id}
-                                />
-                            </div>
-                        </div>
                     </div>
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }
-

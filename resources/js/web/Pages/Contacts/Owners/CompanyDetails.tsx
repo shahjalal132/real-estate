@@ -1,5 +1,6 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
+import CompanyDetailsLayout from "@/Layouts/CompanyDetailsLayout";
 import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
 import SummaryOverview from "@/Components/Owner/SummaryOverview";
 
@@ -36,9 +37,19 @@ interface PageProps {
     filters?: {
         search?: string;
     };
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
-export default function CompanyDetails({ company }: PageProps) {
+export default function CompanyDetails({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const tabs = [
         {
             id: "summary",
@@ -90,39 +101,18 @@ export default function CompanyDetails({ company }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.company} - Owner Company Details`} />
-
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 pt-4">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "summary"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Content - Summary View */}
-                <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-                    <SummaryOverview company={company} />
-                </div>
-            </div>
+            <CompanyDetailsLayout
+                title={`${company.company} - Owner Company Details`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
+                <SummaryOverview company={company} />
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

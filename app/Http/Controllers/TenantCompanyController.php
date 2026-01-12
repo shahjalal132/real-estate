@@ -104,6 +104,21 @@ class TenantCompanyController extends Controller
     {
         $company = TennentCompany::findOrFail($id);
 
+        // Get navigation data for company pagination (used by all tabs)
+        $totalCount = TennentCompany::count();
+        $allCompanyIds = TennentCompany::orderBy('id', 'asc')->pluck('id')->toArray();
+        $currentIndex = array_search((int)$id, $allCompanyIds);
+        $currentIndex = $currentIndex !== false ? $currentIndex + 1 : 1;
+        
+        $previousCompanyId = null;
+        $nextCompanyId = null;
+        if ($currentIndex > 1) {
+            $previousCompanyId = $allCompanyIds[$currentIndex - 2];
+        }
+        if ($currentIndex < count($allCompanyIds)) {
+            $nextCompanyId = $allCompanyIds[$currentIndex];
+        }
+
         // If it's the summary tab, render the full details page
         if ($tab === 'summary') {
             // Get related locations for this company
@@ -131,6 +146,10 @@ class TenantCompanyController extends Controller
                 'company' => $company,
                 'locations' => $locations,
                 'relatedCompanies' => $relatedCompanies,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
                 'filters' => $request->only(['search', 'address_search', 'space_use', 'min_sf_occupied', 'max_sf_occupied', 'occupancy', 'view_mode']),
             ]);
         }
@@ -139,6 +158,10 @@ class TenantCompanyController extends Controller
         if ($tab === 'transactions') {
             return Inertia::render('Contacts/Tenants/Transactions', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -146,6 +169,10 @@ class TenantCompanyController extends Controller
         if ($tab === 'lease-expirations') {
             return Inertia::render('Contacts/Tenants/LeaseExpirations', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -153,6 +180,10 @@ class TenantCompanyController extends Controller
         if ($tab === 'contacts') {
             return Inertia::render('Contacts/Tenants/Contacts', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -160,6 +191,10 @@ class TenantCompanyController extends Controller
         if ($tab === 'relationships') {
             return Inertia::render('Contacts/Tenants/Relationships', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -167,6 +202,10 @@ class TenantCompanyController extends Controller
         if ($tab === 'news') {
             return Inertia::render('Contacts/Tenants/News', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -266,6 +305,10 @@ class TenantCompanyController extends Controller
             return Inertia::render('Contacts/Tenants/CompanyLocations', [
                 'company' => $company,
                 'locations' => $locations,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
                 'filters' => $request->only(['search', 'address_search', 'min_sf_occupied', 'max_sf_occupied', 'space_use', 'occupancy', 'industry', 'city', 'state', 'market', 'property_type']),
                 'sort' => [
                     'by' => $sortBy,
@@ -289,6 +332,10 @@ class TenantCompanyController extends Controller
             'company' => $company,
             'tab' => $tab,
             'tabLabel' => $tabLabel,
+            'currentIndex' => $currentIndex,
+            'totalCount' => $totalCount,
+            'previousCompanyId' => $previousCompanyId,
+            'nextCompanyId' => $nextCompanyId,
         ]);
     }
 }

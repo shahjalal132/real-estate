@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
+import CompanyDetailsLayout from "@/Layouts/CompanyDetailsLayout";
 import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
 import OwnerTransactionsFilterBar from "@/Components/Owner/OwnerTransactionsFilterBar";
 import OwnerTransactionsTable, {
@@ -14,6 +15,10 @@ interface OwnerCompany {
 
 interface PageProps {
     company: OwnerCompany;
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
 // Static transaction data (for now)
@@ -561,7 +566,13 @@ const STATIC_TRANSACTIONS: Transaction[] = [
     },
 ];
 
-export default function Transactions({ company }: PageProps) {
+export default function Transactions({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const [subTab, setSubTab] = useState<"lease" | "sale">("lease");
     const [searchValue, setSearchValue] = useState("");
     const [spaceUse, setSpaceUse] = useState<string>("");
@@ -645,34 +656,16 @@ export default function Transactions({ company }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.company} - Transactions`} />
-
-            <div className="flex flex-col h-screen bg-gray-50">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200 shrink-0">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 pt-4">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "transactions"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
+            <CompanyDetailsLayout
+                title={`${company.company} - Transactions`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
                 {/* Sub-tabs (Lease/Sale) */}
                 <div className="bg-white border-b border-gray-200 shrink-0">
                     <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
@@ -728,7 +721,7 @@ export default function Transactions({ company }: PageProps) {
                         />
                     </div>
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

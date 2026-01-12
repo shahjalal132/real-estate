@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
+import CompanyDetailsLayout from "@/Layouts/CompanyDetailsLayout";
 import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
 import OwnerPropertiesFilterBar from "@/Components/Owner/OwnerPropertiesFilterBar";
 import OwnerPropertiesMapView from "@/Components/Owner/OwnerPropertiesMapView";
@@ -15,9 +16,20 @@ interface OwnerCompany {
 interface PageProps {
     company: OwnerCompany;
     properties: Property[];
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
-export default function Properties({ company, properties }: PageProps) {
+export default function Properties({
+    company,
+    properties,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const [viewMode, setViewMode] = useState<"map" | "list">("map");
     const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
         null
@@ -110,34 +122,16 @@ export default function Properties({ company, properties }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.company} - Properties`} />
-
-            <div className="bg-gray-50 min-h-screen">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 pt-4">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "properties"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
+            <CompanyDetailsLayout
+                title={`${company.company} - Properties`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
                 {/* Filter Bar */}
                 <OwnerPropertiesFilterBar
                     searchValue={searchValue}
@@ -180,7 +174,7 @@ export default function Properties({ company, properties }: PageProps) {
                         </div>
                     )}
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

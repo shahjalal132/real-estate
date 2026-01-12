@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AppLayout from "@/web/Layouts/AppLayout";
+import CompanyDetailsLayout from "@/Layouts/CompanyDetailsLayout";
 import CompanyDetailsHeader from "@/Components/Owner/CompanyDetailsHeader";
 import OwnerListingsFilterBar from "@/Components/Owner/OwnerListingsFilterBar";
 import OwnerListingsTable, {
@@ -14,6 +15,10 @@ interface OwnerCompany {
 
 interface PageProps {
     company: OwnerCompany;
+    currentIndex?: number;
+    totalCount?: number;
+    previousCompanyId?: number | null;
+    nextCompanyId?: number | null;
 }
 
 // Static listing data (for now)
@@ -360,7 +365,13 @@ const STATIC_LISTINGS: Listing[] = [
     },
 ];
 
-export default function Listings({ company }: PageProps) {
+export default function Listings({
+    company,
+    currentIndex,
+    totalCount,
+    previousCompanyId,
+    nextCompanyId,
+}: PageProps) {
     const [subTab, setSubTab] = useState<"lease" | "sale">("lease");
     const [searchValue, setSearchValue] = useState("");
     const [spaceUse, setSpaceUse] = useState<string>("");
@@ -443,34 +454,16 @@ export default function Listings({ company }: PageProps) {
     return (
         <AppLayout>
             <Head title={`${company.company} - Listings`} />
-
-            <div className="flex flex-col h-screen bg-gray-50">
-                {/* Company Header */}
-                <div className="bg-white border-b border-gray-200 shrink-0">
-                    <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 pt-4">
-                        <CompanyDetailsHeader company={company} />
-
-                        {/* Tabs */}
-                        <div className="border-b border-gray-200 mt-6">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => (
-                                    <Link
-                                        key={tab.id}
-                                        href={tab.href}
-                                        className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                                            tab.id === "listings"
-                                                ? "border-red-500 text-red-600"
-                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
+            <CompanyDetailsLayout
+                title={`${company.company} - Listings`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousCompanyId={previousCompanyId}
+                nextCompanyId={nextCompanyId}
+                basePath="/contacts/owners"
+                headerComponent={<CompanyDetailsHeader company={company} />}
+            >
                 {/* Sub-tabs (Lease/Sale) */}
                 <div className="bg-white border-b border-gray-200 shrink-0">
                     <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
@@ -522,7 +515,7 @@ export default function Listings({ company }: PageProps) {
                         <OwnerListingsTable listings={filteredListings} />
                     </div>
                 </div>
-            </div>
+            </CompanyDetailsLayout>
         </AppLayout>
     );
 }

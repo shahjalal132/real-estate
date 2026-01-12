@@ -200,6 +200,21 @@ class OwnerCompanyController extends Controller
     {
         $company = OwnerCompany::findOrFail($id);
 
+        // Get navigation data for company pagination (used by all tabs)
+        $totalCount = OwnerCompany::count();
+        $allCompanyIds = OwnerCompany::orderBy('id', 'asc')->pluck('id')->toArray();
+        $currentIndex = array_search((int)$id, $allCompanyIds);
+        $currentIndex = $currentIndex !== false ? $currentIndex + 1 : 1;
+        
+        $previousCompanyId = null;
+        $nextCompanyId = null;
+        if ($currentIndex > 1) {
+            $previousCompanyId = $allCompanyIds[$currentIndex - 2];
+        }
+        if ($currentIndex < count($allCompanyIds)) {
+            $nextCompanyId = $allCompanyIds[$currentIndex];
+        }
+
         // If it's the summary tab, render the full details page
         if ($tab === 'summary') {
             // Get related companies (same owner type or territory)
@@ -216,6 +231,10 @@ class OwnerCompanyController extends Controller
                 'company' => $company,
                 'relatedCompanies' => $relatedCompanies,
                 'filters' => $request->only(['search']),
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -230,6 +249,10 @@ class OwnerCompanyController extends Controller
             return Inertia::render('Contacts/Owners/Properties', [
                 'company' => $company,
                 'properties' => $properties,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -237,6 +260,10 @@ class OwnerCompanyController extends Controller
         if ($tab === 'transactions') {
             return Inertia::render('Contacts/Owners/Transactions', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -244,6 +271,10 @@ class OwnerCompanyController extends Controller
         if ($tab === 'listings') {
             return Inertia::render('Contacts/Owners/Listings', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -251,6 +282,10 @@ class OwnerCompanyController extends Controller
         if ($tab === 'funds') {
             return Inertia::render('Contacts/Owners/CompanyFunds', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -258,6 +293,10 @@ class OwnerCompanyController extends Controller
         if ($tab === 'relationships') {
             return Inertia::render('Contacts/Owners/Relationships', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -265,6 +304,10 @@ class OwnerCompanyController extends Controller
         if ($tab === 'contacts') {
             return Inertia::render('Contacts/Owners/Contacts', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -272,6 +315,10 @@ class OwnerCompanyController extends Controller
         if ($tab === 'news') {
             return Inertia::render('Contacts/Owners/News', [
                 'company' => $company,
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -372,6 +419,10 @@ class OwnerCompanyController extends Controller
                         'by' => $sortBy,
                         'dir' => $sortDir,
                     ],
+                    'currentIndex' => $currentIndex,
+                    'totalCount' => $totalCount,
+                    'previousCompanyId' => $previousCompanyId,
+                    'nextCompanyId' => $nextCompanyId,
                 ]);
             }
 
@@ -464,6 +515,10 @@ class OwnerCompanyController extends Controller
                     'by' => $sortBy,
                     'dir' => $sortDir,
                 ],
+                'currentIndex' => $currentIndex,
+                'totalCount' => $totalCount,
+                'previousCompanyId' => $previousCompanyId,
+                'nextCompanyId' => $nextCompanyId,
             ]);
         }
 
@@ -482,6 +537,10 @@ class OwnerCompanyController extends Controller
             'company' => $company,
             'tab' => $tab,
             'tabLabel' => $tabLabel,
+            'currentIndex' => $currentIndex,
+            'totalCount' => $totalCount,
+            'previousCompanyId' => $previousCompanyId,
+            'nextCompanyId' => $nextCompanyId,
         ]);
     }
 }
