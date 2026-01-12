@@ -35,7 +35,10 @@ export default function AdvancedFiltersPanel({
             </div>
 
             {/* Content Area - Scrollable */}
-            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth">
+            <div 
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth"
+                style={{ scrollSnapType: "y proximity" }}
+            >
                 {/* Search Content Component */}
                 <TenantSearchContentComponent />
             </div>

@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import TenantFilters from "./Filters/TenantFilters";
-import OccupancyFilters from "./Filters/OccupancyFilters";
+import PortfolioFilters from "./Filters/PortfolioFilters";
+import LeasesFilters from "./Filters/LeasesFilters";
+import PropertyFilters from "./Filters/PropertyFilters";
 import TenantContactsFilters from "./Filters/TenantContactsFilters";
 
-type TenantSection = "tenant" | "occupancy" | "contacts";
+type LocationSearchSection = "portfolio" | "leases" | "property" | "contacts";
 
 // Find the scrollable parent container
 const findScrollableParent = (
@@ -27,16 +28,28 @@ const findScrollableParent = (
     return null;
 };
 
-export default function TenantSearchContentComponent() {
-    const [activeSection, setActiveSection] = useState<TenantSection>("tenant");
-    const [retailersOnly, setRetailersOnly] = useState(false);
-    const [industryClassification, setIndustryClassification] = useState<
-        "industry-type" | "naics-code" | "sic-code"
-    >("industry-type");
-    const [keywordMatch, setKeywordMatch] = useState<"all" | "any">("all");
-    const [creditRatingIncludeUnknown, setCreditRatingIncludeUnknown] =
-        useState(false);
-    const [revenueIncludeUnknown, setRevenueIncludeUnknown] = useState(false);
+export default function LocationSearchContentComponent() {
+    const [activeSection, setActiveSection] =
+        useState<LocationSearchSection>("portfolio");
+
+    // State for PortfolioFilters
+    const [spaceUse, setSpaceUse] = useState("");
+    const [sizeOccupiedMin, setSizeOccupiedMin] = useState("");
+    const [sizeOccupiedMax, setSizeOccupiedMax] = useState("");
+    const [sizeOccupiedUnit, setSizeOccupiedUnit] = useState("SF");
+    const [occupancy, setOccupancy] = useState("");
+
+    // State for LeasesFilters
+    const [leaseDate, setLeaseDate] = useState("");
+    const [leaseTermMin, setLeaseTermMin] = useState("");
+    const [leaseTermMax, setLeaseTermMax] = useState("");
+    const [annualRentMin, setAnnualRentMin] = useState("");
+    const [annualRentMax, setAnnualRentMax] = useState("");
+
+    // State for PropertyFilters
+    const [propertyType, setPropertyType] = useState("");
+    const [locationType, setLocationType] = useState("");
+    const [costarRating, setCostarRating] = useState(0);
 
     // State for TenantContactsFilters
     const [tenantName, setTenantName] = useState("");
@@ -44,24 +57,24 @@ export default function TenantSearchContentComponent() {
     const [contactsByRole, setContactsByRole] = useState("");
 
     // Section refs for scrolling
-    const tenantRef = useRef<HTMLDivElement>(null);
-    const occupancyRef = useRef<HTMLDivElement>(null);
+    const portfolioRef = useRef<HTMLDivElement>(null);
+    const leasesRef = useRef<HTMLDivElement>(null);
+    const propertyRef = useRef<HTMLDivElement>(null);
     const contactsRef = useRef<HTMLDivElement>(null);
 
     // Scroll to section when tab is clicked
-    const scrollToSection = (section: TenantSection) => {
-        // Set active section immediately for instant feedback
+    const scrollToSection = (section: LocationSearchSection) => {
         setActiveSection(section);
         const refs = {
-            tenant: tenantRef,
-            occupancy: occupancyRef,
+            portfolio: portfolioRef,
+            leases: leasesRef,
+            property: propertyRef,
             contacts: contactsRef,
         };
 
         const targetRef = refs[section];
 
         if (targetRef.current) {
-            // Use requestAnimationFrame to ensure DOM is ready
             requestAnimationFrame(() => {
                 if (!targetRef.current) return;
 
@@ -69,7 +82,6 @@ export default function TenantSearchContentComponent() {
                 const scrollableParent = findScrollableParent(target);
 
                 if (scrollableParent) {
-                    // Verify container is scrollable
                     if (
                         scrollableParent.scrollHeight <=
                         scrollableParent.clientHeight
@@ -77,16 +89,13 @@ export default function TenantSearchContentComponent() {
                         return;
                     }
 
-                    const containerRect =
-                        scrollableParent.getBoundingClientRect();
+                    const containerRect = scrollableParent.getBoundingClientRect();
                     const targetRect = target.getBoundingClientRect();
 
-                    // Calculate the scroll position relative to the scrollable parent
                     const relativePosition = targetRect.top - containerRect.top;
                     const absoluteScrollPosition =
                         scrollableParent.scrollTop + relativePosition;
 
-                    // Ensure we don't scroll beyond bounds
                     const maxScroll =
                         scrollableParent.scrollHeight -
                         scrollableParent.clientHeight;
@@ -95,13 +104,11 @@ export default function TenantSearchContentComponent() {
                         Math.min(absoluteScrollPosition, maxScroll)
                     );
 
-                    // Scroll to the target position
                     scrollableParent.scrollTo({
                         top: scrollPosition,
                         behavior: "smooth",
                     });
                 } else {
-                    // Fallback to window scroll if no scrollable parent found
                     target.scrollIntoView({
                         behavior: "smooth",
                         block: "start",
@@ -111,11 +118,10 @@ export default function TenantSearchContentComponent() {
         }
     };
 
-    // Track which section is in view (for vertical scrolling)
+    // Track which section is in view
     useEffect(() => {
-        // Find the scrollable parent container
-        const container = tenantRef.current
-            ? findScrollableParent(tenantRef.current)
+        const container = portfolioRef.current
+            ? findScrollableParent(portfolioRef.current)
             : null;
         if (!container) return;
 
@@ -125,12 +131,12 @@ export default function TenantSearchContentComponent() {
             const containerBottom = containerRect.bottom;
 
             const sections = [
-                { ref: tenantRef, name: "tenant" as const },
-                { ref: occupancyRef, name: "occupancy" as const },
+                { ref: portfolioRef, name: "portfolio" as const },
+                { ref: leasesRef, name: "leases" as const },
+                { ref: propertyRef, name: "property" as const },
                 { ref: contactsRef, name: "contacts" as const },
             ];
 
-            // Find which section is most visible in the viewport
             let mostVisibleSection = sections[0];
             let maxVisibility = 0;
 
@@ -142,7 +148,6 @@ export default function TenantSearchContentComponent() {
                     const sectionBottom = sectionRect.bottom;
                     const sectionHeight = sectionRect.height;
 
-                    // Calculate how much of the section is visible
                     const visibleTop = Math.max(sectionTop, containerTop);
                     const visibleBottom = Math.min(
                         sectionBottom,
@@ -154,10 +159,8 @@ export default function TenantSearchContentComponent() {
                     );
                     const visibilityRatio = visibleHeight / sectionHeight;
 
-                    // Also check if section is near the top of the container
                     const distanceFromTop = Math.abs(sectionTop - containerTop);
 
-                    // Prefer sections that are more visible and closer to the top
                     const score = visibilityRatio * 100 - distanceFromTop * 0.1;
 
                     if (score > maxVisibility) {
@@ -172,7 +175,6 @@ export default function TenantSearchContentComponent() {
             }
         };
 
-        // Use throttling to improve performance
         let ticking = false;
         const throttledHandleScroll = () => {
             if (!ticking) {
@@ -187,7 +189,6 @@ export default function TenantSearchContentComponent() {
         container.addEventListener("scroll", throttledHandleScroll, {
             passive: true,
         });
-        // Also check on mount and after a short delay to catch initial state
         handleScroll();
         const timeoutId = setTimeout(handleScroll, 100);
 
@@ -207,16 +208,16 @@ export default function TenantSearchContentComponent() {
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            scrollToSection("tenant");
+                            scrollToSection("portfolio");
                         }}
                         className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out ${
-                            activeSection === "tenant"
+                            activeSection === "portfolio"
                                 ? "border-blue-600 text-blue-600"
                                 : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
                         }`}
                     >
-                        <span className="relative z-10">Tenant</span>
-                        {activeSection === "tenant" && (
+                        <span className="relative z-10">Portfolio</span>
+                        {activeSection === "portfolio" && (
                             <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 animate-pulse" />
                         )}
                     </button>
@@ -225,16 +226,34 @@ export default function TenantSearchContentComponent() {
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            scrollToSection("occupancy");
+                            scrollToSection("leases");
                         }}
                         className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out ${
-                            activeSection === "occupancy"
+                            activeSection === "leases"
                                 ? "border-blue-600 text-blue-600"
                                 : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
                         }`}
                     >
-                        <span className="relative z-10">Occupancy</span>
-                        {activeSection === "occupancy" && (
+                        <span className="relative z-10">Leases</span>
+                        {activeSection === "leases" && (
+                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 animate-pulse" />
+                        )}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            scrollToSection("property");
+                        }}
+                        className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out ${
+                            activeSection === "property"
+                                ? "border-blue-600 text-blue-600"
+                                : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
+                        }`}
+                    >
+                        <span className="relative z-10">Property</span>
+                        {activeSection === "property" && (
                             <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 animate-pulse" />
                         )}
                     </button>
@@ -261,50 +280,80 @@ export default function TenantSearchContentComponent() {
 
             {/* Content Sections */}
             <div className="flex flex-col gap-4 p-4">
-                {/* Tenant Section */}
+                {/* Portfolio Section */}
                 <div
-                    ref={tenantRef}
+                    ref={portfolioRef}
                     className="w-full shrink-0 bg-white rounded-lg border border-gray-200 shadow-sm"
                     style={{ scrollSnapAlign: "start" }}
                 >
                     <div className="p-6">
                         <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
-                            Tenant
+                            Portfolio
                         </h2>
-                        <TenantFilters
-                            retailersOnly={retailersOnly}
-                            industryClassification={industryClassification}
-                            keywordMatch={keywordMatch}
-                            creditRatingIncludeUnknown={
-                                creditRatingIncludeUnknown
-                            }
-                            revenueIncludeUnknown={revenueIncludeUnknown}
-                            onRetailersOnlyChange={setRetailersOnly}
-                            onIndustryClassificationChange={
-                                setIndustryClassification
-                            }
-                            onKeywordMatchChange={setKeywordMatch}
-                            onCreditRatingIncludeUnknownChange={
-                                setCreditRatingIncludeUnknown
-                            }
-                            onRevenueIncludeUnknownChange={
-                                setRevenueIncludeUnknown
-                            }
+                        <PortfolioFilters
+                            spaceUse={spaceUse}
+                            sizeOccupiedMin={sizeOccupiedMin}
+                            sizeOccupiedMax={sizeOccupiedMax}
+                            sizeOccupiedUnit={sizeOccupiedUnit}
+                            occupancy={occupancy}
+                            onSpaceUseChange={setSpaceUse}
+                            onSizeOccupiedChange={(min, max) => {
+                                setSizeOccupiedMin(min);
+                                setSizeOccupiedMax(max);
+                            }}
+                            onSizeOccupiedUnitChange={setSizeOccupiedUnit}
+                            onOccupancyChange={setOccupancy}
                         />
                     </div>
                 </div>
 
-                {/* Occupancy Section */}
+                {/* Leases Section */}
                 <div
-                    ref={occupancyRef}
+                    ref={leasesRef}
                     className="w-full shrink-0 bg-white rounded-lg border border-gray-200 shadow-sm"
                     style={{ scrollSnapAlign: "start" }}
                 >
                     <div className="p-6">
                         <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
-                            Occupancy
+                            Leases
                         </h2>
-                        <OccupancyFilters />
+                        <LeasesFilters
+                            leaseDate={leaseDate}
+                            leaseTermMin={leaseTermMin}
+                            leaseTermMax={leaseTermMax}
+                            annualRentMin={annualRentMin}
+                            annualRentMax={annualRentMax}
+                            onLeaseDateChange={setLeaseDate}
+                            onLeaseTermChange={(min, max) => {
+                                setLeaseTermMin(min);
+                                setLeaseTermMax(max);
+                            }}
+                            onAnnualRentChange={(min, max) => {
+                                setAnnualRentMin(min);
+                                setAnnualRentMax(max);
+                            }}
+                        />
+                    </div>
+                </div>
+
+                {/* Property Section */}
+                <div
+                    ref={propertyRef}
+                    className="w-full shrink-0 bg-white rounded-lg border border-gray-200 shadow-sm"
+                    style={{ scrollSnapAlign: "start" }}
+                >
+                    <div className="p-6">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
+                            Property
+                        </h2>
+                        <PropertyFilters
+                            propertyType={propertyType}
+                            locationType={locationType}
+                            costarRating={costarRating}
+                            onPropertyTypeChange={setPropertyType}
+                            onLocationTypeChange={setLocationType}
+                            onCostarRatingChange={setCostarRating}
+                        />
                     </div>
                 </div>
 
@@ -332,3 +381,4 @@ export default function TenantSearchContentComponent() {
         </div>
     );
 }
+
