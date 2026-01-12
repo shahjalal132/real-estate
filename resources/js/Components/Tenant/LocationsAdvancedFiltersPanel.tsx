@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Search, MapPin } from "lucide-react";
-import LocationSearchContentComponent from "./LocationSearchContentComponent";
+import TenantLocationSearchContentComponent from "./TenantLocationSearchContentComponent";
 import LocationContentComponent from "../Owner/LocationContentComponent";
 
 interface LocationsAdvancedFiltersPanelProps {
@@ -63,7 +63,9 @@ export default function LocationsAdvancedFiltersPanel({
                 className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
                 style={{ scrollSnapType: "y proximity" }}
             >
-                {topTab === "search" && <LocationSearchContentComponent />}
+                {topTab === "search" && (
+                    <TenantLocationSearchContentComponent />
+                )}
                 {topTab === "location" && <LocationContentComponent />}
             </div>
 

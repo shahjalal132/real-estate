@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import TenantFilters from "./Filters/TenantFilters";
 import OccupancyFilters from "./Filters/OccupancyFilters";
-import ContactsFilters from "./Filters/ContactsFilters";
+import TenantContactsFilters from "./Filters/TenantContactsFilters";
 
 type TenantSection = "tenant" | "occupancy" | "contacts";
 
@@ -37,6 +37,11 @@ export default function TenantSearchContentComponent() {
     const [creditRatingIncludeUnknown, setCreditRatingIncludeUnknown] =
         useState(false);
     const [revenueIncludeUnknown, setRevenueIncludeUnknown] = useState(false);
+
+    // State for TenantContactsFilters
+    const [tenantName, setTenantName] = useState("");
+    const [hqLocation, setHqLocation] = useState("");
+    const [contactsByRole, setContactsByRole] = useState("");
 
     // Section refs for scrolling
     const tenantRef = useRef<HTMLDivElement>(null);
@@ -313,7 +318,14 @@ export default function TenantSearchContentComponent() {
                         <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
                             Contacts
                         </h2>
-                        <ContactsFilters />
+                        <TenantContactsFilters
+                            tenantName={tenantName}
+                            hqLocation={hqLocation}
+                            contactsByRole={contactsByRole}
+                            onTenantNameChange={setTenantName}
+                            onHqLocationChange={setHqLocation}
+                            onContactsByRoleChange={setContactsByRole}
+                        />
                     </div>
                 </div>
             </div>
