@@ -7,8 +7,8 @@ import {
     TennentCompany,
     TennentLocation,
 } from "../../../../types";
-import CompaniesFilterBar from "../../../../Components/Tenant/CompaniesFilterBar";
-import LocationsFilterBar from "../../../../Components/Tenant/LocationsFilterBar";
+import CompanyTenantsFilterBar from "../../../../Components/Owner/CompanyTenantsFilterBar";
+import CompanyTenantLocationsFilterBar from "../../../../Components/Owner/CompanyTenantLocationsFilterBar";
 import LocationsListView from "../../../../Components/Tenant/LocationsListView";
 import ResizableTable, {
     ResizableColumn,
@@ -150,13 +150,6 @@ export default function Tenants({
         updateFilters({ search: filters.search || undefined });
     }, [updateFilters, filters.search]);
 
-    const handleRetailersOnlyChange = useCallback(
-        (value: boolean) => {
-            updateFilters({ retailers_only: value || undefined });
-        },
-        [updateFilters]
-    );
-
     const handleLocationsChange = useCallback(
         (min: number | null, max: number | null) => {
             updateFilters({
@@ -185,13 +178,6 @@ export default function Tenants({
     }, [company.id, activeSubTab]);
 
     // Location-specific handlers
-    const handleAddressSearchChange = useCallback(
-        (value: string) => {
-            updateFilters({ address_search: value || undefined });
-        },
-        [updateFilters]
-    );
-
     const handleTenantSearchChange = useCallback(
         (value: string) => {
             updateFilters({ search: value || undefined });
@@ -202,13 +188,6 @@ export default function Tenants({
     const handleSpaceUseChange = useCallback(
         (value: string | null) => {
             updateFilters({ space_use: value || undefined });
-        },
-        [updateFilters]
-    );
-
-    const handleOccupancyChange = useCallback(
-        (value: string | null) => {
-            updateFilters({ occupancy: value || undefined });
         },
         [updateFilters]
     );
@@ -688,99 +667,46 @@ export default function Tenants({
                     {/* Search and Filter Bar */}
                     <div className="shrink-0">
                         {activeSubTab === "companies" ? (
-                            <CompaniesFilterBar
+                            <CompanyTenantsFilterBar
                                 searchValue={filters.search}
                                 onSearchChange={handleSearchChange}
                                 onSearch={handleSearch}
-                                retailersOnly={filters.retailers_only || false}
-                                onRetailersOnlyChange={
-                                    handleRetailersOnlyChange
-                                }
+                                companiesCount={companies?.total || 0}
                                 minLocations={filters.min_locations || null}
                                 maxLocations={filters.max_locations || null}
                                 onLocationsChange={handleLocationsChange}
-                                minSfOccupied={
-                                    filters.min_sf_occupied ?? undefined
-                                }
-                                maxSfOccupied={
-                                    filters.max_sf_occupied ?? undefined
-                                }
+                                minSfOccupied={filters.min_sf_occupied ?? null}
+                                maxSfOccupied={filters.max_sf_occupied ?? null}
                                 onSfOccupiedChange={handleSfOccupiedChange}
-                                onFiltersClick={() => {
-                                    setShowAdvancedFilters((prev) => !prev);
-                                }}
-                                onClearClick={handleClearFilters}
-                                onSortClick={() => {
-                                    // Handle sort click
-                                }}
-                                onSortChange={handleSortChange}
                                 sortBy={sort.by}
                                 sortDir={sort.dir as "asc" | "desc"}
-                                onSaveClick={() => {
-                                    // Handle save click
-                                }}
-                                onAddClick={() => {
-                                    // Handle add click
-                                }}
-                                onExportClick={() => {
-                                    // Handle export click
-                                }}
-                                onAddedRemovedClick={() => {
-                                    // Handle added/removed click
-                                }}
-                                activeFiltersCount={activeFiltersCount}
+                                onSortChange={handleSortChange}
                             />
                         ) : (
                             locations && (
-                                <LocationsFilterBar
-                                    addressSearch={filters.address_search}
-                                    tenantSearch={filters.search}
-                                    onAddressSearchChange={
-                                        handleAddressSearchChange
-                                    }
-                                    onTenantSearchChange={
-                                        handleTenantSearchChange
-                                    }
+                                <CompanyTenantLocationsFilterBar
+                                    searchValue={filters.search}
+                                    onSearchChange={handleTenantSearchChange}
+                                    onSearch={handleSearch}
+                                    locationsCount={locations.total || 0}
                                     spaceUse={
                                         filters.space_use
                                             ? [filters.space_use]
                                             : []
                                     }
-                                    onSpaceUseChange={(value) =>
-                                        handleSpaceUseChange(value[0] || null)
+                                    onSpaceUseChange={(values) =>
+                                        handleSpaceUseChange(values[0] || null)
                                     }
-                                    minSfOccupied={filters.min_sf_occupied || 0}
-                                    maxSfOccupied={filters.max_sf_occupied || 0}
+                                    minSfOccupied={
+                                        filters.min_sf_occupied ?? null
+                                    }
+                                    maxSfOccupied={
+                                        filters.max_sf_occupied ?? null
+                                    }
                                     onSfOccupiedChange={handleSfOccupiedChange}
-                                    occupancy={
-                                        filters.occupancy
-                                            ? [filters.occupancy]
-                                            : []
-                                    }
-                                    onOccupancyChange={(value) =>
-                                        handleOccupancyChange(value[0] || null)
-                                    }
-                                    onFiltersClick={() => {
-                                        setShowAdvancedFilters((prev) => !prev);
-                                    }}
-                                    onClearClick={handleClearFilters}
-                                    onSortClick={() => {
-                                        // Handle sort click
-                                    }}
-                                    onSaveClick={() => {
-                                        // Handle save click
-                                    }}
-                                    onReportsClick={() => {
-                                        // Handle reports click
-                                    }}
-                                    onMoreClick={() => {
-                                        // Handle more click
-                                    }}
-                                    viewMode="list"
-                                    onViewModeChange={() => {
-                                        // View mode is fixed to list
-                                    }}
-                                    activeFiltersCount={activeFiltersCount}
+                                    sortBy={sort.by}
+                                    sortDir={sort.dir as "asc" | "desc"}
+                                    onSortChange={handleSortChange}
                                 />
                             )
                         )}
