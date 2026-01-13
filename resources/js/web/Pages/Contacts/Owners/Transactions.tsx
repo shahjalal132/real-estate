@@ -715,7 +715,7 @@ export default function Transactions({
 
                 {/* Main Content Area */}
                 <div className="flex-1 overflow-hidden">
-                    <div className="h-full mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="h-full mx-auto max-w-[1920px] py-2">
                         <OwnerTransactionsTable
                             transactions={filteredTransactions}
                         />

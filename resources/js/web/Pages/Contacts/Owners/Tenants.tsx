@@ -649,7 +649,7 @@ export default function Tenants({
                                         : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                                 }`}
                             >
-                                Companies
+                                Tenant Companies
                             </Link>
                             <Link
                                 href={`/contacts/owners/${company.id}/tenants?tab=locations`}
@@ -659,7 +659,7 @@ export default function Tenants({
                                         : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                                 }`}
                             >
-                                Locations
+                                Tenant Locations
                             </Link>
                         </nav>
                     </div>

@@ -30,7 +30,7 @@ export default function SummaryOverview({
     const staticDescription = `Blackstone Inc. (NYSE: "BX") is the largest owner of commercial real estate in the world. In addition to real estate, the company's investments include infrastructure, life sciences, growth equity, credit, real assets, secondaries, and hedge funds. Blackstone was founded in 1985 in New York City by the late Peter G. Peterson and by Stephen A. Schwarzman, who serves as the current Chief Executive Officer. Blackstone went public in 2007, and as of 2025 Q3, Blackstone has over $1.2141 trillion assets under management (AUM) with over 12,100 owned properties and a market cap of $230B. Blackstone's real estate business was founded in 1991 and has $339B of investor capital under management, with a global portfolio value of more than $600B. Blackstone owns and operates assets across every major geography and sector. Moreover, Blackstone manages over 60 real estate funds with $188.1 billion of dry powder available to invest at the end of 2025 Q3.`;
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 mt-4">
             {/* Company Description Section */}
             <div className="bg-white p-4 border border-gray-200 rounded-lg">
                 <article>

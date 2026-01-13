@@ -13,7 +13,7 @@ interface HeroProps {
 
 export default function Hero({ content }: HeroProps) {
     const defaultContent: HeroContent = {
-        title: "Your Next Deal Starts Here.",
+        title: "Discover Your Next Deal.",
         searchPlaceholder: "Enter Location, Broker/Agent, or Description",
         backgroundImage:
             "https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg",
@@ -91,7 +91,13 @@ export default function Hero({ content }: HeroProps) {
 
                 {/* Search Bar */}
                 <div className="mb-7 sm:mb-0 mx-auto w-full max-w-4xl">
-                    <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-0 rounded-lg bg-white shadow-lg ${propertyTypeOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
+                    <div
+                        className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-0 rounded-lg bg-white shadow-lg ${
+                            propertyTypeOpen
+                                ? "overflow-visible"
+                                : "overflow-hidden"
+                        }`}
+                    >
                         {/* Property Type Dropdown */}
                         <div className="relative shrink-0 z-30">
                             <button

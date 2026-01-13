@@ -22,7 +22,7 @@ export default function ListingsButton({ externalLink }: ListingsButtonProps) {
             aria-label="Listings"
         >
             <Link className="w-4 h-4" />
-            <span>Link Original Listings</span>
+            <span>Link to Original Listing</span>
         </button>
     );
 }

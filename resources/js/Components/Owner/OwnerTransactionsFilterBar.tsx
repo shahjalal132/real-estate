@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown, Star, Download, Calendar } from "lucide-react";
-import PropertyFocusSelector from "./PropertyFocusSelector";
+import SpaceUseSelector from "../Tenant/SpaceUseSelector";
 import PortfolioSizeSelector from "./PortfolioSizeSelector";
 
 interface OwnerTransactionsFilterBarProps {
@@ -160,99 +160,97 @@ export default function OwnerTransactionsFilterBar({
 }: OwnerTransactionsFilterBarProps) {
     return (
         <div className="bg-white border-b border-gray-200 shrink-0">
-            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-wrap items-center gap-3 py-4">
-                    {/* Search Input */}
-                    <div className="relative w-64">
-                        <input
-                            type="text"
-                            placeholder="Address or Location"
-                            value={searchValue}
-                            onChange={(e) => onSearchChange(e.target.value)}
-                            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    </div>
-
-                    {/* Space Use Selector */}
-                    <PropertyFocusSelector
-                        selectedTypes={spaceUse}
-                        onChange={onSpaceUseChange}
+            <div className="flex flex-wrap items-center gap-3 py-4">
+                {/* Search Input */}
+                <div className="relative w-64">
+                    <input
+                        type="text"
+                        placeholder="Address or Location"
+                        value={searchValue}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
+                    <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
 
-                    {/* Lease Size Selector */}
-                    <PortfolioSizeSelector
-                        minValue={minLeaseSize ?? null}
-                        maxValue={maxLeaseSize ?? null}
-                        onChange={onLeaseSizeChange || (() => {})}
+                {/* Space Use Selector */}
+                <SpaceUseSelector
+                    spaceUse={spaceUse}
+                    onSpaceUseChange={onSpaceUseChange}
+                />
+
+                {/* Lease Size Selector */}
+                <PortfolioSizeSelector
+                    minValue={minLeaseSize ?? null}
+                    maxValue={maxLeaseSize ?? null}
+                    onChange={onLeaseSizeChange || (() => {})}
+                />
+
+                {/* Sign Date Input */}
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="After 1/10/2024"
+                        value={signDate ? `After ${signDate}` : ""}
+                        onChange={(e) => {
+                            const inputValue = e.target.value;
+                            // Extract date from "After [date]" format
+                            if (inputValue.startsWith("After ")) {
+                                const datePart = inputValue
+                                    .replace("After ", "")
+                                    .trim();
+                                onSignDateChange(datePart);
+                            } else if (inputValue === "") {
+                                onSignDateChange("");
+                            } else {
+                                // If user just types a date without "After ", add it
+                                onSignDateChange(inputValue);
+                            }
+                        }}
+                        onFocus={(e) => {
+                            // When focused, show just the date part for easier editing
+                            if (
+                                signDate &&
+                                e.target.value.startsWith("After ")
+                            ) {
+                                e.target.value = signDate;
+                            }
+                        }}
+                        onBlur={(e) => {
+                            // When blurred, ensure format is "After [date]"
+                            if (
+                                signDate &&
+                                !e.target.value.startsWith("After ")
+                            ) {
+                                e.target.value = `After ${signDate}`;
+                            }
+                        }}
+                        className="rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[150px]"
                     />
+                    <Calendar className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
 
-                    {/* Sign Date Input */}
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="After 1/10/2024"
-                            value={signDate ? `After ${signDate}` : ""}
-                            onChange={(e) => {
-                                const inputValue = e.target.value;
-                                // Extract date from "After [date]" format
-                                if (inputValue.startsWith("After ")) {
-                                    const datePart = inputValue
-                                        .replace("After ", "")
-                                        .trim();
-                                    onSignDateChange(datePart);
-                                } else if (inputValue === "") {
-                                    onSignDateChange("");
-                                } else {
-                                    // If user just types a date without "After ", add it
-                                    onSignDateChange(inputValue);
-                                }
-                            }}
-                            onFocus={(e) => {
-                                // When focused, show just the date part for easier editing
-                                if (
-                                    signDate &&
-                                    e.target.value.startsWith("After ")
-                                ) {
-                                    e.target.value = signDate;
-                                }
-                            }}
-                            onBlur={(e) => {
-                                // When blurred, ensure format is "After [date]"
-                                if (
-                                    signDate &&
-                                    !e.target.value.startsWith("After ")
-                                ) {
-                                    e.target.value = `After ${signDate}`;
-                                }
-                            }}
-                            className="rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[150px]"
-                        />
-                        <Calendar className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    </div>
+                {/* Star Rating */}
+                <StarRating rating={rating} onChange={onRatingChange} />
 
-                    {/* Star Rating */}
-                    <StarRating rating={rating} onChange={onRatingChange} />
+                {/* Transactions Count */}
+                <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                    {transactionsCount.toLocaleString()} Transactions
+                </div>
 
-                    {/* Transactions Count */}
-                    <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                        {transactionsCount.toLocaleString()} Transactions
-                    </div>
+                {/* Right-aligned actions */}
+                <div className="flex items-center gap-3 ml-auto">
+                    {/* Sort Dropdown */}
+                    <SortDropdown value={sortBy} onChange={onSortChange} />
 
-                    {/* Right-aligned actions */}
-                    <div className="flex items-center gap-3 ml-auto">
-                        {/* Sort Dropdown */}
-                        <SortDropdown value={sortBy} onChange={onSortChange} />
-
-                        {/* Export Button */}
-                        <button
-                            type="button"
-                            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        >
-                            <Download className="h-4 w-4" />
-                            <span>Export</span>
-                        </button>
-                    </div>
+                    {/* Export Button */}
+                    <button
+                        type="button"
+                        className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                        <Download className="h-4 w-4" />
+                        <span>Export</span>
+                    </button>
                 </div>
             </div>
         </div>
