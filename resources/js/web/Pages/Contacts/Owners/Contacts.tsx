@@ -381,62 +381,13 @@ export default function Contacts({
                 </div>
             ),
         },
-        {
-            key: "company",
-            label: "Company",
-            defaultWidth: 250,
-            render: (row: Contact) => (
-                <span className="block truncate" title={row.company}>
-                    {row.company}
-                </span>
-            ),
-        },
-        {
-            key: "title",
-            label: "Title",
-            defaultWidth: 250,
-            render: (row: Contact) => (
-                <span className="block truncate" title={row.title}>
-                    {row.title}
-                </span>
-            ),
-        },
-        {
-            key: "role",
-            label: "Role",
-            defaultWidth: 250,
-            render: (row: Contact) => (
-                <div className="flex items-center gap-1">
-                    <span className="block truncate" title={row.role}>
-                        {row.role}
-                    </span>
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-4 h-4 shrink-0 text-blue-600"
-                    >
-                        <path d="M12 4.5V19.5M12 4.5L18 10M12 4.5L6 10" />
-                    </svg>
-                </div>
-            ),
-        },
-        {
-            key: "phone",
-            label: "Phone",
-            align: "right",
-            defaultWidth: 220,
-            render: (row: Contact) => (
-                <span className="block truncate text-right" title={row.phone}>
-                    {row.phone || "—"}
-                </span>
-            ),
-        },
+
         {
             key: "contactInfo",
             label: "Contact Info",
             defaultWidth: 180,
             render: (row: Contact) => (
-                <div className="flex flex-col gap-1">
+                <div className="flex gap-1">
                     {row.email && (
                         <a
                             href={`mailto:${row.email}`}
@@ -472,6 +423,30 @@ export default function Contacts({
                 </div>
             ),
         },
+
+        {
+            key: "title",
+            label: "Title",
+            defaultWidth: 250,
+            render: (row: Contact) => (
+                <span className="block truncate" title={row.title}>
+                    {row.title}
+                </span>
+            ),
+        },
+
+        {
+            key: "phone",
+            label: "Phone Number",
+            align: "right",
+            defaultWidth: 220,
+            render: (row: Contact) => (
+                <span className="block truncate text-right" title={row.phone}>
+                    {row.phone || "—"}
+                </span>
+            ),
+        },
+
         {
             key: "address",
             label: "Address",

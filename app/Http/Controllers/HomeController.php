@@ -137,7 +137,7 @@ class HomeController extends Controller
     {
         return [
             'heroContent' => [
-                'title' => 'Discover Your New Home',
+                'title' => 'Discover Your Next Deal',
                 'subtitle' => 'Helping 100 million renters find their perfect fit.',
                 'searchPlaceholder' => 'Enter Location, Broker/Agent, Tenant, Keyword',
                 'backgroundImage' => 'https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg',

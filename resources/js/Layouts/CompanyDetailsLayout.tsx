@@ -121,13 +121,13 @@ export default function CompanyDetailsLayout({
             {/* Company Header */}
             <div className="bg-white border-b border-gray-200">
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
-                    <div className="mb-4">{headerComponent}</div>
+                    <div className="mb-2">{headerComponent}</div>
                     <CompanyTabs tabs={tabs} activeTabId={getActiveTabId()} />
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
+            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
                 {children}
             </div>
         </div>

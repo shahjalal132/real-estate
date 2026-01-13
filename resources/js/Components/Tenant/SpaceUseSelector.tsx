@@ -6,12 +6,12 @@ interface SpaceUseSelectorProps {
     onSpaceUseChange: (value: string[]) => void;
     inShoppingCenter?: boolean;
     onInShoppingCenterChange?: (value: boolean) => void;
-    shoppingCenterOptions?: string[];
     label?: string;
 }
 
 const SPACE_USE_OPTIONS = [
     "Office",
+    "Coworking",
     "Industrial",
     "Retail",
     "Flex",
@@ -23,7 +23,6 @@ export default function SpaceUseSelector({
     onSpaceUseChange,
     inShoppingCenter = false,
     onInShoppingCenterChange,
-    shoppingCenterOptions = ["Option 1", "Option 2"],
     label = "Space Use",
 }: SpaceUseSelectorProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -114,64 +113,75 @@ export default function SpaceUseSelector({
 
                                     {/* In a Shopping Center Option */}
                                     <div>
-                                        <div className="flex items-center justify-between px-4 py-2 hover:bg-gray-50 transition-colors">
-                                            <label className="flex cursor-pointer items-center gap-2 flex-1">
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsShoppingCenterOpen(
+                                                    !isShoppingCenterOpen
+                                                );
+                                            }}
+                                            className="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-50 transition-colors"
+                                        >
+                                            <label className="flex cursor-pointer items-center gap-2 flex-1 pointer-events-none">
                                                 <input
                                                     type="checkbox"
                                                     checked={inShoppingCenter}
-                                                    onChange={(e) => {
-                                                        e.stopPropagation();
-                                                        onInShoppingCenterChange?.(
-                                                            e.target.checked
-                                                        );
-                                                    }}
+                                                    readOnly
                                                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
                                                 />
                                                 <span className="text-sm text-gray-700">
                                                     In a Shopping Center
                                                 </span>
                                             </label>
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setIsShoppingCenterOpen(
-                                                        !isShoppingCenterOpen
-                                                    );
-                                                }}
-                                                className="p-1 hover:bg-gray-100 rounded transition-colors"
-                                            >
-                                                <ChevronDown
-                                                    className={`h-4 w-4 text-gray-400 transition-transform ${
-                                                        isShoppingCenterOpen
-                                                            ? "rotate-180"
-                                                            : ""
-                                                    }`}
-                                                />
-                                            </button>
-                                        </div>
+                                            <ChevronDown
+                                                className={`h-4 w-4 text-gray-400 transition-transform ${
+                                                    isShoppingCenterOpen
+                                                        ? "rotate-180"
+                                                        : ""
+                                                }`}
+                                            />
+                                        </button>
 
                                         {/* Shopping Center Sub-options */}
                                         {isShoppingCenterOpen && (
-                                            <div className="ml-4 border-l border-gray-200 pl-2">
-                                                {shoppingCenterOptions.map(
-                                                    (option) => (
-                                                        <label
-                                                            key={option}
-                                                            className="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-gray-50 transition-colors"
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={false}
-                                                                onChange={() => {}}
-                                                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
-                                                            />
-                                                            <span className="text-sm text-gray-700">
-                                                                {option}
-                                                            </span>
-                                                        </label>
-                                                    )
-                                                )}
+                                            <div className="bg-white">
+                                                <label className="flex cursor-pointer items-center gap-2 px-4 py-2 pl-8 hover:bg-blue-50 transition-colors">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={
+                                                            inShoppingCenter
+                                                        }
+                                                        onChange={(e) => {
+                                                            e.stopPropagation();
+                                                            onInShoppingCenterChange?.(
+                                                                true
+                                                            );
+                                                        }}
+                                                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
+                                                    />
+                                                    <span className="text-sm text-gray-700">
+                                                        In a Shopping Center
+                                                    </span>
+                                                </label>
+                                                <label className="flex cursor-pointer items-center gap-2 px-4 py-2 pl-8 hover:bg-blue-50 transition-colors">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={
+                                                            !inShoppingCenter
+                                                        }
+                                                        onChange={(e) => {
+                                                            e.stopPropagation();
+                                                            onInShoppingCenterChange?.(
+                                                                false
+                                                            );
+                                                        }}
+                                                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
+                                                    />
+                                                    <span className="text-sm text-gray-700">
+                                                        Not in a Shopping Center
+                                                    </span>
+                                                </label>
                                             </div>
                                         )}
                                     </div>
@@ -184,4 +194,3 @@ export default function SpaceUseSelector({
         </div>
     );
 }
-
