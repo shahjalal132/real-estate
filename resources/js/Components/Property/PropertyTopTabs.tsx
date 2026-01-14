@@ -3,29 +3,33 @@ import { useState } from "react";
 interface Tab {
     id:
         | "for-sale"
+        | "for-lease"
         | "sale-comps"
         | "lease-comps"
         | "sales-lease-data"
         | "property-listing-history"
         | "scout"
-        | "demographics"
         | "property-records"
         | "underwrite"
-        | "contacts";
+        | "contacts"
+        | "documents"
+        | "summary";
     label: string;
 }
 
 const tabs: Tab[] = [
     { id: "for-sale", label: "For Sale" },
-    { id: "sale-comps", label: "Sale Comps" },
+    { id: "for-lease", label: "For Lease" },
+    { id: "sale-comps", label: "Sales Comps" },
     { id: "lease-comps", label: "Lease Comps" },
-    { id: "sales-lease-data", label: "Sales Lease Data" },
+    { id: "sales-lease-data", label: "Sales and Lease Data" },
     { id: "property-listing-history", label: "Property Listing History" },
     { id: "scout", label: "Scout" },
-    { id: "demographics", label: "Demographics" },
     { id: "property-records", label: "Property Records" },
     { id: "underwrite", label: "Underwrite" },
     { id: "contacts", label: "Contacts" },
+    { id: "documents", label: "Documents" },
+    { id: "summary", label: "Summary" },
 ];
 
 export default function PropertyTopTabs() {
