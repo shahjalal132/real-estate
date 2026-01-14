@@ -7,19 +7,13 @@ import BrokersFilterSidebar from "@/Components/Broker/BrokersFilterSidebar";
 import ResizableTable, {
     ResizableColumn,
 } from "@/Components/ResizableTable/ResizableTable";
-import BrokersGallery from "@/Components/Broker/BrokersGallery";
-import { User } from "lucide-react";
+import { MapPin } from "lucide-react";
+import LocationsGallery from "@/Components/Location/LocationsGallery";
 
-interface DirectoryContact {
+interface DirectoryLocation {
     id: number;
-    name: string;
     company: string;
-    title: string;
     specialty: string;
-    property_type_focus: string;
-    phone: string;
-    email: string;
-    linkedin: string;
     building_name: string;
     address: string;
     city: string;
@@ -27,6 +21,7 @@ interface DirectoryContact {
     postal_code: string;
     country: string;
     website: string;
+    location_employees: number;
     lease_transactions_3y: number;
     lease_transactions_sf_3y: number;
     lease_listings: number;
@@ -40,10 +35,10 @@ interface DirectoryContact {
 }
 
 interface PageProps {
-    brokers: PaginatedData<DirectoryContact>;
+    locations: PaginatedData<DirectoryLocation>;
     filters: {
         search?: string;
-        specialty?: string;
+        location?: string;
         view?: "list" | "gallery";
         per_page?: string;
     };
@@ -53,15 +48,13 @@ interface PageProps {
     };
 }
 
-export default function BrokersIndex({ brokers, filters }: PageProps) {
+export default function LocationsIndex({ locations, filters }: PageProps) {
     const { url } = usePage();
-    const activeTab = "contacts";
-    // Initialize viewMode from filters prop, default to 'list'
+    const activeTab = "locations";
     const [viewMode, setViewMode] = useState<"list" | "gallery">(
         filters.view || "list"
     );
 
-    // Sync state if filters prop changes (e.g. back button)
     useEffect(() => {
         if (filters.view) {
             setViewMode(filters.view);
@@ -71,7 +64,7 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
     const updateFilters = useCallback(
         (newFilters: Record<string, any>) => {
             router.get(
-                "/contacts/brokers",
+                "/contacts/locations",
                 {
                     ...filters,
                     ...newFilters,
@@ -105,9 +98,9 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
         updateFilters({ search: filters.search || undefined });
     }, [updateFilters, filters.search]);
 
-    const handleSpecialtyChange = useCallback(
+    const handleLocationChange = useCallback(
         (value: string) => {
-            updateFilters({ specialty: value || undefined });
+            updateFilters({ location: value || undefined });
         },
         [updateFilters]
     );
@@ -119,91 +112,13 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
 
     const columns: ResizableColumn[] = [
         {
-            key: "name",
-            label: "Name",
-            align: "left",
-            defaultWidth: 300,
-            render: (row) => (
-                <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden shrink-0">
-                        <User className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Link
-                        href={`#`}
-                        className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
-                    >
-                        {row.name}
-                    </Link>
-                </div>
-            ),
-        },
-        {
             key: "company",
             label: "Company",
             align: "left",
-            defaultWidth: 300,
+            defaultWidth: 250,
             render: (row) => (
-                <span className="text-gray-900"> {row.company || "—"} </span>
-            ),
-        },
-        {
-            key: "title",
-            label: "Title",
-            align: "left",
-            defaultWidth: 320,
-            render: (row) => row.title || "—",
-        },
-        {
-            key: "specialty",
-            label: "Specialty",
-            align: "left",
-            defaultWidth: 300,
-            render: (row) => row.specialty || "—",
-        },
-        {
-            key: "property_type_focus",
-            label: "Property Type Focus",
-            align: "left",
-            defaultWidth: 300,
-            render: (row) => (
-                <span
-                    className="truncate block"
-                    title={row.property_type_focus}
-                >
-                    {row.property_type_focus || "—"}
-                </span>
-            ),
-        },
-        {
-            key: "phone",
-            label: "Phone",
-            align: "left",
-            defaultWidth: 200,
-            render: (row) => row.phone || "—",
-        },
-        {
-            key: "mobile",
-            label: "Mobile",
-            align: "left",
-            defaultWidth: 200,
-            render: (row) => "—",
-        },
-        {
-            key: "email",
-            label: "Contact Info",
-            align: "left",
-            defaultWidth: 130,
-            render: (row) => (
-                <div className="flex gap-2">
-                    {row.email && (
-                        <a
-                            href={`mailto:${row.email}`}
-                            title={row.email}
-                            className="text-blue-600 hover:underline"
-                        >
-                            Email
-                        </a>
-                    )}
+                <div className="font-medium text-gray-900">
+                    {row.company || "—"}
                 </div>
             ),
         },
@@ -211,49 +126,72 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
             key: "building_name",
             label: "Building Name",
             align: "left",
-            defaultWidth: 270,
+            defaultWidth: 200,
             render: (row) => row.building_name || "—",
         },
         {
             key: "address",
             label: "Address",
             align: "left",
-            defaultWidth: 270,
-            render: (row) => row.address || "—",
+            defaultWidth: 350,
+            render: (row) => (
+                <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-gray-400 shrink-0" />
+                    <span>
+                        {row.address ? `${row.address}, ` : ""}
+                        {row.city ? `${row.city}, ` : ""}
+                        {row.state} {row.postal_code}
+                    </span>
+                </div>
+            ),
         },
         {
             key: "city",
             label: "City",
             align: "left",
-            defaultWidth: 120,
+            defaultWidth: 150,
             render: (row) => row.city || "—",
         },
         {
             key: "state",
             label: "State",
             align: "left",
-            defaultWidth: 120,
+            defaultWidth: 100,
             render: (row) => row.state || "—",
         },
         {
             key: "postal_code",
             label: "Postal Code",
             align: "left",
-            defaultWidth: 150,
+            defaultWidth: 120,
             render: (row) => row.postal_code || "—",
         },
         {
             key: "country",
             label: "Country",
             align: "left",
-            defaultWidth: 180,
+            defaultWidth: 150,
             render: (row) => row.country || "—",
+        },
+        {
+            key: "specialty",
+            label: "Specialty",
+            align: "left",
+            defaultWidth: 200,
+            render: (row) => row.specialty || "—",
+        },
+        {
+            key: "location_employees",
+            label: "Employees",
+            align: "right",
+            defaultWidth: 120,
+            render: (row) => formatNumber(row.location_employees),
         },
         {
             key: "website",
             label: "Website",
             align: "left",
-            defaultWidth: 220,
+            defaultWidth: 200,
             render: (row) =>
                 row.website ? (
                     <a
@@ -266,8 +204,7 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                         rel="noreferrer"
                         className="text-blue-600 hover:underline truncate block"
                     >
-                        {" "}
-                        {row.website}{" "}
+                        {row.website}
                     </a>
                 ) : (
                     "—"
@@ -275,79 +212,82 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
         },
         {
             key: "lease_transactions_3y",
-            label: "Lease Transactions (3Y)",
+            label: "Lease Trans (3Y)",
             align: "right",
-            defaultWidth: 240,
+            defaultWidth: 150,
             render: (row) => formatNumber(row.lease_transactions_3y),
         },
         {
             key: "lease_transactions_sf_3y",
-            label: "Lease Transactions SF (3Y)",
+            label: "Lease Trans SF (3Y)",
             align: "right",
-            defaultWidth: 295,
+            defaultWidth: 180,
             render: (row) => formatNumber(row.lease_transactions_sf_3y),
         },
         {
             key: "lease_listings",
             label: "Lease Listings",
             align: "right",
-            defaultWidth: 220,
+            defaultWidth: 150,
             render: (row) => formatNumber(row.lease_listings),
         },
         {
             key: "lease_listings_portfolio_sf",
-            label: "Lease Listings Portfolio SF",
+            label: "Lease Ptfl SF",
             align: "right",
-            defaultWidth: 270,
+            defaultWidth: 180,
             render: (row) => formatNumber(row.lease_listings_portfolio_sf),
         },
         {
             key: "lease_listings_available_sf",
-            label: "Lease Listings Available SF",
+            label: "Lease Avail SF",
             align: "right",
-            defaultWidth: 295,
+            defaultWidth: 180,
             render: (row) => formatNumber(row.lease_listings_available_sf),
         },
         {
             key: "sale_transactions_3y",
-            label: "Sale Transactions (3Y)",
+            label: "Sale Trans (3Y)",
             align: "right",
-            defaultWidth: 240,
+            defaultWidth: 150,
             render: (row) => formatNumber(row.sale_transactions_3y),
         },
         {
             key: "sale_transactions_sf_3y",
-            label: "Sale Transactions SF (3Y)",
+            label: "Sale Trans SF (3Y)",
             align: "right",
-            defaultWidth: 275,
+            defaultWidth: 180,
             render: (row) => formatNumber(row.sale_transactions_sf_3y),
         },
         {
             key: "sale_transactions_volume_3y",
-            label: "Sale Transactions Volume (3Y)",
+            label: "Sale Vol (3Y)",
             align: "right",
-            defaultWidth: 295,
-            render: (row) => formatNumber(row.sale_transactions_volume_3y),
+            defaultWidth: 200,
+            render: (row) =>
+                row.sale_transactions_volume_3y
+                    ? `$${formatNumber(row.sale_transactions_volume_3y)}`
+                    : "—",
         },
         {
             key: "sale_listings",
             label: "Sale Listings",
             align: "right",
-            defaultWidth: 220,
+            defaultWidth: 150,
             render: (row) => formatNumber(row.sale_listings),
         },
         {
             key: "sale_listings_sf",
             label: "Sale Listings SF",
             align: "right",
-            defaultWidth: 220,
+            defaultWidth: 180,
             render: (row) => formatNumber(row.sale_listings_sf),
         },
     ];
 
     return (
         <AppLayout>
-            <Head title="Brokers" />
+            <Head title="Locations" />
             <div className="flex flex-col h-screen bg-white overflow-hidden max-h-[calc(100vh-8vh)]">
                 {/* Header with Tabs */}
                 <div className="border-b border-gray-200 bg-white shrink-0">
@@ -357,7 +297,7 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                                 <Link
                                     href="/contacts/brokers"
                                     className={`text-sm font-semibold transition-colors ${
-                                        activeTab === "contacts"
+                                        activeTab === "brokers"
                                             ? "text-red-600 border-b-2 border-red-600 pb-2"
                                             : "text-gray-500 hover:text-gray-700"
                                     }`}
@@ -366,7 +306,11 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                                 </Link>
                                 <Link
                                     href="/contacts/locations"
-                                    className={`text-sm font-semibold transition-colors text-gray-500 hover:text-gray-700`}
+                                    className={`text-sm font-semibold transition-colors ${
+                                        activeTab === "locations"
+                                            ? "text-red-600 border-b-2 border-red-600 pb-2"
+                                            : "text-gray-500 hover:text-gray-700"
+                                    }`}
                                 >
                                     Locations
                                 </Link>
@@ -379,7 +323,7 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                             </div>
                             <div className="flex items-center space-x-4">
                                 <span className="text-sm font-medium text-gray-600">
-                                    {formatNumber(brokers.total)} Contacts
+                                    {formatNumber(locations.total)} Locations
                                 </span>
                             </div>
                         </div>
@@ -389,36 +333,38 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                 {/* Search and Filter Bar */}
                 <div className="shrink-0">
                     <BrokersFilterBar
-                        contactName={filters.search} // Mapping generic search to contact name for now
-                        onContactNameChange={handleSearchChange}
-                        onCompanyNameChange={(val) => {}} // Placeholder
-                        specialty={filters.specialty}
-                        onSpecialtyChange={handleSpecialtyChange}
-                        onLocationChange={(val) => {}} // Placeholder
+                        contactName="" // Not relevant
+                        onContactNameChange={() => {}}
+                        companyName={filters.search} // Use generic search as company name input for now or keep separate
+                        onCompanyNameChange={handleSearchChange} // Mapping Company Name input to search filter
+                        specialty=""
+                        onSpecialtyChange={() => {}}
+                        location={filters.location}
+                        onLocationChange={handleLocationChange}
                         onSearch={handleSearch}
                         viewMode={viewMode}
                         onViewModeChange={handleViewModeChange}
                     />
                 </div>
 
-                {/* Main Content Area: Table/Gallery + Sidebar */}
+                {/* Main Content Area */}
                 <div className="flex flex-1 min-h-0 overflow-hidden">
-                    {/* Data Container */}
                     <div className="flex-1 flex flex-col min-w-0">
-                        {/* List or Gallery View */}
+                        {/* Data View */}
                         <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pt-4">
                             {viewMode === "list" ? (
                                 <ResizableTable
                                     columns={columns}
-                                    data={brokers.data}
-                                    storageKey="brokers-column-widths"
+                                    data={locations.data}
+                                    storageKey="locations-column-widths"
                                     className="h-full"
-                                    onRowClick={(row) => {
-                                        // router.visit(`/contacts/brokers/${row.id}`);
-                                    }}
                                 />
                             ) : (
-                                <BrokersGallery brokers={brokers.data} />
+                                <div className="overflow-y-auto h-full pr-2">
+                                    <LocationsGallery
+                                        locations={locations.data}
+                                    />
+                                </div>
                             )}
                         </div>
 
@@ -431,25 +377,27 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                                             <p className="text-sm text-gray-700">
                                                 Showing{" "}
                                                 <span className="font-medium">
-                                                    {brokers.from}
+                                                    {" "}
+                                                    {locations.from}{" "}
                                                 </span>{" "}
                                                 to{" "}
                                                 <span className="font-medium">
-                                                    {brokers.to}
+                                                    {locations.to}
                                                 </span>{" "}
                                                 of{" "}
                                                 <span className="font-medium">
-                                                    {brokers.total}
+                                                    {" "}
+                                                    {locations.total}{" "}
                                                 </span>{" "}
                                                 results
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <select
-                                                value={brokers.per_page}
+                                                value={locations.per_page}
                                                 onChange={(e) => {
                                                     router.get(
-                                                        "/contacts/brokers",
+                                                        "/contacts/locations",
                                                         {
                                                             ...filters,
                                                             per_page:
@@ -461,10 +409,12 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                                                 className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             >
                                                 <option value={10}>
-                                                    Show 10 per page
+                                                    {" "}
+                                                    Show 10 per page{" "}
                                                 </option>
                                                 <option value={20}>
-                                                    Show 20 per page
+                                                    {" "}
+                                                    Show 20 per page{" "}
                                                 </option>
                                                 <option value={50}>
                                                     {" "}
@@ -475,13 +425,10 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                                                     Show 100 per page{" "}
                                                 </option>
                                             </select>
-                                            <nav
-                                                className="flex items-center gap-1"
-                                                aria-label="Pagination"
-                                            >
-                                                {brokers.links.map(
-                                                    (link, index) => {
-                                                        return link.url ? (
+                                            <nav className="flex items-center gap-1">
+                                                {locations.links.map(
+                                                    (link, index) =>
+                                                        link.url ? (
                                                             <button
                                                                 key={index}
                                                                 onClick={() =>
@@ -506,8 +453,7 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                                                                     __html: link.label,
                                                                 }}
                                                             />
-                                                        );
-                                                    }
+                                                        )
                                                 )}
                                             </nav>
                                         </div>
@@ -517,7 +463,7 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                         </div>
                     </div>
 
-                    {/* Right Sidebar */}
+                    {/* Right Sidebar - Optional or reused */}
                     <BrokersFilterSidebar />
                 </div>
             </div>
