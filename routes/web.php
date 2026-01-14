@@ -46,7 +46,7 @@ Route::get('/contacts/owners', function () {
 Route::get('/contacts/owners/companies', [\App\Http\Controllers\OwnerCompanyController::class, 'companies'])->name('contacts.owners.companies');
 Route::get('/contacts/owners/funds', [\App\Http\Controllers\OwnerCompanyController::class, 'funds'])->name('contacts.owners.funds');
 Route::get('/contacts/owners/{id}/{tab?}', [\App\Http\Controllers\OwnerCompanyController::class, 'show'])->name('contacts.owners.show')->where('tab', 'summary|properties|transactions|listings|funds|tenants|contacts|relationships|news');
-Route::get('/contacts/brokers', [\App\Http\Controllers\MiscController::class, 'contactsBrokers'])->name('contacts.brokers');
+Route::get('/contacts/brokers', [\App\Http\Controllers\BrokerController::class, 'index'])->name('contacts.brokers');
 Route::get('/contacts/all', [\App\Http\Controllers\MiscController::class, 'contactsAll'])->name('contacts.all');
 
 // Comparables routes
