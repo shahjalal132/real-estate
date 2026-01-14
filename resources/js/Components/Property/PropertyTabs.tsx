@@ -19,12 +19,8 @@ const tabs: Tab[] = [
     { id: "details", label: "Details" },
     { id: "about", label: "About Property" },
     { id: "map", label: "Map" },
-    { id: "climate", label: "Climate Risk" },
-    { id: "history", label: "Property History" },
     { id: "valuation", label: "Valuation Calculator" },
     { id: "demographics", label: "Demographics" },
-    { id: "insights", label: "Location Insights" },
-    { id: "similar-properties", label: "Similar Properties" },
 ];
 
 export default function PropertyTabs({

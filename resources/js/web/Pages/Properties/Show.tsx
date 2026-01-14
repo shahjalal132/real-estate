@@ -354,7 +354,7 @@ export default function PropertyShow() {
                         )}
 
                         {/* Investment Highlights Section */}
-                        {(!isPrintMode ||
+                        {/* {(!isPrintMode ||
                             selectedPrintSections.includes("highlights")) && (
                             <div id="highlights" className="scroll-mt-20">
                                 <PropertyInvestmentHighlights
@@ -363,7 +363,7 @@ export default function PropertyShow() {
                                     }
                                 />
                             </div>
-                        )}
+                        )} */}
 
                         {/* Map Section */}
                         {(!isPrintMode ||
@@ -382,7 +382,7 @@ export default function PropertyShow() {
                         )}
 
                         {/* Climate Risk Section */}
-                        {(!isPrintMode ||
+                        {/* {(!isPrintMode ||
                             selectedPrintSections.includes("climate-risk")) && (
                             <div
                                 id="climate"
@@ -391,10 +391,10 @@ export default function PropertyShow() {
                             >
                                 <ClimateRisk />
                             </div>
-                        )}
+                        )} */}
 
                         {/* Property History Section */}
-                        {(!isPrintMode ||
+                        {/* {(!isPrintMode ||
                             selectedPrintSections.includes(
                                 "property-history"
                             )) && (
@@ -403,9 +403,9 @@ export default function PropertyShow() {
                                 ref={sectionRefs.history}
                                 className="scroll-mt-20"
                             >
-                                {/* <PropertyHistory /> */}
+                                <PropertyHistory />
                             </div>
-                        )}
+                        )} */}
 
                         {/* Valuation Calculator Section */}
                         {(!isPrintMode ||
@@ -434,7 +434,7 @@ export default function PropertyShow() {
                         )}
 
                         {/* Location Insights Section */}
-                        {(!isPrintMode ||
+                        {/* {(!isPrintMode ||
                             selectedPrintSections.includes(
                                 "additional-information"
                             )) && (
@@ -450,7 +450,7 @@ export default function PropertyShow() {
                                     centerLng={location?.longitude ?? undefined}
                                 />
                             </div>
-                        )}
+                        )} */}
 
                         {/* Similar Properties Section */}
                         {(!isPrintMode ||
