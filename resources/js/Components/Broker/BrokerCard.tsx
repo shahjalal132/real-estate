@@ -1,13 +1,4 @@
-import {
-    Building,
-    Globe,
-    Linkedin,
-    Mail,
-    MapPin,
-    Phone,
-    Trophy,
-    User,
-} from "lucide-react";
+import { Linkedin, Mail, Phone, Trophy, User } from "lucide-react";
 
 interface DirectoryContact {
     id: number;
@@ -26,6 +17,7 @@ interface DirectoryContact {
     postal_code: string;
     country: string;
     website: string;
+    thumbnail_url?: string;
 }
 
 interface BrokerCardProps {
@@ -34,121 +26,118 @@ interface BrokerCardProps {
 
 export default function BrokerCard({ broker }: BrokerCardProps) {
     return (
-        <div className="bg-white border border-gray-200 rounded-lg p-4 flex gap-4 h-full shadow-sm hover:shadow-md transition-shadow">
-            {/* Left Column: Image and Badge */}
-            <div className="flex flex-col gap-2 shrink-0 w-24">
-                <div className="w-24 h-32 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
-                    <img
-                        src="/assets/images/broker.jpeg"
-                        alt={broker.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            // Fallback if image fails to load
-                            e.currentTarget.style.display = "none";
-                            e.currentTarget.parentElement?.classList.add(
-                                "flex",
-                                "items-center",
-                                "justify-center"
-                            );
-                        }}
-                    />
-                    {/* Fallback Icon (hidden by default if image loads) */}
-                    <User className="h-12 w-12 text-gray-400 hidden" />
-                </div>
-                <div className="flex items-center gap-1 text-xs font-semibold text-yellow-600">
-                    <Trophy className="h-3 w-3 fill-current" />
-                    <span>Power Broker </span>
-                </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow h-full w-full max-w-sm">
+            {/* Image Section */}
+            <div className="w-full aspect-square bg-gray-100 rounded-md overflow-hidden relative">
+                <img
+                    src={broker.thumbnail_url || "/assets/images/broker.jpeg"}
+                    alt={broker.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        e.currentTarget.parentElement
+                            ?.querySelector(".fallback-icon")
+                            ?.classList.remove("hidden");
+                    }}
+                />
+                <User className="fallback-icon h-16 w-16 text-gray-400 hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
             </div>
 
-            {/* Right Column: Details */}
-            <div className="flex flex-col gap-1 min-w-0 flex-1">
-                <h3 className="text-base font-bold text-gray-900 leading-tight">
-                    {" "}
-                    {broker.name}{" "}
+            {/* Details Section */}
+            <div className="flex flex-col gap-1">
+                <h3 className="text-lg font-bold text-gray-900 leading-tight">
+                    {broker.name}
                 </h3>
-                <p className="text-xs text-gray-600 font-medium">
-                    {" "}
-                    {broker.title}{" "}
-                </p>
-                <p className="text-xs text-gray-800 font-semibold mt-1">
-                    {" "}
-                    {broker.company}{" "}
-                </p>
+                <p className="text-sm text-gray-700">{broker.title}</p>
+
+                <a
+                    href="#"
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline mt-0.5 inline-block"
+                >
+                    {broker.company}
+                </a>
 
                 {/* Address */}
-                <div className="text-xs text-gray-600 mt-1">
-                    {broker.address && <p>{broker.address} </p>}
+                <div className="text-sm text-gray-700 mt-1 leading-snug">
+                    <p>{broker.address || "125 Park Ave"} </p>
                     <p>
-                        {[broker.city, broker.state, broker.postal_code]
+                        {[
+                            broker.city || "New York",
+                            broker.state || "NY",
+                            broker.postal_code || "10017",
+                        ]
                             .filter(Boolean)
                             .join(", ")}
                     </p>
-                    {broker.country && <p>{broker.country} </p>}
+                    <p> {broker.country || "United States"} </p>
                 </div>
 
-                {/* Contact Links */}
-                <div className="flex flex-col gap-1 mt-3">
-                    {broker.phone && (
-                        <div className="flex items-center gap-2 text-xs text-gray-700">
-                            <Phone className="h-3 w-3 shrink-0" />
-                            <span> {broker.phone} </span>
-                        </div>
-                    )}
-                    {broker.email && (
-                        <div className="flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800">
-                            <Mail className="h-3 w-3 shrink-0" />
+                {/* Contact Info */}
+                <div className="flex flex-col gap-2 mt-3">
+                    {/* Phone */}
+                    <div className="flex items-center gap-2 text-gray-900">
+                        <Phone className="h-4 w-4 shrink-0 text-gray-900" />
+                        <span className="text-sm">
+                            {broker.phone || "(212) 372-2000"}
+                        </span>
+                    </div>
+
+                    {/* Email */}
+                    <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 shrink-0 text-gray-900" />
+                        <a
+                            href={`mailto:${broker.email}`}
+                            className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
+                        >
+                            {broker.email}
+                        </a>
+                    </div>
+
+                    {/* LinkedIn */}
+                    {(broker.linkedin || true) && (
+                        <div className="flex items-center gap-2">
+                            <Linkedin className="h-4 w-4 shrink-0 text-gray-900" />
                             <a
-                                href={`mailto:${broker.email}`}
-                                className="hover:underline truncate"
-                                title={broker.email}
-                            >
-                                {broker.email}
-                            </a>
-                        </div>
-                    )}
-                    {broker.linkedin && (
-                        <div className="flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800">
-                            <Linkedin className="h-3 w-3 shrink-0" />
-                            <a
-                                href={
-                                    broker.linkedin.startsWith("http")
-                                        ? broker.linkedin
-                                        : `https://${broker.linkedin}`
-                                }
+                                href={broker.linkedin || "#"}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="hover:underline truncate"
+                                className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
                             >
-                                {broker.name}
+                                LinkedIn Profile
                             </a>
                         </div>
                     )}
-                    {broker.website && (
-                        <div className="flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800">
-                            <Globe className="h-3 w-3 shrink-0" />
-                            <a
-                                href={
-                                    broker.website.startsWith("http")
-                                        ? broker.website
-                                        : `https://${broker.website}`
-                                }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hover:underline truncate"
-                            >
-                                {broker.company}
-                            </a>
-                        </div>
-                    )}
+
+                    {/* Website */}
+                    <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 shrink-0 text-gray-900" />
+                        <a
+                            href={broker.website || "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
+                        >
+                            Broker Profile
+                        </a>
+                    </div>
+
+                    {/* VCard Download */}
+                    <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 shrink-0 text-gray-900" />
+                        <a
+                            href="#"
+                            className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
+                        >
+                            Download VCard
+                        </a>
+                    </div>
                 </div>
 
-                {/* Specialty */}
-                {broker.specialty && (
-                    <p className="text-xs text-gray-600 mt-2">
-                        {broker.specialty}
-                    </p>
-                )}
+                {/* Award */}
+                <div className="flex items-center gap-2 text-gray-900 mt-3 pt-3 border-t border-gray-100">
+                    <Trophy className="h-4 w-4 shrink-0 text-yellow-500" />
+                    <span className="text-sm font-medium"> Power Broker </span>
+                </div>
             </div>
         </div>
     );
