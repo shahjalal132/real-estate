@@ -382,56 +382,57 @@ export default function BrokerListings() {
 
     return (
         <div>
-        {/* Sub-tabs (Lease/Sale) */ }
-        < div className = "bg-white border-b border-gray-200 shrink-0" >
-            <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8" >
-                <div className="flex space-x-8" >
-                    <button
+            {/* Sub-tabs (Lease/Sale) */}
+            <div className="bg-white border-b border-gray-200 shrink-0">
+                <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
+                    <div className="flex space-x-8">
+                        <button
                             type="button"
-    onClick = {() => setSubTab("lease")
-}
-className = {`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${subTab === "lease"
-        ? "border-red-500 text-red-600"
-        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-    }`}
+                            onClick={() => setSubTab("lease")}
+                            className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
+                                subTab === "lease"
+                                    ? "border-red-500 text-red-600"
+                                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                            }`}
                         >
-    Lease
-    </button>
-    < button
-type = "button"
-onClick = {() => setSubTab("sale")}
-className = {`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${subTab === "sale"
-        ? "border-red-500 text-red-600"
-        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-    }`}
+                            Lease
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setSubTab("sale")}
+                            className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
+                                subTab === "sale"
+                                    ? "border-red-500 text-red-600"
+                                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                            }`}
                         >
-    Sale
-    </button>
-    </div>
-    </div>
-    </div>
+                            Sale
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-{/* Filter Bar */ }
-<OwnerListingsFilterBar
-                searchValue={ searchValue }
-onSearchChange = { setSearchValue }
-spaceUse = { spaceUse }
-onSpaceUseChange = { setSpaceUse }
-availableSpace = { availableSpace }
-onAvailableSpaceChange = { setAvailableSpace }
-rating = { rating }
-onRatingChange = { setRating }
-sortBy = { sortBy }
-onSortChange = { setSortBy }
-listingsCount = { filteredListings.length }
-    />
+            {/* Filter Bar */}
+            <OwnerListingsFilterBar
+                searchValue={searchValue}
+                onSearchChange={setSearchValue}
+                spaceUse={spaceUse}
+                onSpaceUseChange={setSpaceUse}
+                availableSpace={availableSpace}
+                onAvailableSpaceChange={setAvailableSpace}
+                rating={rating}
+                onRatingChange={setRating}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                listingsCount={filteredListings.length}
+            />
 
-    {/* Main Content Area */ }
-    < div className = "flex-1 overflow-hidden" >
-        <div className="h-full mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6" >
-            <OwnerListingsTable listings={ filteredListings } />
+            {/* Main Content Area */}
+            <div className="flex-1 overflow-hidden">
+                <div className="h-full mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 py-6">
+                    <OwnerListingsTable listings={filteredListings} />
                 </div>
-                </div>
-                </div>
+            </div>
+        </div>
     );
 }

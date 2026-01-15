@@ -67,9 +67,9 @@ export default function BrokerDetails({
         switch (currentTab) {
             case "summary":
             default:
-                return <BrokerSummaryOverview broker={ broker } />;
+                return <BrokerSummaryOverview broker={broker} />;
             case "properties":
-                return <BrokerProperties properties={ properties || [] } />;
+                return <BrokerProperties properties={properties || []} />;
             case "transactions":
                 return <BrokerTransactions />;
             case "listings":
@@ -83,26 +83,25 @@ export default function BrokerDetails({
 
     return (
         <AppLayout>
-        <Head title= {`${broker.name} - Broker Details`
-} />
-    < BrokerDetailsLayout
-title = {`${broker.name} - Broker Details`}
-tabs = { tabs }
-currentIndex = { currentIndex }
-totalCount = { totalCount }
-previousBrokerId = { previousBrokerId }
-nextBrokerId = { nextBrokerId }
-basePath = "/contacts/brokers"
-headerComponent = {
-                    < BrokerDetailsHeader
-broker = { broker }
-tabs = { tabs }
-activeTabId = { currentTab || "summary"}
+            <Head title={`${broker.name} - Broker Details`} />
+            <BrokerDetailsLayout
+                title={`${broker.name} - Broker Details`}
+                tabs={tabs}
+                currentIndex={currentIndex}
+                totalCount={totalCount}
+                previousBrokerId={previousBrokerId}
+                nextBrokerId={nextBrokerId}
+                basePath="/contacts/brokers"
+                headerComponent={
+                    <BrokerDetailsHeader
+                        broker={broker}
+                        tabs={tabs}
+                        activeTabId={currentTab || "summary"}
                     />
                 }
             >
-    <div className="py-8" > { renderContent() } </div>
-        </BrokerDetailsLayout>
+                <div className="py-8"> {renderContent()} </div>
+            </BrokerDetailsLayout>
         </AppLayout>
     );
 }
