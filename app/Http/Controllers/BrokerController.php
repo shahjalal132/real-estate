@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Broker;
 use App\Models\DirectoryContact;
+use App\Models\Property;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -21,16 +22,16 @@ class BrokerController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('company', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('company', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
         // Filter by Specialty
         if ($request->has('specialty') && $request->specialty) {
-             $query->where('specialty', 'like', "%{$request->specialty}%");
+            $query->where('specialty', 'like', "%{$request->specialty}%");
         }
-        
+
         // Sorting
         $sortBy = $request->get('sort_by', 'name');
         $sortDir = $request->get('sort_dir', 'asc');
@@ -89,5 +90,34 @@ class BrokerController extends Controller
         });
 
         return response()->json($brokers);
+    }
+    /**
+     * Display the specified broker.
+     */
+    public function show($id, $tab = 'summary')
+    {
+        $broker = DirectoryContact::findOrFail($id);
+        $properties = null;
+
+        // Load additional data based on tab if needed
+        if ($tab === 'properties') {
+            $properties = Property::latest()->paginate(10);
+        }
+
+        // For navigation (previous/next) - simple implementation for now based on ID
+        $previousBrokerId = DirectoryContact::where('id', '<', $id)->max('id');
+        $nextBrokerId = DirectoryContact::where('id', '>', $id)->min('id');
+        $totalCount = DirectoryContact::count();
+        // Calculate current index (rough estimate for now)
+        $currentIndex = DirectoryContact::where('id', '<=', $id)->count();
+
+        return Inertia::render('Contacts/Brokers/Details', [
+            'broker' => $broker,
+            'currentTab' => $tab,
+            'previousBrokerId' => $previousBrokerId,
+            'nextBrokerId' => $nextBrokerId,
+            'totalCount' => $totalCount,
+            'currentIndex' => $currentIndex
+        ]);
     }
 }

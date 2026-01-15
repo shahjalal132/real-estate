@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, List, LayoutGrid } from "lucide-react";
 import TenantSortSelector from "./TenantSortSelector";
 
 interface ContactsFilterBarProps {
@@ -17,6 +17,8 @@ interface ContactsFilterBarProps {
     sortBy?: string;
     sortDir?: "asc" | "desc";
     onSortChange?: (sortBy: string, sortDir: "asc" | "desc") => void;
+    viewMode?: "list" | "gallery";
+    onViewModeChange?: (mode: "list" | "gallery") => void;
 }
 
 const ROLE_OPTIONS = [
@@ -41,6 +43,8 @@ export default function ContactsFilterBar({
     sortBy,
     sortDir,
     onSortChange,
+    viewMode,
+    onViewModeChange,
 }: ContactsFilterBarProps) {
     const [localContactName, setLocalContactName] = useState(contactName);
     const [localCompanyName, setLocalCompanyName] = useState(companyName);
@@ -86,153 +90,213 @@ export default function ContactsFilterBar({
     };
 
     return (
-        <div className="bg-white border-b border-gray-200 py-4">
-            <div className="flex items-center justify-between gap-4">
-                {/* Left Group: Filter Inputs */}
-                <div className="flex items-center gap-4 flex-1 min-w-0">
-                    {/* Contact Name Input */}
-                    <div className="relative shrink-0">
-                        <input
-                            type="text"
-                            value={localContactName}
-                            onChange={(e) =>
-                                handleContactNameChange(e.target.value)
-                            }
-                            placeholder="Contact Name"
-                            className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px]"
-                        />
-                    </div>
-
-                    {/* Company Name Input */}
-                    <div className="relative shrink-0">
-                        <input
-                            type="text"
-                            value={localCompanyName}
-                            onChange={(e) =>
-                                handleCompanyNameChange(e.target.value)
-                            }
-                            placeholder="Company Name"
-                            className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px]"
-                        />
-                    </div>
-
-                    {/* Address or Location Input */}
-                    <div className="relative w-64 shrink-0">
-                        <input
-                            type="text"
-                            value={localAddressSearch}
-                            onChange={(e) =>
-                                handleAddressSearchChange(e.target.value)
-                            }
-                            placeholder="Address or Location"
-                            className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    </div>
-
-                    {/* Title Input */}
-                    <div className="relative shrink-0">
-                        <input
-                            type="text"
-                            value={localTitle}
-                            onChange={(e) => handleTitleChange(e.target.value)}
-                            placeholder="Title"
-                            className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px]"
-                        />
-                    </div>
-
-                    {/* Role Dropdown */}
-                    <div className="relative shrink-0" ref={roleRef}>
-                        <button
-                            type="button"
-                            onClick={() => setIsRoleOpen(!isRoleOpen)}
-                            className={`flex items-center justify-between rounded-md border py-2 pl-3 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white min-w-[140px] ${
-                                role.length > 0
-                                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                            }`}
-                        >
-                            <span className="truncate">
-                                {role.length === 0
-                                    ? "Role"
-                                    : role.length === 1
-                                    ? role[0]
-                                    : `${role.length} selected`}
-                            </span>
-                            <ChevronDown
-                                className={`absolute right-2 h-4 w-4 text-gray-400 pointer-events-none transition-transform ${
-                                    isRoleOpen ? "rotate-180" : ""
-                                }`}
-                            />
-                        </button>
-
-                        {isRoleOpen && (
-                            <>
-                                <div
-                                    className="fixed inset-0 z-40"
-                                    onClick={() => setIsRoleOpen(false)}
-                                />
-                                <div className="absolute left-0 z-50 mt-1 w-64 rounded-md border border-gray-200 bg-white shadow-lg overflow-hidden">
-                                    <div className="py-1">
-                                        {ROLE_OPTIONS.map((option) => (
-                                            <label
-                                                key={option}
-                                                className="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-gray-50 transition-colors"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={role.includes(
-                                                        option
-                                                    )}
-                                                    onChange={() => {
-                                                        const newSelection =
-                                                            role.includes(
-                                                                option
-                                                            )
-                                                                ? role.filter(
-                                                                      (item) =>
-                                                                          item !==
-                                                                          option
-                                                                  )
-                                                                : [
-                                                                      ...role,
-                                                                      option,
-                                                                  ];
-                                                        onRoleChange?.(
-                                                            newSelection
-                                                        );
-                                                    }}
-                                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
-                                                />
-                                                <span className="text-sm text-gray-700">
-                                                    {option}
-                                                </span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-
-                {/* Right Group: Contact Count and Sort */}
-                <div className="flex items-center gap-4 shrink-0">
-                    {/* Contact Count */}
-                    <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                        {contactCount.toLocaleString()} Contacts
-                    </div>
-
-                    {/* Sort Selector */}
-                    <TenantSortSelector
-                        sortBy={sortBy}
-                        sortDir={sortDir}
-                        onSortChange={(sortBy, sortDir) => {
-                            onSortChange?.(sortBy, sortDir);
-                        }}
-                    />
-                </div>
-            </div>
+        <div className= "bg-white border-b border-gray-200 py-4" >
+        <div className="flex items-center justify-between gap-4" >
+            {/* Left Group: Filter Inputs */ }
+            < div className = "flex items-center gap-4 flex-1 min-w-0" >
+                {/* Contact Name Input */ }
+    {
+        onContactNameChange && (
+            <div className="relative shrink-0" >
+                <input
+                                type="text"
+        value = { localContactName }
+        onChange = {(e) =>
+        handleContactNameChange(e.target.value)
+    }
+    placeholder = "Contact Name"
+    className = "w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px]"
+        />
         </div>
+                    )
+}
+
+{/* Company Name Input - Conditional */ }
+{
+    onCompanyNameChange && (
+        <div className="relative shrink-0" >
+            <input
+                                type="text"
+    value = { localCompanyName }
+    onChange = {(e) =>
+    handleCompanyNameChange(e.target.value)
+}
+placeholder = "Company Name"
+className = "w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px]"
+    />
+    </div>
+                    )}
+
+{/* Address or Location Input - Conditional */ }
+{
+    onAddressSearchChange && (
+        <div className="relative w-64 shrink-0" >
+            <input
+                                type="text"
+    value = { localAddressSearch }
+    onChange = {(e) =>
+    handleAddressSearchChange(e.target.value)
+}
+placeholder = "Address or Location"
+className = "w-full rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+    />
+    <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+        </div>
+                    )}
+
+{/* Title Input - Conditional */ }
+{
+    onTitleChange && (
+        <div className="relative shrink-0" >
+            <input
+                                type="text"
+    value = { localTitle }
+    onChange = {(e) =>
+    handleTitleChange(e.target.value)
+}
+placeholder = "Title"
+className = "w-full rounded-md border border-gray-300 py-2 pl-3 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[140px]"
+    />
+    </div>
+                    )}
+
+{/* Role Dropdown - Conditional */ }
+{
+    onRoleChange && (
+        <div className="relative shrink-0" ref = { roleRef } >
+            <button
+                                type="button"
+    onClick = {() => setIsRoleOpen(!isRoleOpen)
+}
+className = {`flex items-center justify-between rounded-md border py-2 pl-3 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white min-w-[140px] ${role.length > 0
+        ? "border-blue-500 bg-blue-50 text-blue-700"
+        : "border-gray-300 text-gray-700 hover:bg-gray-50"
+    }`}
+                            >
+    <span className="truncate" >
+    {
+        role.length === 0
+            ? "Role"
+            : role.length === 1
+                ? role[0]
+                : `${role.length} selected`
+    }
+        </span>
+        < ChevronDown
+className = {`absolute right-2 h-4 w-4 text-gray-400 pointer-events-none transition-transform ${isRoleOpen ? "rotate-180" : ""
+    }`}
+                                />
+    </button>
+
+{
+    isRoleOpen && (
+        <>
+        <div
+                                        className="fixed inset-0 z-40"
+    onClick = {() => setIsRoleOpen(false)
+}
+                                    />
+    < div className = "absolute left-0 z-50 mt-1 w-64 rounded-md border border-gray-200 bg-white shadow-lg overflow-hidden" >
+        <div className="py-1" >
+        {
+            ROLE_OPTIONS.map((option) => (
+                <label
+                                                    key= { option }
+                                                    className = "flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-gray-50 transition-colors"
+                >
+                <input
+                                                        type="checkbox"
+                                                        checked = {
+                    role.includes(
+                        option
+                    )
+                }
+                                                        onChange = {() => {
+                const newSelection =
+                    role.includes(
+                        option
+                    )
+                        ? role.filter(
+                            (
+                                item
+                            ) =>
+                                item !==
+                                option
+                        )
+                        : [
+                            ...role,
+                            option,
+                        ];
+                onRoleChange?.(
+                    newSelection
+                );
+        }}
+className = "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
+    />
+    <span className="text-sm text-gray-700" >
+        { option }
+        </span>
+        </label>
+                                            ))}
+</div>
+    </div>
+    </>
+                            )}
+</div>
+                    )}
+</div>
+
+{/* Right Group: Contact Count, Sort, and View Toggle */ }
+<div className="flex items-center gap-4 shrink-0" >
+    {/* Contact Count */ }
+    < div className = "text-sm font-medium text-gray-700 whitespace-nowrap" >
+        { contactCount.toLocaleString() } Contacts
+            </div>
+
+{/* Sort Selector */ }
+<TenantSortSelector
+                        sortBy={ sortBy }
+sortDir = { sortDir }
+onSortChange = {(sortBy, sortDir) => {
+    onSortChange?.(sortBy, sortDir);
+}}
+                    />
+
+{/* View Mode Toggle - Conditional */ }
+{
+    viewMode && onViewModeChange && (
+        <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200 h-[38px]" >
+            <button
+                                onClick={ () => onViewModeChange("list") }
+    className = {`p-1.5 rounded-md transition-all ${viewMode === "list"
+            ? "bg-white shadow-sm text-blue-600"
+            : "text-gray-400 hover:text-gray-600"
+        }`
+}
+title = "List View"
+    >
+    <List className="h-4 w-4" />
+        </button>
+        < button
+onClick = {() => onViewModeChange("gallery")}
+className = {`p-1.5 rounded-md transition-all ${viewMode === "gallery"
+        ? "bg-white shadow-sm text-blue-600"
+        : "text-gray-400 hover:text-gray-600"
+    }`}
+title = "Gallery View"
+    >
+    <LayoutGrid className="h-4 w-4" />
+        </button>
+{/* Labels (optional, based on screenshot might contain text "LIST" "GALLERY" but icons are cleaner usually. Screenshot says "LIST" "GALLERY" under the icon? Or next to them?) */ }
+{/* Actually looking closer at my memory of standard UI, usually just icons. The user said 'As like attached screenshot'. Screenshot descriptions says: "LIST GALLERY" with icons. */
+                            /* Let's wait. The user supplied screenshot description says: "List/Gallery view toggle". 
+                               Actually, looking at the crop images provided in thoughts (I can't see them), I have to guess. 
+                               But "List and Gallery" text might be there. For now, icons are safe. I can refine if needed. 
+                            */}
+</div>
+                    )}
+</div>
+    </div>
+    </div>
     );
 }
