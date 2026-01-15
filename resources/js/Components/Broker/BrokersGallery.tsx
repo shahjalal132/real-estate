@@ -26,19 +26,17 @@ interface BrokersGalleryProps {
 export default function BrokersGallery({ brokers }: BrokersGalleryProps) {
     if (!brokers.length) {
         return (
-            <div className= "flex h-full items-center justify-center p-8 text-gray-500" >
-            No brokers found.
+            <div className="flex h-full items-center justify-center p-8 text-gray-500">
+                No brokers found.
             </div>
         );
     }
 
     return (
-        <div className= "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6 overflow-y-auto h-full" >
-        {
-            brokers.map((broker) => (
-                <BrokerCard key= { broker.id } broker = { broker } />
-            ))
-        }
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6 overflow-y-auto h-full">
+            {brokers.map((broker) => (
+                <BrokerCard key={broker.id} broker={broker} />
+            ))}
         </div>
     );
 }

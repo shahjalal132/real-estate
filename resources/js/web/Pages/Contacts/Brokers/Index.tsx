@@ -414,7 +414,9 @@ export default function BrokersIndex({ brokers, filters }: PageProps) {
                                     storageKey="brokers-column-widths"
                                     className="h-full"
                                     onRowClick={(row) => {
-                                        // router.visit(`/contacts/brokers/${row.id}`);
+                                        router.visit(
+                                            `/contacts/brokers/${row.id}`
+                                        );
                                     }}
                                 />
                             ) : (
