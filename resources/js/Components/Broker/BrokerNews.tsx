@@ -300,11 +300,11 @@ export default function BrokerNews() {
                                                             questions ? Email us
                                                             at{" "}
                                                             <a
-                                                                href="mailto:news@costar.com"
+                                                                href="mailto:news@tenantshq.com"
                                                                 className="text-blue-600 hover:underline"
                                                             >
                                                                 {" "}
-                                                                news@costar.com
+                                                                news@tenantshq.com
                                                             </a>
                                                         </b>
                                                     </div>
@@ -548,51 +548,6 @@ export default function BrokerNews() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Footer styled similar to the snippet */}
-            <div className="border-t border-gray-200 bg-gray-50 py-6 px-4">
-                <div className="max-w-[1290px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-6">
-                        <div className="text-2xl font-bold italic tracking-tighter text-blue-900">
-                            {" "}
-                            CoStar{" "}
-                        </div>
-                        <div className="flex gap-6 text-sm text-gray-600">
-                            <a
-                                href="#"
-                                className="hover:text-blue-600 hover:underline"
-                            >
-                                {" "}
-                                Help with Features{" "}
-                            </a>
-                            <a
-                                href="#"
-                                className="hover:text-blue-600 hover:underline"
-                            >
-                                {" "}
-                                Request Training{" "}
-                            </a>
-                            <a
-                                href="#"
-                                className="hover:text-blue-600 hover:underline"
-                            >
-                                {" "}
-                                Share Feedback{" "}
-                            </a>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <span>© 2026 CoStar Group.All rights reserved.</span>
-                        <a
-                            href="#"
-                            className="hover:text-blue-600 hover:underline"
-                        >
-                            {" "}
-                            Terms of Use{" "}
-                        </a>
                     </div>
                 </div>
             </div>
