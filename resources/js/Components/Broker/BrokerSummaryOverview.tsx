@@ -1,13 +1,5 @@
 import {
-    Award,
-    Building2,
-    Globe,
-    Linkedin,
-    Mail,
     MapPin,
-    Phone,
-    Trophy,
-    User,
     Info,
 } from "lucide-react";
 
@@ -36,6 +28,7 @@ interface Broker {
     state?: string;
     postal_code?: string;
     country?: string;
+    logo_url?: string;
 }
 
 interface BrokerSummaryOverviewProps {
@@ -69,12 +62,12 @@ export default function BrokerSummaryOverview({
                 }
                 </p>
                 < p className = "mt-4" >
-                    Based in { broker.company }'s headquarters in {broker.city},{" "}
-    { broker.last_name || "Generic" } joined the company in
-        2023 from Cushman & Wakefield, where he served as
-            Chairman of Capital Markets.
+                    Based in { broker.company }'s headquarters in{" "}
+    { broker.city || "AZ" }, { broker.last_name || "Generic" } { " " }
+                        joined the company in 2023 from Cushman & Wakefield,
+        where he served as Chairman of Capital Markets.
                     </p>
-                </div>
+            </div>
 
     {/* Details Grid */ }
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-y-3 text-sm" >
@@ -127,29 +120,17 @@ export default function BrokerSummaryOverview({
                 </h3>
                 < ul className = "space-y-2 mb-4" >
                 {
-                    displayAwards.map((award, index) => (
+                    displayAwards.map((award: any, index: number) => (
                         <li key= { index } className = "text-sm text-gray-900" >
                         { award.year } { award.title } - { award.issuer }
                     </li>
                     ))
                 }
-                    < li className = "text-sm text-gray-900" >
-                        Q3 2025 Power Broker - Quarterly Sales
-                            </li>
-                            < li className = "text-sm text-gray-900" >
-                                Q2 2025 Power Broker - Quarterly Sales
-                                    </li>
-                                    < li className = "text-sm text-gray-900" >
-                                        Q1 2025 Power Broker - Quarterly Sales
-                                            </li>
-                                            < li className = "text-sm text-gray-900" >
-                                                Q4 2024 Power Broker - Quarterly Sales
-                                                    </li>
-                                                    </ul>
-                                                    < button className = "text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded hover:bg-blue-100 transition-colors" >
-                                                        All Awards
-                                                            </button>
-                                                            </div>
+                    </ul>
+                    < button className = "text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded hover:bg-blue-100 transition-colors" >
+                        All Awards
+                            </button>
+                            </div>
 
     {/* Qualifications */ }
     <div>

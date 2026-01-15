@@ -1,8 +1,27 @@
 import { ReactNode } from "react";
-import { parse } from "url"; // Note: might need better URL parsing if available or just use window/props
 import { usePage } from "@inertiajs/react";
 import BrokerDetailsNav from "@/Components/Broker/BrokerDetailsNav";
 import CompanyTabs, { Tab } from "@/Components/Tenant/CompanyTabs";
+import BrokerDetailsHeader from "@/Components/Broker/BrokerDetailsHeader";
+
+// Define strict Broker interface needed for Header/Layout
+interface Broker {
+    id: number;
+    name: string;
+    thumbnail_url?: string;
+    company: string;
+    title: string;
+    phone?: string;
+    email?: string;
+    linkedin?: string;
+    website?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    postal_code?: string;
+    country?: string;
+    logo_url?: string;
+}
 
 interface BrokerDetailsLayoutProps {
     children: ReactNode;
@@ -13,8 +32,9 @@ interface BrokerDetailsLayoutProps {
     previousBrokerId?: number | null;
     nextBrokerId?: number | null;
     basePath: string;
-    headerComponent: ReactNode;
+    headerComponent?: ReactNode; // Made optional as we are hardcoding Header
     className?: string;
+    broker: Broker; // Added broker prop
 }
 
 export default function BrokerDetailsLayout({
@@ -26,6 +46,7 @@ export default function BrokerDetailsLayout({
     nextBrokerId,
     basePath,
     className = "",
+    broker,
 }: BrokerDetailsLayoutProps) {
     const { url } = usePage();
 
@@ -45,7 +66,6 @@ export default function BrokerDetailsLayout({
         }
 
         const pathSegments = normalizedPathname.split("/");
-        const lastSegment = pathSegments[pathSegments.length - 1];
 
         // Check if remaining path is just number (summary)
         const basePathPattern = basePath.replace(/\/$/, "");
@@ -77,6 +97,10 @@ export default function BrokerDetailsLayout({
 
             <div className="bg-white border-b border-gray-200">
                 <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
+                    {/* Broker Header (Company Info) */}
+                    <BrokerDetailsHeader broker={broker} />
+
+                    {/* Navigation Tabs */}
                     <CompanyTabs tabs={tabs} activeTabId={getActiveTabId()} />
                 </div>
             </div>
