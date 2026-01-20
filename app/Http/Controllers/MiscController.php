@@ -207,7 +207,7 @@ class MiscController extends Controller
     public function toolsMortgageCalculator()
     {
         return Inertia::render('Tools/MortgageCalculator', [
-            'title' => 'Coming soon: Mortgage Calculator',
+            'title' => 'Mortgage Calculator',
             'description' => 'Calculate mortgage payments and analyze financing options',
         ]);
     }
@@ -215,7 +215,7 @@ class MiscController extends Controller
     public function toolsCostSeg()
     {
         return Inertia::render('Tools/CostSeg', [
-            'title' => 'Coming soon: Cost Seg Calculator',
+            'title' => 'Cost Segregation Calculator',
             'description' => 'Calculate cost segregation benefits for your property',
         ]);
     }

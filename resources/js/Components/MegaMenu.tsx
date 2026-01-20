@@ -521,11 +521,6 @@ const menus: Record<string, Menu> = {
                         description: "Chat with our AI assistant",
                     },
                     {
-                        label: "Send Proof of Funds",
-                        link: "/tools/chatgpt-assistant",
-                        icon: Send,
-                    },
-                    {
                         label: "Send LOI",
                         link: "/tools/chatgpt-assistant",
                         icon: MessageCircle,
