@@ -1,11 +1,23 @@
-import ComingSoonPage from "../ComingSoon";
+import AppLayout from "../../Layouts/AppLayout";
+import MortgageCalculatorComponent from "../../../Components/Tools/MortgageCalculator";
+import { usePage } from "@inertiajs/react";
+
+interface PageProps {
+    initialHomePrice?: number;
+}
 
 export default function MortgageCalculator() {
+    const { props } = usePage<PageProps>();
+    const { initialHomePrice } = props;
+
     return (
-        <ComingSoonPage
-            title="Mortgage Calculator"
-            description="Calculate mortgage payments and analyze financing options"
-        />
+        <AppLayout title="Mortgage Calculator">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <MortgageCalculatorComponent
+                    initialHomePrice={initialHomePrice}
+                />
+            </div>
+        </AppLayout>
     );
 }
 
