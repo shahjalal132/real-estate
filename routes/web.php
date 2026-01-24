@@ -83,7 +83,15 @@ Route::get('/underwriting/new-ai', [\App\Http\Controllers\MiscController::class,
 Route::get('/tools/mortgage-calculator', [\App\Http\Controllers\MiscController::class, 'toolsMortgageCalculator'])->name('tools.mortgage-calculator');
 Route::get('/tools/cost-seg', [\App\Http\Controllers\MiscController::class, 'toolsCostSeg'])->name('tools.cost-seg');
 Route::get('/tools/zoning-codes', [\App\Http\Controllers\MiscController::class, 'toolsZoningCodes'])->name('tools.zoning-codes');
-Route::get('/tools/todo', [\App\Http\Controllers\MiscController::class, 'toolsTodo'])->name('tools.todo');
+Route::get('/tools/todo', function() { return redirect()->route('tools.todo.my-tasks'); });
+Route::get('/tools/todo/home', [\App\Http\Controllers\MiscController::class, 'todoHome'])->name('tools.todo.home');
+Route::get('/tools/todo/my-tasks', [\App\Http\Controllers\MiscController::class, 'toolsTodo'])->name('tools.todo.my-tasks'); // Reusing existing name/method for default but will rename method nicely later or use alias
+Route::get('/tools/todo/inbox', [\App\Http\Controllers\MiscController::class, 'todoInbox'])->name('tools.todo.inbox');
+Route::get('/tools/todo/reporting', [\App\Http\Controllers\MiscController::class, 'todoReporting'])->name('tools.todo.reporting');
+Route::get('/tools/todo/portfolios', [\App\Http\Controllers\MiscController::class, 'todoPortfolios'])->name('tools.todo.portfolios');
+Route::get('/tools/todo/goals', [\App\Http\Controllers\MiscController::class, 'todoGoals'])->name('tools.todo.goals');
+Route::get('/tools/todo/projects', [\App\Http\Controllers\MiscController::class, 'todoProjects'])->name('tools.todo.projects');
+Route::get('/tools/todo/teams', [\App\Http\Controllers\MiscController::class, 'todoTeams'])->name('tools.todo.teams');
 Route::get('/tools/calendar', [\App\Http\Controllers\MiscController::class, 'toolsCalendar'])->name('tools.calendar');
 Route::get('/tools/chatgpt-assistant', [\App\Http\Controllers\MiscController::class, 'toolsChatGPTAssistant'])->name('tools.chatgpt-assistant');
 Route::get('/links/quick-links', [\App\Http\Controllers\MiscController::class, 'linksQuickLinks'])->name('links.quick-links');
