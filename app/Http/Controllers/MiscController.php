@@ -228,11 +228,59 @@ class MiscController extends Controller
         ]);
     }
 
-    public function toolsTodo()
+    public function todoHome()
     {
-        return Inertia::render('Tools/Todo', [
-            'title' => 'Coming soon: To-Do List',
-            'description' => 'Manage your property investment tasks and reminders',
+        return Inertia::render('Tools/TodoApp/Home', [
+            'title' => 'Home - To-Do List',
+        ]);
+    }
+
+    public function toolsTodo() // Keeping this as My Tasks for now
+    {
+        return Inertia::render('Tools/TodoApp/MyTasks', [
+            'title' => 'My Tasks - To-Do List',
+        ]);
+    }
+
+    public function todoInbox()
+    {
+        return Inertia::render('Tools/TodoApp/Inbox', [
+            'title' => 'Inbox - To-Do List',
+        ]);
+    }
+
+    public function todoReporting()
+    {
+        return Inertia::render('Tools/TodoApp/Reporting', [
+            'title' => 'Reporting - To-Do List',
+        ]);
+    }
+
+    public function todoPortfolios()
+    {
+        return Inertia::render('Tools/TodoApp/Portfolios', [
+            'title' => 'Portfolios - To-Do List',
+        ]);
+    }
+
+    public function todoGoals()
+    {
+        return Inertia::render('Tools/TodoApp/Goals', [
+            'title' => 'Goals - To-Do List',
+        ]);
+    }
+
+    public function todoProjects()
+    {
+        return Inertia::render('Tools/TodoApp/Projects', [
+            'title' => 'Projects - To-Do List',
+        ]);
+    }
+
+    public function todoTeams()
+    {
+        return Inertia::render('Tools/TodoApp/Teams', [
+            'title' => 'Teams - To-Do List',
         ]);
     }
 
