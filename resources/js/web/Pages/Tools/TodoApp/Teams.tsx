@@ -15,7 +15,7 @@ export default function Teams() {
     const [tasks, setTasks] = useState<Task[]>([]);
 
     useEffect(() => {
-        const storedTasks = localStorage.getItem('todo_tasks');
+        const storedTasks = localStorage.getItem("todo_tasks");
         if (storedTasks) {
             setTasks(JSON.parse(storedTasks));
         } else {
@@ -28,21 +28,27 @@ export default function Teams() {
         const newTask: Task = {
             id: Date.now(),
             title: "New Team Task",
-            dueDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            collaborators: ['TEAM'],
+            dueDate: new Date().toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            }),
+            collaborators: ["TEAM"],
             project: "Avi's first team",
             completed: false,
-            visibility: "Everyone"
+            visibility: "Everyone",
         };
         const updated = [newTask, ...tasks];
         setTasks(updated);
-        localStorage.setItem('todo_tasks', JSON.stringify(updated));
+        localStorage.setItem("todo_tasks", JSON.stringify(updated));
     };
 
     const handleToggleTask = (id: number) => {
-        const updated = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+        const updated = tasks.map((t) =>
+            t.id === id ? { ...t, completed: !t.completed } : t,
+        );
         setTasks(updated);
-        localStorage.setItem('todo_tasks', JSON.stringify(updated));
+        localStorage.setItem("todo_tasks", JSON.stringify(updated));
     };
 
     // Filter tasks? Maybe show everything for the team view.
@@ -53,36 +59,50 @@ export default function Teams() {
     // Listen for custom event from Layout Header
     useEffect(() => {
         const onAdd = () => handleCreateTask();
-        window.addEventListener('todo-add-task', onAdd);
-        return () => window.removeEventListener('todo-add-task', onAdd);
+        window.addEventListener("todo-add-task", onAdd);
+        return () => window.removeEventListener("todo-add-task", onAdd);
     }, [tasks]);
 
     return (
-        <TodoLayout title= "Avi's first team" activeFilter = "Avi's first team" >
-            <Content 
-                tasks={ tasks }
-    onToggle = { handleToggleTask }
-    onCreate = { handleCreateTask }
-        />
+        <TodoLayout title="Avi's first team" activeFilter="Avi's first team">
+            <Content
+                tasks={tasks}
+                onToggle={handleToggleTask}
+                onCreate={handleCreateTask}
+            />
         </TodoLayout>
     );
 }
 
 function Content({ tasks, onToggle, onCreate }: any) {
-    const [view, setView] = useState<ViewMode>('List');
+    const [view, setView] = useState<ViewMode>("List");
 
     useEffect(() => {
         const interval = setInterval(() => {
-            const v = localStorage.getItem('todo_view') as ViewMode;
+            const v = localStorage.getItem("todo_view") as ViewMode;
             if (v && v !== view) setView(v);
         }, 500);
         return () => clearInterval(interval);
     }, [view]);
 
-    if (view === 'List') return <TaskList tasks={ tasks } onToggleTask = { onToggle } onAddTask = { onCreate } />;
-    if (view === 'Board') return <BoardView tasks={ tasks } onToggleTask = { onToggle } onAddTask = { onCreate } />;
-    if (view === 'Calendar') return <CalendarView tasks={ tasks } />;
-    if (view === 'Dashboard') return <DashboardView tasks={ tasks } />;
-    if (view === 'Files') return <FilesView />;
+    if (view === "List")
+        return (
+            <TaskList
+                tasks={tasks}
+                onToggleTask={onToggle}
+                onAddTask={onCreate}
+            />
+        );
+    if (view === "Board")
+        return (
+            <BoardView
+                tasks={tasks}
+                onToggleTask={onToggle}
+                onAddTask={onCreate}
+            />
+        );
+    if (view === "Calendar") return <CalendarView tasks={tasks} />;
+    if (view === "Dashboard") return <DashboardView tasks={tasks} />;
+    if (view === "Files") return <FilesView />;
     return null;
 }
