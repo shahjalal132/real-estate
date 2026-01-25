@@ -91,9 +91,6 @@ export default function CalendarView({ tasks, onAddTask }: CalendarViewProps) {
                             <span> Add task </span>
                         </button>
                         <div className="w-px bg-blue-700 h-full"> </div>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-1.5 py-1.5 transition-colors flex items-center justify-center">
-                            <ChevronDown size={14} />
-                        </button>
                     </div>
 
                     <div className="h-6 w-px bg-gray-300 mx-1"> </div>

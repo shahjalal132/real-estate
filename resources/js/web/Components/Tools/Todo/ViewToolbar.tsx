@@ -1,7 +1,10 @@
 import React from "react";
-import { Plus, ArrowUpDown, LayoutGrid, MoreHorizontal } from "lucide-react";
+import { Plus } from "lucide-react";
 import ActionBtn from "./ActionBtn";
 import TodoFilter from "./TodoFilter";
+import TodoSort from "./TodoSort";
+import TodoGroup from "./TodoGroup";
+import TodoOptions from "./TodoOptions";
 import { ViewMode } from "./types";
 
 interface ViewToolbarProps {
@@ -33,12 +36,9 @@ export default function ViewToolbar({
 
             <div className="flex items-center gap-2">
                 <TodoFilter />
-                <ActionBtn icon={<ArrowUpDown size={14} />} label="Sort" />
-                <ActionBtn icon={<LayoutGrid size={14} />} label="Group" />
-                <ActionBtn
-                    icon={<MoreHorizontal size={14} />}
-                    label="Options"
-                />
+                <TodoSort />
+                <TodoGroup />
+                <TodoOptions />
             </div>
         </div>
     );
