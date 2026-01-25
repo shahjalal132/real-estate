@@ -7,97 +7,148 @@ interface TaskListProps {
     tasks: Task[];
     onToggleTask: (id: number) => void;
     onAddTask: () => void;
+    onUpdateTask: (id: number, updates: Partial<Task>) => void;
 }
 
 export default function TaskList({
     tasks,
     onToggleTask,
     onAddTask,
+    onUpdateTask,
 }: TaskListProps) {
-    // Separate tasks into "Recently assigned" (or just all for now) and "Do today" logic if needed.
-    // For now, mirroring the original design's sections but populate them dynamically.
-
-    // We can just show all tasks for simplicty or split them.
-    // Let's split by simple logic for demo:
-    // "Recently assigned" -> all non-completed tasks? or just all?
-    // The original mockup had manual categorization.
-
-    // Simplification: Show all tasks in one list for now, or split by completion if desired.
-    // Let's stick to the mockup sections but maybe just filter differently.
-
     const activeTasks = tasks.filter((t) => !t.completed);
-    const completedTasks = tasks.filter((t) => t.completed);
+
+    // In a real app, these would filter by date. For now, we mock the distribution or just show empty sections
+    // to match the screenshot structure exactly as requested.
+    const recentlyAssigned = activeTasks;
+    const doToday: Task[] = [];
+    const untitledSection: Task[] = [];
+    const doNextWeek: Task[] = [];
+    const doLater: Task[] = [];
 
     return (
-        <div className="px-6">
-            {/* Table Header */}
-            <div className="grid grid-cols-[1fr_120px_120px_180px_140px_40px] gap-4 py-2 border-b border-[#E0E0E0] text-xs font-semibold text-gray-500 uppercase">
-                <div className="pl-8"> Name </div>
-                <div> Due date </div>
-                <div> Collaborators </div>
-                <div> Projects </div>
-                <div> Task visibility </div>
-                <div className="flex justify-center">
-                    {" "}
-                    <Plus size={14} />
-                </div>
-            </div>
+        <div className= "px-6 text-[#2A2B2D]" >
+        {/* Table Header */ }
+        < div className = "grid grid-cols-[1fr_120px_120px_180px_140px_40px] gap-4 py-2 border-b border-[#E0E0E0] text-xs font-semibold text-gray-500 uppercase" >
+            <div className="pl-8" > Name </div>
+                < div className = "pl-1 border-l border-[#E0E0E0]" > Due date </div>
+                    < div className = "pl-1 border-l border-[#E0E0E0]" > Collaborators </div>
+                        < div className = "pl-1 border-l border-[#E0E0E0]" > Projects </div>
+                            < div className = "pl-1 border-l border-[#E0E0E0]" > Task visibility </div>
+                                < div className = "flex justify-center border-l border-[#E0E0E0]" >
+                                    <Plus size={ 14 } />
+                                        </div>
+                                        </div>
 
-            {/* Recently Assigned Section (Active tasks) */}
-            <div className="mt-4">
-                <div className="flex items-center gap-1 mb-2 group cursor-pointer">
-                    <ChevronDown
-                        size={16}
-                        className="text-gray-400 group-hover:text-gray-600"
-                    />
-                    <h3 className="text-sm font-semibold text-[#2A2B2D] group-hover:text-black">
-                        {" "}
-                        Active Tasks{" "}
-                    </h3>
-                </div>
-
-                <div className="space-y-0">
-                    {activeTasks.map((task) => (
-                        <TaskRow
-                            key={task.id}
-                            task={task}
-                            onToggleComplete={onToggleTask}
-                        />
-                    ))}
-                    {/* Add Task Quick Row */}
-                    <div
-                        onClick={onAddTask}
-                        className="pl-8 py-2 text-sm text-gray-400 italic hover:text-gray-600 cursor-pointer hover:bg-gray-50 rounded-md transition-colors flex items-center gap-2"
-                    >
-                        <span>Add task...</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Do Today / Completed Section */}
-            {completedTasks.length > 0 && (
-                <div className="mt-6">
-                    <div className="flex items-center gap-1 mb-2 group cursor-pointer">
-                        <ChevronRight
-                            size={16}
-                            className="text-gray-400 group-hover:text-gray-600"
-                        />
-                        <h3 className="text-sm font-semibold text-[#2A2B2D] group-hover:text-black">
-                            {" "}
-                            Completed Tasks{" "}
-                        </h3>
-                    </div>
-                    <div>
-                        {completedTasks.map((task) => (
-                            <TaskRow
-                                key={task.id}
-                                task={task}
-                                onToggleComplete={onToggleTask}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
+                                        < div className = "mt-4 space-y-6" >
+                                            <TaskSection 
+                    title="Recently assigned"
+    tasks = { recentlyAssigned }
+    onToggleTask = { onToggleTask }
+    onUpdateTask = { onUpdateTask }
+    onAddTask = { onAddTask }
+    isOpenDefault = { true}
+        />
+        <TaskSection 
+                    title="Do today"
+    tasks = { doToday }
+    onToggleTask = { onToggleTask }
+    onUpdateTask = { onUpdateTask }
+    onAddTask = { onAddTask }
+    isOpenDefault = { false}
+        />
+        <TaskSection 
+                    title="Untitled section"
+    tasks = { untitledSection }
+    onToggleTask = { onToggleTask }
+    onUpdateTask = { onUpdateTask }
+    onAddTask = { onAddTask }
+    isOpenDefault = { false}
+        />
+        <TaskSection 
+                    title="Do next week"
+    tasks = { doNextWeek }
+    onToggleTask = { onToggleTask }
+    onUpdateTask = { onUpdateTask }
+    onAddTask = { onAddTask }
+    isOpenDefault = { false}
+        />
+        <TaskSection 
+                    title="Do later"
+    tasks = { doLater }
+    onToggleTask = { onToggleTask }
+    onUpdateTask = { onUpdateTask }
+    onAddTask = { onAddTask }
+    isOpenDefault = { false}
+        />
         </div>
+
+        < div className = "mt-4 mb-8 flex items-center gap-2 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors text-sm" >
+            <Plus size={ 16 } />
+                < span > Add section </span>
+                    </div>
+                    </div>
+    );
+}
+
+function TaskSection({
+    title,
+    tasks,
+    onToggleTask,
+    onUpdateTask,
+    onAddTask,
+    isOpenDefault
+}: {
+    title: string,
+    tasks: Task[],
+    onToggleTask: (id: number) => void,
+    onUpdateTask: (id: number, updates: Partial<Task>) => void,
+    onAddTask: () => void,
+    isOpenDefault: boolean
+}) {
+    const [isOpen, setIsOpen] = useState(isOpenDefault);
+
+    return (
+        <div>
+        <div 
+                className= "flex items-center gap-1 mb-2 group cursor-pointer"
+    onClick = {() => setIsOpen(!isOpen)
+}
+            >
+    {
+        isOpen?(
+                    <ChevronDown size = { 16} className = "text-gray-400 group-hover:text-gray-600 transition-colors" />
+                ): (
+                <ChevronRight size = { 16 } className = "text-gray-400 group-hover:text-gray-600 transition-colors" />
+                )}
+<h3 className="text-sm font-semibold text-[#2A2B2D] group-hover:text-black transition-colors" >
+    { title }
+    </h3>
+    </div>
+
+{
+    isOpen && (
+        <div className="space-y-0" >
+        {
+            tasks.map((task) => (
+                <TaskRow
+                            key= { task.id }
+                            task = { task }
+                            onToggleComplete = { onToggleTask }
+                            onUpdateTask = { onUpdateTask }
+                />
+                    ))
+        }
+    {/* Add Task Quick Row */ }
+    <div
+                        onClick={ onAddTask }
+    className = "pl-8 py-2 text-sm text-gray-400 italic hover:text-gray-600 cursor-pointer hover:bg-gray-50 rounded-md transition-colors flex items-center gap-2"
+        >
+        <span>Add task...</span>
+            </div>
+            </div>
+            )
+}
+</div>
     );
 }

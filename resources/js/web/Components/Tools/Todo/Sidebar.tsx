@@ -7,7 +7,7 @@ import {
     BarChart2,
     Briefcase as Portfolio,
     Target,
-    Users
+    Users,
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
@@ -17,7 +17,11 @@ interface SidebarProps {
     onFilterChange: (filter: string) => void;
 }
 
-export default function Sidebar({ isOpen, activeFilter, onFilterChange }: SidebarProps) {
+export default function Sidebar({
+    isOpen,
+    activeFilter,
+    onFilterChange,
+}: SidebarProps) {
     return (
         <aside
             className= {`${isOpen ? "w-[240px]" : "w-0"
@@ -34,23 +38,23 @@ Create
     </div>
 
     < nav className = "flex-1 overflow-y-auto px-2 space-y-0.5" >
-        <SidebarItem 
+        <SidebarItem
                     icon={ <Home size={ 18 } /> }
 label = "Home"
-active = { activeFilter === 'Home'}
-onClick = {() => onFilterChange('Home')}
+active = { activeFilter === "Home"}
+onClick = {() => onFilterChange("Home")}
                 />
     < SidebarItem
 icon = {< CheckCircle2 size = { 18} />}
 label = "My tasks"
-active = { activeFilter === 'My tasks'}
-onClick = {() => onFilterChange('My tasks')}
+active = { activeFilter === "My tasks"}
+onClick = {() => onFilterChange("My tasks")}
                 />
     < SidebarItem
 icon = {< Inbox size = { 18} />}
 label = "Inbox"
-active = { activeFilter === 'Inbox'}
-onClick = {() => onFilterChange('Inbox')}
+active = { activeFilter === "Inbox"}
+onClick = {() => onFilterChange("Inbox")}
                 />
 
     < div className = "pt-6 pb-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider" >
@@ -59,20 +63,20 @@ onClick = {() => onFilterChange('Inbox')}
         < SidebarItem
 icon = {< BarChart2 size = { 18} />}
 label = "Reporting"
-active = { activeFilter === 'Reporting'}
-onClick = {() => onFilterChange('Reporting')}
+active = { activeFilter === "Reporting"}
+onClick = {() => onFilterChange("Reporting")}
                 />
     < SidebarItem
 icon = {< Portfolio size = { 18} />}
 label = "Portfolios"
-active = { activeFilter === 'Portfolios'}
-onClick = {() => onFilterChange('Portfolios')}
+active = { activeFilter === "Portfolios"}
+onClick = {() => onFilterChange("Portfolios")}
                 />
     < SidebarItem
 icon = {< Target size = { 18} />}
 label = "Goals"
-active = { activeFilter === 'Goals'}
-onClick = {() => onFilterChange('Goals')}
+active = { activeFilter === "Goals"}
+onClick = {() => onFilterChange("Goals")}
                 />
 
     < div className = "pt-6 pb-2 px-3 flex items-center justify-between text-xs font-semibold text-gray-500 uppercase tracking-wider group cursor-pointer" >
@@ -87,8 +91,8 @@ icon = {
                         < div className = "w-2.5 h-2.5 rounded bg-[#4CE0D2]" />
                     }
 label = "Tasks to get done"
-active = { activeFilter === 'Tasks to get done'}
-onClick = {() => onFilterChange('Tasks to get done')}
+active = { activeFilter === "Tasks to get done"}
+onClick = {() => onFilterChange("Tasks to get done")}
                 />
 
     < div className = "pt-6 pb-2 px-3 flex items-center justify-between text-xs font-semibold text-gray-500 uppercase tracking-wider group cursor-pointer" >
