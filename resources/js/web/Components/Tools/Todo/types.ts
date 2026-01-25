@@ -8,6 +8,7 @@ export interface Task {
     comments?: number;
     subtasks?: number;
     visibility?: string;
+    status?: string; // e.g., 'todo', 'doing', 'done', 'backlog'
 }
 
 export type ViewMode = 'List' | 'Board' | 'Calendar' | 'Dashboard' | 'Files';

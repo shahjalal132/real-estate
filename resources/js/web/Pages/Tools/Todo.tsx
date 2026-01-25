@@ -88,6 +88,7 @@ const initialTasks: Task[] = [
         project: "",
         completed: false,
         visibility: "Only me",
+        status: "todo",
     },
     {
         id: 10,
@@ -97,6 +98,25 @@ const initialTasks: Task[] = [
         project: "",
         completed: false,
         visibility: "Only me",
+        status: "todo",
+    },
+    {
+        id: 11,
+        title: "Recently Assigned Task",
+        dueDate: "Aug 12, 2025",
+        collaborators: [],
+        project: "Tasks",
+        completed: false,
+        status: "recently_assigned",
+    },
+    {
+        id: 12,
+        title: "Do Later Task",
+        dueDate: "Sep 1, 2025",
+        collaborators: [],
+        project: "Tasks",
+        completed: false,
+        status: "do_later",
     },
 ];
 
@@ -157,7 +177,7 @@ export default function Todo() {
 
     // --- Handlers ---
 
-    const handleCreateTask = () => {
+    const handleCreateTask = (initialStatus: string = "todo") => {
         const newTask: Task = {
             id: Date.now(),
             title: "New Task",
@@ -170,6 +190,7 @@ export default function Todo() {
             project: "Inbox",
             completed: false,
             visibility: "Only me",
+            status: initialStatus,
         };
         setTasks((prev) => [newTask, ...prev]);
     };
@@ -182,54 +203,90 @@ export default function Todo() {
         );
     };
 
+    const handleMoveTask = (taskId: number, newStatus: string) => {
+        setTasks((prev) =>
+            prev.map((t) =>
+                t.id === taskId ? { ...t, status: newStatus } : t,
+            ),
+        );
+    };
+
+    const handleUpdateTask = (updatedTask: Task) => {
+        setTasks((prev) =>
+            prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+        );
+    };
+
+    const handleDeleteTask = (taskId: number) => {
+        setTasks((prev) => prev.filter((t) => t.id !== taskId));
+    };
+
+    const handleDuplicateTask = (task: Task) => {
+        const duplicatedTask: Task = {
+            ...task,
+            id: Date.now(),
+            title: `${task.title} (Copy)`,
+        };
+        setTasks((prev) => [duplicatedTask, ...prev]);
+    };
+
     // --- Render ---
 
     if (!isLoaded) return null; // Avoid hydration mismatch or flash
 
     return (
-        <AppLayout title="To-Do List">
-            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]">
-                {/* Sidebar */}
-                <Sidebar
-                    isOpen={sidebarOpen}
-                    activeFilter={filter}
-                    onFilterChange={setFilter}
-                />
+        <AppLayout title= "To-Do List" >
+        <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]" >
+            {/* Sidebar */ }
+            < Sidebar
+    isOpen = { sidebarOpen }
+    activeFilter = { filter }
+    onFilterChange = { setFilter }
+        />
 
-                {/* Main Content */}
-                <main className="flex-1 flex flex-col min-w-0 bg-white">
-                    <Header
-                        sidebarOpen={sidebarOpen}
-                        setSidebarOpen={setSidebarOpen}
-                        activeView={view}
-                        setView={setView}
-                        onAddTask={handleCreateTask}
-                    />
+        {/* Main Content */ }
+        < main className = "flex-1 flex flex-col min-w-0 bg-white" >
+            <Header
+                        sidebarOpen={ sidebarOpen }
+    setSidebarOpen = { setSidebarOpen }
+    activeView = { view }
+    setView = { setView }
+    onAddTask = { handleCreateTask }
+        />
 
-                    {/* Page Content */}
-                    <div className="flex-1 overflow-auto bg-white">
-                        {view === "List" && (
-                            <TaskList
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
-                                onAddTask={handleCreateTask}
-                            />
-                        )}
-                        {view === "Board" && (
-                            <BoardView
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
-                                onAddTask={handleCreateTask}
-                            />
-                        )}
-                        {view === "Calendar" && <CalendarView tasks={tasks} />}
-                        {view === "Dashboard" && (
-                            <DashboardView tasks={tasks} />
-                        )}
-                        {view === "Files" && <FilesView />}
-                    </div>
-                </main>
-            </div>
-        </AppLayout>
+        {/* Page Content */ }
+        < div className = "flex-1 overflow-auto bg-white" >
+            { view === "List" && (
+                <TaskList
+                                tasks={ tasks }
+    onToggleTask = { handleToggleTask }
+    onAddTask = { handleCreateTask }
+        />
+                        )
+}
+{
+    view === "Board" && (
+        <BoardView
+                                tasks={ tasks }
+    onToggleTask = { handleToggleTask }
+    onAddTask = { handleCreateTask }
+    onMoveTask = { handleMoveTask }
+    onUpdateTask = { handleUpdateTask }
+    onDeleteTask = { handleDeleteTask }
+    onDuplicateTask = { handleDuplicateTask }
+        />
+                        )
+}
+{ view === "Calendar" && <CalendarView tasks={ tasks } onAddTask = { handleCreateTask } /> }
+{
+    view === "Dashboard" && (
+        <DashboardView tasks={ tasks } />
+                        )
+}
+{ view === "Files" && <FilesView /> }
+</div>
+    </main>
+    </div>
+    </AppLayout>
     );
 }
