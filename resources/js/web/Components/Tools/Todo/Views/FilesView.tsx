@@ -1,60 +1,37 @@
 import React from "react";
-import { FileText, Image as ImageIcon, Download, MoreVertical, File } from "lucide-react";
+import { PieChart, TrendingUp, Image as ImageIcon } from "lucide-react";
 
 export default function FilesView() {
-    // Mock files data
-    const files = [
-        { id: 1, name: "Project_Requirements.pdf", size: "2.4 MB", date: "Jul 28, 2025", type: "pdf" },
-        { id: 2, name: "Office_Layout.jpg", size: "4.1 MB", date: "Jul 29, 2025", type: "image" },
-        { id: 3, name: "Budget_2025.xlsx", size: "1.2 MB", date: "Aug 02, 2025", type: "spreadsheet" },
-        { id: 4, name: "Brand_Assets.zip", size: "15.4 MB", date: "Aug 05, 2025", type: "archive" },
-    ];
-
-    const getIcon = (type: string) => {
-        switch (type) {
-            case 'pdf': return <FileText className="text-red-500" />;
-            case 'image': return <ImageIcon className="text-blue-500" />;
-            default: return <File className="text-gray-500" />;
-        }
-    };
-
     return (
-        <div className= "p-6" >
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" >
-            {/* Upload Card */ }
-            < div className = "aspect-[4/3] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-colors group" >
-                <div className="bg-gray-100 p-3 rounded-full mb-3 group-hover:bg-gray-200" >
-                    <FileText size={ 24 } className = "text-gray-400 group-hover:text-gray-500" />
-                        </div>
-                        < span className = "text-sm font-medium text-gray-600" > Upload File </span>
-                            </div>
+        <div className="flex flex-col items-center justify-center h-full min-h-[400px] bg-gray-50 p-6 text-center">
+            {/* Illustration Container */}
+            <div className="relative w-32 h-32 mb-6">
+                {/* Back Item (Image/Bottom) */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-2 w-16 h-20 bg-white border border-gray-200 rounded shadow-sm flex items-center justify-center rotate-[-10deg] z-10">
+                    <ImageIcon size={24} className="text-red-400" />
+                </div>
 
-    {/* File Cards */ }
-    {
-        files.map(file => (
-            <div key= { file.id } className = "aspect-[4/3] bg-white border border-gray-200 rounded-lg p-4 flex flex-col justify-between hover:shadow-md transition-shadow relative group" >
-            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity" >
-        <button className="p-1 hover:bg-gray-100 rounded text-gray-500" >
-        <MoreVertical size={ 16} />
-        </button>
+                {/* Left Item (Pie Chart) */}
+                <div className="absolute top-2 left-2 w-16 h-20 bg-white border border-gray-200 rounded shadow-sm flex flex-col items-center justify-center -rotate-12 z-20">
+                    <PieChart size={24} className="text-red-400 mb-1" />
+                    <div className="w-8 h-1 bg-gray-100 rounded"> </div>
+                    <div className="w-6 h-1 bg-gray-100 rounded mt-1"> </div>
+                </div>
+
+                {/* Right Item (Graph) */}
+                <div className="absolute top-4 right-0 w-16 h-20 bg-white border border-gray-200 rounded shadow-sm flex flex-col items-center justify-center rotate-12 z-30">
+                    <TrendingUp size={24} className="text-red-400 mb-1" />
+                    <div className="w-10 h-8 border-l border-b border-gray-100 ml-1">
+                        {" "}
+                    </div>
+                </div>
+            </div>
+
+            {/* Text */}
+            <p className="text-gray-600 text-sm max-w-sm">
+                All attachments to tasks & messages in this project will appear
+                here
+            </p>
         </div>
-
-        < div className = "flex items-center justify-center flex-1" >
-        { getIcon(file.type)
-    }
-    </div>
-
-        < div className = "mt-3" >
-            <div className="text-sm font-medium text-gray-800 truncate" title = { file.name } > { file.name } </div>
-                < div className = "flex items-center justify-between mt-1 text-xs text-gray-500" >
-                    <span>{ file.size } </span>
-                    < span > { file.date } </span>
-                    </div>
-                    </div>
-                    </div>
-                ))
-}
-</div>
-    </div>
     );
 }

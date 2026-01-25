@@ -88,6 +88,7 @@ const initialTasks: Task[] = [
         project: "",
         completed: false,
         visibility: "Only me",
+        status: "todo",
     },
     {
         id: 10,
@@ -97,6 +98,25 @@ const initialTasks: Task[] = [
         project: "",
         completed: false,
         visibility: "Only me",
+        status: "todo",
+    },
+    {
+        id: 11,
+        title: "Recently Assigned Task",
+        dueDate: "Aug 12, 2025",
+        collaborators: [],
+        project: "Tasks",
+        completed: false,
+        status: "recently_assigned",
+    },
+    {
+        id: 12,
+        title: "Do Later Task",
+        dueDate: "Sep 1, 2025",
+        collaborators: [],
+        project: "Tasks",
+        completed: false,
+        status: "do_later",
     },
 ];
 
@@ -104,17 +124,17 @@ export default function Todo() {
     // --- State ---
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [view, setView] = useState<ViewMode>('List');
-    const [filter, setFilter] = useState('My tasks');
+    const [view, setView] = useState<ViewMode>("List");
+    const [filter, setFilter] = useState("My tasks");
     const [isLoaded, setIsLoaded] = useState(false);
 
     // --- Effects ---
 
     // Load from Local Storage on Mount
     useEffect(() => {
-        const storedTasks = localStorage.getItem('todo_tasks');
-        const storedSidebar = localStorage.getItem('todo_sidebar_open');
-        const storedView = localStorage.getItem('todo_view');
+        const storedTasks = localStorage.getItem("todo_tasks");
+        const storedSidebar = localStorage.getItem("todo_sidebar_open");
+        const storedView = localStorage.getItem("todo_view");
 
         if (storedTasks) {
             setTasks(JSON.parse(storedTasks));
@@ -136,42 +156,78 @@ export default function Todo() {
     // Save to Local Storage on Change
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('todo_tasks', JSON.stringify(tasks));
+            localStorage.setItem("todo_tasks", JSON.stringify(tasks));
         }
     }, [tasks, isLoaded]);
 
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('todo_sidebar_open', JSON.stringify(sidebarOpen));
+            localStorage.setItem(
+                "todo_sidebar_open",
+                JSON.stringify(sidebarOpen),
+            );
         }
     }, [sidebarOpen, isLoaded]);
 
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('todo_view', view);
+            localStorage.setItem("todo_view", view);
         }
     }, [view, isLoaded]);
 
-
     // --- Handlers ---
 
-    const handleCreateTask = () => {
+    const handleCreateTask = (initialStatus: string = "todo") => {
         const newTask: Task = {
             id: Date.now(),
             title: "New Task",
-            dueDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            collaborators: ['ME'],
+            dueDate: new Date().toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            }),
+            collaborators: ["ME"],
             project: "Inbox",
             completed: false,
-            visibility: "Only me"
+            visibility: "Only me",
+            status: initialStatus,
         };
-        setTasks(prev => [newTask, ...prev]);
+        setTasks((prev) => [newTask, ...prev]);
     };
 
     const handleToggleTask = (id: number) => {
-        setTasks(prev => prev.map(t =>
-            t.id === id ? { ...t, completed: !t.completed } : t
-        ));
+        setTasks((prev) =>
+            prev.map((t) =>
+                t.id === id ? { ...t, completed: !t.completed } : t,
+            ),
+        );
+    };
+
+    const handleMoveTask = (taskId: number, newStatus: string) => {
+        setTasks((prev) =>
+            prev.map((t) =>
+                t.id === taskId ? { ...t, status: newStatus } : t,
+            ),
+        );
+    };
+
+    const handleUpdateTask = (updatedTask: Task) => {
+        setTasks((prev) =>
+            prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+        );
+    };
+
+    const handleDeleteTask = (taskId: number) => {
+        setTasks((prev) => prev.filter((t) => t.id !== taskId));
+    };
+
+    const handleDuplicateTask = (task: Task) => {
+        const duplicatedTask: Task = {
+            ...task,
+            id: Date.now(),
+            title: `${task.title} (Copy)`,
+        };
+        setTasks((prev) => [duplicatedTask, ...prev]);
     };
 
     // --- Render ---
@@ -190,7 +246,7 @@ export default function Todo() {
 
         {/* Main Content */ }
         < main className = "flex-1 flex flex-col min-w-0 bg-white" >
-            <Header 
+            <Header
                         sidebarOpen={ sidebarOpen }
     setSidebarOpen = { setSidebarOpen }
     activeView = { view }
@@ -200,8 +256,8 @@ export default function Todo() {
 
         {/* Page Content */ }
         < div className = "flex-1 overflow-auto bg-white" >
-            { view === 'List' && (
-                <TaskList 
+            { view === "List" && (
+                <TaskList
                                 tasks={ tasks }
     onToggleTask = { handleToggleTask }
     onAddTask = { handleCreateTask }
@@ -209,29 +265,25 @@ export default function Todo() {
                         )
 }
 {
-    view === 'Board' && (
-        <BoardView 
+    view === "Board" && (
+        <BoardView
                                 tasks={ tasks }
     onToggleTask = { handleToggleTask }
     onAddTask = { handleCreateTask }
+    onMoveTask = { handleMoveTask }
+    onUpdateTask = { handleUpdateTask }
+    onDeleteTask = { handleDeleteTask }
+    onDuplicateTask = { handleDuplicateTask }
         />
                         )
 }
+{ view === "Calendar" && <CalendarView tasks={ tasks } onAddTask = { handleCreateTask } /> }
 {
-    view === 'Calendar' && (
-        <CalendarView tasks={ tasks } />
-                        )
-}
-{
-    view === 'Dashboard' && (
+    view === "Dashboard" && (
         <DashboardView tasks={ tasks } />
                         )
 }
-{
-    view === 'Files' && (
-        <FilesView />
-    )
-}
+{ view === "Files" && <FilesView /> }
 </div>
     </main>
     </div>
