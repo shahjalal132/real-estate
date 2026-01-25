@@ -86,9 +86,13 @@ export default function MyTasks({ view = "List" }: { view?: ViewMode }) {
         localStorage.setItem("todo_tasks", JSON.stringify(updated));
     };
 
-    // My Tasks typically shows tasks assigned to me.
-    // For V1 demo, we show everything or filter by "Only me" mock logic?
-    // Let's just show all for "My Tasks" to ensure no confusion, as user is 'ME'.
+    const handleUpdateTask = (id: number, updates: Partial<Task>) => {
+        const updated = tasks.map((t) =>
+            t.id === id ? { ...t, ...updates } : t,
+        );
+        setTasks(updated);
+        localStorage.setItem("todo_tasks", JSON.stringify(updated));
+    };
 
     // Listen for custom event from Layout Header
     useEffect(() => {
@@ -98,17 +102,18 @@ export default function MyTasks({ view = "List" }: { view?: ViewMode }) {
     }, [tasks]);
 
     return (
-        <TodoLayout title="My Tasks" activeFilter="My tasks">
+        <TodoLayout title= "My Tasks" activeFilter = "My tasks" >
             <Content
-                tasks={tasks}
-                onToggle={handleToggleTask}
-                onCreate={handleCreateTask}
-            />
+                tasks={ tasks }
+    onToggle = { handleToggleTask }
+    onCreate = { handleCreateTask }
+    onUpdate = { handleUpdateTask }
+        />
         </TodoLayout>
     );
 }
 
-function Content({ tasks, onToggle, onCreate }: any) {
+function Content({ tasks, onToggle, onCreate, onUpdate }: any) {
     const [view, setView] = useState<ViewMode>("List");
 
     useEffect(() => {
@@ -122,21 +127,22 @@ function Content({ tasks, onToggle, onCreate }: any) {
     if (view === "List")
         return (
             <TaskList
-                tasks={tasks}
-                onToggleTask={onToggle}
-                onAddTask={onCreate}
-            />
+                tasks= { tasks }
+    onToggleTask = { onToggle }
+    onAddTask = { onCreate }
+    onUpdateTask = { onUpdate }
+        />
         );
     if (view === "Board")
         return (
             <BoardView
-                tasks={tasks}
-                onToggleTask={onToggle}
-                onAddTask={onCreate}
-            />
+                tasks= { tasks }
+    onToggleTask = { onToggle }
+    onAddTask = { onCreate }
+        />
         );
-    if (view === "Calendar") return <CalendarView tasks={tasks} />;
-    if (view === "Dashboard") return <DashboardView tasks={tasks} />;
+    if (view === "Calendar") return <CalendarView tasks={ tasks } />;
+    if (view === "Dashboard") return <DashboardView tasks={ tasks } />;
     if (view === "Files") return <FilesView />;
     return null;
 }

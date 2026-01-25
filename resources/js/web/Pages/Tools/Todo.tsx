@@ -213,7 +213,7 @@ export default function Todo() {
 
     const handleUpdateTask = (updatedTask: Task) => {
         setTasks((prev) =>
-            prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+            prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
         );
     };
 
@@ -235,58 +235,59 @@ export default function Todo() {
     if (!isLoaded) return null; // Avoid hydration mismatch or flash
 
     return (
-        <AppLayout title= "To-Do List" >
-        <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]" >
-            {/* Sidebar */ }
-            < Sidebar
-    isOpen = { sidebarOpen }
-    activeFilter = { filter }
-    onFilterChange = { setFilter }
-        />
+        <AppLayout title="To-Do List">
+            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]">
+                {/* Sidebar */}
+                <Sidebar
+                    isOpen={sidebarOpen}
+                    activeFilter={filter}
+                    onFilterChange={setFilter}
+                />
 
-        {/* Main Content */ }
-        < main className = "flex-1 flex flex-col min-w-0 bg-white" >
-            <Header
-                        sidebarOpen={ sidebarOpen }
-    setSidebarOpen = { setSidebarOpen }
-    activeView = { view }
-    setView = { setView }
-    onAddTask = { handleCreateTask }
-        />
+                {/* Main Content */}
+                <main className="flex-1 flex flex-col min-w-0 bg-white">
+                    <Header
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                        activeView={view}
+                        setView={setView}
+                        onAddTask={handleCreateTask}
+                    />
 
-        {/* Page Content */ }
-        < div className = "flex-1 overflow-auto bg-white" >
-            { view === "List" && (
-                <TaskList
-                                tasks={ tasks }
-    onToggleTask = { handleToggleTask }
-    onAddTask = { handleCreateTask }
-        />
-                        )
-}
-{
-    view === "Board" && (
-        <BoardView
-                                tasks={ tasks }
-    onToggleTask = { handleToggleTask }
-    onAddTask = { handleCreateTask }
-    onMoveTask = { handleMoveTask }
-    onUpdateTask = { handleUpdateTask }
-    onDeleteTask = { handleDeleteTask }
-    onDuplicateTask = { handleDuplicateTask }
-        />
-                        )
-}
-{ view === "Calendar" && <CalendarView tasks={ tasks } onAddTask = { handleCreateTask } /> }
-{
-    view === "Dashboard" && (
-        <DashboardView tasks={ tasks } />
-                        )
-}
-{ view === "Files" && <FilesView /> }
-</div>
-    </main>
-    </div>
-    </AppLayout>
+                    {/* Page Content */}
+                    <div className="flex-1 overflow-auto bg-white">
+                        {view === "List" && (
+                            <TaskList
+                                
+                                tasks={tasks}
+                                onToggleTask={handleToggleTask}
+                                onAddTask={handleCreateTask}
+                            />
+                        )}
+                        {view === "Board" && (
+                            <BoardView
+                                tasks={tasks}
+                                onToggleTask={handleToggleTask}
+                                onAddTask={handleCreateTask}
+                                onMoveTask={handleMoveTask}
+                                onUpdateTask={handleUpdateTask}
+                                onDeleteTask={handleDeleteTask}
+                                onDuplicateTask={handleDuplicateTask}
+                            />
+                        )}
+                        {view === "Calendar" && (
+                            <CalendarView
+                                tasks={tasks}
+                                onAddTask={handleCreateTask}
+                            />
+                        )}
+                        {view === "Dashboard" && (
+                            <DashboardView tasks={tasks} />
+                        )}
+                        {view === "Files" && <FilesView />}
+                    </div>
+                </main>
+            </div>
+        </AppLayout>
     );
 }

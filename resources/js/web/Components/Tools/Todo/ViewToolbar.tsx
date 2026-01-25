@@ -1,6 +1,10 @@
 import React from "react";
-import { Plus, Filter, ArrowUpDown, LayoutGrid, MoreHorizontal } from "lucide-react";
+import { Plus } from "lucide-react";
 import ActionBtn from "./ActionBtn";
+import TodoFilter from "./TodoFilter";
+import TodoSort from "./TodoSort";
+import TodoGroup from "./TodoGroup";
+import TodoOptions from "./TodoOptions";
 import { ViewMode } from "./types";
 
 interface ViewToolbarProps {
@@ -8,7 +12,10 @@ interface ViewToolbarProps {
     onAddTask: () => void;
 }
 
-export default function ViewToolbar({ activeView, onAddTask }: ViewToolbarProps) {
+export default function ViewToolbar({
+    activeView,
+    onAddTask,
+}: ViewToolbarProps) {
     // Return null for views that have their own specific toolbar or don't need this standard one
     if (activeView === "Calendar" || activeView === "Dashboard") {
         return null;
@@ -16,27 +23,23 @@ export default function ViewToolbar({ activeView, onAddTask }: ViewToolbarProps)
 
     // Default Toolbar (List, Board)
     return (
-        <div className= "flex items-center justify-between border-b border-[#E0E0E0] pb-2" >
-        <div className="flex items-center gap-0" >
-            <button
-                    onClick={ onAddTask }
-    className = "flex items-center gap-1 px-3 py-1.5 bg-[#4573D2] text-white text-sm font-medium rounded-l-md hover:bg-[#3b63b8] transition-colors"
-        >
-        <Plus size={ 14 } />
+        <div className="flex items-center justify-between border-b border-[#E0E0E0] pb-2">
+            <div className="flex items-center gap-0">
+                <button
+                    onClick={onAddTask}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-[#4573D2] text-white text-sm font-medium rounded-l-md hover:bg-[#3b63b8] transition-colors"
+                >
+                    <Plus size={14} />
                     Add task
-        </button>
-        </div>
+                </button>
+            </div>
 
-        < div className = "flex items-center gap-2" >
-            <ActionBtn icon={
-                <Filter size={ 14 } />} label="Filter" / >
-                    <ActionBtn icon={
-                        <ArrowUpDown size={ 14 } />} label="Sort" / >
-                            <ActionBtn icon={
-                                <LayoutGrid size={ 14 } />} label="Group" / >
-                                    <ActionBtn icon={
-                                        <MoreHorizontal size={ 14 } />} label="Options" / >
-                                            </div>
-                                            </div>
+            <div className="flex items-center gap-2">
+                <TodoFilter />
+                <TodoSort />
+                <TodoGroup />
+                <TodoOptions />
+            </div>
+        </div>
     );
-                }
+}

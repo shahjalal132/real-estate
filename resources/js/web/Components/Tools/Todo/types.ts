@@ -17,6 +17,7 @@ export interface TodoContextType {
     tasks: Task[];
     addTask: (task: Omit<Task, 'id'>) => void;
     toggleTask: (id: number) => void;
+    updateTask: (id: number, updates: Partial<Task>) => void;
     deleteTask: (id: number) => void;
     filter: string;
     setFilter: (filter: string) => void;
