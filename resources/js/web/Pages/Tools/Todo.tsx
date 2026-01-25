@@ -258,6 +258,7 @@ export default function Todo() {
                     <div className="flex-1 overflow-auto bg-white">
                         {view === "List" && (
                             <TaskList
+                                
                                 tasks={tasks}
                                 onToggleTask={handleToggleTask}
                                 onAddTask={handleCreateTask}
