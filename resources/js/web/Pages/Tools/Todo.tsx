@@ -104,17 +104,17 @@ export default function Todo() {
     // --- State ---
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [view, setView] = useState<ViewMode>('List');
-    const [filter, setFilter] = useState('My tasks');
+    const [view, setView] = useState<ViewMode>("List");
+    const [filter, setFilter] = useState("My tasks");
     const [isLoaded, setIsLoaded] = useState(false);
 
     // --- Effects ---
 
     // Load from Local Storage on Mount
     useEffect(() => {
-        const storedTasks = localStorage.getItem('todo_tasks');
-        const storedSidebar = localStorage.getItem('todo_sidebar_open');
-        const storedView = localStorage.getItem('todo_view');
+        const storedTasks = localStorage.getItem("todo_tasks");
+        const storedSidebar = localStorage.getItem("todo_sidebar_open");
+        const storedView = localStorage.getItem("todo_view");
 
         if (storedTasks) {
             setTasks(JSON.parse(storedTasks));
@@ -136,22 +136,24 @@ export default function Todo() {
     // Save to Local Storage on Change
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('todo_tasks', JSON.stringify(tasks));
+            localStorage.setItem("todo_tasks", JSON.stringify(tasks));
         }
     }, [tasks, isLoaded]);
 
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('todo_sidebar_open', JSON.stringify(sidebarOpen));
+            localStorage.setItem(
+                "todo_sidebar_open",
+                JSON.stringify(sidebarOpen),
+            );
         }
     }, [sidebarOpen, isLoaded]);
 
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('todo_view', view);
+            localStorage.setItem("todo_view", view);
         }
     }, [view, isLoaded]);
-
 
     // --- Handlers ---
 
@@ -159,19 +161,25 @@ export default function Todo() {
         const newTask: Task = {
             id: Date.now(),
             title: "New Task",
-            dueDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            collaborators: ['ME'],
+            dueDate: new Date().toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            }),
+            collaborators: ["ME"],
             project: "Inbox",
             completed: false,
-            visibility: "Only me"
+            visibility: "Only me",
         };
-        setTasks(prev => [newTask, ...prev]);
+        setTasks((prev) => [newTask, ...prev]);
     };
 
     const handleToggleTask = (id: number) => {
-        setTasks(prev => prev.map(t =>
-            t.id === id ? { ...t, completed: !t.completed } : t
-        ));
+        setTasks((prev) =>
+            prev.map((t) =>
+                t.id === id ? { ...t, completed: !t.completed } : t,
+            ),
+        );
     };
 
     // --- Render ---
@@ -179,62 +187,49 @@ export default function Todo() {
     if (!isLoaded) return null; // Avoid hydration mismatch or flash
 
     return (
-        <AppLayout title= "To-Do List" >
-        <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]" >
-            {/* Sidebar */ }
-            < Sidebar
-    isOpen = { sidebarOpen }
-    activeFilter = { filter }
-    onFilterChange = { setFilter }
-        />
+        <AppLayout title="To-Do List">
+            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]">
+                {/* Sidebar */}
+                <Sidebar
+                    isOpen={sidebarOpen}
+                    activeFilter={filter}
+                    onFilterChange={setFilter}
+                />
 
-        {/* Main Content */ }
-        < main className = "flex-1 flex flex-col min-w-0 bg-white" >
-            <Header 
-                        sidebarOpen={ sidebarOpen }
-    setSidebarOpen = { setSidebarOpen }
-    activeView = { view }
-    setView = { setView }
-    onAddTask = { handleCreateTask }
-        />
+                {/* Main Content */}
+                <main className="flex-1 flex flex-col min-w-0 bg-white">
+                    <Header
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                        activeView={view}
+                        setView={setView}
+                        onAddTask={handleCreateTask}
+                    />
 
-        {/* Page Content */ }
-        < div className = "flex-1 overflow-auto bg-white" >
-            { view === 'List' && (
-                <TaskList 
-                                tasks={ tasks }
-    onToggleTask = { handleToggleTask }
-    onAddTask = { handleCreateTask }
-        />
-                        )
-}
-{
-    view === 'Board' && (
-        <BoardView 
-                                tasks={ tasks }
-    onToggleTask = { handleToggleTask }
-    onAddTask = { handleCreateTask }
-        />
-                        )
-}
-{
-    view === 'Calendar' && (
-        <CalendarView tasks={ tasks } />
-                        )
-}
-{
-    view === 'Dashboard' && (
-        <DashboardView tasks={ tasks } />
-                        )
-}
-{
-    view === 'Files' && (
-        <FilesView />
-    )
-}
-</div>
-    </main>
-    </div>
-    </AppLayout>
+                    {/* Page Content */}
+                    <div className="flex-1 overflow-auto bg-white">
+                        {view === "List" && (
+                            <TaskList
+                                tasks={tasks}
+                                onToggleTask={handleToggleTask}
+                                onAddTask={handleCreateTask}
+                            />
+                        )}
+                        {view === "Board" && (
+                            <BoardView
+                                tasks={tasks}
+                                onToggleTask={handleToggleTask}
+                                onAddTask={handleCreateTask}
+                            />
+                        )}
+                        {view === "Calendar" && <CalendarView tasks={tasks} />}
+                        {view === "Dashboard" && (
+                            <DashboardView tasks={tasks} />
+                        )}
+                        {view === "Files" && <FilesView />}
+                    </div>
+                </main>
+            </div>
+        </AppLayout>
     );
 }
