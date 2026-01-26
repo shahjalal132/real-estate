@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "risk": "1% Annual Chance", "zone": "A" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [-90.10, 29.95], [-90.00, 29.95], [-90.00, 30.00], [-90.10, 30.00], [-90.10, 29.95]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "risk": "0.2% Annual Chance", "zone": "X" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [-90.20, 29.95], [-90.10, 29.95], [-90.10, 30.00], [-90.20, 30.00], [-90.20, 29.95]
+        ]]
+      }
+    }
+  ]
+}
