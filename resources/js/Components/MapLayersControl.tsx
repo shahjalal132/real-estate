@@ -41,7 +41,6 @@ export default function MapLayersControl({
     ];
 
     const getLayerColor = (layer: MapLayerType) => {
-        // More subtle highlighting for the active state in the dropdown list
         return activeLayer === layer
             ? "bg-blue-50 text-blue-700"
             : "text-gray-700 hover:bg-gray-50";
