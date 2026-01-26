@@ -1,4 +1,6 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import MapLayersControl, { MapLayerType } from "./MapLayersControl";
+import MapLegend from "./MapLegend";
 import {
     MapContainer,
     TileLayer,
@@ -6,6 +8,9 @@ import {
     Popup,
     Tooltip,
     useMap,
+    ZoomControl,
+    WMSTileLayer,
+    LayersControl,
 } from "react-leaflet";
 import L from "leaflet";
 import { Property } from "../types";
@@ -56,7 +61,7 @@ function FitBounds({ properties }: { properties: Property[] }) {
         (p) =>
             p.location &&
             isValidCoordinate(p.location.latitude) &&
-            isValidLongitude(p.location.longitude)
+            isValidLongitude(p.location.longitude),
     );
 
     useEffect(() => {
@@ -79,7 +84,7 @@ function FitBounds({ properties }: { properties: Property[] }) {
                         return null;
                     })
                     .filter(
-                        (coord): coord is [number, number] => coord !== null
+                        (coord): coord is [number, number] => coord !== null,
                     );
 
                 if (coordinates.length > 0) {
@@ -116,7 +121,7 @@ export default function MapView({
                         : Number(p.location.longitude);
                 return isValidCoordinate(lat) && isValidLongitude(lng);
             }),
-        [properties]
+        [properties],
     );
 
     // Calculate center point from all properties
@@ -194,131 +199,234 @@ export default function MapView({
         })}`;
     };
 
-    return (
-        <MapContainer
-            center={center}
-            zoom={6}
-            style={{ height: "100%", width: "100%" }}
-            className="z-0"
-        >
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <FitBounds properties={propertiesWithLocation} />
-            {propertiesWithLocation.map((property) => {
-                const isSelected = property.id === selectedPropertyId;
-                // Handle both number and string types from database
-                const lat =
-                    typeof property.location!.latitude === "string"
-                        ? parseFloat(property.location!.latitude)
-                        : Number(property.location!.latitude);
-                const lng =
-                    typeof property.location!.longitude === "string"
-                        ? parseFloat(property.location!.longitude)
-                        : Number(property.location!.longitude);
+    const [activeLayer, setActiveLayer] = useState<MapLayerType>("Default");
 
-                // Double-check coordinates are valid before rendering marker
-                if (!isValidCoordinate(lat) || !isValidLongitude(lng)) {
-                    return null;
-                }
+    // Initialize layer from URL query param
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const layerParam = params.get("layer");
+        if (layerParam) {
+            // Validate if it's a known layer type to avoid invalid states
+            const validLayers: MapLayerType[] = [
+                "Default",
+                "Population",
+                "Median Income",
+                "Traffic Count",
+                "Points Of Interest",
+                "Flood Risk",
+                "Fire Risk",
+            ];
+            if (validLayers.includes(layerParam as MapLayerType)) {
+                setActiveLayer(layerParam as MapLayerType);
+            }
+        }
+    }, []);
 
-                const price = formatPrice(
-                    property.formatted_price || property.asking_price
+    // Update URL when layer changes
+    const handleLayerChange = (layer: MapLayerType) => {
+        setActiveLayer(layer);
+
+        // Update URL without reloading page
+        const url = new URL(window.location.href);
+        if (layer === "Default") {
+            url.searchParams.delete("layer");
+        } else {
+            url.searchParams.set("layer", layer);
+        }
+        window.history.replaceState({}, "", url.toString());
+    };
+
+    const getTileLayer = (layer: MapLayerType) => {
+        switch (layer) {
+            case "Default":
+                return (
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
                 );
+            case "Population":
+                // Placeholder: Ideally uses US Census or Mapbox
+                return (
+                    <>
+                        <TileLayer
+                            attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+                            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                        />
+                        {/* Example of how we might overlay if we had a Transparent WMS */}
+                    </>
+                );
+            case "Flood Risk":
+                return (
+                    <>
+                        <TileLayer
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <WMSTileLayer
+                            url="https://hazards.fema.gov/gis/nfhl/services/public/NFHL/MapServer/WMSServer"
+                            opacity={0.6}
+                            params={{
+                                format: "image/png",
+                                layers: "4,28", // Standard flood hazard layers
+                                transparent: true,
+                            }}
+                        />
+                    </>
+                );
+            case "Fire Risk":
+                // USFS Wildfire Hazard Potential WMS (Example URL, often requires specific server)
+                // Using a placeholder base map for now but with a darker theme to imply "Fire" or "Risk" context could be good,
+                // but sticking to standard map for consistency + alert is better.
+                return (
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                );
+            default:
+                return (
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                );
+        }
+    };
 
-                // Create simple lollipop/pin marker
-                const icon = L.divIcon({
-                    className: `lollipop-marker ${
-                        isSelected ? "selected" : ""
-                    }`,
-                    html: `
+    return (
+        <div className="relative h-full w-full">
+            <MapContainer
+                center={center}
+                zoom={6}
+                zoomControl={false}
+                style={{ height: "100%", width: "100%" }}
+                className="z-0"
+            >
+                <ZoomControl position="bottomright" />
+                <MapLayersControl
+                    activeLayer={activeLayer}
+                    onLayerChange={handleLayerChange}
+                />
+                <MapLegend activeLayer={activeLayer} />
+
+                {getTileLayer(activeLayer)}
+
+                <FitBounds properties={propertiesWithLocation} />
+                {propertiesWithLocation.map((property) => {
+                    const isSelected = property.id === selectedPropertyId;
+                    // Handle both number and string types from database
+                    const lat =
+                        typeof property.location!.latitude === "string"
+                            ? parseFloat(property.location!.latitude)
+                            : Number(property.location!.latitude);
+                    const lng =
+                        typeof property.location!.longitude === "string"
+                            ? parseFloat(property.location!.longitude)
+                            : Number(property.location!.longitude);
+
+                    // Double-check coordinates are valid before rendering marker
+                    if (!isValidCoordinate(lat) || !isValidLongitude(lng)) {
+                        return null;
+                    }
+
+                    const price = formatPrice(
+                        property.formatted_price || property.asking_price,
+                    );
+
+                    // Create simple lollipop/pin marker
+                    const icon = L.divIcon({
+                        className: `lollipop-marker ${
+                            isSelected ? "selected" : ""
+                        }`,
+                        html: `
                         <div class="lollipop-marker-container ${
                             isSelected ? "selected" : ""
                         }">
                             <div class="lollipop-pin"></div>
                         </div>
                     `,
-                    iconSize: [32, 40],
-                    iconAnchor: [16, 40],
-                    popupAnchor: [0, -40],
-                });
+                        iconSize: [32, 40],
+                        iconAnchor: [16, 40],
+                        popupAnchor: [0, -40],
+                    });
 
-                return (
-                    <Marker
-                        key={property.id}
-                        position={[lat, lng]}
-                        icon={icon}
-                        eventHandlers={{
-                            click: () => {
-                                onMarkerClick?.(property);
-                            },
-                        }}
-                    >
-                        {/* Hover Tooltip */}
-                        <Tooltip
-                            permanent={false}
-                            direction="top"
-                            offset={[0, -40]}
-                            className="property-tooltip"
+                    return (
+                        <Marker
+                            key={property.id}
+                            position={[lat, lng]}
+                            icon={icon}
+                            eventHandlers={{
+                                click: () => {
+                                    onMarkerClick?.(property);
+                                },
+                            }}
                         >
-                            <div className="property-tooltip-content">
-                                <h4 className="font-semibold text-sm mb-1 text-gray-900">
-                                    {property.name}
-                                </h4>
-                                <p className="text-xs font-bold text-blue-600 mb-1">
-                                    {price}
-                                </p>
-                                {property.location && (
-                                    <p className="text-xs text-gray-600">
-                                        {property.location.city},{" "}
-                                        {property.location.state_code}
-                                    </p>
-                                )}
-                            </div>
-                        </Tooltip>
-
-                        {/* Click Popup */}
-                        <Popup className="property-popup">
-                            <div className="min-w-[250px] max-w-[300px]">
-                                <Link
-                                    href={`/properties/${property.id}/${property.url_slug}`}
-                                    className="block"
-                                >
-                                    <h3 className="font-semibold text-base mb-2 hover:text-blue-600 transition-colors">
+                            {/* Hover Tooltip */}
+                            <Tooltip
+                                permanent={false}
+                                direction="top"
+                                offset={[0, -40]}
+                                className="property-tooltip"
+                            >
+                                <div className="property-tooltip-content">
+                                    <h4 className="font-semibold text-sm mb-1 text-gray-900">
                                         {property.name}
-                                    </h3>
-                                </Link>
-                                <p className="text-sm font-semibold text-blue-600 mb-2">
-                                    {price}
-                                </p>
-                                {property.location && (
-                                    <p className="text-xs text-gray-600 mb-2">
-                                        <span className="font-medium">
-                                            Location:
-                                        </span>{" "}
-                                        {property.location.city},{" "}
-                                        {property.location.state_code}
+                                    </h4>
+                                    <p className="text-xs font-bold text-blue-600 mb-1">
+                                        {price}
                                     </p>
-                                )}
-                                {property.thumbnail_url && (
-                                    <img
-                                        src={property.thumbnail_url}
-                                        alt={property.name}
-                                        className="w-full h-32 object-cover rounded mt-2"
-                                    />
-                                )}
-                                <Link
-                                    href={`/properties/${property.id}/${property.url_slug}`}
-                                    className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-800 font-medium"
-                                >
-                                    View Details →
-                                </Link>
-                            </div>
-                        </Popup>
-                    </Marker>
-                );
-            })}
-        </MapContainer>
+                                    {property.location && (
+                                        <p className="text-xs text-gray-600">
+                                            {property.location.city},{" "}
+                                            {property.location.state_code}
+                                        </p>
+                                    )}
+                                </div>
+                            </Tooltip>
+
+                            {/* Click Popup */}
+                            <Popup className="property-popup">
+                                <div className="min-w-[250px] max-w-[300px]">
+                                    <Link
+                                        href={`/properties/${property.id}/${property.url_slug}`}
+                                        className="block"
+                                    >
+                                        <h3 className="font-semibold text-base mb-2 hover:text-blue-600 transition-colors">
+                                            {property.name}
+                                        </h3>
+                                    </Link>
+                                    <p className="text-sm font-semibold text-blue-600 mb-2">
+                                        {price}
+                                    </p>
+                                    {property.location && (
+                                        <p className="text-xs text-gray-600 mb-2">
+                                            <span className="font-medium">
+                                                Location:
+                                            </span>{" "}
+                                            {property.location.city},{" "}
+                                            {property.location.state_code}
+                                        </p>
+                                    )}
+                                    {property.thumbnail_url && (
+                                        <img
+                                            src={property.thumbnail_url}
+                                            alt={property.name}
+                                            className="w-full h-32 object-cover rounded mt-2"
+                                        />
+                                    )}
+                                    <Link
+                                        href={`/properties/${property.id}/${property.url_slug}`}
+                                        className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-800 font-medium"
+                                    >
+                                        View Details →
+                                    </Link>
+                                </div>
+                            </Popup>
+                        </Marker>
+                    );
+                })}
+            </MapContainer>
+        </div>
     );
 }

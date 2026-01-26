@@ -111,6 +111,7 @@ export default function MarketplaceExplainer({
                                         <span className="block" />
                                     )}
                                 </span>
+
                             ))}
                     </h2>
 
@@ -129,10 +130,8 @@ export default function MarketplaceExplainer({
                                 alt="R Marketplace Video"
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                             />
-                            {/* Gradient overlay for better text visibility */}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#004080]/90 via-[#0066CC]/70 to-[#0066CC]/50"></div>
 
-                            {/* Animated overlay on hover */}
                             <div className="absolute inset-0 bg-gradient-to-br from-[#0066CC]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
 
