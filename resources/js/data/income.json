@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "income": "High", "value": 120000 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.00, 40.72], [-73.98, 40.72], [-73.98, 40.74], [-74.00, 40.74], [-74.00, 40.72]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "income": "Medium", "value": 75000 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.02, 40.72], [-74.00, 40.72], [-74.00, 40.74], [-74.02, 40.74], [-74.02, 40.72]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "income": "Low", "value": 45000 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.04, 40.72], [-74.02, 40.72], [-74.02, 40.74], [-74.04, 40.74], [-74.04, 40.72]
+        ]]
+      }
+    }
+  ]
+}
