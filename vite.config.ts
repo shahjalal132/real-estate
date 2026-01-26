@@ -20,4 +20,13 @@ export default defineConfig({
             "@admin": path.resolve(__dirname, "resources/js/admin"),
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    recharts: ["recharts"],
+                },
+            },
+        },
+    },
 });
