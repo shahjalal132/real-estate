@@ -173,127 +173,135 @@ export default function TransactionActivityCharts() {
     const customTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
-                    <p className="font-semibold mb-2">{label}</p>
-                    {payload.map((entry: any, index: number) => (
-                        <p key={index} style={{ color: entry.color }} className="text-sm">
-                            {`${entry.name}: ${formatCurrency(entry.value)}`}
-                        </p>
-                    ))}
-                </div>
+                <div className= "bg-white p-3 border border-gray-200 rounded shadow-lg" >
+                <p className="font-semibold mb-2" > { label } </p>
+            {
+                payload.map((entry: any, index: number) => (
+                    <p key= { index } style = {{ color: entry.color }} className = "text-sm" >
+                        {`${entry.name}: ${formatCurrency(entry.value)}`
+        }
+        </p>
+                    ))
+}
+</div>
             );
         }
-        return null;
+return null;
     };
 
-    return (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                Transaction Activity
+return (
+    <div className= "bg-white border border-gray-200 rounded-lg p-6" >
+    <h3 className="text-lg font-semibold text-gray-900 mb-6" >
+        Transaction Activity
             </h3>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Acquisition Activity Chart */}
-                <div>
-                    <h4 className="text-base font-semibold text-gray-900 mb-4">
-                        Acquisition Activity
-                    </h4>
-                    <div className="h-[400px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                data={acquisitionData}
-                                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis
-                                    dataKey="quarter"
-                                    tick={{ fontSize: 12 }}
-                                />
-                                <YAxis
-                                    tickFormatter={(value) => {
-                                        if (value >= 1000000000) {
-                                            return `$${(value / 1000000000).toFixed(0)}B`;
-                                        }
-                                        return `$${value / 1000000}M`;
-                                    }}
-                                    domain={[0, 16000000000]}
-                                    ticks={[0, 2000000000, 4000000000, 6000000000, 8000000000, 10000000000, 12000000000, 14000000000, 16000000000]}
-                                    tick={{ fontSize: 11 }}
-                                />
-                                <Tooltip content={customTooltip} />
-                                {stackKeys.map((key) => (
-                                    <Bar
-                                        key={key}
-                                        dataKey={key}
-                                        stackId="a"
-                                        fill={propertyTypeColors[key]}
-                                    />
-                                ))}
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
 
-                {/* Disposition Activity Chart */}
-                <div>
-                    <h4 className="text-base font-semibold text-gray-900 mb-4">
-                        Disposition Activity
-                    </h4>
-                    <div className="h-[400px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                data={dispositionData}
-                                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            < div className = "grid grid-cols-1 lg:grid-cols-2 gap-6" >
+                {/* Acquisition Activity Chart */ }
+                < div >
+                <h4 className="text-base font-semibold text-gray-900 mb-4" >
+                    Acquisition Activity
+                        </h4>
+                        < div className = "h-[400px]" >
+                            <ResponsiveContainer width="100%" height = "100%" >
+                                <BarChart
+                                data={ acquisitionData }
+margin = {{ top: 20, right: 30, left: 20, bottom: 20 }}
                             >
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis
+    <CartesianGrid strokeDasharray="3 3" vertical = { false} />
+        <XAxis
                                     dataKey="quarter"
-                                    tick={{ fontSize: 12 }}
+tick = {{ fontSize: 12 }}
                                 />
-                                <YAxis
-                                    tickFormatter={(value) => {
-                                        if (value >= 1000000000) {
-                                            return `$${(value / 1000000000).toFixed(0)}B`;
-                                        }
-                                        return `$${value / 1000000}M`;
-                                    }}
-                                    domain={[0, 7000000000]}
-                                    ticks={[0, 1000000000, 2000000000, 3000000000, 4000000000, 5000000000, 6000000000, 7000000000]}
-                                    tick={{ fontSize: 11 }}
+    < YAxis
+tickFormatter = {(value) => {
+    if (value >= 1000000000) {
+        return `$${(value / 1000000000).toFixed(0)}B`;
+    }
+    return `$${value / 1000000}M`;
+}}
+domain = { [0, 16000000000]}
+ticks = { [0, 2000000000, 4000000000, 6000000000, 8000000000, 10000000000, 12000000000, 14000000000, 16000000000]}
+tick = {{ fontSize: 11 }}
                                 />
-                                <Tooltip content={customTooltip} />
-                                {stackKeys.map((key) => (
-                                    <Bar
-                                        key={key}
-                                        dataKey={key}
-                                        stackId="a"
-                                        fill={propertyTypeColors[key]}
-                                    />
-                                ))}
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-            </div>
-
-            {/* Shared Legend */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex flex-wrap gap-4 justify-center">
-                    {stackKeys.filter(key => 
-                        acquisitionData.some(d => d[key as keyof typeof d]) || 
-                        dispositionData.some(d => d[key as keyof typeof d])
-                    ).map((type) => (
-                        <div key={type} className="flex items-center gap-2">
-                            <div
-                                className="w-4 h-4 rounded"
-                                style={{ backgroundColor: propertyTypeColors[type] }}
-                            />
-                            <span className="text-sm text-gray-700">{type}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
+    < Tooltip content = { customTooltip } />
+    {
+        stackKeys.map((key) => (
+            <Bar
+                                        key= { key }
+                                        dataKey = { key }
+                                        stackId = "a"
+                                        fill = { propertyTypeColors[key]}
+            />
+                                ))
+    }
+        </BarChart>
+        </ResponsiveContainer>
         </div>
+        </div>
+
+{/* Disposition Activity Chart */ }
+<div>
+    <h4 className="text-base font-semibold text-gray-900 mb-4" >
+        Disposition Activity
+            </h4>
+            < div className = "h-[400px]" >
+                <ResponsiveContainer width="100%" height = "100%" >
+                    <BarChart
+                                data={ dispositionData }
+margin = {{ top: 20, right: 30, left: 20, bottom: 20 }}
+                            >
+    <CartesianGrid strokeDasharray="3 3" vertical = { false} />
+        <XAxis
+                                    dataKey="quarter"
+tick = {{ fontSize: 12 }}
+                                />
+    < YAxis
+tickFormatter = {(value) => {
+    if (value >= 1000000000) {
+        return `$${(value / 1000000000).toFixed(0)}B`;
+    }
+    return `$${value / 1000000}M`;
+}}
+domain = { [0, 7000000000]}
+ticks = { [0, 1000000000, 2000000000, 3000000000, 4000000000, 5000000000, 6000000000, 7000000000]}
+tick = {{ fontSize: 11 }}
+                                />
+    < Tooltip content = { customTooltip } />
+    {
+        stackKeys.map((key) => (
+            <Bar
+                                        key= { key }
+                                        dataKey = { key }
+                                        stackId = "a"
+                                        fill = { propertyTypeColors[key]}
+            />
+                                ))
+    }
+        </BarChart>
+        </ResponsiveContainer>
+        </div>
+        </div>
+        </div>
+
+{/* Shared Legend */ }
+<div className="mt-6 pt-6 border-t border-gray-200" >
+    <div className="flex flex-wrap gap-4 justify-center" >
+        {
+            stackKeys.filter(key =>
+                acquisitionData.some(d => d[key as keyof typeof d]) ||
+                dispositionData.some(d => d[key as keyof typeof d])
+            ).map((type) => (
+                <div key= { type } className = "flex items-center gap-2" >
+                <div
+                                className="w-4 h-4 rounded"
+                                style = {{ backgroundColor: propertyTypeColors[type] }}
+        />
+        <span className="text-sm text-gray-700" > { type } </span>
+            </div>
+                    ))}
+</div>
+    </div>
+    </div>
     );
 }
 
