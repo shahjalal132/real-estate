@@ -16,4 +16,13 @@ export default defineConfig({
         host: '127.0.0.1',
         cors: true,
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    recharts: ['recharts'],
+                },
+            },
+        },
+    },
 });
