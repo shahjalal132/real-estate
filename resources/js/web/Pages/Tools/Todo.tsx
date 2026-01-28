@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+
 import AppLayout from "../../Layouts/AppLayout";
-import Sidebar from "../../Components/Tools/Todo/Sidebar";
 import Header from "../../Components/Tools/Todo/Header";
 import TaskList from "../../Components/Tools/Todo/TaskList";
 import BoardView from "../../Components/Tools/Todo/Views/BoardView";
@@ -122,10 +122,8 @@ const initialTasks: Task[] = [
 
 export default function Todo() {
     // --- State ---
-    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [tasks, setTasks] = useState<Task[]>([]);
     const [view, setView] = useState<ViewMode>("List");
-    const [filter, setFilter] = useState("My tasks");
     const [isLoaded, setIsLoaded] = useState(false);
 
     // --- Effects ---
@@ -133,17 +131,12 @@ export default function Todo() {
     // Load from Local Storage on Mount
     useEffect(() => {
         const storedTasks = localStorage.getItem("todo_tasks");
-        const storedSidebar = localStorage.getItem("todo_sidebar_open");
         const storedView = localStorage.getItem("todo_view");
 
         if (storedTasks) {
             setTasks(JSON.parse(storedTasks));
         } else {
             setTasks(initialTasks);
-        }
-
-        if (storedSidebar !== null) {
-            setSidebarOpen(JSON.parse(storedSidebar));
         }
 
         if (storedView) {
@@ -159,15 +152,6 @@ export default function Todo() {
             localStorage.setItem("todo_tasks", JSON.stringify(tasks));
         }
     }, [tasks, isLoaded]);
-
-    useEffect(() => {
-        if (isLoaded) {
-            localStorage.setItem(
-                "todo_sidebar_open",
-                JSON.stringify(sidebarOpen),
-            );
-        }
-    }, [sidebarOpen, isLoaded]);
 
     useEffect(() => {
         if (isLoaded) {
@@ -235,59 +219,57 @@ export default function Todo() {
     if (!isLoaded) return null; // Avoid hydration mismatch or flash
 
     return (
-        <AppLayout title="To-Do List">
-            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]">
-                {/* Sidebar */}
-                <Sidebar
-                    isOpen={sidebarOpen}
-                    activeFilter={filter}
-                    onFilterChange={setFilter}
-                />
+        <AppLayout title= "To-Do List" >
+        <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]" >
+            {/* Main Content */ }
+            < main className = "flex-1 flex flex-col min-w-0 bg-white" >
+                <Header
+                        activeView={ view }
+    setView = { setView }
+    onAddTask = { handleCreateTask }
+        />
 
-                {/* Main Content */}
-                <main className="flex-1 flex flex-col min-w-0 bg-white">
-                    <Header
-                        sidebarOpen={sidebarOpen}
-                        setSidebarOpen={setSidebarOpen}
-                        activeView={view}
-                        setView={setView}
-                        onAddTask={handleCreateTask}
-                    />
-
-                    {/* Page Content */}
-                    <div className="flex-1 overflow-auto bg-white">
-                        {view === "List" && (
-                            <TaskList
+        {/* Page Content */ }
+        < div className = "flex-1 overflow-auto bg-white" >
+            { view === "List" && (
+                <TaskList
                                 
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
-                                onAddTask={handleCreateTask}
-                            />
-                        )}
-                        {view === "Board" && (
-                            <BoardView
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
-                                onAddTask={handleCreateTask}
-                                onMoveTask={handleMoveTask}
-                                onUpdateTask={handleUpdateTask}
-                                onDeleteTask={handleDeleteTask}
-                                onDuplicateTask={handleDuplicateTask}
-                            />
-                        )}
-                        {view === "Calendar" && (
-                            <CalendarView
-                                tasks={tasks}
-                                onAddTask={handleCreateTask}
-                            />
-                        )}
-                        {view === "Dashboard" && (
-                            <DashboardView tasks={tasks} />
-                        )}
-                        {view === "Files" && <FilesView />}
-                    </div>
-                </main>
-            </div>
-        </AppLayout>
+                                tasks={ tasks }
+    onToggleTask = { handleToggleTask }
+    onAddTask = { handleCreateTask }
+        />
+                        )
+}
+{
+    view === "Board" && (
+        <BoardView
+                                tasks={ tasks }
+    onToggleTask = { handleToggleTask }
+    onAddTask = { handleCreateTask }
+    onMoveTask = { handleMoveTask }
+    onUpdateTask = { handleUpdateTask }
+    onDeleteTask = { handleDeleteTask }
+    onDuplicateTask = { handleDuplicateTask }
+        />
+                        )
+}
+{
+    view === "Calendar" && (
+        <CalendarView
+                                tasks={ tasks }
+    onAddTask = { handleCreateTask }
+        />
+                        )
+}
+{
+    view === "Dashboard" && (
+        <DashboardView tasks={ tasks } />
+                        )
+}
+{ view === "Files" && <FilesView /> }
+</div>
+    </main>
+    </div>
+    </AppLayout>
     );
 }

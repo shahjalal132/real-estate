@@ -7,91 +7,53 @@ import DashboardView from "../../../Components/Tools/Todo/Views/DashboardView";
 import FilesView from "../../../Components/Tools/Todo/Views/FilesView";
 import { Task, ViewMode } from "../../../Components/Tools/Todo/types";
 
-// Re-using initial data from Todo.tsx for now
-// Standardizing project name to "Tasks to get done" to match UI
-const initialTasks: Task[] = [
-    {
-        id: 1,
-        title: "Create a desk set up",
-        dueDate: "Aug 4, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: true,
-        comments: 2,
-    },
-    {
-        id: 2,
-        title: "order biz cards",
-        dueDate: "Jul 29, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: true,
-        comments: 3,
-    },
-    {
-        id: 3,
-        title: "custom office supplies",
-        dueDate: "Aug 7, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: false,
-    },
-    {
-        id: 8,
-        title: "Task 1",
-        dueDate: "Jul 28, 2025",
-        collaborators: [],
-        project: "Tasks to get done",
-        completed: false,
-        visibility: "Only me",
-    },
-];
+// Initial data removed as we now load from backend
 
-export default function MyTasks({ view = "List" }: { view?: ViewMode }) {
-    const [tasks, setTasks] = useState<Task[]>([]);
+// @ts-ignore
+import { router } from "@inertiajs/react";
 
-    useEffect(() => {
-        const storedTasks = localStorage.getItem("todo_tasks");
-        if (storedTasks) {
-            setTasks(JSON.parse(storedTasks));
-        } else {
-            setTasks(initialTasks);
-        }
-    }, []);
+export default function MyTasks({ tasks }: { tasks: Task[] }) {
 
+    // Create Task (Sync with backend)
     const handleCreateTask = () => {
-        const newTask: Task = {
-            id: Date.now(),
+        const newTask = {
             title: "New Task",
-            dueDate: new Date().toLocaleDateString("en-US", {
+            due_date: new Date().toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
             }),
-            collaborators: ["ME"],
             project: "Tasks to get done",
-            completed: false,
+            status: "todo",
             visibility: "Only me",
+            collaborators: ["ME"],
         };
-        const updated = [newTask, ...tasks];
-        setTasks(updated);
-        localStorage.setItem("todo_tasks", JSON.stringify(updated));
+
+        router.post(route('tools.todo.store'), newTask, {
+            preserveScroll: true,
+        });
     };
 
+    // Toggle Task Completion (Sync with backend)
     const handleToggleTask = (id: number) => {
-        const updated = tasks.map((t) =>
-            t.id === id ? { ...t, completed: !t.completed } : t,
-        );
-        setTasks(updated);
-        localStorage.setItem("todo_tasks", JSON.stringify(updated));
+        const task = tasks.find((t) => t.id === id);
+        if (!task) return;
+
+        router.put(route('tools.todo.update', task.id), {
+            is_completed: !task.completed
+        }, {
+            preserveScroll: true,
+        });
     };
 
+    // Update Task (Sync with backend)
     const handleUpdateTask = (id: number, updates: Partial<Task>) => {
-        const updated = tasks.map((t) =>
-            t.id === id ? { ...t, ...updates } : t,
-        );
-        setTasks(updated);
-        localStorage.setItem("todo_tasks", JSON.stringify(updated));
+        const task = tasks.find((t) => t.id === id);
+        if (!task) return;
+
+        router.put(route('tools.todo.update', task.id), updates, {
+            preserveScroll: true,
+        });
     };
 
     // Listen for custom event from Layout Header
@@ -99,7 +61,7 @@ export default function MyTasks({ view = "List" }: { view?: ViewMode }) {
         const onAdd = () => handleCreateTask();
         window.addEventListener("todo-add-task", onAdd);
         return () => window.removeEventListener("todo-add-task", onAdd);
-    }, [tasks]);
+    }, []);
 
     return (
         <TodoLayout title= "My Tasks" activeFilter = "My tasks" >
@@ -139,6 +101,7 @@ function Content({ tasks, onToggle, onCreate, onUpdate }: any) {
                 tasks= { tasks }
     onToggleTask = { onToggle }
     onAddTask = { onCreate }
+    onUpdateTask = { onUpdate }
         />
         );
     if (view === "Calendar") return <CalendarView tasks={ tasks } />;

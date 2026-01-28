@@ -1,10 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index']);
 
+// Property routes
 Route::get('/properties', [\App\Http\Controllers\PropertyController::class, 'index'])->name('properties.index');
 Route::get('/properties/auctions', [\App\Http\Controllers\PropertyController::class, 'auctions'])->name('properties.auctions');
 Route::get('/properties/residential', [\App\Http\Controllers\PropertyController::class, 'residentials'])->name('properties.residentials');
@@ -15,13 +18,6 @@ Route::get('/properties/{property}/{url_slug}', [\App\Http\Controllers\PropertyC
 // API routes for filters
 Route::get('/api/brokers/search', [\App\Http\Controllers\BrokerController::class, 'search'])->name('api.brokers.search');
 
-// Auth routes
-Route::post('/api/auth/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('api.auth.login');
-Route::post('/api/auth/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('api.auth.register');
-Route::post('/api/auth/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('api.auth.logout')->middleware('auth');
-Route::get('/api/auth/user', [\App\Http\Controllers\AuthController::class, 'user'])->name('api.auth.user');
-
-// Saved Searches routes (require authentication)
 Route::middleware('auth')->group(function () {
     Route::get('/api/saved-searches', [\App\Http\Controllers\SavedSearchController::class, 'index'])->name('api.saved-searches.index');
     Route::post('/api/saved-searches', [\App\Http\Controllers\SavedSearchController::class, 'store'])->name('api.saved-searches.store');
@@ -31,7 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/optimize', function () {
-    Artisan::call('optimize:clear');
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     return 'Application optimized!';
 })->name('optimize')->middleware('auth');
 
@@ -83,15 +79,25 @@ Route::get('/underwriting/new-ai', [\App\Http\Controllers\MiscController::class,
 Route::get('/tools/mortgage-calculator', [\App\Http\Controllers\MiscController::class, 'toolsMortgageCalculator'])->name('tools.mortgage-calculator');
 Route::get('/tools/cost-seg', [\App\Http\Controllers\MiscController::class, 'toolsCostSeg'])->name('tools.cost-seg');
 Route::get('/tools/zoning-codes', [\App\Http\Controllers\MiscController::class, 'toolsZoningCodes'])->name('tools.zoning-codes');
-Route::get('/tools/todo', function() { return redirect()->route('tools.todo.my-tasks'); });
-Route::get('/tools/todo/home', [\App\Http\Controllers\MiscController::class, 'todoHome'])->name('tools.todo.home');
-Route::get('/tools/todo/my-tasks', [\App\Http\Controllers\MiscController::class, 'toolsTodo'])->name('tools.todo.my-tasks'); // Reusing existing name/method for default but will rename method nicely later or use alias
-Route::get('/tools/todo/inbox', [\App\Http\Controllers\MiscController::class, 'todoInbox'])->name('tools.todo.inbox');
-Route::get('/tools/todo/reporting', [\App\Http\Controllers\MiscController::class, 'todoReporting'])->name('tools.todo.reporting');
-Route::get('/tools/todo/portfolios', [\App\Http\Controllers\MiscController::class, 'todoPortfolios'])->name('tools.todo.portfolios');
-Route::get('/tools/todo/goals', [\App\Http\Controllers\MiscController::class, 'todoGoals'])->name('tools.todo.goals');
-Route::get('/tools/todo/projects', [\App\Http\Controllers\MiscController::class, 'todoProjects'])->name('tools.todo.projects');
-Route::get('/tools/todo/teams', [\App\Http\Controllers\MiscController::class, 'todoTeams'])->name('tools.todo.teams');
+
+// Todo Routes (Authenticated)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/tools/todo', function() { return redirect()->route('tools.todo.my-tasks'); });
+    Route::get('/tools/todo/my-tasks', [\App\Http\Controllers\TodoController::class, 'index'])->name('tools.todo.my-tasks');
+    Route::post('/tools/todo/tasks', [\App\Http\Controllers\TodoController::class, 'store'])->name('tools.todo.store');
+    Route::put('/tools/todo/tasks/{todoTask}', [\App\Http\Controllers\TodoController::class, 'update'])->name('tools.todo.update');
+    Route::delete('/tools/todo/tasks/{todoTask}', [\App\Http\Controllers\TodoController::class, 'destroy'])->name('tools.todo.destroy');
+
+    // Other Todo Views
+    Route::get('/tools/todo/home', [\App\Http\Controllers\MiscController::class, 'todoHome'])->name('tools.todo.home');
+    Route::get('/tools/todo/inbox', [\App\Http\Controllers\MiscController::class, 'todoInbox'])->name('tools.todo.inbox');
+    Route::get('/tools/todo/reporting', [\App\Http\Controllers\MiscController::class, 'todoReporting'])->name('tools.todo.reporting');
+    Route::get('/tools/todo/portfolios', [\App\Http\Controllers\MiscController::class, 'todoPortfolios'])->name('tools.todo.portfolios');
+    Route::get('/tools/todo/goals', [\App\Http\Controllers\MiscController::class, 'todoGoals'])->name('tools.todo.goals');
+    Route::get('/tools/todo/projects', [\App\Http\Controllers\MiscController::class, 'todoProjects'])->name('tools.todo.projects');
+    Route::get('/tools/todo/teams', [\App\Http\Controllers\MiscController::class, 'todoTeams'])->name('tools.todo.teams');
+});
+
 Route::get('/tools/calendar', [\App\Http\Controllers\MiscController::class, 'toolsCalendar'])->name('tools.calendar');
 Route::get('/tools/chatgpt-assistant', [\App\Http\Controllers\MiscController::class, 'toolsChatGPTAssistant'])->name('tools.chatgpt-assistant');
 Route::get('/links/quick-links', [\App\Http\Controllers\MiscController::class, 'linksQuickLinks'])->name('links.quick-links');
@@ -113,3 +119,21 @@ Route::get('/news/{slug}', [\App\Http\Controllers\MiscController::class, 'newsSh
 Route::get('/quick-links/{slug}', [\App\Http\Controllers\MiscController::class, 'quickLink'])->name('quick-links.show');
 Route::get('/learn-more/{slug}', [\App\Http\Controllers\MiscController::class, 'learnMore'])->name('learn-more.show');
 Route::get('/policies/{slug}', [\App\Http\Controllers\MiscController::class, 'policy'])->name('policies.show');
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/admin/dashboard', function () {
+    return Inertia::render('Admin/Dashboard');
+})->middleware(['auth', 'verified'])->name('admin.dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Auth routes handled by Breeze (routes/auth.php)
+require __DIR__.'/auth.php';
