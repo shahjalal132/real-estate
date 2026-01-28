@@ -13,23 +13,34 @@ createInertiaApp({
     resolve: (name) => {
         const pages = import.meta.glob([
             './web/Pages/**/*.tsx',
-            './Pages/**/*.tsx',
+            './admin/Pages/**/*.tsx',
         ]);
 
-        // Try to match the page in prioritized order
-        const variations = [
-            `./web/Pages/${name}.tsx`,
-            `./Pages/${name}.tsx`,
-        ];
+        let path = `./web/Pages/${name}.tsx`;
 
-        for (const path of variations) {
-            if (pages[path]) {
-                return resolvePageComponent(path, pages);
+        // Check if we are on client side and if strict prefix is needed
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+            path = `./admin/Pages/${name}.tsx`;
+        }
+
+        // Fallback or let it fail naturally if the specific file doesn't exist?
+        // Usually, resolvePageComponent expects the exact key.
+        // We will try to allow cross-access if needed, or just stick to strict.
+        // Given the request, strict seems preferred, but if a page is missing it will fail.
+        // We can check if it exists in the glob result.
+
+        if (!pages[path]) {
+            // Check reverse scenario if not found in expected location
+            const otherPath = path.includes('/admin/')
+                ? `./web/Pages/${name}.tsx`
+                : `./admin/Pages/${name}.tsx`;
+
+            if (pages[otherPath]) {
+                return resolvePageComponent(otherPath, pages);
             }
         }
 
-        // Fallback or let it fail naturally
-        return resolvePageComponent(`./web/Pages/${name}.tsx`, pages);
+        return resolvePageComponent(path, pages);
     },
     setup({ el, App, props }) {
         const root = createRoot(el);

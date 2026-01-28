@@ -120,14 +120,8 @@ Route::get('/quick-links/{slug}', [\App\Http\Controllers\MiscController::class, 
 Route::get('/learn-more/{slug}', [\App\Http\Controllers\MiscController::class, 'learnMore'])->name('learn-more.show');
 Route::get('/policies/{slug}', [\App\Http\Controllers\MiscController::class, 'policy'])->name('policies.show');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/admin/dashboard', function () {
-    return Inertia::render('Admin/Dashboard');
-})->middleware(['auth', 'verified'])->name('admin.dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
