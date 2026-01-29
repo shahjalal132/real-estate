@@ -8,6 +8,9 @@ use Inertia\Inertia;
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index']);
 
 // Property routes
+Route::get('/site-lock', [\App\Http\Controllers\SiteLockController::class, 'show'])->name('site-lock.show');
+Route::post('/site-lock', [\App\Http\Controllers\SiteLockController::class, 'unlock'])->name('site-lock.unlock');
+
 Route::get('/properties', [\App\Http\Controllers\PropertyController::class, 'index'])->name('properties.index');
 Route::get('/properties/auctions', [\App\Http\Controllers\PropertyController::class, 'auctions'])->name('properties.auctions');
 Route::get('/properties/residential', [\App\Http\Controllers\PropertyController::class, 'residentials'])->name('properties.residentials');

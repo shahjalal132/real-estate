@@ -219,57 +219,49 @@ export default function Todo() {
     if (!isLoaded) return null; // Avoid hydration mismatch or flash
 
     return (
-        <AppLayout title= "To-Do List" >
-        <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]" >
-            {/* Main Content */ }
-            < main className = "flex-1 flex flex-col min-w-0 bg-white" >
-                <Header
-                        activeView={ view }
-    setView = { setView }
-    onAddTask = { handleCreateTask }
-        />
+        <AppLayout title="To-Do List">
+            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]">
+                {/* Main Content */}
+                <main className="flex-1 flex flex-col min-w-0 bg-white">
+                    <Header
+                        activeView={view}
+                        setView={setView}
+                        onAddTask={handleCreateTask}
+                    />
 
-        {/* Page Content */ }
-        < div className = "flex-1 overflow-auto bg-white" >
-            { view === "List" && (
-                <TaskList
-                                
-                                tasks={ tasks }
-    onToggleTask = { handleToggleTask }
-    onAddTask = { handleCreateTask }
-        />
-                        )
-}
-{
-    view === "Board" && (
-        <BoardView
-                                tasks={ tasks }
-    onToggleTask = { handleToggleTask }
-    onAddTask = { handleCreateTask }
-    onMoveTask = { handleMoveTask }
-    onUpdateTask = { handleUpdateTask }
-    onDeleteTask = { handleDeleteTask }
-    onDuplicateTask = { handleDuplicateTask }
-        />
-                        )
-}
-{
-    view === "Calendar" && (
-        <CalendarView
-                                tasks={ tasks }
-    onAddTask = { handleCreateTask }
-        />
-                        )
-}
-{
-    view === "Dashboard" && (
-        <DashboardView tasks={ tasks } />
-                        )
-}
-{ view === "Files" && <FilesView /> }
-</div>
-    </main>
-    </div>
-    </AppLayout>
+                    {/* Page Content */}
+                    <div className="flex-1 overflow-auto bg-white">
+                        {view === "List" && (
+                            <TaskList
+                                tasks={tasks}
+                                onToggleTask={handleToggleTask}
+                                onAddTask={handleCreateTask}
+                            />
+                        )}
+                        {view === "Board" && (
+                            <BoardView
+                                tasks={tasks}
+                                onToggleTask={handleToggleTask}
+                                onAddTask={handleCreateTask}
+                                onMoveTask={handleMoveTask}
+                                onUpdateTask={handleUpdateTask}
+                                onDeleteTask={handleDeleteTask}
+                                onDuplicateTask={handleDuplicateTask}
+                            />
+                        )}
+                        {view === "Calendar" && (
+                            <CalendarView
+                                tasks={tasks}
+                                onAddTask={handleCreateTask}
+                            />
+                        )}
+                        {view === "Dashboard" && (
+                            <DashboardView tasks={tasks} />
+                        )}
+                        {view === "Files" && <FilesView />}
+                    </div>
+                </main>
+            </div>
+        </AppLayout>
     );
 }
