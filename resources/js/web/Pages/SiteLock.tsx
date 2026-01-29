@@ -1,7 +1,7 @@
 import React, { FormEventHandler } from "react";
 import { Head, useForm } from "@inertiajs/react";
 // @ts-ignore
-import bgImage from "/home/tanbir/.gemini/antigravity/brain/9b26fa50-405e-4379-b298-d4a95ccf8cf1/site_lock_background_1769661957578.png";
+const bgImage = "/assets/auth/site-lock-bg.png";
 
 export default function SiteLock() {
     const { data, setData, post, processing, errors, reset } = useForm({
