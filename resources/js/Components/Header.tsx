@@ -275,7 +275,7 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-[100] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
+        <header className="sticky top-0 z-40 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
             <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 md:py-4  h-full overflow-visible">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-6 flex-1 min-w-0">

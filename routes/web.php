@@ -93,6 +93,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tools/todo/projects', [\App\Http\Controllers\TodoController::class, 'storeProject'])->name('tools.todo.projects.store');
     Route::put('/tools/todo/projects/{todoProject}', [\App\Http\Controllers\TodoController::class, 'updateProject'])->name('tools.todo.projects.update');
     Route::delete('/tools/todo/projects/{todoProject}', [\App\Http\Controllers\TodoController::class, 'destroyProject'])->name('tools.todo.projects.destroy');
+
+    Route::post('/tools/todo/teams', [\App\Http\Controllers\TodoController::class, 'storeTeam'])->name('tools.todo.teams.store');
+    Route::put('/tools/todo/teams/{todoTeam}', [\App\Http\Controllers\TodoController::class, 'updateTeam'])->name('tools.todo.teams.update');
+    Route::delete('/tools/todo/teams/{todoTeam}', [\App\Http\Controllers\TodoController::class, 'destroyTeam'])->name('tools.todo.teams.destroy');
 });
 
 Route::get('/tools/calendar', [\App\Http\Controllers\MiscController::class, 'toolsCalendar'])->name('tools.calendar');

@@ -20,6 +20,12 @@ export interface Project {
     color?: string;
 }
 
+export interface Team {
+    id: number;
+    name: string;
+    color?: string;
+}
+
 export type ViewMode = 'List' | 'Board' | 'Calendar' | 'Dashboard' | 'Files';
 
 export interface TodoContextType {

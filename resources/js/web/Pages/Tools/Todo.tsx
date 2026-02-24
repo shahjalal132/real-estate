@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 
 import AppLayout from "../../Layouts/AppLayout";
@@ -8,15 +8,47 @@ import BoardView from "../../Components/Tools/Todo/Views/BoardView";
 import CalendarView from "../../Components/Tools/Todo/Views/CalendarView";
 import DashboardView from "../../Components/Tools/Todo/Views/DashboardView";
 import FilesView from "../../Components/Tools/Todo/Views/FilesView";
-import { Task, Project, ViewMode } from "../../Components/Tools/Todo/types";
+import { Task, Project, Team, ViewMode } from "../../Components/Tools/Todo/types";
 import Sidebar from "../../Components/Tools/Todo/Sidebar";
+import ProjectModal from "../../Components/Tools/Todo/ProjectModal";
+import TeamModal from "../../Components/Tools/Todo/TeamModal";
+import ConfirmDialog from "../../Components/Tools/Todo/ConfirmDialog";
 
-export default function Todo({ tasks: initialTasks }: { tasks: Task[], projects: Project[] }) {
+export default function Todo({
+    tasks: initialTasks,
+    projects = [],
+    teams = [],
+}: {
+    tasks: Task[];
+    projects?: Project[];
+    teams?: Team[];
+}) {
     // --- State ---
     const [view, setView] = useState<ViewMode>("List");
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default closed on mobile initially
-    const [activeFilter, setActiveFilter] = useState("My tasks");
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
+
+    const [projectModal, setProjectModal] = useState<{ open: boolean; project: Project | null }>({
+        open: false,
+        project: null,
+    });
+    const [teamModal, setTeamModal] = useState<{ open: boolean; team: Team | null }>({
+        open: false,
+        team: null,
+    });
+    const [deleteConfirm, setDeleteConfirm] = useState<{
+        open: boolean;
+        type: "project" | "team";
+        id: number;
+        name: string;
+    } | null>(null);
+
+    // Tasks filtered by selected project
+    const tasks =
+        activeProjectId == null
+            ? initialTasks
+            : initialTasks.filter((t) => t.project_id === activeProjectId);
 
     // --- Effects ---
 
@@ -42,7 +74,7 @@ export default function Todo({ tasks: initialTasks }: { tasks: Task[], projects:
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     const handleCreateTask = (initialStatus: string = "todo") => {
-        const newTask = {
+        const newTask: Record<string, unknown> = {
             title: "New Task",
             due_date: new Date().toLocaleDateString("en-US", {
                 month: "short",
@@ -55,28 +87,39 @@ export default function Todo({ tasks: initialTasks }: { tasks: Task[], projects:
             visibility: "Only me",
             status: initialStatus,
         };
+        if (activeProjectId != null) {
+            newTask.project_id = activeProjectId;
+        }
 
-        router.post('/tools/todo/tasks', newTask as any, {
+        router.post("/tools/todo/tasks", newTask as any, {
             preserveState: true,
             preserveScroll: true,
         });
     };
 
     const handleToggleTask = (id: number) => {
-        const task = initialTasks.find(t => t.id === id);
+        const task = initialTasks.find((t) => t.id === id);
         if (task) {
-            router.put(`/tools/todo/tasks/${id}`, { is_completed: !task.is_completed }, {
-                preserveState: true,
-                preserveScroll: true,
-            });
+            router.put(
+                `/tools/todo/tasks/${id}`,
+                { is_completed: !task.is_completed },
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                },
+            );
         }
     };
 
     const handleMoveTask = (taskId: number, newStatus: string) => {
-        router.put(`/tools/todo/tasks/${taskId}`, { status: newStatus }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
+        router.put(
+            `/tools/todo/tasks/${taskId}`,
+            { status: newStatus },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
     };
 
     const handleUpdateTask = (updatedTask: Task) => {
@@ -99,10 +142,74 @@ export default function Todo({ tasks: initialTasks }: { tasks: Task[], projects:
             title: `${task.title} (Copy)`,
         };
 
-        router.post('/tools/todo/tasks', duplicatedTask as any, {
+        router.post("/tools/todo/tasks", duplicatedTask as any, {
             preserveState: true,
             preserveScroll: true,
         });
+    };
+
+    // --- Project CRUD ---
+    const handleAddProject = () => setProjectModal({ open: true, project: null });
+    const handleEditProject = (project: Project) => setProjectModal({ open: true, project });
+    const handleSaveProject = (data: { name: string; color?: string }) => {
+        if (projectModal.project) {
+            router.put(`/tools/todo/projects/${projectModal.project.id}`, data, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        } else {
+            router.post("/tools/todo/projects", data, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
+        setProjectModal({ open: false, project: null });
+    };
+    const handleDeleteProject = (project: Project) => {
+        setDeleteConfirm({ open: true, type: "project", id: project.id, name: project.name });
+    };
+    const handleConfirmDeleteProject = () => {
+        if (!deleteConfirm || deleteConfirm.type !== "project") return;
+        router.delete(`/tools/todo/projects/${deleteConfirm.id}`, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+        setDeleteConfirm(null);
+    };
+
+    // --- Team CRUD ---
+    const handleAddTeam = () => setTeamModal({ open: true, team: null });
+    const handleEditTeam = (team: Team) => setTeamModal({ open: true, team });
+    const handleSaveTeam = (data: { name: string; color?: string }) => {
+        if (teamModal.team) {
+            router.put(`/tools/todo/teams/${teamModal.team.id}`, data, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        } else {
+            router.post("/tools/todo/teams", data, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
+        setTeamModal({ open: false, team: null });
+    };
+    const handleDeleteTeam = (team: Team) => {
+        setDeleteConfirm({ open: true, type: "team", id: team.id, name: team.name });
+    };
+    const handleConfirmDeleteTeam = () => {
+        if (!deleteConfirm || deleteConfirm.type !== "team") return;
+        router.delete(`/tools/todo/teams/${deleteConfirm.id}`, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+        setDeleteConfirm(null);
+    };
+
+    const handleConfirmDelete = () => {
+        if (!deleteConfirm) return;
+        if (deleteConfirm.type === "project") handleConfirmDeleteProject();
+        else handleConfirmDeleteTeam();
     };
 
     // --- Render ---
@@ -110,88 +217,130 @@ export default function Todo({ tasks: initialTasks }: { tasks: Task[], projects:
     if (!isLoaded) return null; // Avoid hydration mismatch or flash
 
     return (
-        <AppLayout title= "To-Do List" >
-        <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-full lg:h-[calc(100vh-64px)] relative" >
-            {/* Main Content */ }
-            < main className = "flex-1 flex flex-col min-w-0 bg-white md:bg-gray-50/20" >
-                <Header
-                        activeView={ view }
-    setView = { setView }
-    onAddTask = { handleCreateTask }
-    onToggleSidebar = { toggleSidebar }
-        />
+        <AppLayout title="To-Do List">
+            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-full lg:h-[calc(100vh-64px)] relative">
+                {/* Main Content */}
+                <main className="flex-1 flex flex-col min-w-0 bg-white md:bg-gray-50/20">
+                    <Header
+                        activeView={view}
+                        setView={setView}
+                        onAddTask={handleCreateTask}
+                        onToggleSidebar={toggleSidebar}
+                    />
 
-        {/* Content Wrapper */ }
-        < div className = "flex flex-1 overflow-hidden relative" >
-            {/* Sidebar Off-canvas Overlay for Mobile */ }
-    {
-        isSidebarOpen && (
-            <div 
-                                className="fixed inset-0 bg-black/40 z-20 lg:hidden"
-        onClick = {() => setIsSidebarOpen(false)
-    }
+                    {/* Content Wrapper */}
+                    <div className="flex flex-1 overflow-hidden relative">
+                        {/* Sidebar Off-canvas Overlay for Mobile */}
+                        {isSidebarOpen && (
+                            <div
+                                className="fixed inset-0 bg-black/50 z-20 lg:hidden backdrop-blur-sm"
+                                onClick={() => setIsSidebarOpen(false)}
+                                aria-hidden
                             />
-                        )
-}
+                        )}
 
-{/* Sidebar */ }
-<div className={
-    `
-                            absolute inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out bg-white
-                            lg:static lg:translate-x-0
-                            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                        `}>
-    <Sidebar
-                                isOpen={ true }
-activeFilter = { activeFilter }
-onFilterChange = {(f) => {
-    setActiveFilter(f);
-    if (window.innerWidth < 1024) setIsSidebarOpen(false);
-}}
+                        {/* Sidebar */}
+                        <div
+                            className={`
+                            absolute inset-y-0 left-0 z-30 w-[260px] max-w-[85vw] transform transition-transform duration-300 ease-out bg-white border-r border-gray-200
+                            lg:static lg:translate-x-0 lg:max-w-none
+                            ${isSidebarOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"}
+                        `}
+                        >
+                            <Sidebar
+                                isOpen={true}
+                                activeView={view}
+                                onViewChange={(newView) => {
+                                    setView(newView);
+                                    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                                        setIsSidebarOpen(false);
+                                    }
+                                }}
+                                activeProjectId={activeProjectId}
+                                onProjectChange={(id) => {
+                                    setActiveProjectId(id);
+                                    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                                        setIsSidebarOpen(false);
+                                    }
+                                }}
+                                projects={projects}
+                                onAddTask={handleCreateTask}
+                                onAddProject={handleAddProject}
+                                onEditProject={handleEditProject}
+                                onDeleteProject={handleDeleteProject}
+                                teams={teams}
+                                onAddTeam={handleAddTeam}
+                                onEditTeam={handleEditTeam}
+                                onDeleteTeam={handleDeleteTeam}
                             />
-    </div>
+                        </div>
 
-{/* Page Content */ }
-<div className="flex-1 overflow-auto bg-white" >
-    { view === "List" && (
-        <TaskList
-                                    tasks={ initialTasks }
-onToggleTask = { handleToggleTask }
-onAddTask = { handleCreateTask }
-onUpdateTask = { handleUpdateTask }
-    />
+                        {/* Page Content — mobile-friendly padding and safe area */}
+                        <div className="flex-1 overflow-auto bg-white px-3 sm:px-4 md:px-6 pb-[env(safe-area-inset-bottom)]">
+                            {view === "List" && (
+                                <TaskList
+                                    tasks={tasks}
+                                    onToggleTask={handleToggleTask}
+                                    onAddTask={handleCreateTask}
+                                    onUpdateTask={handleUpdateTask}
+                                />
                             )}
-{
-    view === "Board" && (
-        <BoardView
-                                    tasks={ initialTasks }
-    onToggleTask = { handleToggleTask }
-    onAddTask = { handleCreateTask }
-    onMoveTask = { handleMoveTask }
-    onUpdateTask = { handleUpdateTask }
-    onDeleteTask = { handleDeleteTask }
-    onDuplicateTask = { handleDuplicateTask }
-        />
-                            )
-}
-{
-    view === "Calendar" && (
-        <CalendarView
-                                    tasks={ initialTasks }
-    onAddTask = { handleCreateTask }
-        />
-                            )
-}
-{
-    view === "Dashboard" && (
-        <DashboardView tasks={ initialTasks } />
-                            )
-}
-{ view === "Files" && <FilesView /> }
-</div>
-    </div>
-    </main>
-    </div>
-    </AppLayout>
+                            {view === "Board" && (
+                                <BoardView
+                                    tasks={tasks}
+                                    onToggleTask={handleToggleTask}
+                                    onAddTask={handleCreateTask}
+                                    onMoveTask={handleMoveTask}
+                                    onUpdateTask={handleUpdateTask}
+                                    onDeleteTask={handleDeleteTask}
+                                    onDuplicateTask={handleDuplicateTask}
+                                />
+                            )}
+                            {view === "Calendar" && (
+                                <CalendarView
+                                    tasks={tasks}
+                                    onAddTask={handleCreateTask}
+                                />
+                            )}
+                            {view === "Dashboard" && (
+                                <DashboardView tasks={tasks} />
+                            )}
+                            {view === "Files" && <FilesView />}
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            {/* Project create/edit modal */}
+            <ProjectModal
+                isOpen={projectModal.open}
+                onClose={() => setProjectModal({ open: false, project: null })}
+                project={projectModal.project}
+                onSave={handleSaveProject}
+            />
+
+            {/* Team create/edit modal */}
+            <TeamModal
+                isOpen={teamModal.open}
+                onClose={() => setTeamModal({ open: false, team: null })}
+                team={teamModal.team}
+                onSave={handleSaveTeam}
+            />
+
+            {/* Delete confirmation */}
+            <ConfirmDialog
+                isOpen={deleteConfirm?.open ?? false}
+                onClose={() => setDeleteConfirm(null)}
+                onConfirm={handleConfirmDelete}
+                title={deleteConfirm?.type === "project" ? "Delete project?" : "Delete team?"}
+                message={
+                    deleteConfirm
+                        ? `"${deleteConfirm.name}" will be permanently deleted. This cannot be undone.`
+                        : ""
+                }
+                confirmLabel="Delete"
+                danger
+            />
+        </AppLayout>
     );
 }
