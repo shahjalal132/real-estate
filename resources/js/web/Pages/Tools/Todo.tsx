@@ -319,6 +319,7 @@ export default function Todo({
                                     onToggleTask={handleToggleTask}
                                     onAddTask={handleCreateTask}
                                     onUpdateTask={handleUpdateTask}
+                                    onDeleteTask={handleDeleteTask}
                                 />
                             )}
                             {view === "Board" && (
