@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function DashboardView({ tasks }: DashboardViewProps) {
     // 1. Stats Calculation
     const totalTasks = tasks.length;
-    const completedTasks = tasks.filter((t) => t.completed).length;
+    const completedTasks = tasks.filter((t) => t.is_completed).length;
     const incompleteTasks = totalTasks - completedTasks;
     // Mocking overdue as date parsing might be complex with current mock strings
     const overdueTasks = 0;
@@ -103,21 +103,21 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
 
     // 5. Data for "Task completion over time"
     const timeData = [
-        { name: "01/11", total: 0, completed: 0 },
-        { name: "01/12", total: 0, completed: 0 },
-        { name: "01/13", total: 0, completed: 0 },
-        { name: "01/14", total: 0, completed: 0 },
-        { name: "01/15", total: 0, completed: 0 },
-        { name: "01/16", total: 0, completed: 0 },
-        { name: "01/17", total: 0, completed: 0 },
-        { name: "01/18", total: 0, completed: 0 },
-        { name: "01/19", total: 0, completed: 0 },
-        { name: "01/20", total: 0, completed: 0 },
-        { name: "01/21", total: 0, completed: 0 },
-        { name: "01/22", total: 0, completed: 0 },
-        { name: "01/23", total: 0, completed: 0 },
-        { name: "01/24", total: 2, completed: 1 },
-        { name: "01/25", total: totalTasks, completed: completedTasks },
+        { name: "01/11", total: 0, is_completed: 0 },
+        { name: "01/12", total: 0, is_completed: 0 },
+        { name: "01/13", total: 0, is_completed: 0 },
+        { name: "01/14", total: 0, is_completed: 0 },
+        { name: "01/15", total: 0, is_completed: 0 },
+        { name: "01/16", total: 0, is_completed: 0 },
+        { name: "01/17", total: 0, is_completed: 0 },
+        { name: "01/18", total: 0, is_completed: 0 },
+        { name: "01/19", total: 0, is_completed: 0 },
+        { name: "01/20", total: 0, is_completed: 0 },
+        { name: "01/21", total: 0, is_completed: 0 },
+        { name: "01/22", total: 0, is_completed: 0 },
+        { name: "01/23", total: 0, is_completed: 0 },
+        { name: "01/24", total: 2, is_completed: 1 },
+        { name: "01/25", total: totalTasks, is_completed: completedTasks },
     ];
 
     return (

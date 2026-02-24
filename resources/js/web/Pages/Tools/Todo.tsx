@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { router } from "@inertiajs/react";
 
 import AppLayout from "../../Layouts/AppLayout";
 import Header from "../../Components/Tools/Todo/Header";
@@ -7,211 +8,235 @@ import BoardView from "../../Components/Tools/Todo/Views/BoardView";
 import CalendarView from "../../Components/Tools/Todo/Views/CalendarView";
 import DashboardView from "../../Components/Tools/Todo/Views/DashboardView";
 import FilesView from "../../Components/Tools/Todo/Views/FilesView";
-import { Task, ViewMode } from "../../Components/Tools/Todo/types";
+import {
+    Task,
+    Project,
+    Team,
+    ViewMode,
+} from "../../Components/Tools/Todo/types";
+import Sidebar from "../../Components/Tools/Todo/Sidebar";
+import ProjectModal from "../../Components/Tools/Todo/ProjectModal";
+import TeamModal from "../../Components/Tools/Todo/TeamModal";
+import ConfirmDialog from "../../Components/Tools/Todo/ConfirmDialog";
 
-// Mock Data for Initial State
-const initialTasks: Task[] = [
-    {
-        id: 1,
-        title: "Create a desk set up so shay can purchase",
-        dueDate: "Aug 4, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: true,
-        comments: 2,
-    },
-    {
-        id: 2,
-        title: "order biz cards",
-        dueDate: "Jul 29, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: true,
-        comments: 3,
-    },
-    {
-        id: 3,
-        title: "custom office supplies",
-        dueDate: "Aug 7, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: false,
-    },
-    {
-        id: 4,
-        title: "Lets order some Merch so team is hyped",
-        dueDate: "Aug 11, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: false,
-        comments: 4,
-    },
-    {
-        id: 5,
-        title: "open bank account and credit card",
-        dueDate: "Aug 6, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: true,
-    },
-    {
-        id: 6,
-        title: "secure the bond office space",
-        dueDate: "Aug 4, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: true,
-    },
-    {
-        id: 7,
-        title: "Find sign vendor",
-        dueDate: "Jul 31, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: false,
-        subtasks: 2,
-    },
-    {
-        id: 8,
-        title: "Task 1",
-        dueDate: "Jul 28, 2025",
-        collaborators: [],
-        project: "",
-        completed: false,
-        visibility: "Only me",
-    },
-    {
-        id: 9,
-        title: "Task 2",
-        dueDate: "Jul 29, 2025",
-        collaborators: [],
-        project: "",
-        completed: false,
-        visibility: "Only me",
-        status: "todo",
-    },
-    {
-        id: 10,
-        title: "Task 3",
-        dueDate: "Jul 30, 2025",
-        collaborators: [],
-        project: "",
-        completed: false,
-        visibility: "Only me",
-        status: "todo",
-    },
-    {
-        id: 11,
-        title: "Recently Assigned Task",
-        dueDate: "Aug 12, 2025",
-        collaborators: [],
-        project: "Tasks",
-        completed: false,
-        status: "recently_assigned",
-    },
-    {
-        id: 12,
-        title: "Do Later Task",
-        dueDate: "Sep 1, 2025",
-        collaborators: [],
-        project: "Tasks",
-        completed: false,
-        status: "do_later",
-    },
-];
-
-export default function Todo() {
+export default function Todo({
+    tasks: initialTasks,
+    projects = [],
+    teams = [],
+}: {
+    tasks: Task[];
+    projects?: Project[];
+    teams?: Team[];
+}) {
     // --- State ---
-    const [tasks, setTasks] = useState<Task[]>([]);
     const [view, setView] = useState<ViewMode>("List");
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
+
+    const [projectModal, setProjectModal] = useState<{
+        open: boolean;
+        project: Project | null;
+    }>({
+        open: false,
+        project: null,
+    });
+    const [teamModal, setTeamModal] = useState<{
+        open: boolean;
+        team: Team | null;
+    }>({
+        open: false,
+        team: null,
+    });
+    const [deleteConfirm, setDeleteConfirm] = useState<{
+        open: boolean;
+        type: "project" | "team";
+        id: number;
+        name: string;
+    } | null>(null);
+
+    // Tasks filtered by selected project
+    const tasks =
+        activeProjectId == null
+            ? initialTasks
+            : initialTasks.filter((t) => t.project_id === activeProjectId);
 
     // --- Effects ---
 
-    // Load from Local Storage on Mount
+    // Load View preference from Local Storage on Mount
     useEffect(() => {
-        const storedTasks = localStorage.getItem("todo_tasks");
         const storedView = localStorage.getItem("todo_view");
-
-        if (storedTasks) {
-            setTasks(JSON.parse(storedTasks));
-        } else {
-            setTasks(initialTasks);
-        }
-
         if (storedView) {
             setView(storedView as ViewMode);
         }
-
         setIsLoaded(true);
     }, []);
 
     // Save to Local Storage on Change
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem("todo_tasks", JSON.stringify(tasks));
-        }
-    }, [tasks, isLoaded]);
-
-    useEffect(() => {
-        if (isLoaded) {
             localStorage.setItem("todo_view", view);
         }
     }, [view, isLoaded]);
 
-    // --- Handlers ---
+    // --- Handlers (Interacting with Backend via Inertia) ---
+
+    // Toggle Mobile Sidebar
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     const handleCreateTask = (initialStatus: string = "todo") => {
-        const newTask: Task = {
-            id: Date.now(),
+        const newTask: Record<string, unknown> = {
             title: "New Task",
-            dueDate: new Date().toLocaleDateString("en-US", {
+            due_date: new Date().toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
             }),
             collaborators: ["ME"],
             project: "Inbox",
-            completed: false,
+            is_completed: false,
             visibility: "Only me",
             status: initialStatus,
         };
-        setTasks((prev) => [newTask, ...prev]);
+        if (activeProjectId != null) {
+            newTask.project_id = activeProjectId;
+        }
+
+        router.post("/tools/todo/tasks", newTask as any, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleToggleTask = (id: number) => {
-        setTasks((prev) =>
-            prev.map((t) =>
-                t.id === id ? { ...t, completed: !t.completed } : t,
-            ),
-        );
+        const task = initialTasks.find((t) => t.id === id);
+        if (task) {
+            router.put(
+                `/tools/todo/tasks/${id}`,
+                { is_completed: !task.is_completed },
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                },
+            );
+        }
     };
 
     const handleMoveTask = (taskId: number, newStatus: string) => {
-        setTasks((prev) =>
-            prev.map((t) =>
-                t.id === taskId ? { ...t, status: newStatus } : t,
-            ),
+        router.put(
+            `/tools/todo/tasks/${taskId}`,
+            { status: newStatus },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
         );
     };
 
     const handleUpdateTask = (updatedTask: Task) => {
-        setTasks((prev) =>
-            prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
-        );
+        router.put(`/tools/todo/tasks/${updatedTask.id}`, updatedTask as any, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleDeleteTask = (taskId: number) => {
-        setTasks((prev) => prev.filter((t) => t.id !== taskId));
+        router.delete(`/tools/todo/tasks/${taskId}`, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleDuplicateTask = (task: Task) => {
-        const duplicatedTask: Task = {
+        const duplicatedTask = {
             ...task,
-            id: Date.now(),
             title: `${task.title} (Copy)`,
         };
-        setTasks((prev) => [duplicatedTask, ...prev]);
+
+        router.post("/tools/todo/tasks", duplicatedTask as any, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    // --- Project CRUD ---
+    const handleAddProject = () =>
+        setProjectModal({ open: true, project: null });
+    const handleEditProject = (project: Project) =>
+        setProjectModal({ open: true, project });
+    const handleSaveProject = (data: { name: string; color?: string }) => {
+        if (projectModal.project) {
+            router.put(
+                `/tools/todo/projects/${projectModal.project.id}`,
+                data,
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                },
+            );
+        } else {
+            router.post("/tools/todo/projects", data, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
+        setProjectModal({ open: false, project: null });
+    };
+    const handleDeleteProject = (project: Project) => {
+        setDeleteConfirm({
+            open: true,
+            type: "project",
+            id: project.id,
+            name: project.name,
+        });
+    };
+    const handleConfirmDeleteProject = () => {
+        if (!deleteConfirm || deleteConfirm.type !== "project") return;
+        router.delete(`/tools/todo/projects/${deleteConfirm.id}`, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+        setDeleteConfirm(null);
+    };
+
+    // --- Team CRUD ---
+    const handleAddTeam = () => setTeamModal({ open: true, team: null });
+    const handleEditTeam = (team: Team) => setTeamModal({ open: true, team });
+    const handleSaveTeam = (data: { name: string; color?: string }) => {
+        if (teamModal.team) {
+            router.put(`/tools/todo/teams/${teamModal.team.id}`, data, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        } else {
+            router.post("/tools/todo/teams", data, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
+        setTeamModal({ open: false, team: null });
+    };
+    const handleDeleteTeam = (team: Team) => {
+        setDeleteConfirm({
+            open: true,
+            type: "team",
+            id: team.id,
+            name: team.name,
+        });
+    };
+    const handleConfirmDeleteTeam = () => {
+        if (!deleteConfirm || deleteConfirm.type !== "team") return;
+        router.delete(`/tools/todo/teams/${deleteConfirm.id}`, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+        setDeleteConfirm(null);
+    };
+
+    const handleConfirmDelete = () => {
+        if (!deleteConfirm) return;
+        if (deleteConfirm.type === "project") handleConfirmDeleteProject();
+        else handleConfirmDeleteTeam();
     };
 
     // --- Render ---
@@ -220,48 +245,143 @@ export default function Todo() {
 
     return (
         <AppLayout title="To-Do List">
-            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]">
+            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-full lg:h-[calc(100vh-64px)] relative">
                 {/* Main Content */}
-                <main className="flex-1 flex flex-col min-w-0 bg-white">
+                <main className="flex-1 flex flex-col min-w-0 bg-white md:bg-gray-50/20">
                     <Header
                         activeView={view}
                         setView={setView}
                         onAddTask={handleCreateTask}
+                        onToggleSidebar={toggleSidebar}
                     />
 
-                    {/* Page Content */}
-                    <div className="flex-1 overflow-auto bg-white">
-                        {view === "List" && (
-                            <TaskList
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
-                                onAddTask={handleCreateTask}
+                    {/* Content Wrapper */}
+                    <div className="flex flex-1 overflow-hidden relative">
+                        {/* Sidebar overlay — below app header on mobile so header stays visible */}
+                        {isSidebarOpen && (
+                            <div
+                                className="fixed top-16 left-0 right-0 bottom-0 bg-black/50 z-20 lg:hidden backdrop-blur-sm"
+                                onClick={() => setIsSidebarOpen(false)}
+                                aria-hidden
                             />
                         )}
-                        {view === "Board" && (
-                            <BoardView
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
+
+                        {/* Sidebar — mobile: fixed below app header; desktop: static in flow */}
+                        <div
+                            className={`
+                            z-30 w-[260px] max-w-[85vw] transform transition-transform duration-300 ease-out bg-white border-r border-gray-200 flex flex-col
+                            max-lg:fixed max-lg:top-20 max-lg:left-0 max-lg:bottom-0
+                            lg:static lg:translate-x-0 lg:max-w-none
+                            ${isSidebarOpen ? "translate-x-0 shadow-xl max-lg:shadow-2xl" : "-translate-x-full"}
+                            lg:translate-x-0!
+                        `}
+                        >
+                            <Sidebar
+                                isOpen={true}
+                                activeView={view}
+                                onViewChange={(newView) => {
+                                    setView(newView);
+                                    if (
+                                        typeof window !== "undefined" &&
+                                        window.innerWidth < 1024
+                                    ) {
+                                        setIsSidebarOpen(false);
+                                    }
+                                }}
+                                activeProjectId={activeProjectId}
+                                onProjectChange={(id) => {
+                                    setActiveProjectId(id);
+                                    if (
+                                        typeof window !== "undefined" &&
+                                        window.innerWidth < 1024
+                                    ) {
+                                        setIsSidebarOpen(false);
+                                    }
+                                }}
+                                projects={projects}
                                 onAddTask={handleCreateTask}
-                                onMoveTask={handleMoveTask}
-                                onUpdateTask={handleUpdateTask}
-                                onDeleteTask={handleDeleteTask}
-                                onDuplicateTask={handleDuplicateTask}
+                                onAddProject={handleAddProject}
+                                onEditProject={handleEditProject}
+                                onDeleteProject={handleDeleteProject}
+                                teams={teams}
+                                onAddTeam={handleAddTeam}
+                                onEditTeam={handleEditTeam}
+                                onDeleteTeam={handleDeleteTeam}
+                                onClose={() => setIsSidebarOpen(false)}
                             />
-                        )}
-                        {view === "Calendar" && (
-                            <CalendarView
-                                tasks={tasks}
-                                onAddTask={handleCreateTask}
-                            />
-                        )}
-                        {view === "Dashboard" && (
-                            <DashboardView tasks={tasks} />
-                        )}
-                        {view === "Files" && <FilesView />}
+                        </div>
+
+                        {/* Page Content — mobile-friendly padding and safe area */}
+                        <div className="flex-1 overflow-auto bg-white px-3 sm:px-4 md:px-6 pb-[env(safe-area-inset-bottom)]">
+                            {view === "List" && (
+                                <TaskList
+                                    tasks={tasks}
+                                    onToggleTask={handleToggleTask}
+                                    onAddTask={handleCreateTask}
+                                    onUpdateTask={handleUpdateTask}
+                                    onDeleteTask={handleDeleteTask}
+                                />
+                            )}
+                            {view === "Board" && (
+                                <BoardView
+                                    tasks={tasks}
+                                    onToggleTask={handleToggleTask}
+                                    onAddTask={handleCreateTask}
+                                    onMoveTask={handleMoveTask}
+                                    onUpdateTask={handleUpdateTask}
+                                    onDeleteTask={handleDeleteTask}
+                                    onDuplicateTask={handleDuplicateTask}
+                                />
+                            )}
+                            {view === "Calendar" && (
+                                <CalendarView
+                                    tasks={tasks}
+                                    onAddTask={handleCreateTask}
+                                />
+                            )}
+                            {view === "Dashboard" && (
+                                <DashboardView tasks={tasks} />
+                            )}
+                            {view === "Files" && <FilesView />}
+                        </div>
                     </div>
                 </main>
             </div>
+
+            {/* Project create/edit modal */}
+            <ProjectModal
+                isOpen={projectModal.open}
+                onClose={() => setProjectModal({ open: false, project: null })}
+                project={projectModal.project}
+                onSave={handleSaveProject}
+            />
+
+            {/* Team create/edit modal */}
+            <TeamModal
+                isOpen={teamModal.open}
+                onClose={() => setTeamModal({ open: false, team: null })}
+                team={teamModal.team}
+                onSave={handleSaveTeam}
+            />
+
+            {/* Delete confirmation */}
+            <ConfirmDialog
+                isOpen={deleteConfirm?.open ?? false}
+                onClose={() => setDeleteConfirm(null)}
+                onConfirm={handleConfirmDelete}
+                title={
+                    deleteConfirm?.type === "project"
+                        ? "Delete project?"
+                        : "Delete team?"
+                }
+                message={
+                    deleteConfirm
+                        ? `"${deleteConfirm.name}" will be permanently deleted. This cannot be undone.`
+                        : ""
+                }
+                confirmLabel="Delete"
+                danger
+            />
         </AppLayout>
     );
 }

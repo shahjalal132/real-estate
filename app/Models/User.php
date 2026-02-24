@@ -62,4 +62,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(TodoTask::class);
     }
+
+    /**
+     * Get the todo projects for the user.
+     */
+    public function todoProjects(): HasMany
+    {
+        return $this->hasMany(TodoProject::class);
+    }
+
+    /**
+     * Get the todo teams for the user.
+     */
+    public function todoTeams(): HasMany
+    {
+        return $this->hasMany(TodoTeam::class);
+    }
+
+    /**
+     * Get the calendar events for the user.
+     */
+    public function calendarEvents(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class);
+    }
 }

@@ -1,14 +1,4 @@
-
-import {
-
-    List,
-    LayoutGrid,
-    Calendar,
-    BarChart2,
-    Plus,
-    Users,
-} from "lucide-react";
-import Tab from "./Tab";
+import { Menu } from "lucide-react";
 import ViewToolbar from "./ViewToolbar";
 import { ViewMode } from "./types";
 
@@ -16,70 +6,32 @@ interface HeaderProps {
     activeView: ViewMode;
     setView: (view: ViewMode) => void;
     onAddTask: () => void;
+    onToggleSidebar?: () => void;
 }
 
 export default function Header({
     activeView,
-    setView,
     onAddTask,
+    onToggleSidebar,
 }: HeaderProps) {
     return (
-        <>
-        {/* View Controls */ }
-        < div className = "px-6 pt-2 pb-2" >
-            <div className="flex items-center justify-between mb-4" >
-                <div className="flex items-center gap-3" >
-                    <div>
-                    <div className="flex items-center gap-4 mt-2 border-b border-transparent" >
-                        <Tab
-                                    active={ activeView === "List" }
-    label = "List"
-    icon = {< List size = { 14} />}
-onClick = {() => setView("List")}
-                                />
-    < Tab
-active = { activeView === "Board"}
-label = "Board"
-icon = {< LayoutGrid size = { 14} />}
-onClick = {() => setView("Board")}
-                                />
-    < Tab
-active = { activeView === "Calendar"}
-label = "Calendar"
-icon = {< Calendar size = { 14} />}
-onClick = {() => setView("Calendar")}
-                                />
-    < Tab
-active = { activeView === "Dashboard"}
-label = "Dashboard"
-icon = {< BarChart2 size = { 14} />}
-onClick = {() => setView("Dashboard")}
-                                />
-    < Tab
-label = "Files"
-active = { activeView === "Files"}
-onClick = {() => setView("Files")}
-                                />
-    < button className = "p-1 hover:bg-gray-100 rounded-md text-gray-500" >
-        <Plus size={ 14 } />
-            </button>
+        <div className="px-4 sm:px-6 py-3 bg-white border-b border-gray-200 min-h-[52px] flex items-center">
+            <div className="flex items-center justify-between gap-3 w-full">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <button
+                        type="button"
+                        onClick={onToggleSidebar}
+                        className="p-3 -ml-2 rounded-xl text-gray-500 hover:bg-gray-100 hover:text-gray-700 active:bg-gray-200 transition-colors lg:hidden min-w-[44px] min-h-[44px] touch-manipulation"
+                        aria-label="Toggle sidebar"
+                    >
+                        <Menu size={22} />
+                    </button>
+                    <h1 className="text-lg font-semibold text-gray-900 truncate">
+                        To-Do
+                    </h1>
+                </div>
+                <ViewToolbar activeView={activeView} onAddTask={onAddTask} />
             </div>
-            </div>
-            </div>
-            < div className = "flex items-center gap-2" >
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md border border-gray-200 bg-white" >
-                    <Users size={ 14 } />
-Share
-    </button>
-    < button className = "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md border border-gray-200 bg-white" >
-        <LayoutGrid size={ 14 } />
-Customize
-    </button>
-    </div>
-    </div>
-
-    < ViewToolbar activeView = { activeView } onAddTask = { onAddTask } />
         </div>
-        </>
     );
 }

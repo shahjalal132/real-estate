@@ -13,13 +13,16 @@ class TodoTask extends Model
     protected $fillable = [
         'user_id',
         'title',
+        'description',
         'due_date',
         'project',
+        'project_id',
         'is_completed',
         'status',
         'priority',
         'collaborators',
         'visibility',
+        'position',
     ];
 
     protected $casts = [
@@ -30,5 +33,10 @@ class TodoTask extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(TodoProject::class, 'project_id');
     }
 }

@@ -149,7 +149,7 @@ export default function CalendarView({ tasks, onAddTask }: CalendarViewProps) {
             <div className="flex-1 grid grid-cols-7 h-full overflow-hidden divide-x divide-gray-200">
                 {weekDays.map((date, idx) => {
                     const dateStr = formatDateForComparison(date);
-                    const dayTasks = tasks.filter((t) => t.dueDate === dateStr);
+                    const dayTasks = tasks.filter((t) => t.due_date === dateStr);
                     const isCurrentDay = isToday(date);
 
                     return (
@@ -186,13 +186,13 @@ export default function CalendarView({ tasks, onAddTask }: CalendarViewProps) {
                                     <div
                                         key={task.id}
                                         className={`p-3 rounded border text-sm shadow-sm cursor-pointer hover:shadow-md transition-all ${
-                                            task.completed
+                                            task.is_completed
                                                 ? "bg-gray-50 border-gray-200 text-gray-400"
                                                 : "bg-white border-gray-200 text-gray-800"
                                         }`}
                                     >
                                         <div
-                                            className={`font-medium mb-1 ${task.completed ? "line-through" : ""}`}
+                                            className={`font-medium mb-1 ${task.is_completed ? "line-through" : ""}`}
                                         >
                                             {task.title}
                                         </div>
