@@ -141,9 +141,9 @@ export default function BoardView({
     };
 
     return (
-        <div className= "p-6 h-full overflow-x-auto bg-gray-50 text-gray-900" >
+        <div className= "p-4 sm:p-6 h-full overflow-x-auto bg-gray-50 text-gray-900 hide-scrollbar" >
         <DragDropContext onDragEnd={ onDragEnd }>
-            <div className="flex gap-6 h-full" >
+            <div className="flex gap-4 sm:gap-6 h-full min-w-max pb-4" >
             {
                 sections.map((section) => {
                     const sectionTasks = getTasksByStatus(section.id);
@@ -157,8 +157,8 @@ export default function BoardView({
                                         ref= { provided.innerRef }
                     {...provided.droppableProps}
     className = {`w-[300px] shrink-0 flex flex-col h-full max-h-full ${snapshot.isDraggingOver
-            ? "bg-blue-50"
-            : ""
+        ? "bg-blue-50"
+        : ""
         }`
 }
                                     >
@@ -345,7 +345,7 @@ function BoardCard({
         `w-5 h-5 rounded-full border ${isCompleted
             ? "bg-[#5CB85C] border-[#5CB85C]"
             : "border-gray-300 hover:border-gray-400"
-        } flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mt-0.5`
+            } flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mt-0.5`
     }
     onClick = {(e) => {
         e.stopPropagation();
@@ -400,7 +400,7 @@ onClick = {() => setIsEditing(true)}
         (task.due_date || "").toLowerCase().includes("tomorrow")
         ? "text-[#5CB85C]"
         : "text-gray-500"
-    }`
+        }`
 }
                 >
     { task.due_date }

@@ -78,4 +78,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(TodoTeam::class);
     }
+
+    /**
+     * Get the calendar events for the user.
+     */
+    public function calendarEvents(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class);
+    }
 }

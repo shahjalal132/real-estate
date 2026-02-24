@@ -97,9 +97,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tools/todo/teams', [\App\Http\Controllers\TodoController::class, 'storeTeam'])->name('tools.todo.teams.store');
     Route::put('/tools/todo/teams/{todoTeam}', [\App\Http\Controllers\TodoController::class, 'updateTeam'])->name('tools.todo.teams.update');
     Route::delete('/tools/todo/teams/{todoTeam}', [\App\Http\Controllers\TodoController::class, 'destroyTeam'])->name('tools.todo.teams.destroy');
-});
 
-Route::get('/tools/calendar', [\App\Http\Controllers\MiscController::class, 'toolsCalendar'])->name('tools.calendar');
+    Route::get('/tools/calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('tools.calendar');
+    Route::post('/tools/calendar/events', [\App\Http\Controllers\CalendarController::class, 'store'])->name('tools.calendar.events.store');
+    Route::put('/tools/calendar/events/{calendarEvent}', [\App\Http\Controllers\CalendarController::class, 'update'])->name('tools.calendar.events.update');
+    Route::delete('/tools/calendar/events/{calendarEvent}', [\App\Http\Controllers\CalendarController::class, 'destroy'])->name('tools.calendar.events.destroy');
+});
 Route::get('/tools/chatgpt-assistant', [\App\Http\Controllers\MiscController::class, 'toolsChatGPTAssistant'])->name('tools.chatgpt-assistant');
 Route::get('/links/quick-links', [\App\Http\Controllers\MiscController::class, 'linksQuickLinks'])->name('links.quick-links');
 
