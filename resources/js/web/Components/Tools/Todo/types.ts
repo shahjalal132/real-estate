@@ -1,14 +1,23 @@
 export interface Task {
     id: number;
     title: string;
-    dueDate: string;
-    collaborators: string[];
-    project: string;
-    completed: boolean;
+    description?: string;
+    due_date?: string;
+    collaborators?: string[];
+    project?: string;
+    project_id?: number | null;
+    is_completed: boolean;
     comments?: number;
     subtasks?: number;
     visibility?: string;
-    status?: string; // e.g., 'todo', 'doing', 'done', 'backlog'
+    status?: string;
+    position?: number;
+}
+
+export interface Project {
+    id: number;
+    name: string;
+    color?: string;
 }
 
 export type ViewMode = 'List' | 'Board' | 'Calendar' | 'Dashboard' | 'Files';

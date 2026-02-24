@@ -85,20 +85,14 @@ Route::get('/tools/zoning-codes', [\App\Http\Controllers\MiscController::class, 
 
 // Todo Routes (Authenticated)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/tools/todo', function() { return redirect()->route('tools.todo.my-tasks'); });
-    Route::get('/tools/todo/my-tasks', [\App\Http\Controllers\TodoController::class, 'index'])->name('tools.todo.my-tasks');
+    Route::get('/tools/todo', [\App\Http\Controllers\TodoController::class, 'index'])->name('tools.todo.index');
     Route::post('/tools/todo/tasks', [\App\Http\Controllers\TodoController::class, 'store'])->name('tools.todo.store');
     Route::put('/tools/todo/tasks/{todoTask}', [\App\Http\Controllers\TodoController::class, 'update'])->name('tools.todo.update');
     Route::delete('/tools/todo/tasks/{todoTask}', [\App\Http\Controllers\TodoController::class, 'destroy'])->name('tools.todo.destroy');
 
-    // Other Todo Views
-    Route::get('/tools/todo/home', [\App\Http\Controllers\MiscController::class, 'todoHome'])->name('tools.todo.home');
-    Route::get('/tools/todo/inbox', [\App\Http\Controllers\MiscController::class, 'todoInbox'])->name('tools.todo.inbox');
-    Route::get('/tools/todo/reporting', [\App\Http\Controllers\MiscController::class, 'todoReporting'])->name('tools.todo.reporting');
-    Route::get('/tools/todo/portfolios', [\App\Http\Controllers\MiscController::class, 'todoPortfolios'])->name('tools.todo.portfolios');
-    Route::get('/tools/todo/goals', [\App\Http\Controllers\MiscController::class, 'todoGoals'])->name('tools.todo.goals');
-    Route::get('/tools/todo/projects', [\App\Http\Controllers\MiscController::class, 'todoProjects'])->name('tools.todo.projects');
-    Route::get('/tools/todo/teams', [\App\Http\Controllers\MiscController::class, 'todoTeams'])->name('tools.todo.teams');
+    Route::post('/tools/todo/projects', [\App\Http\Controllers\TodoController::class, 'storeProject'])->name('tools.todo.projects.store');
+    Route::put('/tools/todo/projects/{todoProject}', [\App\Http\Controllers\TodoController::class, 'updateProject'])->name('tools.todo.projects.update');
+    Route::delete('/tools/todo/projects/{todoProject}', [\App\Http\Controllers\TodoController::class, 'destroyProject'])->name('tools.todo.projects.destroy');
 });
 
 Route::get('/tools/calendar', [\App\Http\Controllers\MiscController::class, 'toolsCalendar'])->name('tools.calendar');

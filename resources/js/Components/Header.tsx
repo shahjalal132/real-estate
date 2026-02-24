@@ -1,13 +1,14 @@
 import { useState, useRef } from "react";
 import { Link, usePage } from "@inertiajs/react";
-import MegaMenu from "./MegaMenu";
-import { Menu, ChevronDown } from "lucide-react";
+import MegaMenu, { menus, menuAliases } from "./MegaMenu";
+import { Menu, ChevronDown, ChevronRight, X } from "lucide-react";
 import Button from "./Button";
 import SearchComponent from "./SearchComponent";
+import MobileMenu from "./MobileMenu";
 
 import { PageProps } from "@/types";
 
-interface NavigationItem {
+export interface NavigationItem {
     label: string;
     link: string;
     type: "megaMenu" | "page";
@@ -275,7 +276,7 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-[100] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
-            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 pt-4 pb-3 h-full overflow-visible">
+            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 md:py-4  h-full overflow-visible">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-6 flex-1 min-w-0">
                         {/* Logo */}
@@ -576,14 +577,14 @@ export default function Header() {
                                             ? "/admin/dashboard"
                                             : "/dashboard"
                                     }
-                                    className="tracking-[1px] uppercase"
+                                    className="tracking-[1px]"
                                 >
-                                    Go To Dashboard
+                                    Dashboard
                                 </Button>
                             ) : (
                                 <Button
                                     href="/login"
-                                    className="tracking-[1px] uppercase"
+                                    className="tracking-[1px]"
                                 >
                                     Log in
                                 </Button>
@@ -601,52 +602,13 @@ export default function Header() {
                 </div>
             </div>
 
-            {/* Mobile Menu */}
-            {mobileMenuOpen && (
-                <div className="lg:hidden bg-white border-t">
-                    <nav className="px-4 py-4 space-y-2">
-                        {/* Mobile Search - Only show on properties pages */}
-                        {showSearch && (
-                            <div className="mb-4">
-                                <SearchComponent
-                                    onClose={() => setMobileMenuOpen(false)}
-                                />
-                            </div>
-                        )}
-                        {navigationItems.map((item) => (
-                            <Link
-                                key={item.label}
-                                href={item.link}
-                                className="block py-2 text-sm font-medium text-[#333333] hover:text-[#0066CC] capitalize"
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
-                        {auth.user ? (
-                            <Link
-                                href={
-                                    auth.user.user_type === "admin"
-                                        ? "/admin/dashboard"
-                                        : "/dashboard"
-                                }
-                                className="block mt-4 bg-[#0066CC] text-white px-5 py-2.5 rounded text-sm font-semibold text-center"
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                Go To Dashboard
-                            </Link>
-                        ) : (
-                            <Link
-                                href="/login"
-                                className="block mt-4 bg-[#0066CC] text-white px-5 py-2.5 rounded text-sm font-semibold text-center"
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                Log In
-                            </Link>
-                        )}
-                    </nav>
-                </div>
-            )}
+            <MobileMenu
+                isOpen={mobileMenuOpen}
+                onClose={() => setMobileMenuOpen(false)}
+                showSearch={showSearch}
+                navigationItems={navigationItems}
+                auth={auth}
+            />
         </header>
     );
 }

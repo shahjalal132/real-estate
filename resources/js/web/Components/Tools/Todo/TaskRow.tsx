@@ -18,7 +18,7 @@ export default function TaskRow({
     const titleInputRef = useRef<HTMLInputElement>(null);
 
     const [isEditingDate, setIsEditingDate] = useState(false);
-    const [date, setDate] = useState(task.dueDate);
+    const [date, setDate] = useState(task.due_date);
     const dateInputRef = useRef<HTMLInputElement>(null);
 
     const [isEditingProject, setIsEditingProject] = useState(false);
@@ -52,8 +52,8 @@ export default function TaskRow({
 
     const handleDateSave = () => {
         setIsEditingDate(false);
-        if (date !== task.dueDate) {
-            onUpdateTask(task.id, { dueDate: date });
+        if (date !== task.due_date) {
+            onUpdateTask(task.id, { due_date: date });
         }
     };
 
@@ -80,18 +80,18 @@ export default function TaskRow({
                 >
     <div
                         className={
-    `w-4 h-4 rounded-full border ${task.completed
+    `w-4 h-4 rounded-full border ${task.is_completed
         ? "bg-[#5CB85C] border-[#5CB85C]"
         : "border-gray-400 hover:border-black"
     } flex items-center justify-center transition-colors`
 }
                     >
 {
-    task.completed && (
+    task.is_completed && (
         <CheckSquare size={ 10 } className = "text-white" />
                         )}
 {
-    !task.completed && (
+    !task.is_completed && (
         <CheckSquare
                                 size={ 10 }
     className = "text-white opacity-0 group-hover/check:opacity-20 text-black"
@@ -140,14 +140,14 @@ onClick = {() => {
 {/* Due Date Column */ }
 <div
                 className={
-    `pl-1 border-l border-[#F0F0F0] h-full flex items-center ${task.dueDate?.includes("Jul") || task.dueDate?.includes("Aug")
+    `pl-1 border-l border-[#F0F0F0] h-full flex items-center ${task.due_date?.includes("Jul") || task.due_date?.includes("Aug")
         ? "text-[#D32F2F]"
         : "text-gray-500"
     } text-xs cursor-pointer hover:bg-white px-1 rounded transition-colors`
 }
 onClick = {() => {
     setIsEditingDate(true);
-    setDate(task.dueDate);
+    setDate(task.due_date);
 }}
             >
     {
@@ -163,7 +163,7 @@ onKeyDown = {(e) => {
 className = "w-full bg-transparent border-none outline-none p-0 text-xs text-inherit h-4"
     />
                 ) : (
-    task.dueDate
+    task.due_date
 )}
 </div>
 

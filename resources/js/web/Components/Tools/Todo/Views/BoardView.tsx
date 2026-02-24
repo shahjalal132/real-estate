@@ -308,7 +308,7 @@ function BoardCard({
     onContextMenu,
     dragHandleProps,
 }: BoardCardProps) {
-    const isCompleted = task.completed;
+    const isCompleted = task.is_completed;
     const [isEditing, setIsEditing] = useState(false);
     const [editTitle, setEditTitle] = useState(task.title);
 
@@ -396,14 +396,14 @@ onClick = {() => setIsEditing(true)}
 <div className="flex items-center justify-between text-xs mt-3" >
     <div
                     className={
-    `${(task.dueDate || "").toLowerCase().includes("today") ||
-        (task.dueDate || "").toLowerCase().includes("tomorrow")
+    `${(task.due_date || "").toLowerCase().includes("today") ||
+        (task.due_date || "").toLowerCase().includes("tomorrow")
         ? "text-[#5CB85C]"
         : "text-gray-500"
     }`
 }
                 >
-    { task.dueDate }
+    { task.due_date }
     </div>
 {
     task.collaborators && task.collaborators.length > 0 && (

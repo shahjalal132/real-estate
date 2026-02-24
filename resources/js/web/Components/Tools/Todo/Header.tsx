@@ -1,6 +1,4 @@
-
 import {
-
     List,
     LayoutGrid,
     Calendar,
@@ -16,12 +14,14 @@ interface HeaderProps {
     activeView: ViewMode;
     setView: (view: ViewMode) => void;
     onAddTask: () => void;
+    onToggleSidebar?: () => void;
 }
 
 export default function Header({
     activeView,
     setView,
     onAddTask,
+    onToggleSidebar,
 }: HeaderProps) {
     return (
         <>

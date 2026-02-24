@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { router } from "@inertiajs/react";
 
 import AppLayout from "../../Layouts/AppLayout";
 import Header from "../../Components/Tools/Todo/Header";
@@ -7,211 +8,101 @@ import BoardView from "../../Components/Tools/Todo/Views/BoardView";
 import CalendarView from "../../Components/Tools/Todo/Views/CalendarView";
 import DashboardView from "../../Components/Tools/Todo/Views/DashboardView";
 import FilesView from "../../Components/Tools/Todo/Views/FilesView";
-import { Task, ViewMode } from "../../Components/Tools/Todo/types";
+import { Task, Project, ViewMode } from "../../Components/Tools/Todo/types";
+import Sidebar from "../../Components/Tools/Todo/Sidebar";
 
-// Mock Data for Initial State
-const initialTasks: Task[] = [
-    {
-        id: 1,
-        title: "Create a desk set up so shay can purchase",
-        dueDate: "Aug 4, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: true,
-        comments: 2,
-    },
-    {
-        id: 2,
-        title: "order biz cards",
-        dueDate: "Jul 29, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: true,
-        comments: 3,
-    },
-    {
-        id: 3,
-        title: "custom office supplies",
-        dueDate: "Aug 7, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: false,
-    },
-    {
-        id: 4,
-        title: "Lets order some Merch so team is hyped",
-        dueDate: "Aug 11, 2025",
-        collaborators: ["AA", "AR"],
-        project: "Tasks to get done",
-        completed: false,
-        comments: 4,
-    },
-    {
-        id: 5,
-        title: "open bank account and credit card",
-        dueDate: "Aug 6, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: true,
-    },
-    {
-        id: 6,
-        title: "secure the bond office space",
-        dueDate: "Aug 4, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: true,
-    },
-    {
-        id: 7,
-        title: "Find sign vendor",
-        dueDate: "Jul 31, 2025",
-        collaborators: ["AA"],
-        project: "Tasks to get done",
-        completed: false,
-        subtasks: 2,
-    },
-    {
-        id: 8,
-        title: "Task 1",
-        dueDate: "Jul 28, 2025",
-        collaborators: [],
-        project: "",
-        completed: false,
-        visibility: "Only me",
-    },
-    {
-        id: 9,
-        title: "Task 2",
-        dueDate: "Jul 29, 2025",
-        collaborators: [],
-        project: "",
-        completed: false,
-        visibility: "Only me",
-        status: "todo",
-    },
-    {
-        id: 10,
-        title: "Task 3",
-        dueDate: "Jul 30, 2025",
-        collaborators: [],
-        project: "",
-        completed: false,
-        visibility: "Only me",
-        status: "todo",
-    },
-    {
-        id: 11,
-        title: "Recently Assigned Task",
-        dueDate: "Aug 12, 2025",
-        collaborators: [],
-        project: "Tasks",
-        completed: false,
-        status: "recently_assigned",
-    },
-    {
-        id: 12,
-        title: "Do Later Task",
-        dueDate: "Sep 1, 2025",
-        collaborators: [],
-        project: "Tasks",
-        completed: false,
-        status: "do_later",
-    },
-];
-
-export default function Todo() {
+export default function Todo({ tasks: initialTasks }: { tasks: Task[], projects: Project[] }) {
     // --- State ---
-    const [tasks, setTasks] = useState<Task[]>([]);
     const [view, setView] = useState<ViewMode>("List");
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default closed on mobile initially
+    const [activeFilter, setActiveFilter] = useState("My tasks");
 
     // --- Effects ---
 
-    // Load from Local Storage on Mount
+    // Load View preference from Local Storage on Mount
     useEffect(() => {
-        const storedTasks = localStorage.getItem("todo_tasks");
         const storedView = localStorage.getItem("todo_view");
-
-        if (storedTasks) {
-            setTasks(JSON.parse(storedTasks));
-        } else {
-            setTasks(initialTasks);
-        }
-
         if (storedView) {
             setView(storedView as ViewMode);
         }
-
         setIsLoaded(true);
     }, []);
 
     // Save to Local Storage on Change
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem("todo_tasks", JSON.stringify(tasks));
-        }
-    }, [tasks, isLoaded]);
-
-    useEffect(() => {
-        if (isLoaded) {
             localStorage.setItem("todo_view", view);
         }
     }, [view, isLoaded]);
 
-    // --- Handlers ---
+    // --- Handlers (Interacting with Backend via Inertia) ---
+
+    // Toggle Mobile Sidebar
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     const handleCreateTask = (initialStatus: string = "todo") => {
-        const newTask: Task = {
-            id: Date.now(),
+        const newTask = {
             title: "New Task",
-            dueDate: new Date().toLocaleDateString("en-US", {
+            due_date: new Date().toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
             }),
             collaborators: ["ME"],
             project: "Inbox",
-            completed: false,
+            is_completed: false,
             visibility: "Only me",
             status: initialStatus,
         };
-        setTasks((prev) => [newTask, ...prev]);
+
+        router.post('/tools/todo/tasks', newTask as any, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleToggleTask = (id: number) => {
-        setTasks((prev) =>
-            prev.map((t) =>
-                t.id === id ? { ...t, completed: !t.completed } : t,
-            ),
-        );
+        const task = initialTasks.find(t => t.id === id);
+        if (task) {
+            router.put(`/tools/todo/tasks/${id}`, { is_completed: !task.is_completed }, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
     };
 
     const handleMoveTask = (taskId: number, newStatus: string) => {
-        setTasks((prev) =>
-            prev.map((t) =>
-                t.id === taskId ? { ...t, status: newStatus } : t,
-            ),
-        );
+        router.put(`/tools/todo/tasks/${taskId}`, { status: newStatus }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleUpdateTask = (updatedTask: Task) => {
-        setTasks((prev) =>
-            prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
-        );
+        router.put(`/tools/todo/tasks/${updatedTask.id}`, updatedTask as any, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleDeleteTask = (taskId: number) => {
-        setTasks((prev) => prev.filter((t) => t.id !== taskId));
+        router.delete(`/tools/todo/tasks/${taskId}`, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleDuplicateTask = (task: Task) => {
-        const duplicatedTask: Task = {
+        const duplicatedTask = {
             ...task,
-            id: Date.now(),
             title: `${task.title} (Copy)`,
         };
-        setTasks((prev) => [duplicatedTask, ...prev]);
+
+        router.post('/tools/todo/tasks', duplicatedTask as any, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     // --- Render ---
@@ -219,49 +110,88 @@ export default function Todo() {
     if (!isLoaded) return null; // Avoid hydration mismatch or flash
 
     return (
-        <AppLayout title="To-Do List">
-            <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-[calc(100vh-64px)]">
-                {/* Main Content */}
-                <main className="flex-1 flex flex-col min-w-0 bg-white">
-                    <Header
-                        activeView={view}
-                        setView={setView}
-                        onAddTask={handleCreateTask}
-                    />
+        <AppLayout title= "To-Do List" >
+        <div className="flex w-full bg-white font-sans text-[#2A2B2D] overflow-hidden h-full lg:h-[calc(100vh-64px)] relative" >
+            {/* Main Content */ }
+            < main className = "flex-1 flex flex-col min-w-0 bg-white md:bg-gray-50/20" >
+                <Header
+                        activeView={ view }
+    setView = { setView }
+    onAddTask = { handleCreateTask }
+    onToggleSidebar = { toggleSidebar }
+        />
 
-                    {/* Page Content */}
-                    <div className="flex-1 overflow-auto bg-white">
-                        {view === "List" && (
-                            <TaskList
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
-                                onAddTask={handleCreateTask}
+        {/* Content Wrapper */ }
+        < div className = "flex flex-1 overflow-hidden relative" >
+            {/* Sidebar Off-canvas Overlay for Mobile */ }
+    {
+        isSidebarOpen && (
+            <div 
+                                className="fixed inset-0 bg-black/40 z-20 lg:hidden"
+        onClick = {() => setIsSidebarOpen(false)
+    }
                             />
-                        )}
-                        {view === "Board" && (
-                            <BoardView
-                                tasks={tasks}
-                                onToggleTask={handleToggleTask}
-                                onAddTask={handleCreateTask}
-                                onMoveTask={handleMoveTask}
-                                onUpdateTask={handleUpdateTask}
-                                onDeleteTask={handleDeleteTask}
-                                onDuplicateTask={handleDuplicateTask}
+                        )
+}
+
+{/* Sidebar */ }
+<div className={
+    `
+                            absolute inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out bg-white
+                            lg:static lg:translate-x-0
+                            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                        `}>
+    <Sidebar
+                                isOpen={ true }
+activeFilter = { activeFilter }
+onFilterChange = {(f) => {
+    setActiveFilter(f);
+    if (window.innerWidth < 1024) setIsSidebarOpen(false);
+}}
                             />
-                        )}
-                        {view === "Calendar" && (
-                            <CalendarView
-                                tasks={tasks}
-                                onAddTask={handleCreateTask}
-                            />
-                        )}
-                        {view === "Dashboard" && (
-                            <DashboardView tasks={tasks} />
-                        )}
-                        {view === "Files" && <FilesView />}
-                    </div>
-                </main>
-            </div>
-        </AppLayout>
+    </div>
+
+{/* Page Content */ }
+<div className="flex-1 overflow-auto bg-white" >
+    { view === "List" && (
+        <TaskList
+                                    tasks={ initialTasks }
+onToggleTask = { handleToggleTask }
+onAddTask = { handleCreateTask }
+onUpdateTask = { handleUpdateTask }
+    />
+                            )}
+{
+    view === "Board" && (
+        <BoardView
+                                    tasks={ initialTasks }
+    onToggleTask = { handleToggleTask }
+    onAddTask = { handleCreateTask }
+    onMoveTask = { handleMoveTask }
+    onUpdateTask = { handleUpdateTask }
+    onDeleteTask = { handleDeleteTask }
+    onDuplicateTask = { handleDuplicateTask }
+        />
+                            )
+}
+{
+    view === "Calendar" && (
+        <CalendarView
+                                    tasks={ initialTasks }
+    onAddTask = { handleCreateTask }
+        />
+                            )
+}
+{
+    view === "Dashboard" && (
+        <DashboardView tasks={ initialTasks } />
+                            )
+}
+{ view === "Files" && <FilesView /> }
+</div>
+    </div>
+    </main>
+    </div>
+    </AppLayout>
     );
 }

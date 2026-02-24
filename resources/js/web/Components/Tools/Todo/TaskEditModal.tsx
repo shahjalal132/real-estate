@@ -86,9 +86,9 @@ export default function TaskEditModal({
                             </label>
                             <input
                                 type="text"
-                                value={formData.dueDate || ""}
+                                value={formData.due_date || ""}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, dueDate: e.target.value })
+                                    setFormData({ ...formData, due_date: e.target.value })
                                 }
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="e.g., Aug 4, 2025 or Today or Tomorrow"
@@ -157,9 +157,9 @@ export default function TaskEditModal({
                             <input
                                 type="checkbox"
                                 id="completed"
-                                checked={formData.completed || false}
+                                checked={formData.is_completed || false}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, completed: e.target.checked })
+                                    setFormData({ ...formData, is_completed: e.target.checked })
                                 }
                                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
