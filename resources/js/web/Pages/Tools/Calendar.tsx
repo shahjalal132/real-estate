@@ -441,24 +441,32 @@ export default function Calendar({
     return (
         <AppLayout title="Calendar">
             <div className="flex w-full bg-white font-sans text-gray-900 overflow-hidden h-[calc(100vh-64px)] relative">
+                {/* Overlay — below app header on mobile so header stays visible */}
                 {sidebarOpen && (
                     <div
-                        className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+                        className="fixed top-16 left-0 right-0 bottom-0 bg-black/50 z-20 lg:hidden"
                         onClick={() => setSidebarOpen(false)}
+                        aria-hidden
                     />
                 )}
 
+                {/* Sidebar — on mobile: fixed below app header (top-16); desktop: in flow */}
                 <aside
-                    className={`fixed inset-y-0 left-0 z-30 transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:relative lg:translate-x-0 w-[240px] bg-gray-50 shrink-0 transition-transform duration-300 border-r border-gray-200 flex flex-col shadow-xl lg:shadow-none h-full`}
+                    className={`z-30 w-[240px] bg-gray-50 shrink-0 transition-transform duration-300 border-r border-gray-200 flex flex-col shadow-xl lg:shadow-none
+                        max-lg:fixed max-lg:top-16 max-lg:left-0 max-lg:bottom-0 max-lg:h-screen
+                        lg:relative lg:translate-x-0
+                        transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0!`}
                 >
-                    <div className="p-4 flex items-center justify-between border-b border-gray-100 lg:border-none">
-                        <h2 className="text-lg font-semibold text-gray-900 lg:hidden">Calendar</h2>
+                    {/* Close control — visible only on mobile */}
+                    <div className="flex items-center justify-between shrink-0 px-4 py-3 border-b border-gray-100 lg:hidden">
+                        <h2 className="text-lg font-semibold text-gray-900">Calendar</h2>
                         <button
                             type="button"
-                            className="lg:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100"
                             onClick={() => setSidebarOpen(false)}
+                            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 active:bg-gray-200 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"
+                            aria-label="Close menu"
                         >
-                            <X size={20} />
+                            <X size={22} />
                         </button>
                     </div>
 
@@ -528,8 +536,8 @@ export default function Calendar({
                             </div>
                         </div>
                         <div className="grid grid-cols-7 gap-y-1 gap-x-0.5 text-center text-xs text-gray-400 mb-1 font-medium">
-                            {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
-                                <div key={d}>{d}</div>
+                            {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+                                <div key={`weekday-${i}`}>{d}</div>
                             ))}
                         </div>
                         <div className="grid grid-cols-7 gap-y-1 gap-x-0.5 text-center text-[13px] font-medium text-gray-600">
