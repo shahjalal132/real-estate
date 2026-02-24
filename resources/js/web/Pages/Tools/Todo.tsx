@@ -8,7 +8,12 @@ import BoardView from "../../Components/Tools/Todo/Views/BoardView";
 import CalendarView from "../../Components/Tools/Todo/Views/CalendarView";
 import DashboardView from "../../Components/Tools/Todo/Views/DashboardView";
 import FilesView from "../../Components/Tools/Todo/Views/FilesView";
-import { Task, Project, Team, ViewMode } from "../../Components/Tools/Todo/types";
+import {
+    Task,
+    Project,
+    Team,
+    ViewMode,
+} from "../../Components/Tools/Todo/types";
 import Sidebar from "../../Components/Tools/Todo/Sidebar";
 import ProjectModal from "../../Components/Tools/Todo/ProjectModal";
 import TeamModal from "../../Components/Tools/Todo/TeamModal";
@@ -29,11 +34,17 @@ export default function Todo({
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
 
-    const [projectModal, setProjectModal] = useState<{ open: boolean; project: Project | null }>({
+    const [projectModal, setProjectModal] = useState<{
+        open: boolean;
+        project: Project | null;
+    }>({
         open: false,
         project: null,
     });
-    const [teamModal, setTeamModal] = useState<{ open: boolean; team: Team | null }>({
+    const [teamModal, setTeamModal] = useState<{
+        open: boolean;
+        team: Team | null;
+    }>({
         open: false,
         team: null,
     });
@@ -149,14 +160,20 @@ export default function Todo({
     };
 
     // --- Project CRUD ---
-    const handleAddProject = () => setProjectModal({ open: true, project: null });
-    const handleEditProject = (project: Project) => setProjectModal({ open: true, project });
+    const handleAddProject = () =>
+        setProjectModal({ open: true, project: null });
+    const handleEditProject = (project: Project) =>
+        setProjectModal({ open: true, project });
     const handleSaveProject = (data: { name: string; color?: string }) => {
         if (projectModal.project) {
-            router.put(`/tools/todo/projects/${projectModal.project.id}`, data, {
-                preserveState: true,
-                preserveScroll: true,
-            });
+            router.put(
+                `/tools/todo/projects/${projectModal.project.id}`,
+                data,
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                },
+            );
         } else {
             router.post("/tools/todo/projects", data, {
                 preserveState: true,
@@ -166,7 +183,12 @@ export default function Todo({
         setProjectModal({ open: false, project: null });
     };
     const handleDeleteProject = (project: Project) => {
-        setDeleteConfirm({ open: true, type: "project", id: project.id, name: project.name });
+        setDeleteConfirm({
+            open: true,
+            type: "project",
+            id: project.id,
+            name: project.name,
+        });
     };
     const handleConfirmDeleteProject = () => {
         if (!deleteConfirm || deleteConfirm.type !== "project") return;
@@ -195,7 +217,12 @@ export default function Todo({
         setTeamModal({ open: false, team: null });
     };
     const handleDeleteTeam = (team: Team) => {
-        setDeleteConfirm({ open: true, type: "team", id: team.id, name: team.name });
+        setDeleteConfirm({
+            open: true,
+            type: "team",
+            id: team.id,
+            name: team.name,
+        });
     };
     const handleConfirmDeleteTeam = () => {
         if (!deleteConfirm || deleteConfirm.type !== "team") return;
@@ -230,21 +257,23 @@ export default function Todo({
 
                     {/* Content Wrapper */}
                     <div className="flex flex-1 overflow-hidden relative">
-                        {/* Sidebar Off-canvas Overlay for Mobile */}
+                        {/* Sidebar overlay — below app header on mobile so header stays visible */}
                         {isSidebarOpen && (
                             <div
-                                className="fixed inset-0 bg-black/50 z-20 lg:hidden backdrop-blur-sm"
+                                className="fixed top-16 left-0 right-0 bottom-0 bg-black/50 z-20 lg:hidden backdrop-blur-sm"
                                 onClick={() => setIsSidebarOpen(false)}
                                 aria-hidden
                             />
                         )}
 
-                        {/* Sidebar */}
+                        {/* Sidebar — mobile: fixed below app header; desktop: static in flow */}
                         <div
                             className={`
-                            absolute inset-y-0 left-0 z-30 w-[260px] max-w-[85vw] transform transition-transform duration-300 ease-out bg-white border-r border-gray-200
+                            z-30 w-[260px] max-w-[85vw] transform transition-transform duration-300 ease-out bg-white border-r border-gray-200 flex flex-col
+                            max-lg:fixed max-lg:top-20 max-lg:left-0 max-lg:bottom-0
                             lg:static lg:translate-x-0 lg:max-w-none
-                            ${isSidebarOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"}
+                            ${isSidebarOpen ? "translate-x-0 shadow-xl max-lg:shadow-2xl" : "-translate-x-full"}
+                            lg:translate-x-0!
                         `}
                         >
                             <Sidebar
@@ -252,14 +281,20 @@ export default function Todo({
                                 activeView={view}
                                 onViewChange={(newView) => {
                                     setView(newView);
-                                    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                                    if (
+                                        typeof window !== "undefined" &&
+                                        window.innerWidth < 1024
+                                    ) {
                                         setIsSidebarOpen(false);
                                     }
                                 }}
                                 activeProjectId={activeProjectId}
                                 onProjectChange={(id) => {
                                     setActiveProjectId(id);
-                                    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                                    if (
+                                        typeof window !== "undefined" &&
+                                        window.innerWidth < 1024
+                                    ) {
                                         setIsSidebarOpen(false);
                                     }
                                 }}
@@ -272,6 +307,7 @@ export default function Todo({
                                 onAddTeam={handleAddTeam}
                                 onEditTeam={handleEditTeam}
                                 onDeleteTeam={handleDeleteTeam}
+                                onClose={() => setIsSidebarOpen(false)}
                             />
                         </div>
 
@@ -332,7 +368,11 @@ export default function Todo({
                 isOpen={deleteConfirm?.open ?? false}
                 onClose={() => setDeleteConfirm(null)}
                 onConfirm={handleConfirmDelete}
-                title={deleteConfirm?.type === "project" ? "Delete project?" : "Delete team?"}
+                title={
+                    deleteConfirm?.type === "project"
+                        ? "Delete project?"
+                        : "Delete team?"
+                }
                 message={
                     deleteConfirm
                         ? `"${deleteConfirm.name}" will be permanently deleted. This cannot be undone.`
