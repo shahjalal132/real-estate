@@ -62,7 +62,7 @@ export default function SliderWithControls({
             {
                 breakpoint: 640,
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 1,
                     slidesToScroll: 1,
                     swipe: true,
                     swipeToSlide: true,
@@ -73,7 +73,7 @@ export default function SliderWithControls({
             {
                 breakpoint: 480,
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 1,
                     slidesToScroll: 1,
                     swipe: true,
                     swipeToSlide: true,
