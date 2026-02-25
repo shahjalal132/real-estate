@@ -334,16 +334,16 @@ export default function PropertySearchHeader({
             type="button"
             onClick={onClick}
             disabled={disabled}
-            className={`inline-flex items-center justify-between gap-2 rounded-md border-2 border-[#0066CC] cursor-pointer bg-white px-4 py-2.5 text-sm font-semibold text-[#0066CC] hover:bg-[#F0F7FF] transition-all min-w-[140px] shadow-sm ${
+            className={`inline-flex items-center justify-between gap-2 rounded-md border-2 border-[#0066CC] cursor-pointer bg-white px-3 py-2.5 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-[#0066CC] hover:bg-[#F0F7FF] transition-all min-w-0 w-full sm:w-auto sm:min-w-[140px] shadow-sm min-h-[44px] sm:min-h-0 ${
                 disabled ? "opacity-60 cursor-not-allowed hover:bg-white" : ""
             } ${className}`}
         >
-            <span>{label}</span>
+            <span className="truncate text-left">{label}</span>
             {isSearching && !isOpen ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
             ) : (
                 <ChevronDown
-                    className={`h-4 w-4 transition-transform ${
+                    className={`h-4 w-4 shrink-0 transition-transform ${
                         isOpen ? "rotate-180" : ""
                     }`}
                 />
@@ -369,14 +369,14 @@ export default function PropertySearchHeader({
             <>
                 <div className="fixed inset-0 z-10" onClick={onClose} />
                 <div
-                    className={`absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg ${className}`}
+                    className={`absolute left-0 z-20 mt-1 w-full min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg sm:min-w-0 ${className}`}
                 >
-                    <div className="py-1">
+                    <div className="py-1 max-h-[min(60vh,320px)] overflow-y-auto">
                         {options.map((option) => (
                             <button
                                 key={option.value}
                                 type="button"
-                                className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                                className="w-full px-4 py-2.5 sm:py-2 text-left text-sm text-gray-700 hover:bg-gray-100 min-h-[44px] sm:min-h-0 flex items-center"
                                 onClick={() => {
                                     onSelect(option.value);
                                     onClose();
@@ -392,7 +392,7 @@ export default function PropertySearchHeader({
     };
 
     return (
-        <div className="w-full bg-white border-b border-gray-200 py-4 shadow-sm relative">
+        <div className="w-full bg-white border-b border-gray-200 py-3 sm:py-4 shadow-sm relative">
             {/* Loading overlay */}
             {isSearching && (
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -404,12 +404,13 @@ export default function PropertySearchHeader({
                     </div>
                 </div>
             )}
-            <div className="mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    {/* Left Side: Dropdowns and Search Button */}
-                    <div className="flex flex-wrap items-center gap-3 flex-1">
+            <div className="mx-auto w-[95%] max-w-full px-3 sm:px-6 lg:px-2">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
+                    {/* Left: Filter dropdowns (2x2 grid on mobile, flex wrap on sm+) */}
+                    <div className="flex flex-1 flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-3">
+                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
                         {/* Status Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedStatus}
                                 isOpen={statusOpen}
@@ -432,7 +433,7 @@ export default function PropertySearchHeader({
                         </div>
 
                         {/* Property Type Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedType}
                                 isOpen={typeOpen}
@@ -455,7 +456,7 @@ export default function PropertySearchHeader({
                         </div>
 
                         {/* Price Range Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedPrice}
                                 isOpen={priceOpen}
@@ -478,7 +479,7 @@ export default function PropertySearchHeader({
                         </div>
 
                         {/* CAP Rate Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedCapRate}
                                 isOpen={capRateOpen}
@@ -499,13 +500,14 @@ export default function PropertySearchHeader({
                                 onSelect={handleCapRateChange}
                             />
                         </div>
+                        </div>
 
                         {/* Save Search Button */}
                         <button
                             type="button"
                             onClick={handleSaveSearchClick}
                             disabled={!hasActiveFilters}
-                            className={`px-4 py-2 rounded font-semibold whitespace-nowrap transition-colors shadow-sm ${
+                            className={`w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded font-semibold whitespace-nowrap transition-colors shadow-sm min-h-[44px] sm:min-h-0 ${
                                 hasActiveFilters
                                     ? "bg-gray-500 hover:bg-[#004C99] text-white cursor-pointer"
                                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -515,8 +517,8 @@ export default function PropertySearchHeader({
                         </button>
                     </div>
 
-                    {/* Right Side: Filters, Save, Clear, Map Toggle */}
-                    <div className="flex flex-wrap items-center gap-3">
+                    {/* Right: All Filters + Map toggle */}
+                    <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0">
                         {/* All Filters Button */}
                         <AllFiltersButton
                             onClick={onFiltersClick || (() => {})}
@@ -525,7 +527,10 @@ export default function PropertySearchHeader({
 
                         {/* Map Toggle */}
                         <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-700">
+                            <span className="text-xs sm:text-sm text-gray-700 sm:hidden">
+                                Map
+                            </span>
+                            <span className="text-xs sm:text-sm text-gray-700 hidden sm:inline">
                                 Show Map
                             </span>
                             <button
@@ -535,16 +540,17 @@ export default function PropertySearchHeader({
                                         viewMode === "map" ? "grid" : "map"
                                     )
                                 }
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2 cursor-pointer ${
+                                className={`relative inline-flex h-7 w-11 sm:h-6 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2 cursor-pointer touch-manipulation ${
                                     viewMode === "map"
                                         ? "bg-[#0066CC]"
                                         : "bg-gray-300"
                                 }`}
                                 role="switch"
                                 aria-checked={viewMode === "map"}
+                                aria-label={viewMode === "map" ? "Hide map" : "Show map"}
                             >
                                 <span
-                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                    className={`inline-block h-5 w-5 sm:h-4 sm:w-4 transform rounded-full bg-white transition-transform ${
                                         viewMode === "map"
                                             ? "translate-x-6"
                                             : "translate-x-1"

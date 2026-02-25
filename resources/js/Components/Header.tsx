@@ -114,6 +114,14 @@ export default function Header() {
     // Medium (md–xl): show these left items; rest in hamburger drawer
     const leftNavMedium = mainNavItems.slice(0, 3); // For Sale, For Lease, Scout
 
+    // When search is visible (properties), use 1422px breakpoint so right menus go under hamburger below that width.
+    // Use max-width for medium nav so it never overlaps with full nav (avoids duplicate items).
+    const navVisibleClass = showSearch ? "min-[1422px]:flex" : "xl:flex";
+    const navHiddenClass = showSearch ? "min-[1422px]:hidden" : "xl:hidden";
+    // Medium nav: show only below full-nav breakpoint (no overlap = no duplicate items)
+    const mediumNavVisibleClass = showSearch ? "md:max-[1421px]:flex" : "md:max-xl:flex";
+    const mediumNavSeparatorClass = showSearch ? "md:max-[1421px]:block" : "md:max-xl:block";
+
     const renderNavItem = (
         item: NavigationItem,
         isRightNav: boolean = false,
@@ -278,37 +286,37 @@ export default function Header() {
                             </div>
                         )}
 
-                        {/* Medium (md–xl): left items only; rest in "More" drawer */}
-                        <nav className="hidden md:flex xl:hidden items-center gap-1 sm:gap-2 flex-shrink-0 overflow-visible">
+                        {/* Medium (md–breakpoint): left items only; rest in "More" drawer */}
+                        <nav className={`hidden ${mediumNavVisibleClass} items-center gap-1 sm:gap-2 flex-shrink-0 overflow-visible`}>
                             {leftNavMedium.map((item) =>
                                 renderNavItem(item, false),
                             )}
                         </nav>
 
-                        {/* Full navigation: visible only from xl (1280px) and up */}
-                        <nav className="hidden xl:flex items-center space-x-2 xl:space-x-3 overflow-visible flex-1 min-w-0 flex-wrap">
+                        {/* Full navigation: visible from breakpoint up (xl or 1422px when search shown) */}
+                        <nav className={`hidden ${navVisibleClass} items-center space-x-2 xl:space-x-3 overflow-visible flex-1 min-w-0 flex-wrap`}>
                             {mainNavItems.map((item) =>
                                 renderNavItem(item, false),
                             )}
                         </nav>
                     </div>
 
-                    {/* Right Side: Nav items (xl only) + Menu/More button (below xl) + CTA */}
-                    <div className="flex items-center py-4 md:py-2 xl:py-0 gap-2 xl:gap-4">
-                        {/* Separator before More on medium (md–xl) */}
+                    {/* Right Side: Nav items (breakpoint+) + Menu/More button (below breakpoint) + CTA */}
+                    <div className={`flex items-center py-4 md:py-2 gap-2 ${showSearch ? "min-[1422px]:py-0 min-[1422px]:gap-4" : "xl:py-0 xl:gap-4"}`}>
+                        {/* Separator before More on medium (md–breakpoint) */}
                         <div
-                            className="hidden md:block xl:hidden w-px h-5 bg-gray-200 shrink-0"
+                            className={`hidden ${mediumNavSeparatorClass} w-px h-5 bg-gray-200 shrink-0`}
                             aria-hidden
                         />
-                        {/* Right nav items (Zoning, Contacts, Pipeline, Tools, Settings) - visible only at xl */}
-                        <nav className="hidden xl:flex items-center space-x-2 xl:space-x-3 overflow-visible">
+                        {/* Right nav items - visible from breakpoint up */}
+                        <nav className={`hidden ${navVisibleClass} items-center space-x-2 xl:space-x-3 overflow-visible`}>
                             {rightNavItems.map((item) =>
                                 renderNavItem(item, true),
                             )}
                         </nav>
 
-                        {/* CTA + Menu/More button (below xl: opens full nav drawer) */}
-                        <div className="flex items-center gap-2 xl:gap-4">
+                        {/* CTA + Menu/More button (below breakpoint: opens full nav drawer) */}
+                        <div className={`flex items-center gap-2 ${showSearch ? "min-[1422px]:gap-4" : "xl:gap-4"}`}>
                             {auth.user ? (
                                 <Button
                                     href={
@@ -333,7 +341,7 @@ export default function Header() {
                                 onClick={() =>
                                     setMobileMenuOpen(!mobileMenuOpen)
                                 }
-                                className="xl:hidden flex items-center gap-2 px-3 py-2 rounded-lg text-[#4A4A4A] hover:bg-[#F0F7FF] hover:text-[#0066cc] transition-colors border border-transparent hover:border-gray-200"
+                                className={`${navHiddenClass} flex items-center gap-2 px-3 py-2 rounded-lg text-[#4A4A4A] hover:bg-[#F0F7FF] hover:text-[#0066cc] transition-colors border border-transparent hover:border-gray-200`}
                                 aria-label="Open menu"
                             >
                                 <Menu
@@ -344,7 +352,7 @@ export default function Header() {
                                 <span className="text-sm font-medium hidden sm:inline md:hidden">
                                     Menu
                                 </span>
-                                <span className="text-sm font-medium hidden md:inline xl:hidden">
+                                <span className={`text-sm font-medium hidden md:inline ${navHiddenClass}`}>
                                     More
                                 </span>
                             </button>

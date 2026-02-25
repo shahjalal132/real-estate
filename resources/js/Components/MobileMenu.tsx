@@ -163,11 +163,13 @@ export default function MobileMenu({
     navigationItems: NavigationItem[];
     auth: any;
 }) {
+    const belowNavBreakpointClass = showSearch ? "min-[1422px]:hidden" : "xl:hidden";
+
     return (
         <>
-            {/* Menu overlay (mobile + tablet: below xl) */}
+            {/* Menu overlay (below nav breakpoint: xl or 1422px when on properties) */}
             <div
-                className={`xl:hidden fixed inset-0 z-[105] bg-black/40 backdrop-blur-sm transition-all duration-300 ${
+                className={`${belowNavBreakpointClass} fixed inset-0 z-[105] bg-black/40 backdrop-blur-sm transition-all duration-300 ${
                     isOpen
                         ? "opacity-100 visible"
                         : "opacity-0 invisible pointer-events-none"
@@ -175,9 +177,9 @@ export default function MobileMenu({
                 onClick={onClose}
             />
 
-            {/* Menu drawer (mobile + tablet: below xl) */}
+            {/* Menu drawer (below nav breakpoint) */}
             <div
-                className={`xl:hidden fixed top-0 right-0 h-[100dvh] w-[85%] sm:w-[380px] bg-white z-[110] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${
+                className={`${belowNavBreakpointClass} fixed top-0 right-0 h-[100dvh] w-[85%] sm:w-[380px] bg-white z-[110] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${
                     isOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
