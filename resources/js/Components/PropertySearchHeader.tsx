@@ -334,16 +334,16 @@ export default function PropertySearchHeader({
             type="button"
             onClick={onClick}
             disabled={disabled}
-            className={`inline-flex items-center justify-between gap-2 rounded-md border-2 border-[#0066CC] cursor-pointer bg-white px-4 py-2.5 text-sm font-semibold text-[#0066CC] hover:bg-[#F0F7FF] transition-all min-w-[140px] shadow-sm ${
+            className={`inline-flex items-center justify-between gap-2 rounded-lg border border-[#0066CC] cursor-pointer bg-white px-3 py-2.5 text-sm font-medium text-[#0066CC] hover:bg-[#F0F7FF] transition-colors min-w-0 w-full min-h-[44px] ${
                 disabled ? "opacity-60 cursor-not-allowed hover:bg-white" : ""
             } ${className}`}
         >
-            <span>{label}</span>
+            <span className="truncate text-left">{label}</span>
             {isSearching && !isOpen ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
             ) : (
                 <ChevronDown
-                    className={`h-4 w-4 transition-transform ${
+                    className={`h-4 w-4 shrink-0 transition-transform ${
                         isOpen ? "rotate-180" : ""
                     }`}
                 />
@@ -369,14 +369,14 @@ export default function PropertySearchHeader({
             <>
                 <div className="fixed inset-0 z-10" onClick={onClose} />
                 <div
-                    className={`absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg ${className}`}
+                    className={`absolute left-0 z-20 mt-1.5 w-full min-w-[160px] rounded-lg border border-gray-200 bg-white shadow-lg ${className}`}
                 >
-                    <div className="py-1">
+                    <div className="py-1 max-h-[min(60vh,320px)] overflow-y-auto">
                         {options.map((option) => (
                             <button
                                 key={option.value}
                                 type="button"
-                                className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 min-h-[40px] flex items-center rounded-md"
                                 onClick={() => {
                                     onSelect(option.value);
                                     onClose();
@@ -392,7 +392,7 @@ export default function PropertySearchHeader({
     };
 
     return (
-        <div className="w-full bg-white border-b border-gray-200 py-4 shadow-sm relative">
+        <div className="w-full bg-white border-b border-gray-200 shadow-sm relative">
             {/* Loading overlay */}
             {isSearching && (
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -404,12 +404,13 @@ export default function PropertySearchHeader({
                     </div>
                 </div>
             )}
-            <div className="mx-auto w-[95%] max-w-full px-4 sm:px-6 lg:px-2">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    {/* Left Side: Dropdowns and Search Button */}
-                    <div className="flex flex-wrap items-center gap-3 flex-1">
+            <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-4">
+                {/* Medium: two rows. Large: one row (dropdowns + Save Search + All Filters + Map) */}
+                <div className="flex flex-col lg:flex-row lg:items-center lg:gap-6">
+                {/* Row 1 (medium) / Left block (large): Filter dropdowns */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full lg:w-auto lg:flex-1 lg:grid-cols-4">
                         {/* Status Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedStatus}
                                 isOpen={statusOpen}
@@ -432,7 +433,7 @@ export default function PropertySearchHeader({
                         </div>
 
                         {/* Property Type Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedType}
                                 isOpen={typeOpen}
@@ -455,7 +456,7 @@ export default function PropertySearchHeader({
                         </div>
 
                         {/* Price Range Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedPrice}
                                 isOpen={priceOpen}
@@ -478,7 +479,7 @@ export default function PropertySearchHeader({
                         </div>
 
                         {/* CAP Rate Dropdown */}
-                        <div className="relative">
+                        <div className="relative min-w-0">
                             <DropdownButton
                                 label={selectedCapRate}
                                 isOpen={capRateOpen}
@@ -499,35 +500,29 @@ export default function PropertySearchHeader({
                                 onSelect={handleCapRateChange}
                             />
                         </div>
+                </div>
 
-                        {/* Save Search Button */}
-                        <button
-                            type="button"
-                            onClick={handleSaveSearchClick}
-                            disabled={!hasActiveFilters}
-                            className={`px-4 py-2 rounded font-semibold whitespace-nowrap transition-colors shadow-sm ${
-                                hasActiveFilters
-                                    ? "bg-gray-500 hover:bg-[#004C99] text-white cursor-pointer"
-                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
-                        >
-                            Save Search
-                        </button>
-                    </div>
-
-                    {/* Right Side: Filters, Save, Clear, Map Toggle */}
-                    <div className="flex flex-wrap items-center gap-3">
-                        {/* All Filters Button */}
+                {/* Row 2 (medium) / Right block (large): Save Search | All Filters | Show Map */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-200 lg:pt-0 lg:border-t-0 lg:shrink-0 lg:gap-4">
+                    <button
+                        type="button"
+                        onClick={handleSaveSearchClick}
+                        disabled={!hasActiveFilters}
+                        className={`w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors min-h-[44px] sm:min-h-0 order-first sm:order-0 ${
+                            hasActiveFilters
+                                ? "bg-[#0066CC] hover:bg-[#0052A3] text-white shadow-sm cursor-pointer"
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        }`}
+                    >
+                        Save Search
+                    </button>
+                    <div className="flex items-center justify-between sm:justify-end gap-4">
                         <AllFiltersButton
                             onClick={onFiltersClick || (() => {})}
                             activeFiltersCount={activeFiltersCount}
                         />
-
-                        {/* Map Toggle */}
                         <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-700">
-                                Show Map
-                            </span>
+                            <span className="text-sm text-gray-600">Show Map</span>
                             <button
                                 type="button"
                                 onClick={() =>
@@ -542,9 +537,10 @@ export default function PropertySearchHeader({
                                 }`}
                                 role="switch"
                                 aria-checked={viewMode === "map"}
+                                aria-label={viewMode === "map" ? "Hide map" : "Show map"}
                             >
                                 <span
-                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
                                         viewMode === "map"
                                             ? "translate-x-6"
                                             : "translate-x-1"
@@ -553,6 +549,7 @@ export default function PropertySearchHeader({
                             </button>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
 

@@ -91,7 +91,7 @@ export default function ResizableTable<T extends Record<string, any>>({
         setResizeStartWidth(
             columnWidths[column] ||
                 columns.find((c) => c.key === column)?.defaultWidth ||
-                150
+                150,
         );
     };
 
@@ -164,7 +164,7 @@ export default function ResizableTable<T extends Record<string, any>>({
                         className="min-w-full divide-y divide-gray-200"
                         style={{ tableLayout: "fixed", width: "100%" }}
                     >
-                        <thead className="bg-gray-50 sticky top-0 z-40">
+                        <thead className="bg-gray-50 sticky top-0 z-30">
                             <tr>
                                 {renderCheckbox && (
                                     <th
@@ -195,7 +195,7 @@ export default function ResizableTable<T extends Record<string, any>>({
                                         <th
                                             key={column.key}
                                             className={`px-4 py-3 text-xs font-medium uppercase tracking-wider text-gray-700 whitespace-nowrap relative group select-none ${getAlignmentClass(
-                                                column.align
+                                                column.align,
                                             )} ${
                                                 isFirstColumn
                                                     ? "sticky left-0 border-r border-gray-200"
@@ -217,9 +217,9 @@ export default function ResizableTable<T extends Record<string, any>>({
                                                     column.align === "right"
                                                         ? "justify-end pr-2"
                                                         : column.align ===
-                                                          "center"
-                                                        ? "justify-center pr-2"
-                                                        : "justify-between pr-2"
+                                                            "center"
+                                                          ? "justify-center pr-2"
+                                                          : "justify-between pr-2"
                                                 }`}
                                             >
                                                 <span>{column.label}</span>
@@ -239,7 +239,7 @@ export default function ResizableTable<T extends Record<string, any>>({
                                                 onMouseDown={(e) =>
                                                     handleResizeStart(
                                                         column.key,
-                                                        e
+                                                        e,
                                                     )
                                                 }
                                                 style={{
@@ -307,7 +307,7 @@ export default function ResizableTable<T extends Record<string, any>>({
                                             <td
                                                 key={column.key}
                                                 className={`px-4 py-4 text-sm whitespace-nowrap overflow-hidden text-start text-ellipsis ${getAlignmentClass(
-                                                    column.align
+                                                    column.align,
                                                 )} ${column.className || ""} ${
                                                     isFirstColumn
                                                         ? "sticky left-0 border-r border-gray-200"
@@ -345,7 +345,9 @@ export default function ResizableTable<T extends Record<string, any>>({
                                                     isFirstColumn
                                                         ? (e) => {
                                                               e.currentTarget.style.backgroundColor =
-                                                                  rowIndex % 2 === 0
+                                                                  rowIndex %
+                                                                      2 ===
+                                                                  0
                                                                       ? "white"
                                                                       : "#f9fafb";
                                                           }

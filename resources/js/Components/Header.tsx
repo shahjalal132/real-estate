@@ -21,7 +21,6 @@ export default function Header() {
     const { auth } = props;
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-    const [moreMenuOpen, setMoreMenuOpen] = useState<boolean>(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Show search component only when URL contains "properties"
@@ -112,13 +111,19 @@ export default function Header() {
         navigationItems[7], // SETTINGS
     ];
 
-    // For medium screens: first 6 visible, rest (excluding last 3) go to "MORE"
-    const visibleItems = mainNavItems.slice(0, 6);
-    const moreItems = mainNavItems.slice(6);
+    // Medium (md–xl): show these left items; rest in hamburger drawer
+    const leftNavMedium = mainNavItems.slice(0, 3); // For Sale, For Lease, Scout
+
+    // When search is visible (properties), use 1422px breakpoint so right menus go under hamburger below that width.
+    // Use max-width for medium nav so it never overlaps with full nav (avoids duplicate items).
+    const navVisibleClass = showSearch ? "min-[1422px]:flex" : "xl:flex";
+    const navHiddenClass = showSearch ? "min-[1422px]:hidden" : "xl:hidden";
+    // Medium nav: show only below full-nav breakpoint (no overlap = no duplicate items)
+    const mediumNavVisibleClass = showSearch ? "md:max-[1421px]:flex" : "md:max-xl:flex";
+    const mediumNavSeparatorClass = showSearch ? "md:max-[1421px]:block" : "md:max-xl:block";
 
     const renderNavItem = (
         item: NavigationItem,
-        isInMoreMenu: boolean = false,
         isRightNav: boolean = false,
     ) => {
         // For items with mega menus, use a button instead of Link to prevent direct navigation
@@ -131,30 +136,20 @@ export default function Header() {
         );
 
         const handleMouseEnter = () => {
-            // Clear any pending close timeout
             if (closeTimeoutRef.current) {
                 clearTimeout(closeTimeoutRef.current);
                 closeTimeoutRef.current = null;
             }
-
             if (item.type === "megaMenu") {
                 setActiveMenu(item.megaMenuId || null);
-                if (isInMoreMenu) {
-                    setMoreMenuOpen(true);
-                }
             }
         };
 
         const handleMouseLeave = () => {
-            // Add a delay before closing to allow user to move to mega menu
-            if (isInMoreMenu && activeMenu === item.megaMenuId) {
-                return;
-            }
-
-            if (!isInMoreMenu && item.type === "megaMenu") {
+            if (item.type === "megaMenu") {
                 closeTimeoutRef.current = setTimeout(() => {
                     setActiveMenu(null);
-                }, 300); // Optimized delay for better UX
+                }, 300);
             }
         };
 
@@ -244,12 +239,8 @@ export default function Header() {
                                 setActiveMenu(item.megaMenuId || null);
                             }}
                             onMouseLeave={() => {
-                                // Delay closing when leaving mega menu area
                                 closeTimeoutRef.current = setTimeout(() => {
                                     setActiveMenu(null);
-                                    if (isInMoreMenu) {
-                                        setMoreMenuOpen(false);
-                                    }
                                 }, 150);
                             }}
                         >
@@ -262,9 +253,6 @@ export default function Header() {
                                         closeTimeoutRef.current = null;
                                     }
                                     setActiveMenu(null);
-                                    if (isInMoreMenu) {
-                                        setMoreMenuOpen(false);
-                                    }
                                 }}
                             />
                         </div>
@@ -276,7 +264,7 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-40 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] overflow-visible">
-            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 md:py-4  h-full overflow-visible">
+            <div className="w-[95%] max-w-full mx-auto px-4 sm:px-6 lg:px-2 lg:py-4  h-full overflow-visible">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-6 flex-1 min-w-0">
                         {/* Logo */}
@@ -293,283 +281,42 @@ export default function Header() {
 
                         {/* Search Component - Only show on properties pages */}
                         {showSearch && (
-                            <div className="hidden md:block flex-1 max-w-[250px]">
+                            <div className="hidden md:block flex-1 max-w-[250px] min-w-0">
                                 <SearchComponent />
                             </div>
                         )}
 
-                        {/* Medium Screen Navigation (with MORE dropdown) */}
-                        <nav className="hidden md:flex lg:hidden items-center space-x-1 sm:space-x-2 overflow-visible flex-1 min-w-0">
-                            <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
-                                {visibleItems.map((item) =>
-                                    renderNavItem(item, false, false),
-                                )}
-                            </div>
-
-                            {/* MORE Dropdown */}
-                            {moreItems.length > 0 && (
-                                <div
-                                    className="relative overflow-visible flex-shrink-0"
-                                    onMouseEnter={() => {
-                                        if (closeTimeoutRef.current) {
-                                            clearTimeout(
-                                                closeTimeoutRef.current,
-                                            );
-                                            closeTimeoutRef.current = null;
-                                        }
-                                        setMoreMenuOpen(true);
-                                    }}
-                                    onMouseLeave={() => {
-                                        if (!activeMenu) {
-                                            closeTimeoutRef.current =
-                                                setTimeout(() => {
-                                                    setMoreMenuOpen(false);
-                                                }, 400);
-                                        }
-                                    }}
-                                >
-                                    <button
-                                        className={`relative group tracking-[0.5px] font-normal transition-all duration-200 whitespace-nowrap flex items-center gap-1.5 md:gap-2 text-xs md:text-sm capitalize px-1 py-1.5 rounded-md ${
-                                            moreMenuOpen
-                                                ? "text-[#0066cc] bg-[#F0F7FF]"
-                                                : "text-[#4A4A4A] hover:text-[#0066cc] hover:bg-[#F0F7FF]/50"
-                                        }`}
-                                    >
-                                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#0066cc] group-hover:w-[calc(100%-0.5rem)] transition-all duration-200">
-                                            {" "}
-                                        </span>
-                                        More
-                                        <ChevronDown
-                                            className={`h-3 w-3 shrink-0 transition-transform duration-200 ${
-                                                moreMenuOpen
-                                                    ? "rotate-180 text-[#0066cc]"
-                                                    : "text-[#4a4a4a]"
-                                            }`}
-                                        />
-                                    </button>
-
-                                    {/* MORE Dropdown Menu */}
-                                    {moreMenuOpen && (
-                                        <>
-                                            {/* Bridge element to prevent gap */}
-                                            <div
-                                                className="absolute top-full left-0 right-0 h-2"
-                                                onMouseEnter={() => {
-                                                    if (
-                                                        closeTimeoutRef.current
-                                                    ) {
-                                                        clearTimeout(
-                                                            closeTimeoutRef.current,
-                                                        );
-                                                        closeTimeoutRef.current =
-                                                            null;
-                                                    }
-                                                    setMoreMenuOpen(true);
-                                                }}
-                                            />
-                                            <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl py-2 min-w-[180px] animate-in fade-in slide-in-from-top-1 duration-200">
-                                                {moreItems.map((item) => (
-                                                    <div
-                                                        key={item.label}
-                                                        className="relative"
-                                                        onMouseEnter={() => {
-                                                            if (
-                                                                closeTimeoutRef.current
-                                                            ) {
-                                                                clearTimeout(
-                                                                    closeTimeoutRef.current,
-                                                                );
-                                                                closeTimeoutRef.current =
-                                                                    null;
-                                                            }
-                                                            if (
-                                                                item.type ===
-                                                                "megaMenu"
-                                                            ) {
-                                                                setActiveMenu(
-                                                                    item.megaMenuId ||
-                                                                        null,
-                                                                );
-                                                            }
-                                                        }}
-                                                        onMouseLeave={() => {
-                                                            if (
-                                                                activeMenu !==
-                                                                item.megaMenuId
-                                                            ) {
-                                                                closeTimeoutRef.current =
-                                                                    setTimeout(
-                                                                        () => {
-                                                                            setActiveMenu(
-                                                                                null,
-                                                                            );
-                                                                        },
-                                                                        400,
-                                                                    );
-                                                            }
-                                                        }}
-                                                    >
-                                                        {item.type ===
-                                                            "megaMenu" &&
-                                                        item.hasDropdown ? (
-                                                            <button
-                                                                type="button"
-                                                                className={`block w-full text-left px-4 py-2 text-sm tracking-[0.5px] transition-colors capitalize ${
-                                                                    activeMenu ===
-                                                                    item.megaMenuId
-                                                                        ? "text-[#0066cc] bg-[#F0F7FF]"
-                                                                        : "text-[#4A4A4A] hover:bg-gray-50"
-                                                                }`}
-                                                            >
-                                                                <div className="flex items-center justify-between">
-                                                                    {item.label}
-                                                                    {item.hasDropdown && (
-                                                                        <ChevronDown
-                                                                            className={`h-3 w-3 transition-all duration-300 ${
-                                                                                activeMenu ===
-                                                                                item.megaMenuId
-                                                                                    ? "rotate-180 text-[#0066cc]"
-                                                                                    : "text-[#4a4a4a]"
-                                                                            }`}
-                                                                        />
-                                                                    )}
-                                                                </div>
-                                                            </button>
-                                                        ) : (
-                                                            <Link
-                                                                href={item.link}
-                                                                className={`block px-4 py-2 text-sm tracking-[0.5px] transition-colors capitalize ${
-                                                                    activeMenu ===
-                                                                    item.megaMenuId
-                                                                        ? "text-[#0066cc] bg-[#F0F7FF]"
-                                                                        : "text-[#4A4A4A] hover:bg-gray-50"
-                                                                }`}
-                                                            >
-                                                                <div className="flex items-center justify-between">
-                                                                    {item.label}
-                                                                    {item.hasDropdown && (
-                                                                        <ChevronDown
-                                                                            className={`h-3 w-3 transition-all duration-300 ${
-                                                                                activeMenu ===
-                                                                                item.megaMenuId
-                                                                                    ? "rotate-180 text-[#0066cc]"
-                                                                                    : "text-[#4a4a4a]"
-                                                                            }`}
-                                                                        />
-                                                                    )}
-                                                                </div>
-                                                            </Link>
-                                                        )}
-                                                        {item.type ===
-                                                            "megaMenu" &&
-                                                            activeMenu ===
-                                                                item.megaMenuId && (
-                                                                <div
-                                                                    className={`absolute top-0 z-[100] pt-2 ${
-                                                                        // Right-align menus (pipeline, tools, settings, contacts) to prevent overflow
-                                                                        [
-                                                                            "pipeline",
-                                                                            "tools",
-                                                                            "settings",
-                                                                            "contacts",
-                                                                        ].includes(
-                                                                            item.megaMenuId ||
-                                                                                "",
-                                                                        )
-                                                                            ? "right-0"
-                                                                            : "left-full ml-2"
-                                                                    }`}
-                                                                    onMouseEnter={() => {
-                                                                        if (
-                                                                            closeTimeoutRef.current
-                                                                        ) {
-                                                                            clearTimeout(
-                                                                                closeTimeoutRef.current,
-                                                                            );
-                                                                            closeTimeoutRef.current =
-                                                                                null;
-                                                                        }
-                                                                        setActiveMenu(
-                                                                            item.megaMenuId ||
-                                                                                null,
-                                                                        );
-                                                                    }}
-                                                                    onMouseLeave={() => {
-                                                                        closeTimeoutRef.current =
-                                                                            setTimeout(
-                                                                                () => {
-                                                                                    setActiveMenu(
-                                                                                        null,
-                                                                                    );
-                                                                                    setMoreMenuOpen(
-                                                                                        false,
-                                                                                    );
-                                                                                },
-                                                                                150,
-                                                                            );
-                                                                    }}
-                                                                >
-                                                                    <MegaMenu
-                                                                        menuId={
-                                                                            item.megaMenuId!
-                                                                        }
-                                                                        isRightAligned={[
-                                                                            "pipeline",
-                                                                            "tools",
-                                                                            "settings",
-                                                                            "contacts",
-                                                                        ].includes(
-                                                                            item.megaMenuId ||
-                                                                                "",
-                                                                        )}
-                                                                        onClose={() => {
-                                                                            if (
-                                                                                closeTimeoutRef.current
-                                                                            ) {
-                                                                                clearTimeout(
-                                                                                    closeTimeoutRef.current,
-                                                                                );
-                                                                                closeTimeoutRef.current =
-                                                                                    null;
-                                                                            }
-                                                                            setActiveMenu(
-                                                                                null,
-                                                                            );
-                                                                            setMoreMenuOpen(
-                                                                                false,
-                                                                            );
-                                                                        }}
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
+                        {/* Medium (md–breakpoint): left items only; rest in "More" drawer */}
+                        <nav className={`hidden ${mediumNavVisibleClass} items-center gap-1 sm:gap-2 flex-shrink-0 overflow-visible`}>
+                            {leftNavMedium.map((item) =>
+                                renderNavItem(item, false),
                             )}
                         </nav>
 
-                        {/* Large Screen Navigation (first 8 items) */}
-                        <nav className="hidden lg:flex items-center space-x-2 xl:space-x-3 overflow-visible flex-1 min-w-0 flex-wrap">
+                        {/* Full navigation: visible from breakpoint up (xl or 1422px when search shown) */}
+                        <nav className={`hidden ${navVisibleClass} items-center space-x-2 xl:space-x-3 overflow-visible flex-1 min-w-0 flex-wrap`}>
                             {mainNavItems.map((item) =>
-                                renderNavItem(item, false, false),
+                                renderNavItem(item, false),
                             )}
                         </nav>
                     </div>
 
-                    {/* Right Side: Last 3 Menu Items + Login Button */}
-                    <div className="flex items-center py-6 lg:py-0 space-x-4">
-                        {/* Last 3 Menu Items (with gaps) - visible on md and up */}
-                        <nav className="hidden md:flex items-center space-x-2 xl:space-x-3 overflow-visible">
+                    {/* Right Side: Nav items (breakpoint+) + Menu/More button (below breakpoint) + CTA */}
+                    <div className={`flex items-center py-4 md:py-2 gap-2 ${showSearch ? "min-[1422px]:py-0 min-[1422px]:gap-4" : "xl:py-0 xl:gap-4"}`}>
+                        {/* Separator before More on medium (md–breakpoint) */}
+                        <div
+                            className={`hidden ${mediumNavSeparatorClass} w-px h-5 bg-gray-200 shrink-0`}
+                            aria-hidden
+                        />
+                        {/* Right nav items - visible from breakpoint up */}
+                        <nav className={`hidden ${navVisibleClass} items-center space-x-2 xl:space-x-3 overflow-visible`}>
                             {rightNavItems.map((item) =>
-                                renderNavItem(item, false, true),
+                                renderNavItem(item, true),
                             )}
                         </nav>
 
-                        {/* CTA Button */}
-                        <div className="flex items-center space-x-4">
+                        {/* CTA + Menu/More button (below breakpoint: opens full nav drawer) */}
+                        <div className={`flex items-center gap-2 ${showSearch ? "min-[1422px]:gap-4" : "xl:gap-4"}`}>
                             {auth.user ? (
                                 <Button
                                     href={
@@ -589,14 +336,26 @@ export default function Header() {
                                     Log in
                                 </Button>
                             )}
-                            <Menu
-                                color="#4a4a4a"
-                                strokeWidth={3}
-                                className="cursor-pointer lg:hidden"
+                            <button
+                                type="button"
                                 onClick={() =>
                                     setMobileMenuOpen(!mobileMenuOpen)
                                 }
-                            />
+                                className={`${navHiddenClass} flex items-center gap-2 px-3 py-2 rounded-lg text-[#4A4A4A] hover:bg-[#F0F7FF] hover:text-[#0066cc] transition-colors border border-transparent hover:border-gray-200`}
+                                aria-label="Open menu"
+                            >
+                                <Menu
+                                    color="currentColor"
+                                    strokeWidth={3}
+                                    className="w-5 h-5 shrink-0"
+                                />
+                                <span className="text-sm font-medium hidden sm:inline md:hidden">
+                                    Menu
+                                </span>
+                                <span className={`text-sm font-medium hidden md:inline ${navHiddenClass}`}>
+                                    More
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>
