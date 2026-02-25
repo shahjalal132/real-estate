@@ -52,7 +52,7 @@ export default function PropertyOverview({
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [viewMode, setViewMode] = useState<"image" | "map" | "street">(
-        "image"
+        "image",
     );
     const [isMapLoading, setIsMapLoading] = useState(false);
     const [isStreetViewLoading, setIsStreetViewLoading] = useState(false);
@@ -69,13 +69,13 @@ export default function PropertyOverview({
 
     const nextImage = () => {
         setSelectedImageIndex((prev) =>
-            prev < images.length - 1 ? prev + 1 : 0
+            prev < images.length - 1 ? prev + 1 : 0,
         );
     };
 
     const prevImage = () => {
         setSelectedImageIndex((prev) =>
-            prev > 0 ? prev - 1 : images.length - 1
+            prev > 0 ? prev - 1 : images.length - 1,
         );
     };
 
@@ -83,7 +83,7 @@ export default function PropertyOverview({
         ? Math.floor(
               (new Date().getTime() -
                   new Date(property.activated_on).getTime()) /
-                  (1000 * 60 * 60 * 24)
+                  (1000 * 60 * 60 * 24),
           )
         : 0;
 
@@ -91,7 +91,7 @@ export default function PropertyOverview({
         ? Math.floor(
               (new Date().getTime() -
                   new Date(property.external_updated_on).getTime()) /
-                  (1000 * 60 * 60 * 24)
+                  (1000 * 60 * 60 * 24),
           )
         : 0;
 
@@ -165,16 +165,17 @@ export default function PropertyOverview({
     return (
         <div className="mb-2">
             {/* Title Section */}
-            <div className="flex items-start justify-between pt-3 md:py-[15px]">
-                <div>
-                    <h1 className="text-2xl font-semibold text-gray-900 font-literata">
+            {/* Title + actions: stacked on small/medium, row on large */}
+            <div className="flex flex-col gap-4 pt-3 md:pt-4 md:gap-5 lg:flex-row lg:items-start lg:justify-between lg:py-[15px]">
+                <div className="min-w-0 flex-1">
+                    <h1 className="text-lg font-semibold text-gray-900 font-literata sm:text-xl lg:text-2xl break-words">
                         {fullAddress}
                     </h1>
-                    <p className="text-[15px] font-normal text-gray-700">
+                    <p className="font-normal text-gray-700 mt-0.5 sm:text-[16px] lg:text-[18px]">
                         {propertyName}
                     </p>
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 lg:shrink-0 lg:justify-end">
                     <ListingsButton externalLink={property.external_url} />
                     <NotesButton propertyId={property.id} />
                     <PrintButton onPrintClick={onPrintClick || (() => {})} />
