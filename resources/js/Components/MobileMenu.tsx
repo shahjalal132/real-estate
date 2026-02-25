@@ -165,9 +165,9 @@ export default function MobileMenu({
 }) {
     return (
         <>
-            {/* Mobile Menu Overlay */}
+            {/* Menu overlay (mobile + tablet: below xl) */}
             <div
-                className={`lg:hidden fixed inset-0 z-[105] bg-black/40 backdrop-blur-sm transition-all duration-300 ${
+                className={`xl:hidden fixed inset-0 z-[105] bg-black/40 backdrop-blur-sm transition-all duration-300 ${
                     isOpen
                         ? "opacity-100 visible"
                         : "opacity-0 invisible pointer-events-none"
@@ -175,9 +175,9 @@ export default function MobileMenu({
                 onClick={onClose}
             />
 
-            {/* Mobile Menu Drawer */}
+            {/* Menu drawer (mobile + tablet: below xl) */}
             <div
-                className={`lg:hidden fixed top-0 right-0 h-[100dvh] w-[85%] sm:w-[380px] bg-white z-[110] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${
+                className={`xl:hidden fixed top-0 right-0 h-[100dvh] w-[85%] sm:w-[380px] bg-white z-[110] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${
                     isOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
