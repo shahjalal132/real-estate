@@ -334,7 +334,7 @@ export default function PropertySearchHeader({
             type="button"
             onClick={onClick}
             disabled={disabled}
-            className={`inline-flex items-center justify-between gap-2 rounded-md border-2 border-[#0066CC] cursor-pointer bg-white px-3 py-2.5 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-[#0066CC] hover:bg-[#F0F7FF] transition-all min-w-0 w-full sm:w-auto sm:min-w-[140px] shadow-sm min-h-[44px] sm:min-h-0 ${
+            className={`inline-flex items-center justify-between gap-2 rounded-lg border border-[#0066CC] cursor-pointer bg-white px-3 py-2.5 text-sm font-medium text-[#0066CC] hover:bg-[#F0F7FF] transition-colors min-w-0 w-full min-h-[44px] ${
                 disabled ? "opacity-60 cursor-not-allowed hover:bg-white" : ""
             } ${className}`}
         >
@@ -369,14 +369,14 @@ export default function PropertySearchHeader({
             <>
                 <div className="fixed inset-0 z-10" onClick={onClose} />
                 <div
-                    className={`absolute left-0 z-20 mt-1 w-full min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg sm:min-w-0 ${className}`}
+                    className={`absolute left-0 z-20 mt-1.5 w-full min-w-[160px] rounded-lg border border-gray-200 bg-white shadow-lg ${className}`}
                 >
                     <div className="py-1 max-h-[min(60vh,320px)] overflow-y-auto">
                         {options.map((option) => (
                             <button
                                 key={option.value}
                                 type="button"
-                                className="w-full px-4 py-2.5 sm:py-2 text-left text-sm text-gray-700 hover:bg-gray-100 min-h-[44px] sm:min-h-0 flex items-center"
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 min-h-[40px] flex items-center rounded-md"
                                 onClick={() => {
                                     onSelect(option.value);
                                     onClose();
@@ -392,7 +392,7 @@ export default function PropertySearchHeader({
     };
 
     return (
-        <div className="w-full bg-white border-b border-gray-200 py-3 sm:py-4 shadow-sm relative">
+        <div className="w-full bg-white border-b border-gray-200 shadow-sm relative">
             {/* Loading overlay */}
             {isSearching && (
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -404,11 +404,11 @@ export default function PropertySearchHeader({
                     </div>
                 </div>
             )}
-            <div className="mx-auto w-[95%] max-w-full px-3 sm:px-6 lg:px-2">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
-                    {/* Left: Filter dropdowns (2x2 grid on mobile, flex wrap on sm+) */}
-                    <div className="flex flex-1 flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-3">
-                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-4">
+                {/* Medium: two rows. Large: one row (dropdowns + Save Search + All Filters + Map) */}
+                <div className="flex flex-col lg:flex-row lg:items-center lg:gap-6">
+                {/* Row 1 (medium) / Left block (large): Filter dropdowns */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full lg:w-auto lg:flex-1 lg:grid-cols-4">
                         {/* Status Dropdown */}
                         <div className="relative min-w-0">
                             <DropdownButton
@@ -500,39 +500,29 @@ export default function PropertySearchHeader({
                                 onSelect={handleCapRateChange}
                             />
                         </div>
-                        </div>
+                </div>
 
-                        {/* Save Search Button */}
-                        <button
-                            type="button"
-                            onClick={handleSaveSearchClick}
-                            disabled={!hasActiveFilters}
-                            className={`w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded font-semibold whitespace-nowrap transition-colors shadow-sm min-h-[44px] sm:min-h-0 ${
-                                hasActiveFilters
-                                    ? "bg-gray-500 hover:bg-[#004C99] text-white cursor-pointer"
-                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
-                        >
-                            Save Search
-                        </button>
-                    </div>
-
-                    {/* Right: All Filters + Map toggle */}
-                    <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0">
-                        {/* All Filters Button */}
+                {/* Row 2 (medium) / Right block (large): Save Search | All Filters | Show Map */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-200 lg:pt-0 lg:border-t-0 lg:shrink-0 lg:gap-4">
+                    <button
+                        type="button"
+                        onClick={handleSaveSearchClick}
+                        disabled={!hasActiveFilters}
+                        className={`w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors min-h-[44px] sm:min-h-0 order-first sm:order-0 ${
+                            hasActiveFilters
+                                ? "bg-[#0066CC] hover:bg-[#0052A3] text-white shadow-sm cursor-pointer"
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        }`}
+                    >
+                        Save Search
+                    </button>
+                    <div className="flex items-center justify-between sm:justify-end gap-4">
                         <AllFiltersButton
                             onClick={onFiltersClick || (() => {})}
                             activeFiltersCount={activeFiltersCount}
                         />
-
-                        {/* Map Toggle */}
                         <div className="flex items-center gap-2">
-                            <span className="text-xs sm:text-sm text-gray-700 sm:hidden">
-                                Map
-                            </span>
-                            <span className="text-xs sm:text-sm text-gray-700 hidden sm:inline">
-                                Show Map
-                            </span>
+                            <span className="text-sm text-gray-600">Show Map</span>
                             <button
                                 type="button"
                                 onClick={() =>
@@ -540,7 +530,7 @@ export default function PropertySearchHeader({
                                         viewMode === "map" ? "grid" : "map"
                                     )
                                 }
-                                className={`relative inline-flex h-7 w-11 sm:h-6 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2 cursor-pointer touch-manipulation ${
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:ring-offset-2 cursor-pointer ${
                                     viewMode === "map"
                                         ? "bg-[#0066CC]"
                                         : "bg-gray-300"
@@ -550,7 +540,7 @@ export default function PropertySearchHeader({
                                 aria-label={viewMode === "map" ? "Hide map" : "Show map"}
                             >
                                 <span
-                                    className={`inline-block h-5 w-5 sm:h-4 sm:w-4 transform rounded-full bg-white transition-transform ${
+                                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
                                         viewMode === "map"
                                             ? "translate-x-6"
                                             : "translate-x-1"
@@ -559,6 +549,7 @@ export default function PropertySearchHeader({
                             </button>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
 
