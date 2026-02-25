@@ -50,7 +50,9 @@ export default function Hero({ content }: HeroProps) {
     ];
 
     return (
-        <section className="relative flex min-h-[500px] w-full items-center justify-center overflow-hidden sm:min-h-[600px] lg:min-h-[650px]">
+        <section
+            className={`relative flex min-h-[620px] w-full items-center justify-center sm:min-h-[600px] lg:min-h-[650px] ${propertyTypeOpen ? "overflow-visible" : "overflow-hidden"}`}
+        >
             {/* Background Image */}
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
