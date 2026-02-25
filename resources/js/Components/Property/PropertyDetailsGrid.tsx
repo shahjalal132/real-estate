@@ -357,12 +357,36 @@ export default function PropertyDetailsGrid({
         });
     }
 
+    // Flatten for small/medium: two-column list (label | value per row)
+    const flatRows = rows.flatMap((pair) =>
+        [pair.left, pair.right].filter((x) => x && x.label)
+    );
+
     return (
         <div>
             <h2 className="text-base font-semibold text-gray-900 mb-3">
                 Details
             </h2>
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            {/* Small/medium: 2-column layout (label | value), no border */}
+            <div className="bg-white rounded-lg lg:hidden">
+                <div className="divide-y divide-gray-100">
+                    {flatRows.map((item, index) => (
+                        <div
+                            key={index}
+                            className="grid grid-cols-2 gap-x-4 py-3 first:pt-0"
+                        >
+                            <div className="text-sm text-gray-600 font-normal">
+                                {item.label}
+                            </div>
+                            <div className="text-sm font-semibold text-gray-900 text-left break-words">
+                                {item.value}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            {/* Large: 4-column table with border */}
+            <div className="hidden lg:block bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                 <table className="w-full">
                     <tbody>
                         {rows.map((rowPair, index) => {
@@ -378,7 +402,7 @@ export default function PropertyDetailsGrid({
                                     }
                                 >
                                     {/* Left Column - Label */}
-                                    <td className="px-4 py-2  border-gray-200 w-1/4">
+                                    <td className="px-4 py-2 border-gray-200 w-1/4">
                                         {rowPair.left.label && (
                                             <span className="text-sm text-gray-600 font-normal">
                                                 {rowPair.left.label}
@@ -394,7 +418,7 @@ export default function PropertyDetailsGrid({
                                         )}
                                     </td>
                                     {/* Right Column - Label */}
-                                    <td className="px-4 py-2  border-gray-200 w-1/4">
+                                    <td className="px-4 py-2 border-gray-200 w-1/4">
                                         {rowPair.right &&
                                             rowPair.right.label && (
                                                 <span className="text-sm text-gray-600 font-normal">
