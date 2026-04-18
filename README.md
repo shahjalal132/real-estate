@@ -1,59 +1,163 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TENANTS HQ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+USA-focused commercial and residential real estate platform: listings, market intelligence, contact directories, underwriting workflows, and productivity tools. The public site is a [Laravel](https://laravel.com/) + [Inertia.js](https://inertiajs.com/) + [React](https://react.dev/) SPA with a separate admin area under `/admin`.
 
-## About Laravel
+## Tech stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Layer | Technology |
+|--------|------------|
+| Backend | PHP **8.2+**, Laravel **12** |
+| Frontend | React **18**, TypeScript, Vite **7**, Tailwind CSS **4** |
+| App shell | Inertia.js **2**, Laravel Breeze (auth), Ziggy (named routes in JS) |
+| Data | MySQL (default), session/cache/queue on database in `.env.example` |
+| Maps / charts | Leaflet, react-leaflet, Recharts |
+| Other | PHPSpreadsheet (imports/exports), Sanctum |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Front-end pages live under `resources/js/web/Pages/` (main app) and `resources/js/admin/Pages/` (admin). `resources/js/app.tsx` resolves Inertia pages from `web` or `admin` based on the URL path.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Prerequisites
 
-## Learning Laravel
+- PHP **8.2+** with common extensions (mbstring, openssl, pdo, etc.)
+- [Composer](https://getcomposer.org/)
+- Node.js **18+** and npm
+- MySQL (or adjust `DB_*` in `.env` for another driver)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Quick start
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+From the project root:
 
-## Laravel Sponsors
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Add a MySQL database and credentials in `.env`, then:
 
-### Premium Partners
+```bash
+php artisan migrate
+npm install
+npm run build
+php artisan serve
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+One-shot setup (install, env, key, migrate, npm install, production build) is also available:
 
-## Contributing
+```bash
+composer run setup
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Development
 
-## Code of Conduct
+Runs the PHP server, queue worker, log viewer (Pail), and Vite together:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer run dev
+```
 
-## Security Vulnerabilities
+Then open the URL shown by `php artisan serve` (typically `http://127.0.0.1:8000`).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Tests
+
+```bash
+composer run test
+```
+
+## Environment
+
+Copy `.env.example` to `.env` and configure at least:
+
+- `APP_URL`, `APP_NAME` (default app name in `.env.example` is **TENANTS HQ**)
+- `DB_*` for your database
+- `SITE_LOCK_PASSWORD` — **required** for visitors to pass the global site gate (see below)
+
+Optional: mail, queue, cache, and Redis settings follow standard Laravel conventions.
+
+## Site lock (staging / private demos)
+
+`GlobalPasswordProtection` redirects all requests to `/site-lock` until the session flag `site_unlocked` is set. Unlocking compares the submitted password to `SITE_LOCK_PASSWORD` in `.env` (`SiteLockController`). Routes under `/site-lock` are excluded from the redirect.
+
+## Main features (by URL area)
+
+### Listings and search
+
+- **Home** (`/`) — Featured auctions, residential, and commercial sections with filter-aware queries.
+- **Properties** (`/properties`) — Browse with filters for sale/lease, category (commercial/residential), listing type, status, and more.
+- **Segments** — `/properties/auctions`, `/properties/residential`, `/properties/commercial`, `/properties/rental`.
+- **Detail** — `/properties/{property}/{url_slug}` — Single listing with location, images, brokers, and details.
+
+Authenticated users get **saved searches** via `/api/saved-searches` (CRUD + apply).
+
+### Contacts and directories
+
+- **Tenants** — Company and location indexes and detail tabs (summary, locations, transactions, lease expirations, contacts, relationships, news).
+- **Owners** — Companies, funds, and owner detail tabs (summary, properties, transactions, listings, funds, tenants, contacts, relationships, news).
+- **Brokers** — Directory contacts with search, filters, sorting, and broker detail pages.
+- **Locations & companies** — `/contacts/locations`, `/contacts/companies`, plus aggregated views like `/contacts/all`.
+
+### Comparables (“comps”)
+
+Routes under `/comps/*` (commercial sales/lease, residential sales/lease, and “all”). Implementation mixes live placeholders and market-style UIs; see `MiscController` for page titles and descriptions.
+
+### Scout (market intelligence)
+
+Routes under `/scout/*` — index, owner criteria, tenant criteria, location rankings, scout map, and scout intelligence. Presented as a structured Scout product area (some screens are marked coming soon in copy).
+
+### Zoning
+
+- `/zoning-changes/property-map`
+- `/zoning-changes/rezoning-map`
+
+### Underwriting / pipeline
+
+Routes under `/underwriting/*` — saved, completed, submitted, sheets, new manual, and new AI flows for deal analysis workflows.
+
+### Tools
+
+- **Public / semi-public** — Mortgage calculator, cost segregation calculator, zoning codes reference, ChatGPT assistant page, quick links.
+- **Authenticated** — **Todo** (tasks, projects, teams) and **Calendar** (events) under `/tools/todo` and `/tools/calendar`.
+
+### Settings and account
+
+- `/settings/buy-box`, `/settings/notifications`, `/settings/account`, `/settings/subscription`
+- **Profile** — `/profile` (edit/update/delete account) when logged in.
+
+### Content
+
+- **Insights** (`/insights`)
+- **News** (`/news`, `/news/{slug}`)
+- **Footer / CMS-style pages** — `/quick-links/{slug}`, `/learn-more/{slug}`, `/policies/{slug}`
+
+### Admin
+
+- **`/admin/dashboard`** — Inertia admin dashboard (`routes/admin.php`), middleware: `auth`, `verified`.
+- **`/dashboard`** — Breeze default dashboard (`routes/admin.php`).
+
+### Authentication
+
+Laravel Breeze routes in `routes/auth.php`: register, login, logout, password reset, email verification, password confirmation.
+
+### Utilities
+
+- **`GET /optimize`** — Runs `optimize:clear` (requires `auth`). Intended for operators, not public use.
+
+## Backend data model (overview)
+
+Core domain models include `Property`, `PropertyLocation`, `PropertyDetail`, `PropertyImage`, `Broker`, `Brokerage`, tenant and owner company/location models, directory contacts/locations/broker companies, `SavedSearch`, todo (`TodoTask`, `TodoProject`, `TodoTeam`), and `CalendarEvent`. Import services under `app/Services/` support bulk loading of properties and directory data.
+
+## Project layout (short)
+
+| Path | Role |
+|------|------|
+| `routes/web.php` | Main web and API routes |
+| `routes/auth.php` | Breeze authentication |
+| `routes/admin.php` | `/admin` and `/dashboard` |
+| `app/Http/Controllers/` | Controllers |
+| `app/Models/` | Eloquent models |
+| `database/migrations/` | Schema |
+| `resources/js/web/` | Main React app (pages, layouts, components) |
+| `resources/js/admin/` | Admin React bundle |
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project inherits the **MIT** license from the Laravel application skeleton (see `composer.json`).
